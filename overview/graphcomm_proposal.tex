@@ -1,5 +1,6 @@
 \documentclass[12pt]{article}
 \usepackage{ebgaramond}
+\usepackage{apacite}
 \usepackage[protrusion=true,expansion=true]{microtype} 
 \usepackage{fullpage}
 
@@ -12,20 +13,25 @@
 
 \section{Why graphical communication?}
 
-Drawing is a powerful tool for communication --- with just a few strokes it is possible to convey the identity of a face \cite{bergmann2013impact}or express an intention to act \cite{Galantucci:2005uh}. Moreover, drawn images predate the historical record, are pervasive in human culture, and are often produced prolifically in childhood. 
+Drawing is a powerful tool for communication --- with just a few strokes it is possible to convey the identity of a face \cite{bergmann2013impact} or express an intention to act \cite{Galantucci:2005uh}. Moreover, drawn images predate the historical record, are pervasive in human culture, and are often produced prolifically in childhood.
 
-Examining graphical communication provides a window into how meaningful tokens emerge from experience, especially when conventionalized carriers of meaning are not available (e.g., words). Over the long-term, integrating insights across studies of linguistic and graphical modes of communication may yield general principles that govern how people negotiate shared meanings.  
+Examining graphical communication provides a window into how meaningful tokens emerge from individual experience and social interactions, especially when conventionalized carriers of meaning are not available (e.g., words). Over the long-term, integrating insights across studies of linguistic and graphical modes of communication may yield general principles that govern how people negotiate shared meanings.  
 
-\section{What sort of shared knowledge is established in the course of communicative interactions?}
+\section{How drawing influences object representations}
+
+In ongoing work, Fan, Yamins, and Turk-Browne (in prep) are investigating the basis for the ability to communicate an idea by drawing, by evaluating the premise that our ability to recognize objects and produce recognizable drawings of objects are linked by a common internal substrate --- a generalized object representation. They found that a convolutional neural network whose architecutre mirrors that of the ventral visual stream and was optimized to handle natural image variation in photographs \cite{Yamins:2014gia} was able to generalize to simple sketches of objects, without having to posit new specialized mechanisms. This suggests that the capacity for visual abstraction may be rooted in the functional architecture of the visual system.
+
+Moreover, this result set them up to use this model to ask: how does learning to draw objects influences the representation of object categories in the mind? Perhaps practice drawing allows one to learn the diagnostic features that better communicate the identity of an object (e.g., horse), and this practice might improve people's ability to make recognizable drawings of other, visually similar objects (e.g., sheep, cow). To test this, they designed a training paradigm in which participants repeatedly sketched some objects, while the model guessed the identity of the sketched object, providing trial-by-trial feedback. They found that repeatedly sketched objects were better recognized after training, while sketches of unpracticed but similar objects worsened. These results show that visual production can reshape the representational space for objects in various ways: by differentiating trained objects and merging other nearby objects in the space.
+
+\section{How do communicative interactions establish shared knowledge?}
 
 \subsection{Background}
 
-From Brennan and Clark (1996) and others, we know that a person’s choice of label for an object is sensitive to the shared history of interactions with their interlocutor. Sometimes this results in the use of labels that might not be maximally efficient/distinctive in a given circumstance, but rather the same label previously used to refer to that same object (a ‘conceptual pact’ about the object-label pairing). 
+However, drawing (like speaking or writing) can communicate different meanings in different contexts. How does social/conceptual context constrain visual production? For example, if targets belong to different basic-level categories in a drawing task (e.g., dogs, furniture, flowers), what features do people pick out to include in their drawings vs. when the targets are exemplars of the same basic-level category (e.g., pomeranian vs. dachshund)? 
 
-In ongoing work (Fan, Yamins, and Turk-Browne, in prep), we’re examining how label feedback in an object-drawing task influences how people subsequently draw those objects to more effectively convey its identity. How does such practice with communicative drawing affect features of those subsequent drawings? Presently, we interpret better production performance as reflecting the ability of people to home in visual features most diagnostic of object identity over time. 
+From \citeNP{Brennan:1996ud} and others, we know that a individual's choice of label for an object is sensitive to the shared history of interactions with their interlocutor. Sometimes this results in the use of labels that might not be maximally efficient/distinctive in a given circumstance, but match the label previously used to refer to that same object (a ‘conceptual pact’ about the object-label pairing). 
 
-However, drawing (like speaking or writing) can communicate different meanings in different contexts. How does social/conceptual context constrain visual production? For example, in the context of a drawing task where the targets belong to different basic-level categories (e.g., dogs, furniture, flowers), what features do people pick out to include in their drawings vs. when the targets are exemplars of the same basic-level category (e.g., pomeranian vs. dachshund)? 
-
+Additionally, prior work on graphical dialogue suggests that pairs of individuals who have interacted before tend to produce drawings that are more `abstract' and similar to one another than individuals who have had just as much experience with the drawing task, but previously interacted with other individuals \cite{Healey:2007vq}. Moreover, pairs that are able to `mutually-modify' each other's drawings in real-time (as opposed to taking turns) also end up producing drawings with similar styles and are more abstract. However, a deeper understanding of the mechanisms by which this form of interaction shapes the representational content of communicative drawings has been limited by the methodologies employed in these earlier studies, which relied on relatively coarse measures and qualitative analysis of response variables. 
 
 \subsection{Proposal}
 
@@ -43,7 +49,7 @@ Moreover, pairs of participants that were trained on a relatively narrow set of 
 
 \section{How does knowing what is not shared knowledge influence communication? }
 
-This is where it gets really juicy. Sometimes, two people interacting with one another may have access to non-overlapping knowledge (cf. Wu and Keysar, 2007). For example, in teacher-student interactions, the teacher is presumed to have greater knowledge about the topic at hand than the student. In such cases, how does the teacher flexibly adjust their output in order to accommodate this discrepancy in knowledge (or fail to do so)? Understanding what allows a teacher (or any person more informed about a subject than their interlocutor) to succesfully overcome these challenges, by taking into account what the student already knows/believes, is a key challenge for this work. 
+This is where it gets really juicy. Sometimes, two people interacting with one another may have access to non-overlapping knowledge \cite{Wu:2007tz}. For example, in teacher-student interactions, the teacher is presumed to have greater knowledge about the topic at hand than the student. In such cases, how does the teacher flexibly adjust their output in order to accommodate this discrepancy in knowledge (or fail to do so)? Understanding what allows a teacher (or any person more informed about a subject than their interlocutor) to succesfully overcome these challenges, by taking into account what the student already knows/believes, is a key challenge for this work. 
 
 To experimentally manipulate discrepancies in knowledge, one member of a pair may be given additional examples during training, extended opportunities to practice, or richer feedback, prior to interacting with a less-experienced partner. 
 
