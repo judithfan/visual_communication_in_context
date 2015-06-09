@@ -3,6 +3,7 @@
 \usepackage{apacite}
 \usepackage[protrusion=true,expansion=true]{microtype} 
 \usepackage{fullpage}
+\setlength{\parskip}{0.5em}
 
 \title{\textbf{Modeling Graphical Communication}}
 
@@ -35,7 +36,7 @@ Additionally, prior work on graphical dialogue suggests that pairs of individual
 
 Using a similar paradigm with word cues, \cite{Fay:2010jh} tracked pairs as they played several rounds of `Pictionary' with the same set of target items reappearing from round to round (e.g., `soap opera,' `parliament'). People initially produced detailed drawings that directly resembled their referents; however, over successive rounds, fewer strokes were necessary to convey the same meaning, and the drawings became progressively more iconic/symbolic \cite{Garrod:2007wk}. Drawings produced by members of the same pair to refer to a given target became more similar to one another, whereas drawings of a given target were highly variable across pairs, suggesting that the resulting conventions depend on the specific history of interactions between communication partners \cite{Fay:2010jh}.
 
-Taken together, these studies provide converging evidence that rich social feedback plays a crucial role in refining graphical representations over repeated interactions; in the absence of this feedback, drawings can actually become more complex over time \cite{Garrod:2007wk,Hupet:1992ua}. Building on this prior work, the goal of the present studies is to build a quantitatively predictive model that captures how social interactions shape the representational content of communicative drawings, and explain how such experience can lead to both efficient and expressive graphical communication \cite{Kirby:2015gi}. 
+Taken together, these studies provide converging evidence that rich social feedback plays a crucial role in refining graphical representations over repeated interactions; in the absence of this feedback, drawings can actually become more complex over time \cite{Garrod:2007wk,Hupet:1992ua}. Building on this prior work, the main goals of the present studies are: to systematically document major behavioral effects in this domain through a series of interrelated experiments, and to build a quantitatively predictive model that captures how social interactions shape the representational content of communicative drawings, thereby explaining how such experiences can lead to both efficient and expressive communication \cite{Kirby:2015gi}. 
 
 \section{Proposal}
 
@@ -57,9 +58,7 @@ Images of these objects will serve as cues in the drawing task, as well as alter
 
 Adopting a similar approach to Fan, Yamins, and Turk-Browne (in prep), we plan to employ an experimental design that probes generalization by contrasting test performance on untrained objects that belong to the same category as trained objects with performance on untrained objects that belong to a different category. 
 
-For each session, we will recruit two naive participants. 
-
-During an initial learning phase, each participant will take turns as Artist and Viewer, alternating roles on each trial. They will practice on the same subset of objects (4 of 8) sampled from half of the categories (2 of 4). Each participant will draw each object twice, resulting in 32 total learning trials, comprising 16 drawing trials and 16 guessing trials. These trials may be blocked by category, such that all the trials in the same block involve objects from the same category (4 blocks, 2 per category). 
+For each session, we will recruit two naive participants. During an initial learning phase, each participant will take turns as Artist and Viewer, alternating roles on each trial. They will practice on the same subset of objects (4 of 8) sampled from half of the categories (2 of 4). Each participant will draw each object twice, resulting in 64 total learning trials, comprising 16 drawing trials and 16 guessing trials for each participant. These trials may be blocked by category, such that all the trials in the same block involve objects from the same category (4 blocks, 2 per category). 
 
 On each trial of this practice phase, the Artist will be cued with an image of one of these objects (target) and prompted to produce a quick sketch of it (<=30s). This sketch will then be revealed to the Viewer, whereupon he/she will guess which object the sketch corresponds to by selecting among all 8 alternatives from the target category. These alternatives will be displayed as images depicting each of the trained objects from identical viewpoints. After the Viewer makes a guess, the pair will receive feedback indicating whether the choice was correct or not; if incorrect, the Viewer will be shown which object was the target. 
 
@@ -67,54 +66,38 @@ The test phase will immediately follow the practice phase. During this phase, pa
 
 \subsubsection{General Predictions}
 
-
+Because each participant has the opportunity to play the Artist and Viewer roles for each object once before 
 
 
 \subsubsection{Specific Manipulations}
 
-There are several variations on the basic procedure outlined above that would allow us to ask more specific questions about how interaction history influences graphical communication.
+There are several variations on the basic procedure outlined above that would allow us to pose more specific questions about how interaction history influences graphical communication.
 
-\textit{Interaction volume.}
-
-How does the sheer number of interactions two people have influence how well they are able to generalize to communicating new concepts? Insofar as interaction history meaningfully influences how people communicate, people with similar amounts of experience drawing and guessing but who did not previously interact with each other may be at a disadvantage. 
+\emph{Interaction volume.} How does the sheer number of interactions two people have influence how well they are able to generalize to communicating new concepts? Insofar as interaction history meaningfully influences how people communicate, people with similar amounts of experience drawing and guessing but who did not previously interact with each other may be at a disadvantage. 
 
 To test this, we could compare test performance between pairs trained in the manner described above with that of a control group in which pairs do not interact prior to being tested. On drawing-practice trials in this Control condition, participants practice drawing the same objects the same number of times as above, but receive either no feedback or only feedback based on model-classifier output. On guessing-practice trials, these control participants would be prompted to label drawings produced by randomly sampled other participants from other sessions. 
+\medskip
 
-\textit{Pragmatic considerations.}
+\emph{Conceptual overlap.} Oftentimes two people enter into a conversation with different background experiences, but with an interest in expressing themselves intelligibly, and understanding what the other person means. How does this circumstance initially affect how effectively they communicate, and how do they go about bridging across these differences? 
 
-How does an Artist's knowledge of the Viewer's belief state influence how they draw? For example, if the Artist knew ahead of time the space of alternatives that the Viewer was considering (operationalized as options presented in the forced-choice task), how would this affect which features he/she included? In the design described above, the list of alternatives presented are always exhaustive directories of the exemplars belonging to a single basic-level category. This might promote search for the feature(s) that were most diagnostic of the specific identity of the target relative to the other exemplars within the same category. On the other hand, if the list of alternatives included objects belonging to different categories, this might promote the selection of alternate features, perhaps those diagnostic of the basic-level category containing the target, but not uniquely possesed by it. 
+In the general procedure above, both participants receive equal amounts of experience learning to express the same set of concepts, as well as interpret drawings conveying them. Thus, this baseline case represents maximal overlap in communicative goals and prior experience. In a close variant of this that reduces overlap between their direct experiences, one participant would be assigned all (four) trained items from one category, and the other participant the other category. He/she would only practice drawing objects from one category, and only practice interpreting drawings made by their partner of objects from the other category. For the pair as a whole, this condition is identical to the baseline condition, in that they are collectively exposed to the same objects the same number of times in each task modality, except that each participant's experiences in each task are biased towards one category. How does this specialization affect how well each participant is able to adapt their drawings to be more recognizable to their communication partner during the practice phase, and what are the consequences for generalization in the test phase?
+\medskip
+
+\emph{Knowledge asymmetries.} In many real-world scenarios, there are often knowledge asymmetries between communication partners (e.g. that between a teacher and a student). Such asymmetries can sometimes be a source of confusion, when the relatively more-knowledgeable individual uses terms or conventions that the less-knowledgeable individual is unfamiliar with. What kinds of strategies can the pair adopt in order to cope with such asymmetries, and still communicate effectively? 
+
+In our paradigm, inducing an asymmetry in experience could be accomplished by pre-training one member of the pair on several more objects prior to beginning to interact with the other participant (similar to `director' in \citeNP{Wu:2007tz}). In order to minimize the risk of interference with subsequent social feedback, this pre-training could be performed without external feedback. Insofar as this pre-training promoted greater abstraction in this participant's drawings, this might initially hinder communication with a naive Viewer, who may not share the same visual abstractions. In the absence of explicit disclosure from the experimenters that there was an asymmetry in training, how do the dynamics of interaction under these conditions compare with those of the symmetric baseline condition? Does this pre-training make it easier (or more difficult) to interpret the drawings of the naive participant? Is it more likely that the pair converges on conventions proposed by the pre-trained participant, or the naive one? 
+\medskip
+
+\emph{Pragmatic considerations.} How does an Artist's knowledge of the Viewer's belief state influence how they draw? For example, if the Artist knew ahead of time the space of alternatives that the Viewer was considering (operationalized as options presented in the forced-choice task), how would this affect which features he/she included? In the design described above, the list of alternatives presented are always exhaustive directories of the exemplars belonging to a single basic-level category. This might promote search for the feature(s) that were most diagnostic of the specific identity of the target relative to the other exemplars within the same category. On the other hand, if the list of alternatives included objects belonging to different categories, this might promote the selection of alternate features, perhaps those diagnostic of the basic-level category containing the target, but not uniquely possesed by it. 
 
 Conversely, how does a Viewer's knowledge of the Artist's goals influence how they construe a drawing? For example, a Viewer who learns that the Artist is penalized for the amount of `ink' used during drawing may discount the presence or absence of dense texture fills in their drawing, even if this is otherwise a highly diagnostic feature of the target object. There are other ways to manipulate the Viewer's expectations about the Artist's intentions, given the drawing in front of them, as well. One may be to compromise the quality of the perceptual information the Artist has about the target (e.g., an uninformative viewpoint, or blurred image) and pass this information along to the Viewer.
-
-\textit{Conceptual overlap.}
-
-if one is drawing horses, and the other airplanes. 
-
-
-\textit{Knowledge asymmetries.}
-
-In many real-world scenarios, there are knowledge asymmetries between communciation partners (e.g. that between a teacher and a student). Such asymmetries can be a source of confusion, when the relatively more-knowledgeable individual uses terms or conventions that the less-knowledgeable individual is not likely to be familiar with. 
-
-
-Overlap in information is intuitively thought to support more effective communication. 
-
-One has more training than the other on more tokens
-
-
-\cite{Wu:2007tz}
 
 
 \section{Future directions}
 
 \subsection{Emergence of novel graphical conventions}
 
-%  Expressivity and compressibility \cite{Kirby:2015gi}
-
-In some cases, verbal and visual conventions for referring to objects may not be well established (e.g., music drawing task from \citeNP{Healey:2007vq}), or not available at all (cf. coordination game in \citeNP{Galantucci:2005uh}). For instance, auditory textures \cite{McDermott:2013ky} lack the rhythmic and pitch information that are captured in standard musical notation, and may be hard to describe. Thus, someone who wants to visually convey which auditory texture they are listening to must innovate a graphical scheme for capturing its identifying physical features. While the initial selection of encoding schemes may be highly underdetermined, repeated interactions between communication partners may induce convergence upon a consistent way of referring to their shared experiences. Understanding the dynamics by which such interactions yield convergence is a key target for this work. 
-
-\subsection{Coping with knowledge asymmetries in graphical communication}
-
-Sometimes, two people interacting with one another may have access to non-overlapping knowledge \cite{Wu:2007tz}. For example, in teacher-student interactions, the teacher is presumed to have greater knowledge about the topic at hand than the student. In such cases, how does the teacher flexibly adjust their output in order to accommodate this discrepancy in knowledge (or fail to do so)? Understanding what allows a teacher (or any person more informed about a subject than their interlocutor) to succesfully overcome these challenges, by taking into account what the student already knows/believes, is a key challenge for this work. To experimentally manipulate discrepancies in knowledge, one member of a pair may be given additional examples during training, extended opportunities to practice, or richer feedback, prior to interacting with a less-experienced partner. 
+In some cases, verbal and visual conventions for referring to objects may not be well established (e.g., music drawing task from \citeNP{Healey:2007vq}), or not available at all (cf. coordination game in \citeNP{Galantucci:2005uh}). For instance, auditory textures \cite{McDermott:2013ky} lack the rhythmic and pitch information that are captured in standard musical notation, and may be hard to describe. Thus, someone who wants to visually convey which auditory texture they are listening to must innovate a graphical scheme for capturing its identifying physical features. While the initial selection of encoding schemes may be highly underdetermined, how do repeated interactions between communication partners induce convergence upon a consistent way of referring to their shared experiences?
 
 \bibliographystyle{apacite}
 \setlength{\bibleftmargin}{.125in}
