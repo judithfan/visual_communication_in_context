@@ -58,7 +58,7 @@ Images of these objects will serve as cues in the drawing task, as well as alter
 \includegraphics[width=80mm]{figures/design.pdf}
 \end{center}
 \end{figure}
-\vspace{-10mm}
+\vspace{-5mm}
 
 \subsection{General Procedure}
 
@@ -76,39 +76,17 @@ The test phase will immediately follow the practice phase. During this phase, pa
 
 As both participants encounter each object in the Artist and Viewer roles once before doing so a second time in the practice phase, we can analyze the first and second halves of the practice phase separately in order to examine the consequences of the first complete graphical exchange. If this exchange leads to greater coordination of graphical tokens used to evoke objects, we would predict higher identification accuracy, as well as higher feature similarity between their drawings (based on top-layer model output from the CNN described in \citeNP{Yamins:2014gia}) on the second repetition of the practice phase relative to the first. The degree of improvement could be contrasted with a non-interactive control condition in which participants first drew all trained objects twice, then made guesses about their partner's drawings after the fact. 
 
+\subsubsection{Effect of History}
+
+Insofar as interaction history meaningfully influences how people communicate, people with the same amount of experience drawing and guessing but who did not previously interact with each other may be at a disadvantage. To test this, we could compare test performance between pairs trained in the manner described above with that of a control group in which pairs do not interact prior to being tested (but instead trained either with a different partner or no partner).
+
 \subsubsection{Generalization}
 
-Does interacting extensively with someone have more general consequences, affecting how other, related ideas are expressed (and understood)? If learning how to make drawings that convey the identity of objects belonging to the same category (e.g., poodle, dalmatian) depends on coordinating graphical conventions for capturing their distinguishing features within this category, the members of this pair may be able to generalize to other members of the same category (e.g., schnauzer). Possibly generalization may even occur for objects from untrained categories, but to a much lesser extent. 
+Does interacting extensively with someone have more general consequences, affecting how other, related ideas are expressed (and understood)? If learning how to make drawings that convey the identity of objects belonging to the same category (e.g., poodle, dalmatian) depends on coordinating graphical conventions for capturing their distinguishing features within this category, the members of this pair may be able to generalize to other members of the same category (e.g., schnauzer). 
 
-The degree of generalization observed in this case could be contrasted with a switched-pair control condition in which participants trained with one partner (or with no partner), but performed the generalization test with a member of a different pair who had trained on the same objects. 
+\subsection{Experiment 1: Pragmatic considerations}
 
-\subsection{Specific Manipulations}
-
-There are several variations on the basic procedure outlined above that would allow us to pose more specific questions about how interaction history influences graphical communication.
-
-\begin{figure}[hbtp]
-\begin{center}
-\includegraphics[width=80mm]{figures/interaction_volume.pdf}
-\end{center}
-\end{figure}
-\vspace{-5mm}
-
-\subsubsection{Interaction volume} How does the sheer number of interactions two people have influence how well they are able to generalize to communicating new concepts? Insofar as interaction history meaningfully influences how people communicate, people with the same amount of experience drawing and guessing but who did not previously interact with each other may be at a disadvantage. 
-
-To test this, we could compare test performance between pairs trained in the manner described above with that of a control group in which pairs do not interact prior to being tested. On drawing-practice trials in this Control condition, participants practice drawing the same objects the same number of times as above, but receive either no feedback or only feedback based on model-classifier output. On guessing-practice trials, these control participants would be prompted to label drawings produced by randomly sampled other participants from other sessions. 
-
-% \subsubsection{Conceptual overlap} Oftentimes two people enter into a conversation wishing to express different ideas, but have an interest in understanding what the other person means. How does this circumstance initially affect how effectively they communicate, and how do they go about bridging across these differences? 
-
-% In the general procedure above, both participants receive equal amounts of experience learning to express the same set of concepts, as well as interpret drawings conveying them. Thus, this baseline case represents maximal overlap in communicative goals and prior experience. In a close variant of this that reduces overlap between their direct experiences, one participant would be assigned all (four) trained items from one category, and the other participant the other category. He/she would only practice drawing objects from one category, and only practice interpreting drawings made by their partner of objects from the other category. For the pair as a whole, this condition is identical to the baseline condition, in that they are collectively exposed to the same objects the same number of times in each task modality, except that each participant's experiences in each task are biased towards one category. How does this specialization affect how well each participant is able to adapt their drawings to be more recognizable to their communication partner during the practice phase, and what are the consequences for generalization in the test phase?
-
-% \begin{figure}[hbtp]
-% \begin{center}
-% \includegraphics[width=80mm]{figures/conceptual_overlap.pdf}
-% \end{center}
-% \end{figure}
-% \vspace{-5mm}
-
-\subsubsection{Pragmatic considerations} How does an Artist's knowledge of the Viewer's belief state influence how they draw? For example, if the Artist knew ahead of time the space of alternatives that the Viewer was considering (operationalized as options presented in the forced-choice task), how would this affect which features he/she included? In the design described above, the list of alternatives presented are always exhaustive directories of the exemplars belonging to a single basic-level category. This might promote search for the feature(s) that were most diagnostic of the specific identity of the target relative to the other exemplars within the same category. On the other hand, if the list of alternatives included objects belonging to different categories, this might promote the selection of alternate features, perhaps those diagnostic of the basic-level category containing the target, but not uniquely possesed by it. 
+How does an Artist's knowledge of the Viewer's belief state influence how they draw? For example, if the Artist knew ahead of time the space of alternatives that the Viewer was considering (operationalized as options presented in the forced-choice task), how would this affect which features he/she included? In the design described above, the list of alternatives presented are always exhaustive directories of the exemplars belonging to a single basic-level category. This might promote search for the feature(s) that were most diagnostic of the specific identity of the target relative to the other exemplars within the same category. On the other hand, if the list of alternatives included objects belonging to different categories, this might promote the selection of alternate features, perhaps those diagnostic of the basic-level category containing the target, but not uniquely possesed by it. 
 
 \begin{figure}[hbtp]
 \begin{center}
@@ -117,12 +95,9 @@ To test this, we could compare test performance between pairs trained in the man
 \end{figure}
 \vspace{-5mm}
 
-Conversely, how does a Viewer's knowledge of the Artist's goals influence how they construe a drawing? For example, a Viewer who learns that the Artist is penalized for the amount of `ink' used during drawing may discount the presence or absence of dense texture fills in their drawing, even if this is otherwise a highly diagnostic feature of the target object. There are other ways to manipulate the Viewer's expectations about the Artist's intentions, given the drawing in front of them, as well. One may be to compromise the quality of the perceptual information the Artist has about the target (e.g., an uninformative viewpoint, or blurred image) and pass this information along to the Viewer.
+\subsection{Experiment 2: Knowledge asymmetries} In many real-world scenarios, there are knowledge asymmetries between communication partners (e.g. that between a teacher and a student). Such asymmetries can sometimes be a source of confusion, when the more-knowledgeable individual uses terms or conventions that the less-knowledgeable individual is unfamiliar with. What kinds of strategies can the pair adopt in order to cope with such asymmetries, and still communicate effectively? 
 
-
-\subsubsection{Knowledge asymmetries} In many real-world scenarios, there are often knowledge asymmetries between communication partners (e.g. that between a teacher and a student). Such asymmetries can sometimes be a source of confusion, when the relatively more-knowledgeable individual uses terms or conventions that the less-knowledgeable individual is unfamiliar with. What kinds of strategies can the pair adopt in order to cope with such asymmetries, and still communicate effectively? 
-
-In our paradigm, inducing an asymmetry in experience could be accomplished by pre-training one member of the pair on several more objects prior to beginning to interact with the other participant (similar to `director' in \citeNP{Wu:2007tz}). In order to minimize the risk of interference with subsequent social feedback, this pre-training could be performed without external feedback. Insofar as this pre-training promoted greater abstraction in this participant's drawings, this might initially hinder communication with a naive Viewer, who may not share the same visual abstractions. In the absence of explicit disclosure from the experimenters that there was an asymmetry in training, how do the dynamics of interaction under these conditions compare with those of the symmetric baseline condition? Does this pre-training make it easier (or more difficult) to interpret the drawings of the naive participant? Is it more likely that the pair converges on conventions proposed by the pre-trained participant, or the naive one? 
+In our paradigm, inducing an asymmetry in experience could be accomplished by pre-training one member of the pair on several more objects (without social feedback) prior to beginning to interact with the other participant (similar to `director' in \citeNP{Wu:2007tz}). Insofar as this pre-training promoted greater abstraction in this participant's drawings, this might initially hinder communication with a naive Viewer, who may not share the same visual abstractions. How do the dynamics of interaction under these conditions compare with those of the symmetric case? Does this pre-training make it easier (or more difficult) to interpret the drawings of the naive participant? Are the conventions eventually adopted by the pair biased towards those initially proposed by the pre-trained participant, or the naive one? 
 
 \begin{figure}[hbtp]
 \begin{center}
