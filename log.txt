@@ -1,0 +1,30 @@
+"""
+Project Log for graphcomm 
+purpose = to keep track of TODO's and archive meeting notes
+"""
+
+Jul 7 2015  
+Meeting Notes
+present = [jefan, ngoodman, rxdh, justinek]
+
+Sketches as signals -- what, if any, advantages might they have for studying reference & communication? 
+
+Some possible responses:
+
+(1) can test against geometric ground truth (for concrete nouns) because we have precise control over image space (through object modeling & rendering), as well as ways good ways to measure visual features at various levels of abstraction (model output at each layer in HMO model)
+
+(2) can look at emergence of systematicity or conventionalization 
+
+Celebrity 
+
+
+
+
+
+Jul 7 2015
+TODO's
+
+
+
+
+
