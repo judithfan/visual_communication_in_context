@@ -1,28 +1,47 @@
-"""
-Project Log for graphcomm 
-purpose = to keep track of TODO's and archive meeting notes
-"""
 
-Jul 7 2015  
-Meeting Notes
-present = [jefan, ngoodman, rxdh, justinek]
+---
+##project log for graphcomm 
+####(to keep track of TODO's and archive meeting notes)
+---
+
+__July 7 2015 meeting notes__
+_present = [jefan, ngoodman, rxdh, justinek]_
+
+######
 
 Sketches as signals -- what, if any, advantages might they have for studying reference & communication? 
 
 Some possible responses:
 
-(1) can test against geometric ground truth (for concrete nouns) because we have precise control over image space (through object modeling & rendering), as well as ways good ways to measure visual features at various levels of abstraction (model output at each layer in HMO model)
+1. can test against geometric ground truth (for concrete nouns) because we have precise control over image space (through object modeling & rendering), as well as ways good ways to measure visual features at various levels of abstraction (model output at each layer in HMO model)
 
-(2) can look at emergence of systematicity or conventionalization 
+2. relatedly, can look at emergence of systematicity or conventionalization in a continuous space (say, vs. among discrete lexicon). 
 
-Celebrity 
+3. may be able to avoid some ceiling effects due to participants already having access to abstract concepts pre-packaged into words
 
+What are some familiar graphical communication games that expose cool behaviors? Pictionary... and Celebrity. Celebrity involves fading out modalities available to communicate concept: first, full sentences, then words altogether, until you're stuck with just gestures. Yet people can do it! They seem to accomplish this both by learning directly what refers to what, as well as the space of alternatives. 
 
+So, what if we directly manipulate the space of alternatives? Broad vs. narrow, spanning multiple categories or focusing on one. Question: how do task demands & scope of possibilities influence sketch output? How does the choice of worlds (space of literal meanings included in task) affect which splines end up being most informative, and thus (perhaps), prioritized in sketches?
 
+Should people be pre-exposed to the objects, or should everyone start out ignorant? 
 
+Would be really cool to explore systematicity. There seems to be some tentative forays into this (see Theisen, Oberlander, & Kirby, 2010), but with small sample size, coarse/qualitative measures. Already clearly an opportunity to study these on larger scale, with some possibly more powerful measures. 
 
-Jul 7 2015
-TODO's
+Lest we get stuck working with only one task -- sketch referring to a single object -- could also play with defining novel/arbitrary categories, and see how people learn to convey those. 
+
+Modeling using RSA & HMO convnet: Over what level of representation is an additional stroke informative? Naively, you might assume that what sketches are is simply edge extraction. If so, then presenting early layers of HMO with sketches should work to efficiently constrain reference to meanings (specified by RSA model).
+
+Our guess is that natural strokes from human sketches are probably informative with respect to a more abstract feature space, such as that in Layer5 (resembling IT cortex), one that supports categorization, as opposed to at earliest layers (resembling V1). How can we formalize this? 
+
+Let's explore this with some existing data sets, maybe collect some sketch data to accompany tangram text data, and mock up simplest RSA model. 
+
+__TODO's__
+
+(1) In existing tangram experiment, try version with sketches as utterances (to be able to compare against verbal data).
+
+(2) Mock up simplest version of RSA model to express prior distribution over strokes/splines and how it updates when 0th order recursive reasoning deployed (i.e., literal meaning). Any use for existing sketch set from previous learning study?
+
+(3) Meet again at CogSci (+ Dan). 
 
 
 
