@@ -33,6 +33,21 @@ Modeling using RSA & HMO convnet: Over what level of representation is an additi
 
 Our guess is that natural strokes from human sketches are probably informative with respect to a more abstract feature space, such as that in Layer5 (resembling IT cortex), one that supports categorization, as opposed to at earliest layers (resembling V1). How can we formalize this? 
 
+First computational experiment with RSA should deal with the one-shot version: you've got a 'speaker' (drawer?) and a 'listener' (observer?), and the drawer gets to generate a single spline to get the observer to guess what they're referring to. Because there's a nice generative model of the spline, it can use conditional inference to reason about which parameter settings $\theta$ would be most useful for the communication task. The model would look something like this:
+
+```
+var drawer = function(trueItem) {
+  var splineParams = sample(splineParamERP);
+  var sketch = drawSpline(splineParams);
+  var convnetSketch = convnet(sketch);
+  var convnetTrue   = convnet(trueItem);
+  factor(similarity(convnetSketch, convnetTrue));
+  return splineParams;
+}
+```
+
+After running inference on this for a lot of iterations, you'd have some distribution of splines that you think are similarly to the true item in CNN space. Note that this does not require reasoning about the other agent at all: it's just trying to be informative with respect to the literal meaning of the drawing.
+
 Let's explore this with some existing data sets, maybe collect some sketch data to accompany tangram text data, and mock up simplest RSA model. 
 
 __TODO's__
