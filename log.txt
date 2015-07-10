@@ -46,6 +46,8 @@ var drawer = function(trueItem) {
 }
 ```
 
+_[jef: Gotcha. If I understand this somewhat correctly, the idea is to get a large sample of splines that people make to refer to an object, and then evaluate their informativeness by using a measure of feature similarity to the representation of the 3D model of the object in the CNN. A few clarification questions: (1) is it important to restrict analysis to only the first spline (vs. the complete sketch, or any other subset of splines from complete sketch)? (2) is similarity defined as the direct correspondence between the feature representation of the sketch and the feature representation of the image cue (e.g., dot product)?]_
+
 After running inference on this for a lot of iterations, you'd have some distribution of splines that you think are similarly to the true item in CNN space. Note that this does not require reasoning about the other agent at all: it's just trying to be informative with respect to the literal meaning of the drawing.
 
 Let's explore this with some existing data sets, maybe collect some sketch data to accompany tangram text data, and mock up simplest RSA model. 
