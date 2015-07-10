@@ -1041,8 +1041,21 @@ body .markdown-body
 <p>Lest we get stuck working with only one task &ndash; sketch referring to a single object &ndash; could also play with defining novel/arbitrary categories, and see how people learn to convey those. </p>
 <p>Modeling using RSA &amp; HMO convnet: Over what level of representation is an additional stroke informative? Naively, you might assume that what sketches are is simply edge extraction. If so, then presenting early layers of HMO with sketches should work to efficiently constrain reference to meanings (specified by RSA model).</p>
 <p>Our guess is that natural strokes from human sketches are probably informative with respect to a more abstract feature space, such as that in Layer5 (resembling IT cortex), one that supports categorization, as opposed to at earliest layers (resembling V1). How can we formalize this? </p>
+<p>First computational experiment with RSA should deal with the one-shot version: you&rsquo;ve got a &lsquo;speaker&rsquo; (drawer?) and a &lsquo;listener&rsquo; (observer?), and the drawer gets to generate a single spline to get the observer to guess what they&rsquo;re referring to. Because there&rsquo;s a nice generative model of the spline, it can use conditional inference to reason about which parameter settings $\theta$ would be most useful for the communication task. The model would look something like this:</p>
+<pre><code>var drawer = function(trueItem) {
+  var splineParams = sample(splineParamERP);
+  var sketch = drawSpline(splineParams);
+  var convnetSketch = convnet(sketch);
+  var convnetTrue   = convnet(trueItem);
+  factor(similarity(convnetSketch, convnetTrue));
+  return splineParams;
+}
+</code></pre>
+
+<p>After running inference on this for a lot of iterations, you&rsquo;d have some distribution of splines that you think are similarly to the true item in CNN space. Note that this does not require reasoning about the other agent at all: it&rsquo;s just trying to be informative with respect to the literal meaning of the drawing.</p>
 <p>Let&rsquo;s explore this with some existing data sets, maybe collect some sketch data to accompany tangram text data, and mock up simplest RSA model. </p>
 <p><strong>TODO&rsquo;s</strong></p>
+<p>(0) Take the sketches from existing &lsquo;sketchloop&rsquo; experiment and extract the </p>
 <p>(1) In existing tangram experiment, try version with sketches as utterances (to be able to compare against verbal data).</p>
 <p>(2) Mock up simplest version of RSA model to express prior distribution over strokes/splines and how it updates when 0th order recursive reasoning deployed (i.e., literal meaning). Any use for existing sketch set from previous learning study?</p>
 <p>(3) Meet again at CogSci (+ Dan). </p></article></body></html>

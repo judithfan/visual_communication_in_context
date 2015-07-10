@@ -52,6 +52,8 @@ Let's explore this with some existing data sets, maybe collect some sketch data 
 
 __TODO's__
 
+(0) Take the sketches from existing 'sketchloop' experiment and extract strokes (already done), apply simplest literal model. 
+
 (1) In existing tangram experiment, try version with sketches as utterances (to be able to compare against verbal data).
 
 (2) Mock up simplest version of RSA model to express prior distribution over strokes/splines and how it updates when 0th order recursive reasoning deployed (i.e., literal meaning). Any use for existing sketch set from previous learning study?
