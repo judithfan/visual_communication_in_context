@@ -1,6 +1,3 @@
-
-   $(document).ready(function() {
-
         // define sketchpad
         var editor = Raphael.sketchpad("editor", {
               height: 500,
