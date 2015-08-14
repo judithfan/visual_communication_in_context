@@ -70,6 +70,27 @@ __TODO's__
 
 
 
+__Aug 14 2015 meeting notes__
+_present = [rxdh, jefan]_
+
+Discussed prelim results of literal and pragmatic sketcher on square vs. circle task: http://hawkrobe.github.io/Q_and_A/pages/pictionary.html
+
+Try Sequential Monte Carlo, where each iteration defined at the stroke level? 
+
+Oh! What about the within-trial dynamics in the existing drawing dataset? How do informative sketches differ from less-informative sketches in this timecourse? How does margin/rank change as a function of each stroke, and what kinds of strokes provide the greatest boost? 
+
+One observation we made recently is that sketch feature change (correlation distance in layer5 features) is greatest over the first 4 trials, then plateaus over the next 3 for trained items. (Trained items are drawn once in the pre-test, five times during training, then once again in the post-test). Another way of saying this is that sketches are more variable early in training, and are less variable later in training. Makes sense and suggests that early trials are where we could look to capture a lot of the sketch 'experimentation' people might be doing within-sketch. 
+
+__TODO's__
+
+(1) Judy will look at sketch features at stroke-level, see what kinds of interesting properties the informativeness vs. stroke order timecourse has.
+
+(2) Robert looks into Sequential Monte Carlo as potential sampling regime to get better convergence from the literal/pragmatic sketch generator. 
+
+
+
+
+
 
 
 

@@ -12,8 +12,7 @@
         });
 
 
-        // stuff happens... 
-
+        // experiment stuff happens... 
 
         // then submitResponse is called
         function submitResponse(){
