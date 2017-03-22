@@ -64,3 +64,6 @@ target/
 *.synctex.gz
 *.key
 *.jpg
+
+sandbox/bower_components/*
+sandbox/node_modules/*
