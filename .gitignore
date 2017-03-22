@@ -67,4 +67,4 @@ target/
 
 sandbox/bower_components/*
 sandbox/node_modules/*
-sandbox/assets
+sandbox/assets/img/*
