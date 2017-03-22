@@ -25,6 +25,38 @@ function setupCodeBoxes(){
 $(setupCodeBoxes);
 
 
+
+// Utils
+
+function isErp(x){
+    return (x && (x.score != undefined) && (x.sample != undefined));
+}
+
+function isErpWithSupport(x){
+    return (isErp(x) && (x.support != undefined));
+}
+
+function jsPrint(x){
+    var resultDiv = $(activeCodeBox.parent().find(".resultDiv"));
+    resultDiv.show();
+    if (isErpWithSupport(x)){
+  var params = Array.prototype.slice.call(arguments, 2);
+  var labels = x.support(params);
+  var scores = _.map(labels, function(label){return x.score(params, label);});
+  if (_.find(scores, isNaN) !== undefined){
+      resultDiv.append(document.createTextNode("ERP with NaN scores!\n"));
+      return;
+  }
+  var counts = scores.map(Math.exp);
+  var resultDivSelector = "#" + resultDiv.attr('id');
+  barChart(resultDivSelector, labels, counts);
+    } else {
+  resultDiv.append(
+      document.createTextNode(
+    JSON.stringify(x) + "\n"));
+    }
+}
+
 // // Google analytics
 
 // (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){

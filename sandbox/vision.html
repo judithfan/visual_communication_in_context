@@ -6,45 +6,29 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>Sketcher 0.0.1 Sandbox</title>
+    <title>Computer Vision Page from DIPPL</title>
 
     <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap-theme.min.css">
     <link rel="stylesheet" href="node_modules/codemirror/theme/neat.css">
     <link rel="stylesheet" href="assets/css/custom.css">
     <link rel="stylesheet" href="assets/css/code.css">
-
-
     <script src="bower_components/jquery/dist/jquery.min.js"></script>
     <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
     <script src="bower_components/d3/d3.min.js"></script>
 
-    <script src="http://cdn.webppl.org/webppl-v0.9.7.js"></script>
-    <script src="http://cdn.webppl.org/webppl-editor-1.0.9.js"></script>
-    <link rel="stylesheet" href="http://cdn.webppl.org/webppl-editor-1.0.9.css">
+    <script src="assets/webppl/webppl-v0.9.7.js"></script>
+    <script src="assets/webppl/webppl-editor-1.0.9.js"></script>
+    <link rel="stylesheet" href="assets/webppl/webppl-editor-1.0.9.css">
 
     <script src="http://cdn.webppl.org/webppl-viz-0.7.11.js"></script>
-    <link rel="stylesheet" href="http://cdn.webppl.org/webppl-viz-0.7.11.css">
-
+    <link rel="stylesheet" href="assets/webppl/webppl-viz-0.7.11.css">
     <script src="bower_components/paper/dist/paper-full.js"></script>
     <!-- <script src="bower_components/autosize/src/autosize.js"></script> -->
     <script src="bower_components/dimple/dist/dimple.v2.1.0.js"></script>
     <script src="bower_components/underscore/underscore.js"></script>
-
-    <!-- <script src="bower_components/showdown/src/showdown.js"></script> -->
-    <script src="assets/js/custom.js"></script>
-    <!-- <script src="assets/js/custom2.js"></script> -->
-
-    <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-    <![endif]-->
-
-    
-      
-      <link rel="stylesheet" href="assets/css/draw.css" media="screen" type="text/css">
-      
-          
+    <script src="assets/js/custom.js"></script>    
+      <link rel="stylesheet" href="assets/css/draw.css" media="screen" type="text/css">      
       <script src='assets/js/draw.js' type="text/javascript"></script>
       
                
@@ -57,12 +41,14 @@
     <div class="container">
 
       <div class="page-header">
-  <h1>Sketcher 0.0.1 Sandbox</h1>
+  <h1>Computer Vision Page from DIPPL</h1>
 </div>
 
 <p>Drawing a line:</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>var myDraw = Draw(200, 200, true);
+<div class="highlighter-rouge"><pre class="highlight"><code>
+
+var myDraw = Draw(200, 200, true);
 var x1 = randomInteger(200);
 var y1 = randomInteger(200);
 var x2 = randomInteger(200);
@@ -325,13 +311,18 @@ loadImage(Draw(50, 50, true), "assets/img/beach.png")
 </code></pre>
 </div>
 
+<p>Sandbox</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>
+
+</code></pre>
+</div>
+
 
 <p>Robert's original Pictionary code</p>
 
 <div class="highlighter-rouge"><pre class="highlight"><code>
 
-
-/// fold:
 var drawCurves = function(drawObj, splines){
   var curve = splines[0];
   drawObj.drawSpline(curve[0], curve[1], curve[2], curve[3], curve[4], curve[5]);

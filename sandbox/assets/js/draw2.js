@@ -1,3 +1,21 @@
+// draw2 is like a 'sandbox' to test out different drawing approaches
+// e.g., a first goal is to write a spline <-> raster image 
+// transformer that is differentiable
+//
+// jefan 3/22/17
+
+// from Daniel Ritchie
+// Just write all the spline evaluation functions in AD code. 
+// Then, when sampling the spline onto the
+// image grid, rather than using inside/outside tests 
+// (i.e. is this pixel inside the width of the spline being rendered),
+// use some continuous function of the distance to the spline 
+// boundary with controllable falloff (e.g. some sort of exponential). 
+// If you're doing this in adnn, you'd probably want to write 
+// the sampling function as a new adnn primitive 
+// (to handle derivatives through pixels efficiently).
+
+
 function DrawObject(width, height, visible){
   this.canvas = $('<canvas/>', {
     "class": "drawCanvas",

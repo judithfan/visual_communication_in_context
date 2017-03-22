@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Sketcher 0.0.1 Sandbox</title>
+
+    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="node_modules/codemirror/theme/neat.css">
+    <link rel="stylesheet" href="assets/css/custom.css">
+    <link rel="stylesheet" href="assets/css/code.css">
+    <script src="bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="bower_components/d3/d3.min.js"></script>
+
+    <script src="assets/webppl/webppl-v0.9.7.js"></script>
+    <script src="assets/webppl/webppl-editor-1.0.9.js"></script>
+    <link rel="stylesheet" href="assets/webppl/webppl-editor-1.0.9.css">
+
+    <script src="http://cdn.webppl.org/webppl-viz-0.7.11.js"></script>
+    <link rel="stylesheet" href="assets/webppl/webppl-viz-0.7.11.css">
+    <script src="bower_components/paper/dist/paper-full.js"></script>
+    <!-- <script src="bower_components/autosize/src/autosize.js"></script> -->
+    <script src="bower_components/dimple/dist/dimple.v2.1.0.js"></script>
+    <script src="bower_components/underscore/underscore.js"></script>
+    <script src="assets/js/custom.js"></script>    
+      <link rel="stylesheet" href="assets/css/draw.css" media="screen" type="text/css">      
+      <script src='assets/js/draw.js' type="text/javascript"></script>
+      
+               
+
+  </head>
+  <body>
+
+    </div>
+
+    <div class="container">
+
+      <div class="page-header">
+  <h1>Sketcher 0.0.1 Sandbox</h1>
+</div>
+
+<p>Drawing a spliney box (naive MH, literal): </p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>
+
+var drawObj = Draw(70, 70, true);
+
+var makeLines = function(n, xs){
+  var x1 = randomInteger(500);
+  var y1 = randomInteger(500);
+  var x2 = randomInteger(500);
+  var y2 = randomInteger(500);
+  var xs2 = xs.concat([[x1, y1, x2, y2]]);
+  return (n==0) ? xs : makeLines(n-1, xs2);
+}
+
+var drawLines = function(lines){
+  var line = lines[0];
+  myDraw.line(line[0], line[1], line[2], line[3]);
+  if (lines.length > 1) {
+    drawLines(lines.slice(1));
+  }
+}
+
+var makeSplines = function(n, splines){
+  // Add a curve line to the set of curves
+  var startX = uniform(10,60);
+  var startY = uniform(10,60);
+  var midX = uniform(10,60);
+  var midY = uniform(10,60);
+  var endX = uniform(10,60);
+  var endY = uniform(10,60);
+  var newSplines = splines.concat([[startX, startY,
+                                    midX, midY,
+                                    endX, endY]]);
+  // Repeat until you have the desired number
+  return (n==1) ? newSplines : makeSplines(n-1, newSplines);
+};
+
+var splinePrior = function() {
+  var numCurves = 3;
+  return makeSplines(numCurves, []);
+};
+
+var splineParams = splinePrior();       // Sample a set of 1-4 curves
+
+var drawCurves = function(drawObj, splines){
+  var curve = splines[0]; // returns array of arrays of start/mid/end points for splines
+  drawObj.drawSpline(curve[0], curve[1], curve[2], curve[3], curve[4], curve[5]);
+  if (splines.length > 1) {
+    drawCurves(drawObj, splines.slice(1));
+  }
+};
+
+// tries to draw the sketch that maximizes the raw similarity to the goal object
+var literalSketcher = function(goalObj) {
+  var targetImg = Draw(70, 70, false);      // Load the target
+  loadImage(targetImg, "assets/img/" + goalObj + ".png"); 
+  return MH(function() {
+    var splineParams = splinePrior();       // Sample a set of 1-5 curves
+    var generatedImg = Draw(70, 70, true);  // Create a canvas to draw on
+    drawCurves(generatedImg, splineParams); // Sketch the sample curves on the canvas
+    factor(-targetImg.distance(generatedImg)/1000); // Weight by raw similarity to target
+    return splineParams;
+  }, 200);
+};
+
+// Plot best sketch
+var goalObj = "box"
+var bestSplineParams = MAP(literalSketcher(goalObj)).val;
+var generatedImg = Draw(70, 70, true);
+drawCurves(generatedImg, bestSplineParams);
+
+// Draw target image
+var targetImg = Draw(70, 70, true);
+loadImage(targetImg, "assets/img/" + goalObj + ".png");
+
+
+</code></pre>
+</div>
+
+<p>Drawing a spliney box (naive MH, pragmatic): </p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>
+
+var drawObj = Draw(70, 70, true);
+
+var makeLines = function(n, xs){
+  var x1 = randomInteger(500);
+  var y1 = randomInteger(500);
+  var x2 = randomInteger(500);
+  var y2 = randomInteger(500);
+  var xs2 = xs.concat([[x1, y1, x2, y2]]);
+  return (n==0) ? xs : makeLines(n-1, xs2);
+}
+
+var drawLines = function(lines){
+  var line = lines[0];
+  myDraw.line(line[0], line[1], line[2], line[3]);
+  if (lines.length > 1) {
+    drawLines(lines.slice(1));
+  }
+}
+
+var makeSplines = function(n, splines){
+  // Add a curve line to the set of curves
+  var startX = uniform(10,60);
+  var startY = uniform(10,60);
+  var midX = uniform(10,60);
+  var midY = uniform(10,60);
+  var endX = uniform(10,60);
+  var endY = uniform(10,60);
+  var newSplines = splines.concat([[startX, startY,
+                                    midX, midY,
+                                    endX, endY]]);
+  // Repeat until you have the desired number
+  return (n==1) ? newSplines : makeSplines(n-1, newSplines);
+};
+
+var possibleGuesses = ["circle", "box"];
+
+
+var splinePrior = function() {
+  var numCurves = 3;
+  return makeSplines(numCurves, []);
+};
+
+var guessPrior = function() {
+  return uniformDraw(possibleGuesses);  
+};
+
+
+var guessCircle = function() {
+  return possibleGuesses[0];
+}
+
+var guessBox = function() {
+  return possibleGuesses[1];
+}
+
+var splineParams = splinePrior();       // Sample a set of 1-4 curves
+
+var drawCurves = function(drawObj, splines){
+  var curve = splines[0]; // returns array of arrays of start/mid/end points for splines
+  drawObj.drawSpline(curve[0], curve[1], curve[2], curve[3], curve[4], curve[5]);
+  if (splines.length > 1) {
+    drawCurves(drawObj, splines.slice(1));
+  }
+};
+
+// tries to draw the sketch that maximizes the raw similarity to the goal object
+var literalSketcher = function(goalObj) {
+  var targetImg = Draw(70, 70, false);      // Load the target
+  loadImage(targetImg, "assets/img/" + goalObj + ".png"); 
+  return MH(function() {
+    var splineParams = splinePrior();       // Sample a set of 1-5 curves
+    var generatedImg = Draw(70, 70, true);  // Create a canvas to draw on
+    drawCurves(generatedImg, splineParams); // Sketch the sample curves on the canvas
+    factor(-targetImg.distance(generatedImg)/1000); // Weight by raw similarity to target
+    return splineParams;
+  }, 200);
+};
+
+var guesser = function(sketch) {
+  return Enumerate(function() {
+    var guess = guessPrior();
+    var targetImg = Draw(70, 70, false);
+    loadImage(targetImg, "assets/img/" + guess + ".png");
+    factor(-targetImg.distance(sketch)/1000);
+    console.log(guess);
+    return guess;
+  });
+};
+
+var boxGuesser = function(sketch) {
+  return Enumerate(function() {
+    var guess = guessBox();
+    var targetImg = Draw(70, 70, false);
+    loadImage(targetImg, "assets/img/" + guess + ".png");
+    factor(-targetImg.distance(sketch)/1000);
+    // console.log(guess);
+    return guess;
+  });
+};
+
+var circleGuesser = function(sketch) {
+  return Enumerate(function() {
+    var guess = guessCircle();
+    var targetImg = Draw(70, 70, false);
+    loadImage(targetImg, "assets/img/" + guess + ".png");
+    factor(-targetImg.distance(sketch)/1000);
+    // console.log(guess);
+    return guess;
+  });
+};
+
+
+var pragmaticSketcher = function(goalObj) {
+  return MH(function() {
+    var splineParams = splinePrior();       // Sample a set of 1-5 curves
+    var generatedImg = Draw(70, 70, true);  // Create a canvas to draw on
+    drawCurves(generatedImg, splineParams); // Sketch the sample curves on the canvas
+    var guessERP = guesser(generatedImg);    // Query the *GUESSER* to get the likelihood 
+    console.log(guessERP.score("circle"), guessERP.score("box"));
+    factor(guessERP.score(goalObj));
+    return splineParams;
+  }, 50);
+};
+
+var pragmaticSketcher2 = function(goalObj) {
+  return MH(function() {
+    var splineParams = splinePrior();       // Sample a set of 1-5 curves
+    var generatedImg = Draw(70, 70, true);  // Create a canvas to draw on
+    drawCurves(generatedImg, splineParams); // Sketch the sample curves on the canvas
+    var boxGuessERP = boxGuesser(generatedImg);    // Query the *GUESSER* to get the likelihood
+    var circleGuessERP = circleGuesser(generatedImg);    
+    console.log(boxGuessERP.score("box"), circleGuessERP.score("circle"));
+    factor(guessERP.score([], goalObj));
+    return splineParams;
+  }, 50);
+};
+
+// Plot best sketch
+var goalObj = "box"
+var bestSplineParams = MAP(pragmaticSketcher(goalObj)).val;
+var generatedImg = Draw(70, 70, true);
+drawCurves(generatedImg, bestSplineParams);
+
+// Draw target image
+var targetImg = Draw(70, 70, true);
+loadImage(targetImg, "assets/img/" + goalObj + ".png");
+
+
+</code></pre>
+</div>
+
+
+
+<p>Drawing:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>
+
+
+
+
+</code></pre>
+</div>
+
+
+
+    </div><!-- /.container -->
+
+  </body>
+</html>
