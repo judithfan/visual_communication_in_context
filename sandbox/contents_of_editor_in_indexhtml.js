@@ -1,10 +1,9 @@
 var path;
-var path2;
-var p;
+var pathNorm;
 
 // The mouse has to drag at least N pt
 // before the next drag event is fired:
-tool.minDistance = 1;
+tool.minDistance = 5;
 paper.install(window);
 
 function eG(t,m,s) { // eG = evaluateGaussian
@@ -27,32 +26,30 @@ function onMouseDown(event) {
     path = new Path();
     path2 = new Path();
     _p = new Path();
-    // path2.strokeColor = 'red';
     path.strokeColor = 'black';
     path.strokeWidth = 5;
-    path2.strokeWidth = 5;
     path.fullySelected = true;
 }
 
 function onMouseDrag(event) {
     path.add(event.point); 
     
-    var p2 = new Path();
-    p2.strokeWidth = 10;
-    p2.strokeColor = 'black';
-    p2.opacity = 0.5;
+    var pathNorm = new Path();
+    pathNorm.strokeWidth = 10;
+    pathNorm.strokeColor = 'black';
+    pathNorm.opacity = 0.5;
     var vector = event.delta;
 
     // rotate the vector by 90 degrees:
     vector.angle += 90;
 
     // change its length to 5 pt:
-    vector.length = 30;
+    vector.length = 10;
     
-    p2.add(event.middlePoint + vector);
-    p2.add(event.middlePoint - vector);  
+    pathNorm.add(event.middlePoint + vector);
+    pathNorm.add(event.middlePoint - vector);  
     
-    p2.strokeColor = {
+    pathNorm.strokeColor = {
         gradient: {
             stops: [[gS(-4,1), 0], [gS(-3,1), 0.125], [gS(-2,1), 0.25],[gS(-1,1), 0.375],
                     [gS(0,1), 0.5], [gS(1,1), 0.625], [gS(2,1), 0.75],[gS(3,1), 0.875],[gS(4,1), 1]],
@@ -68,15 +65,6 @@ function onMouseDrag(event) {
 function onMouseUp(event) {
     path.selected = false;
     path.smooth(10);
-    norm = path.getNormalAt(path.length)*30;
-    // norm2 = norm.rotate(180); // get the other normal    
-    finalPoint = path._segments.slice(-1)[0];
-    // console.log(norm);
-    // console.log(finalPoint['point']+norm)
-    path2.add(finalPoint['point']-norm);
-    path2.add(finalPoint['point']);
-    path2.add(finalPoint['point']+norm);
-    // console.log(path.exportJSON());
     
     svgString = paper.project.exportJSON({asString:true});
     var serializer = new XMLSerializer();
@@ -111,15 +99,4 @@ function onMouseUp(event) {
         
     };
     
-
-    path2.strokeColor = {
-        gradient: {
-            stops: [[gS(-4,1), 0], [gS(-3,1), 0.125], [gS(-2,1), 0.25],[gS(-1,1), 0.375],
-                    [gS(0,1), 0.5], [gS(1,1), 0.625], [gS(2,1), 0.75],[gS(3,1), 0.875],[gS(4,1), 1]],
-            radial: false
-        },
-        origin: finalPoint['point']-norm,
-        destination: finalPoint['point']+norm
-    };
-
     }
