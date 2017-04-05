@@ -1,0 +1,23 @@
+{
+  "name": "sandbox",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "ad": "^0.0.1",
+    "adnn": "^2.0.4",
+    "coditor": "^1.1.0",
+    "codemirror": "^5.25.0",
+    "jquery": "^3.2.1",
+    "nn": "^0.0.6",
+    "pug": "^2.0.0-beta11",
+    "require": "^2.4.20",
+    "requirejs": "^2.3.3"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "mocha"
+  },
+  "author": "",
+  "license": "ISC"
+}
