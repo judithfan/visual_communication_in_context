@@ -67,6 +67,20 @@ DrawObject.prototype.drawSpline = function(startX, startY, midX, midY, endX, end
   this.redraw();
 };
 
+DrawObject.prototype.drawSpline_returnSegments = function(startX, startY, midX, midY, endX, endY){
+  var path = this.newPath();
+  path.strokeColor = 'black';
+  path.add(this.newPoint(startX, startY));
+  path.add(this.newPoint(midX, midY));
+  path.add(this.newPoint(endX, endY));
+  path.smooth();
+  this.redraw();
+  console.log(path._segments);
+  return path._segments;
+
+};
+
+
 DrawObject.prototype.redraw = function(){
   this.paper.view.draw();
 };

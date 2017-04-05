@@ -16,6 +16,15 @@
 // (to handle derivatives through pixels efficiently).
 
 
+// Resources
+
+// Daniel Ritchie's readme for ad (automatic differentiation)
+// https://github.com/dritchie/adnn/blob/master/ad/README.md
+
+// dritchie's readme for adnn (ad + neural networks)
+// https://github.com/dritchie/adnn
+
+
 function DrawObject(width, height, visible){
   this.canvas = $('<canvas/>', {
     "class": "drawCanvas",
