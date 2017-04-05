@@ -292,8 +292,77 @@ loadImage(targetImg, "assets/img/" + goalObj + ".png");
 </div>
 
 
+<p>Drawing:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>
+
+var drawObj = Draw(70, 70, true);
+
+var makeLines = function(n, xs){
+  var x1 = randomInteger(500);
+  var y1 = randomInteger(500);
+  var x2 = randomInteger(500);
+  var y2 = randomInteger(500);
+  var xs2 = xs.concat([[x1, y1, x2, y2]]);
+  return (n==0) ? xs : makeLines(n-1, xs2);
+}
+
+var drawLines = function(lines){
+  var line = lines[0];
+  myDraw.line(line[0], line[1], line[2], line[3]);
+  if (lines.length > 1) {
+    drawLines(lines.slice(1));
+  }
+}
+
+var makeSplines = function(n, splines){
+  // Add a curve line to the set of curves
+  var startX = uniform(10,30);
+  var startY = uniform(10,30);
+  var midX = uniform(30,50);
+  var midY = uniform(30,50);
+  var endX = uniform(50,60);
+  var endY = uniform(50,60);
+  var newSplines = splines.concat([[startX, startY,
+                                    midX, midY,
+                                    endX, endY]]);
+  // Repeat until you have the desired number
+  return (n==1) ? newSplines : makeSplines(n-1, newSplines);
+};
+
+
+var splinePrior = function() {
+  var numCurves = 1;
+  return makeSplines(numCurves, []);
+};
+
+var splineParams = splinePrior();       // Sample a set of 1-4 curves
+
+var drawCurves = function(drawObj, splines){
+  var curve = splines[0]; // returns array of arrays of start/mid/end points for splines
+  drawObj.drawSpline_returnSegments(curve[0], curve[1], curve[2], curve[3], curve[4], curve[5]);
+  if (splines.length > 1) {
+    drawCurves(drawObj, splines.slice(1));
+  }
+};
+
+var splineParams = splinePrior();       // Sample a set of 1-5 curves
+var generatedImg = Draw(70, 70, true);  // Create a canvas to draw on
+drawCurves(generatedImg, splineParams); // Sketch the sample curves on the canvas
+    
+
+</code></pre>
+</div>
+
+
+
+
 
     </div><!-- /.container -->
+
+
+
+
 
   </body>
 </html>
