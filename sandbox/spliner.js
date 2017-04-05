@@ -99,7 +99,6 @@ function genOffsetPath(offset,mainPath) {
 
 // test paper pathmaker
 paper.setup([100,100]);
-var path = new paper.Path();
 
 // coords = genPath();
 // console.log(coords);
@@ -112,7 +111,17 @@ var path = new paper.Path();
 
 
 // test catmull fitter
-data = genPath('cubic',0,10,10,[0,0,-2,3,4]);
-console.log(data);
-coords = catmullFitter(data,0.5);
-console.log(coords);
+coords = genPath('cubic',0,600,5,[0,0.001,0,0]);
+// console.log(coords);
+pathData = catmullFitter(coords,0.5);// console.log(coords);
+var path = new paper.Path(pathData);
+
+path.strokeColor = 'black';
+
+// Scale the copy by 1000%, so we see something
+path.scale(10);
+console.log(pathData);
+// naively just pass SVG string to path item
+// Item = path.importSVG(svgString);
+
+// console.log(path._segments);
