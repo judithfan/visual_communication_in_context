@@ -93,35 +93,103 @@ function genPath(type,x0,x1,N,params) {
 function genOffsetPath(offset,mainPath) {
 	p = new paper.Path();
 
+}
 
+
+////////// GENERATE POLYNOMIAL PATH ////////// 
+
+// canvas params
+width = 500;
+height = 500;
+
+// set up paper
+paper.setup([width,height]);
+
+// generate points along polynomial
+coords = genPath('cubic',0,500,4,[0,0.0001,0,0]);
+
+////////// APPLY GAUSSIAN BLUR TO PATH //////////
+
+// adapted from paper.js smooth method
+// line 5628 in paper-full.js
+// takes in: x,y coords
+// outputs: segments (point + handleIn + handleOut)
+
+// adapted from catmullFitter.js
+function catmullFitter2(coords,alpha) {
+
+    if (alpha == 0 || alpha === undefined) {
+      return false;
+    } else {
+      var p0, p1, p2, p3, d1, d2, d3;
+      var p = new Array();
+      var handleIn = new Array ();
+      var handleOut = new Array();
+      var segments = new Array();
+      var d = 'M' + Math.round(coords[0].x) + ',' + Math.round(coords[0].y) + ' ';
+      var length = coords.length;
+      for (var i = 0; i < length - 1; i++) {
+	        p0 = i == 0 ? coords[0] : coords[i - 1];
+	        p1 = coords[i];
+	        p2 = coords[i + 1];
+	        p3 = i + 2 < length ? coords[i + 2] : p2;
+
+	        d1 = dist(p0.x, p0.y, p1.x, p1.y);
+	        d2 = dist(p1.x, p1.y, p2.x, p2.y);
+	        d3 = dist(p2.x, p2.y, p3.x, p3.y);
+
+	        var a = alpha,
+				d1_a = Math.pow(d1, a),
+				d1_2a = d1_a * d1_a,
+				d2_a = Math.pow(d2, a),
+				d2_2a = d2_a * d2_a;
+
+			// set starting point
+			p.push({
+				x: coords[i].x,
+				y: coords[i].y
+			})
+
+			// set handleIn
+			var A = 2 * d2_2a + 3 * d2_a * d1_a + d1_2a,
+				N = 3 * d2_a * (d2_a + d1_a);
+			
+			handleIn.push({
+				x: (d2_2a * p0.x + A * p1.x - d1_2a * p2.x) / N - p1.x,
+				y: (d2_2a * p0.y + A * p1.y - d1_2a * p2.y) / N - p1.y
+			});
+
+			// set handleOut
+			var A = 2 * d1_2a + 3 * d1_a * d2_a + d2_2a,
+				N = 3 * d1_a * (d1_a + d2_a);
+
+			handleOut.push({
+				x: (d1_2a * p2.x + A * p1.x - d2_2a * p0.x) / N - p1.x,
+				y: (d1_2a * p2.y + A * p1.y - d2_2a * p0.y) / N - p1.y
+			})
+	  }
+
+	}
+	var segments = {
+		points: p,
+		handleIn: handleIn,
+		handleOut: handleOut
+	};
+	return segments;
 
 }
 
-// test paper pathmaker
-paper.setup([100,100]);
+segments = catmullFitter2(coords, 0.5);
+console.log(segments);
 
-// coords = genPath();
-// console.log(coords);
+///// ///// ///// RENDERING STEP ///// ///// /////
 
-// path.add([50,60]);
-// path.add([30,80]);
-// path.smooth(10);
+// generate SVG string of catmull-rom-fitted spline
+pathData = catmullFitter(coords,0.5);
 
-// console.log(path._segments);
-
-
-// test catmull fitter
-coords = genPath('cubic',0,600,5,[0,0.001,0,0]);
-// console.log(coords);
-pathData = catmullFitter(coords,0.5);// console.log(coords);
+// pass SVG string to paper Path obj
 var path = new paper.Path(pathData);
-
 path.strokeColor = 'black';
 
-// Scale the copy by 1000%, so we see something
-path.scale(10);
-console.log(pathData);
-// naively just pass SVG string to path item
-// Item = path.importSVG(svgString);
+// save out SVG string as PNG
 
-// console.log(path._segments);
