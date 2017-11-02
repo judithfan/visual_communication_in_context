@@ -69,3 +69,5 @@ sandbox/bower_components/*
 sandbox/node_modules/*
 sandbox/assets/img/*
 sandbox/assets/fontello/*
+
+*.fls
