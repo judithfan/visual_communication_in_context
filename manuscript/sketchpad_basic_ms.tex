@@ -103,13 +103,11 @@ For each pair, objects were grouped into eight quartets: Four of these quartets 
 
 Features were extracted using VGG-19 \cite{simonyan2014very}, a high-performing deep convolutional neural network model architecture that had been pre-trained to categorize objects on the Imagenet database, which contains millions of photographs from hundreds of object categories \cite{deng2009imagenet}.
 
-Despite the fact that drawings are highly abstracted away from natural visual inputs, 
+Despite the fact that drawings are highly abstracted away from natural visual inputs, a relatively modest amount of finetuning of models previously trained only on photos has been shown to lead to vast improvements in sketch categorization, and discerning image-level correspondences between sketches and photos \cite[]{sangkloy2016sketchy}. Even without finetuning, prior work has shown a striking isomorphism in the similarity structure \cite{kriegeskorte2008matching} of object categories in drawings and photos at higher layers in these models \cite[]{fan2015common}.
 
-a relatively modest amount of finetuning of models previously trained only on photos has been shown to lead to vast improvements in sketch categorization, and discerning image-level correspondences between sketches and photos \cite[]{sangkloy2016sketchy}. Even without finetuning, prior work has shown a striking isomorphism in the similarity structure \cite{kriegeskorte2008matching} of object categories in drawings and photos at higher layers in these models \cite[]{fan2015common}.
+In order to capture fine-grained relationships between ...
 
-In order to capture fine-grained relationships between 
-
-references using distances in higher layers of deep networks to measure perceptual similarity: 
+Prior work using using distances in higher layers of deep networks to measure perceptual similarity: 
 \cite{dosovitskiy2016generating,johnson2016perceptual,peterson2016adapting} 
 
 
