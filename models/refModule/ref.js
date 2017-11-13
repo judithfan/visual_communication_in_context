@@ -29,70 +29,42 @@ function _logsumexp(a) {
 
 // P(target | sketch) \propto e^{scale * sim(t, s)}
 // => log(p) = scale * sim(target, sketch) - log(\sum_{i} e^{scale * sim(t, s)})
-var getL0score = function(target, sketch, context, params) {
-  var similarities = params.similarities[params.similarityMetric];
+var getL0score = function(target, sketch, context, params, config) {
+  var similarities = config.similarities[params.perception];
   var scores = [];
   for(var i=0; i<context.length; i++){
-    scores.push(params.simScale * similarities[context[i]][sketch]);
+    scores.push(params.simScaling * similarities[context[i]][sketch]);
   }
-  return params.simScale * similarities[target][sketch] - _logsumexp(scores);
+  return params.simScaling * similarities[target][sketch] - _logsumexp(scores);
+};
+
+// Interpolates between the 'informativity' term of S0 and S1 based on pragWeight param
+var informativity = function(targetObj, sketch, context, params, config) {
+  var similarities = config.similarities[params.perception];
+  var S0inf = similarities[targetObj][sketch];
+  var S1inf = getL0score(targetObj, sketch, context, params, config);
+  return ((1 - params.pragWeight) * S0inf + params.pragWeight * S1inf);
 };
 
 // note using logsumexp here isn't strictly necessary, because all the scores
 // are *negative* (informativity is log(p of listener)) and there aren't
 // enough terms for precision to matter... 
-var getCombinedScore = function(trueSketch, targetObj, context, params) {
-  var possibleSketches = params.possibleSketches;
+var getSpeakerScore = function(trueSketch, targetObj, context, params, config) {
+  var possibleSketches = config.possibleSketches;
   var costw = params.costWeight;
-  var pragw = params.costWeight;  
   var scores = [];
+  // note: could memoize this (only needs to be computed once per context, not for every sketch)
   for(var i=0; i<possibleSketches.length; i++){
     var sketch = possibleSketches[i];
-    var inf = getL0score(targetObj, sketch, context, params);
-    var cost = params.costs[sketch][0];
-    var utility = (1 - w) * inf - w * cost;
+    var inf = informativity(targetObj, sketch, context, params, config);
+    var cost = config.costs[sketch][0];
+    var utility = (1 - costw) * inf - costw * cost;
     scores.push(params.alpha * utility);
   }
-  var trueUtility = ((1 - w) * getL0score(targetObj, trueSketch, context, params)
-		     - w * params.costs[trueSketch][0]);
-  return params.alpha * trueUtility - _logsumexp(scores);
-};
 
-// note using logsumexp here isn't strictly necessary, because all the scores
-// are *negative* (informativity is log(p of listener)) and there aren't
-// enough terms for precision to matter... 
-var getS1score = function(trueSketch, targetObj, context, params) {
-  var possibleSketches = params.possibleSketches;
-  var w = params.costWeight;
-  var scores = [];
-  for(var i=0; i<possibleSketches.length; i++){
-    var sketch = possibleSketches[i];
-    var inf = getL0score(targetObj, sketch, context, params);
-    var cost = params.costs[sketch][0];
-    var utility = (1 - w) * inf - w * cost;
-    scores.push(params.alpha * utility);
-  }
-  var trueUtility = ((1 - w) * getL0score(targetObj, trueSketch, context, params)
-		     - w * params.costs[trueSketch][0]);
+  var trueUtility = ((1 - costw) * informativity(targetObj, trueSketch, context, params, config)
+		     - costw * config.costs[trueSketch][0]);
   return params.alpha * trueUtility - _logsumexp(scores);
-};
-
-var getS0score = function(trueSketch, targetObj, params) {
-  var possibleSketches = params.possibleSketches;
-  var similarities = params.similarities[params.similarityMetric];
-  var w = params.costWeight;
-  var scores = [];
-  for(var i=0; i<possibleSketches.length; i++){
-    var sketch = possibleSketches[i];
-    var inf = similarities[targetObj][sketch];
-    var cost = params.costs[sketch][0];
-    var utility = (1 - w) * inf - w * cost;
-    scores.push(params.alpha * utility);
-  }
-  var trueUtility = ((1-w) * similarities[targetObj][trueSketch]
-		     - w * params.costs[trueSketch][0]);
-  
-  return Math.log(Math.exp(params.alpha * trueUtility)) - _logsumexp(scores);
 };
 
 function readCSV(filename){
@@ -125,7 +97,7 @@ var bayesianErpWriter = function(erp, filePrefix) {
 				"value", "prob", "posteriorProb"] + '\n');
 
   var paramFile = fs.openSync(filePrefix + "Params.csv", 'w');
-  fs.writeSync(paramFile, ["similarityMetric,", "speakerModel", "alpha", "typWeight", "costWeight", "logLikelihood", "posteriorProb"] + '\n');
+  fs.writeSync(paramFile, ["perception,", "pragmatics", "production", "alpha", "simScaling", "pragWeight","costWeight", "logLikelihood", "posteriorProb"] + '\n');
 
   var supp = erp.support();
  
@@ -151,6 +123,6 @@ var locParse = function(filename) {
 
 module.exports = {
   getSimilarities, getPossibleSketches, getCosts, getSubset,
-  getL0score, getS1score, getS0score,
+  getL0score, getSpeakerScore,
   bayesianErpWriter, writeCSV, readCSV, locParse
 };

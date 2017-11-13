@@ -22,55 +22,36 @@ var globalConfig = {
   outputFileName : 'testing'
 };
 
-var modelAnalysis = function() {
-  var similarityMetric = uniformDraw(['mid-layer']);
-  var speakerModel = uniformDraw(['S1'])//, 'S0', 'combined']);
-  
-  var params = {
-    similarityMetric,
-    speakerModel,
+var paramPrior = function() {
+  var perception = uniformDraw(['mid-layer']);
+  var pragmatics = uniformDraw(['S1', 'S0', 'combined']);
+  var production = uniformDraw(['cost', 'nocost']);  
+  return {
+    perception, pragmatics, production,
     alpha : uniformDraw(_.range(0.5, 10, 0.5)),
-    simScale : 1000,//speakerModel === 'S0' ? 1 : uniformDraw(_.range(0.5, 5, 0.5)),
-    costWeight : uniformDraw(_.range(0, 1, 0.05))
+    simScaling : (pragmatics === 'S0' ? 1 :
+		uniformDraw(_.range(0.5, 5, 0.5))),    
+    pragWeight: (pragmatics == 'S0' ? 0 :
+		 pragmatics == 'S1' ? 1 :
+		 uniformDraw(_.range(0, 1.01, 0.1))),
+    costWeight : (production === 'nocost' ? 0 :
+		  uniformDraw(_.range(0, 1, 0.05)))
   };
+};
 
-  var getScore = cache(function(sketch, target, ctx) {
-    if(speakerModel === 'S1') {
-      return refModule.getS1score(sketch, target, ctx, extend(params, globalConfig));
-    } else if(speakerModel === 'S0') {
-      return refModule.getS0score(sketch, target, extend(params, globalConfig));
-    } else if(speakerModel === 'combined') {
-      return refModule.getCombinedScore(sketch, target, ctx, extend(params, globalConfig));
-    } else {
-      console.error('unknown model:' + speakerModel);
-    }
-    return score;
-  });
+var modelAnalysis = function() {
 
-  console.log(params);
-  
+  var params = paramPrior();
   var score = reduce(function(c, memo) {
     // Extract condition information
     var conditionType = c.condition;
     var context = [c.Target, c.Distractor1, c.Distractor2, c.Distractor3];
     var target = context[0];
 
-    // Store predives
-    // if(globalConfig.storePredictives) {
-    //   foreach(modelOutput.support(), function(s){
-    // 	var key = _.values(c).concat(s);
-    // 	var newPair = _.zipObject([key], [Math.exp(modelOutput.score(s))]);
-    // 	globalStore.predictives = extend(globalStore.predictives, newPair);
-    //   });
-    // }
-    
-    // condition on data
-    var score = getScore(c.sketchLabel, target, context);
-    // var p = 
-    // var score = (params.speakerModel === 'S1' ?
-    // 		 refModule.getS1score(c.sketchLabel, target, context, p) :
-    // 		 refModule.getS0score(c.sketchLabel, target, p));
-    return memo + score;
+    // compute log likelihood (score) of data point under model
+    return memo + refModule.getSpeakerScore(
+      c.sketchLabel, target, context, params, globalConfig
+    );
   }, 0, data);    
 
   console.log(params);
@@ -79,9 +60,11 @@ var modelAnalysis = function() {
   factor(score);
 
   var paramsKey = _.values(params).join(',');
-  return {predictive: globalStore.predictives, params : _.zipObject([paramsKey], [score])};
+  return {
+    predictive: globalStore.predictives,
+    params : _.zipObject([paramsKey], [score])
+  };
 };
 
 var outputERP = Infer({method:'enumerate', model: modelAnalysis});
-
 refModule.bayesianErpWriter(outputERP, "./bdaOutput/" + globalConfig.outputFileName);
