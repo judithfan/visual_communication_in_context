@@ -39,10 +39,11 @@ var getL0score = function(target, sketch, context, params, config) {
 };
 
 // Interpolates between the 'informativity' term of S0 and S1 based on pragWeight param
+// Try remapping these to [0,1]...
 var informativity = function(targetObj, sketch, context, params, config) {
   var similarities = config.similarities[params.perception];
-  var S0inf = similarities[targetObj][sketch];
-  var S1inf = getL0score(targetObj, sketch, context, params, config);
+  var S0inf = (similarities[targetObj][sketch] + 1) / 2;
+  var S1inf = Math.exp(getL0score(targetObj, sketch, context, params, config));
   return ((1 - params.pragWeight) * S0inf + params.pragWeight * S1inf);
 };
 
@@ -57,14 +58,14 @@ var getSpeakerScore = function(trueSketch, targetObj, context, params, config) {
   for(var i=0; i<possibleSketches.length; i++){
     var sketch = possibleSketches[i];
     var inf = informativity(targetObj, sketch, context, params, config);
-    var cost = config.costs[sketch][0];
+    var cost = config.costs[sketch];
     var utility = (1 - costw) * inf - costw * cost;
-    scores.push(params.alpha * utility);
+    scores.push(params.alpha * Math.log(utility));
   }
 
   var trueUtility = ((1 - costw) * informativity(targetObj, trueSketch, context, params, config)
-		     - costw * config.costs[trueSketch][0]);
-  return params.alpha * trueUtility - _logsumexp(scores);
+		     - costw * config.costs[trueSketch]);
+  return params.alpha * Math.log(trueUtility) - _logsumexp(scores);
 };
 
 function readCSV(filename){
