@@ -1,3 +1,10 @@
+# 'big data'
+models/refModule/json/*.json
+
+# emacs/node cruft
+*~
+models/refModule/node_modules
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
