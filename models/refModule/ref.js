@@ -54,18 +54,23 @@ var getSpeakerScore = function(trueSketch, targetObj, context, params, config) {
   var possibleSketches = config.possibleSketches;
   var costw = params.costWeight;
   var scores = [];
-  // note: could memoize this (only needs to be computed once per context, not for every sketch)
+  // note: could memoize this for moderate optimization...
+  // (only needs to be computed once per context per param, not for every sketch)
   for(var i=0; i<possibleSketches.length; i++){
     var sketch = possibleSketches[i];
     var inf = informativity(targetObj, sketch, context, params, config);
     var cost = config.costs[sketch];
-    var utility = (1 - costw) * inf - costw * cost;
-    scores.push(params.alpha * Math.log(utility));
+    var utility = (1 - costw) * inf + costw * (1 - cost);
+    // if rounding error makes true utility <= 0, log isn't defined...    
+    scores.push(params.alpha * Math.log(Math.max(utility, Number.EPSILON)));
   }
 
   var trueUtility = ((1 - costw) * informativity(targetObj, trueSketch, context, params, config)
-		     - costw * config.costs[trueSketch]);
-  return params.alpha * Math.log(trueUtility) - _logsumexp(scores);
+		     + costw * (1 - config.costs[trueSketch]));
+  var roundedUtility = Math.max(trueUtility, Number.EPSILON);
+  // console.log(_logsumexp(scores))
+  // console.log(params.alpha * Math.log(roundedUtility))// - _logsumexp(scores));
+  return params.alpha * Math.log(roundedUtility) - _logsumexp(scores);
 };
 
 function readCSV(filename){
