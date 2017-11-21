@@ -115,14 +115,15 @@ For each pair, objects were grouped into eight quartets: Four of these quartets 
 
 \subsubsection*{Visual encoder module}
 
-Features were extracted using VGG-19 \cite{simonyan2014very}, a high-performing deep convolutional neural network model architecture that had been pre-trained to categorize objects on the Imagenet database, which contains millions of photographs from hundreds of object categories \cite{deng2009imagenet}.
+Features were extracted using VGG-19 \cite{simonyan2014very}, a high-performing deep convolutional neural network model architecture that had been pretrained to categorize objects on the Imagenet database, which contains millions of photographs from hundreds of object categories \cite{deng2009imagenet}. Despite the fact that drawings are highly abstracted away from natural visual inputs, prior work has shown a striking isomorphism in the similarity structure \cite{kriegeskorte2008matching} of object categories in drawings and photos at higher layers in these models \cite[]{fan2015common}, without any additional training.
 
-Despite the fact that drawings are highly abstracted away from natural visual inputs, a relatively modest amount of finetuning of models previously trained only on photos has been shown to lead to vast improvements in sketch categorization, and discerning image-level correspondences between sketches and photos \cite[]{sangkloy2016sketchy}. Even without finetuning, prior work has shown a striking isomorphism in the similarity structure \cite{kriegeskorte2008matching} of object categories in drawings and photos at higher layers in these models \cite[]{fan2015common}.
+While these models excel at (and were indeed optimized for) categorization of objects, two additional competencies are required to succeed at the visual communication task described above.
 
-In order to capture fine-grained relationships between ...
+First, an observer must be able to represent fine-grained relationships between different images of objects from the same category; second, this observer must also be able to discern image-level correspondences between drawings and photos of the same object. 
 
-Prior work using using distances in higher layers of deep networks to measure perceptual similarity: 
-\cite{dosovitskiy2016generating,johnson2016perceptual,peterson2016adapting} 
+In order to better approximate the granularity with which human observers can distinguish different images, we augment VGG19 with a smaller \textit{adaptor} network that learns a common feature representation for drawings and photos. 
+
+This approach has been successfully used in prior work to better predict human semantic categorization judgments \cite{peterson2016adapting}, and to improve sketch-based image retrieval \cite[]{sangkloy2016sketchy}. 
 
 
 \subsubsection*{Social inference module}
