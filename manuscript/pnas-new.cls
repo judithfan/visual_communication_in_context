@@ -55,8 +55,7 @@
 \RequirePackage[framemethod=tikz]{mdframed}
 
 %% For single column equations and balancing the columns on final page
-\RequirePackage{widetext}
-
+% \RequirePackage{widetext}
 %% Hyperlinking
 \RequirePackage[colorlinks=true, allcolors=blue]{hyperref}
 
