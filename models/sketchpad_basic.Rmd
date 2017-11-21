@@ -1,0 +1,565 @@
+---
+title: "sketchpad_basic"
+output: html_document
+---
+
+# Import some libraries 
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(ggthemes)
+library(lme4)
+library(stringr)
+# # Note: to install langcog, 
+# library(langcog)
+library(jsonlite)
+```
+
+# Create BDA input
+
+## Import group data
+
+TODO: incorporate pilot0 as well (though missing pose data makes this nontrivial)
+
+```{r}
+raw <-  read_delim('sketchpad_basic_merged_group_data.csv', delim = ',') 
+invalid_trials <- (read_csv('./invalid_trial_paths.txt', col_names = F) %>%
+  mutate(X1 = gsub('gameID_', '', X1)) %>%
+  mutate(X1 = gsub('trial_', '', X1)) %>%
+  mutate(X1 = gsub('.png', '', X1)) %>%
+  mutate(X1 = str_sub(gsub("-", "", X1), start = 25)))$X1
+
+
+dogs <- c('weimaraner', 'chihuahua', 'basset', 'doberman', 'bloodhound', 'bullmastiff', 'goldenretriever', 'pug')
+chairs = c('leather', 'straight', 'squat', 'sling', 'woven', 'waiting', 'inlay','knob')
+birds = c('crow', 'pigeon', 'robin', 'sparrow', 'tomtit', 'nightingale', 'bluejay', 'cuckoo')
+cars = c('beetle', 'bluesport', 'brown', 'white', 'redsport', 'redantique', 'hatchback', 'bluesedan')
+d <- raw %>% 
+  mutate(gameid = str_sub(gsub("-", "", gameID), start = -12)) %>%
+  mutate(sketchLabel = sprintf('%s_%s', gameid, trialNum)) %>%
+  filter(iteration == 'pilot1') %>% # Just use pilot 1 for now
+  filter(!(sketchLabel %in% invalid_trials)) %>% # Remove invalid sketch (e.g. w/ text)
+  filter(outcome == 1) %>% # Remove incorrect trials
+  select(sketchLabel, condition, target, Distractor1, Distractor2, Distractor3, mean_intensity, pose) %>%
+  mutate(domain = case_when(target %in% chairs ~ 'chair',
+                            target %in% dogs ~ 'dog',
+                            target %in% birds ~ 'bird',
+                            target %in% cars ~ 'car',
+                            T ~ 'other'))
+```
+
+```{r}
+with_domain <- raw %>%
+  mutate(domain = case_when(target %in% chairs ~ 'chair',
+                            target %in% dogs ~ 'dog',
+                            target %in% birds ~ 'bird',
+                            target %in% cars ~ 'car',
+                            T ~ 'other')) 
+write_csv(with_domain %>% select(-X1, -`Unnamed: 0`), 'merged_data_plus_domain.csv')
+```
+
+Write out cost look-up table (use mean_intensity for now):
+
+```{r}
+as.list(setNames(d$mean_intensity,d$sketchLabel)) %>%
+  write_json('RSA/refModule/json/costs.json')
+```
+
+We reorder contexts alphabetically because we just care about content of set. Also reformat object names to include pose.... 
+
+```{r}
+d$context = apply(d %>% select(Distractor1, Distractor2, Distractor3), 1, 
+                  function(x) paste(sort(x), collapse="_"))
+
+d.ordered = d %>% 
+  select(-Distractor1, -Distractor2, -Distractor3) %>%
+  separate(context, into = c('Distractor1', 'Distractor2', 'Distractor3')) %>%
+  mutate(Target = sprintf("%s_%04d", target, pose)) %>%
+  mutate(Distractor1 = sprintf("%s_%04d", Distractor1, pose)) %>%
+  mutate(Distractor2 = sprintf("%s_%04d", Distractor2, pose)) %>%
+  mutate(Distractor3 = sprintf("%s_%04d", Distractor3, pose))
+```
+
+Note: it'd be nicer if we had a smaller space of unique conditions for quicker BDA in webppl, but pretty much every trial was unique due to the pose randomization... 
+
+Write out actual data to condition on
+
+```{r}
+d.ordered %>% 
+  select(condition, sketchLabel, Target, Distractor1, Distractor2, Distractor3) %>%
+  write_csv('./RSA/bdaInput/sketch_data.csv')
+```
+
+Make alternate dataset with only far condition
+
+```{r}
+d.ordered %>%  filter(condition == 'further') %>%
+  select(condition, sketchLabel, Target, Distractor1, Distractor2, Distractor3) %>%
+  write_csv('./RSA/bdaInput/sketch_data_far_only.csv')
+```
+
+Alternate version with test examples
+
+```{r}
+
+d.ordered %>% 
+  select(condition, sketchLabel, Target, Distractor1, Distractor2, Distractor3) %>%
+  write_csv('./RSA/bdaInput/sketchData_splitByContext.csv')
+```
+
+# Analyze raw similarities
+
+Load in different embeddings and make boilerplate iterables for them
+
+```{r}
+# strictSimilarities <- fromJSON('./RSA/refModule/json/strict-similarity.json', flatten = T)
+# nonstrictSimilarities <- fromJSON('./RSA/refModule/json/nonstrict-similarity.json', flatten = T)
+pragSimilarities <- fromJSON('./RSA/refModule/json/strict-similarity-pragmatics-conv4_2.json', flatten = T)
+
+lookupFixedSimilarity <- function(object, sketch) {
+  fixedSimilarities[[object]]
+  return(fixedSimilarities[[object]][[sketch]])
+}
+
+lookupPragSimilarity <- function(object, sketch) {
+  return(pragSimilarities[[object]][[sketch]])
+}
+
+lookupEarlySimilarity <- function(object, sketch) {
+  return(earlySimilarities[[object]][[sketch]])
+}
+```
+
+Add columns for the different kinds of similarity
+
+```{r}
+d.similarity <- d.ordered %>%
+  gather(contextElement, name, Target, Distractor1, Distractor2, Distractor3) %>%
+  rowwise() %>%
+  mutate(pragSimilarity = lookupPragSimilarity(name, sketchLabel)) %>%
+  rowwise() %>%
+  mutate(fixedSimilarity = lookupFixedSimilarity(name, sketchLabel)) 
+```
+
+Sanity check: is similarity higher for target than distractors?
+
+```{r}
+tmp = d.similarity %>% 
+  mutate(contextElement = case_when(contextElement == 'Target' ~ 'target',
+                                    T ~ 'distractor')) %>%
+  filter(condition == 'further') 
+
+tmp %>%
+  ggplot(aes(x = pragSimilarity, fill = contextElement)) +
+    geom_density(alpha = .5) +
+    theme_few() +
+    theme(aspect.ratio = 1) +
+    xlim(-1, 1) +
+    ggtitle('sketch similarity in further condition') +
+    facet_wrap(~ domain) +
+    scale_fill_colorblind()
+
+ggsave('diffconditions.pdf')
+```
+
+Yes,on 'far' conditions the sketch tends to be similar to the target and dissimilar to the distractors
+
+What about closer condition? 
+
+```{r}
+tmp = d.similarity %>% 
+  mutate(contextElement = case_when(contextElement == 'Target' ~ 'target',
+                                    T ~ 'distractor')) %>%
+  filter(condition == 'closer') 
+
+tmp %>%
+  ggplot(aes(x = pragSimilarity, fill = contextElement)) +
+    geom_density(alpha = .5) +
+    theme_few() +
+    theme(aspect.ratio = 1) +
+    xlim(-1, 1) +
+    ggtitle('sketch similarity in close condition') +
+    facet_wrap(~ domain) +
+    scale_fill_colorblind()
+
+ggsave('sameconditions.pdf')
+```
+
+On 'close' conditions the sketch tends to be similar to both...
+
+What does the early layer look like?
+
+```{r}
+tmp = d.similarity %>% 
+  mutate(contextElement = case_when(contextElement == 'Target' ~ 'target',
+                                    T ~ 'distractor')) %>%
+  filter(condition == 'further') 
+
+tmp %>%
+  ggplot(aes(x = earlySimilarity, fill = contextElement)) +
+    geom_density(alpha = .5) +
+    theme_few() +
+    theme(aspect.ratio = 1) +
+    xlim(-1, 1) +
+    ggtitle('sketch similarity in further condition') +
+    scale_fill_colorblind()
+
+ggsave('early_far.pdf')
+```
+
+What does the early layer look like?
+
+```{r}
+tmp = d.similarity %>% 
+  mutate(contextElement = case_when(contextElement == 'Target' ~ 'target',
+                                    T ~ 'distractor')) %>%
+  filter(condition == 'closer') 
+
+tmp %>%
+  ggplot(aes(x = earlySimilarity, fill = contextElement)) +
+    geom_density(alpha = .5) +
+    theme_few() +
+    theme(aspect.ratio = 1) +
+    xlim(-1, 1) +
+    ggtitle('sketch similarity in closer condition') +
+    scale_fill_colorblind()
+
+ggsave('early_close.pdf')
+```
+
+But is anything different across conditions? We'd expect that your bird is pushed to look more like the target bird when the distractors are also birds... 
+
+```{r}
+wilcox.test(sketchSimilarity ~ condition, 
+            data = d.similarity %>% filter(contextElement == 'Target'))
+
+d.similarity %>% 
+  filter(contextElement == 'Target') %>%
+  separate(name, into = c('pureName', 'poseStr')) %>% #  = strsplit(name, split = '_')[0]) 
+  group_by(condition, pureName) %>%
+  summarize(m = mean(sketchSimilarity)) %>%
+  spread(condition, m) %>%
+  ggplot(aes(x = closer, y = further, label = pureName)) +
+    # geom_point() +
+    # geom_abline(slope = 1, intercept = 0) +
+    geom_text(check_overlap = T) +
+    theme_few() +
+    theme(aspect.ratio = 1) +
+    ggtitle('sketch similarity to target across conditions')
+```
+
+Not with this embedding... 
+
+Correlation b/w embeddings at trial-by-trial level
+
+```{r}
+d.similarity %>% 
+  filter(contextElement == 'Target') %>%
+  separate(name, into = c('pureName', 'poseStr')) %>% #  = strsplit(name, split = '_')[0]) 
+  #gather(embedding, similarity, strictSimilarity,nonstrictSimilarity) %>%
+  # group_by(embedding, pureName) %>%
+  # summarize(m = mean(sketchSimilarity)) %>%
+  # spread(condition, m) %>%
+  ggplot(aes(x = strictSimilarity, y = nonstrictSimilarity)) +#, label = pureName)) +
+    geom_bin2d() +
+    # geom_abline(slope = 1, intercept = 0) +
+    #geom_text(check_overlap = T) +
+    theme_few() +
+    theme(aspect.ratio = 1) +
+    ggtitle('sketch similarity to target across conditions')
+```
+
+Correlation b/w embeddings at item level
+
+```{r}
+d.similarity %>% 
+  filter(contextElement == 'Target') %>%
+  separate(name, into = c('pureName', 'poseStr')) %>% #  = strsplit(name, split = '_')[0]) 
+  gather(embedding, similarity, strictSimilarity,nonstrictSimilarity) %>%
+  group_by(embedding, pureName) %>%
+  summarize(m = mean(similarity)) %>%
+  spread(embedding, m) %>%
+  ggplot(aes(x = strictSimilarity, y = nonstrictSimilarity, label = pureName)) +
+    #geom_smooth(method = 'loess') +
+    geom_text(check_overlap = T) +
+    geom_abline(slope = 1, intercept = 0) +
+    #geom_text(check_overlap = T) +
+    theme_few() +
+    theme(aspect.ratio = 1) +
+    xlim(-.2, 1) +
+  ylim(-.2, 1) +
+    ggtitle('sketch similarity to target across embeddings')
+```
+
+# Model comparison
+
+Compute likelihood for each model... 
+
+```{r}
+sumlogprob <- function(a, b) {
+  if(a>b) {
+    return(a+log1p(exp(b-a)))
+  } else{
+    return(b+log1p(exp(a-b)))
+  }
+}
+
+modelOutput = read_csv('./bdaOutput/testingParams.csv', col_types = 'cccdddddd') %>%
+  #filter(posteriorProb != -Inf) %>%
+  group_by(perception,pragmatics, production) %>%
+  summarize(prob = reduce(logLikelihood, sumlogprob) - log(length(logLikelihood)))
+
+print(modelOutput)
+```
+
+Visualize as bars
+
+```{r}
+ggplot(modelOutput %>% ungroup() %>% mutate(pragmatics = ordered(pragmatics, levels = c('S0', 'S1', 'combined'))), 
+aes(x = pragmatics, y = prob, fill = production)) +
+    geom_bar(stat = 'identity', position = 'dodge', width = .75) +
+    guides(fill=guide_legend(title="Speaker model")) +
+    ylab('log-likelihood') +
+    scale_fill_colorblind() +
+    theme_few(12) +
+    #theme(aspect.ratio = )
+    coord_cartesian(ylim=c(-7000, -7300)) +
+    theme(legend.position = 'top') 
+
+ggsave('modelComparison.pdf')
+```
+
+```{r}
+samples = read_csv('./bdaOutput/testingParams.csv', col_types = 'cccdddddd') %>%
+  filter(pragmatics == 'combined' & production == 'cost') %>%
+  filter(posteriorProb != -Inf) %>%
+  mutate(posteriorProb = as.numeric(posteriorProb)) %>%
+  mutate(intermed = exp(posteriorProb - max(posteriorProb))) %>%
+  mutate(posteriorProb = log(intermed/sum(intermed))) %>%
+  select(-intermed, -pragmatics, -production) 
+
+  mutate(MCMCprob = exp(MCMCprob)) %>%
+  filter(MCMCprob > 0.001) %>%
+  mutate(n = floor(MCMCprob*1000)) %>%
+  do(data.frame(.[rep(1:nrow(.), .$n),])) %>%
+  select(-t, -n, -MCMCprob) %>%
+  gather(parameter, value) %>%
+  mutate(value = as.numeric(as.character( value)))
+```
+ 
+```{r}
+fixedSimilarities <- fromJSON('./RSA/refModule/json/strict-similarity-pragmatics-fixedpose-conv4_2.json', flatten = T)
+
+raw_fixed <- read_delim('sketchpad_basic_pilot2_group_data.csv', delim = ',') 
+
+d <- raw_fixed %>% 
+  mutate(gameid = str_sub(gsub("-", "", gameID), start = -12)) %>%
+  mutate(sketchLabel = sprintf('%s_%s', gameid, trialNum)) %>%
+  select(sketchLabel, condition, target, Distractor1, Distractor2, Distractor3, mean_intensity, pose) 
+```
+
+```{r}
+d$context = apply(d %>% select(Distractor1, Distractor2, Distractor3), 1, 
+                  function(x) paste(sort(x), collapse="_"))
+
+test_trials <- (read_csv('./pilot2_test_examples.txt', col_names = F) %>%
+  mutate(X1 = gsub('gameID_', '', X1)) %>%
+  mutate(X1 = gsub('trial_', '', X1)) %>%
+  #mutate(X1 = gsub('.png', '', X1)) %>%
+  mutate(X1 = str_sub(gsub("-", "", X1), start = 25)) %>%
+  separate())$X1
+
+
+d.ordered = d %>% 
+  select(-Distractor1, -Distractor2, -Distractor3) %>%
+  separate(context, into = c('Distractor1', 'Distractor2', 'Distractor3')) %>%
+  mutate(Target = sprintf("%s_%04d", target, pose)) %>%
+  mutate(Distractor1 = sprintf("%s_%04d", Distractor1, pose)) %>%
+  mutate(Distractor2 = sprintf("%s_%04d", Distractor2, pose)) %>%
+  mutate(Distractor3 = sprintf("%s_%04d", Distractor3, pose))
+
+as.list(setNames(d$mean_intensity,d$sketchLabel)) %>%
+  write_json('RSA/refModule/json/costs.json')
+
+# Only keep close trials from held-out set
+d.ordered %>% 
+  select(condition, sketchLabel, Target, Distractor1, Distractor2, Distractor3) %>%
+  
+  write_csv('./RSA/bdaInput/sketch_data.csv')
+```
+
+# Repeated contexts in fixed pose version
+
+```{r}
+fixedPose <- read_csv('RSA/bdaInput/sketchData_fixedPose.csv') %>%
+  separate(sketchLabel, into = c('gameid', 'trialNum'))
+
+fixedPose$context = apply(fixedPose %>% select(Target, Distractor1, Distractor2, Distractor3), 1, 
+                  function(x) paste(sort(x), collapse="_"))
+
+fixedPose %>% group_by(gameid, context) %>% summarize(trialNum = first(trialNum)) %>% group_by(context) %>% tally() %>% group_by(n) %>% tally()
+# fixedPose.ordered = fixedPose %>% 
+#   select(-Target, -Distractor1, -Distractor2, -Distractor3) %>%
+#   separate(context, into = c('Target', 'Distractor1', 'Distractor2', 'Distractor3'))
+
+fixedPose %>% group_by(Target, Distractor1, Distractor2, Distractor3) %>% tally() %>% group_by(n) %>% tally()
+```
+
+# Make dataset from split-by-context
+
+```{r}
+d
+fullSketchData <- read_csv('RSA/bdaInput/sketchData_fixedPose.csv')
+length(unique((d %>% separate(sketchLabel, into = c('gameid','trialNum')))$gameid))
+splitTestExamples <- read_csv('RSA/bdaInput/split-by-condition-test-examples.txt', col_names = F) %>%
+  rename(sketchLabel = X1) 
+length(unique((splitTestExamples %>% separate(sketchLabel, into = c('gameid','trialNum')))$gameid))
+
+fullSketchData %>% left_join(splitTestExamples %>% separate(sketchLabel, into=c('gameid', 'trialNum'), remove=F) %>% group_by(gameid) %>% mutate(n = n()) %>% mutate(prop = n/32)) %>%
+  ggplot(aes(x = prop)) + geom_histogram()
+
+fixedPose
+d <- raw_fixed %>% 
+  mutate(gameid = str_sub(gsub("-", "", gameID), start = -12)) %>%
+  mutate(sketchLabel = sprintf('%s_%s', gameid, trialNum)) %>%
+  select(sketchLabel, condition, target, Distractor1, Distractor2, Distractor3, mean_intensity, pose) 
+
+```
+
+Remap costs to [0,1]
+
+## Look at ranking measure
+
+```{r}
+predictives <- read_csv('./bdaOutput/bestFittingPredictives.csv')
+```
+
+### Make ranking curve
+
+```{r}
+pcts <- data.frame(topn = c(NA), further = c(NA), closer = c(NA))
+for(num in seq(1, 1000, 10)) {
+  nums <- predictives %>% 
+    group_by(game, trueSketch) %>%
+    top_n(num, modelProb) %>%
+    select(condition, trueSketch, possibleSketch, modelProb) %>%
+    group_by(game, condition) %>%
+    summarize(containsTrueSketch = length(intersect(trueSketch, possibleSketch)) > 0) %>%
+    group_by(condition) %>%
+    summarize(num = mean(containsTrueSketch)) %>%
+    spread(condition, num)
+  pcts <- rbind(pcts, c(num, nums$closer, nums$further))
+}
+```
+
+```{r}
+ggplot(pcts %>% gather(condition, val, further, closer), aes(x = topn, y = val, color = condition)) +
+  geom_line() +
+  #theme_few() +
+  geom_vline(xintercept = 250) +
+  xlab('k') +
+  ylab('% of trials where true sketch is in top k')
+```
+
+### Visualize confusion matrix
+
+```{r}
+# Extract a big lookup table of sketches and their targets
+sketchTargets <- predictives %>% 
+  group_by(trueSketch) %>% 
+  summarize(Target = first(Target)) %>%
+  separate(Target, into = c('garbage1','garbage2','possibleSketchTarget')) %>%
+  rename(possibleSketch = trueSketch) %>%
+  select(possibleSketch, possibleSketchTarget)
+
+confusion <- left_join(predictives, sketchTargets, by = c('possibleSketch')) %>% 
+    separate(Target, into = c('garbage1','garbage2','trueSketchTarget')) %>%
+    mutate(trueDomain = case_when(trueSketchTarget %in% chairs ~ 'chair',
+                                  trueSketchTarget %in% dogs ~ 'dog',
+                                  trueSketchTarget %in% birds ~ 'bird',
+                                  trueSketchTarget %in% cars ~ 'car',
+                                  T ~ 'other')) %>%
+    mutate(possibleDomain = case_when(possibleSketchTarget %in% chairs ~ 'chair',
+                                  possibleSketchTarget %in% dogs ~ 'dog',
+                                  possibleSketchTarget %in% birds ~ 'bird',
+                                  possibleSketchTarget %in% cars ~ 'car',
+                                  T ~ 'other'))# %>%
+    # select(condition, trueSketch, possibleSketch, trueSketchTarget, 
+    #        possibleSketchTarget, trueDomain, possibleDomain, modelProb)
+#write_csv(confusion, 'supplementedPredictives.csv')
+```
+
+### By domain...
+
+```{r}
+errorsByDomain <- confusion %>%
+  group_by(trueDomain,possibleDomain, condition) %>%
+  summarize(meanDomainProb = mean(modelProb))
+
+ggplot(errorsByDomain, aes(x = trueDomain, y = desc(possibleDomain), fill = meanDomainProb)) +
+  geom_tile() +
+  facet_wrap(~ condition) +
+  theme(aspect.ratio = 1)
+  
+```
+
+Somewhat counterintuitively, averaging across sketches made in *further* condition, RSA model more strongly predicts sketches in the right domain than for sketches made in the *closer* condition -- presumably more confusable with other categories because of pragmatic signal in context (i.e. do *not* make sketch of dog to refer to this car, because your partner will pick the dog --there's no such signal in the close condition because a sketch of a dog is equally poor for all cars). 
+
+More quantiatively... What is mean probability assigned *within* domain vs. *across* domain?
+
+```{r}
+## Table (Assign higher probability to true domain than wrong domain)
+errorsByDomain %>% 
+  mutate(withinDomain = ifelse(trueDomain == possibleDomain, 'within', 'across')) %>%
+  group_by(condition, withinDomain) %>%
+  summarize(meanProb = mean(meanDomainProb))
+```
+
+### By object...
+
+This is good -- higher probability assigned to sketches of true object within a domain than of other objects in the domain (and even higher than of objects in other domains)
+
+Note: probably better to do some kind of within-class comparison here, like subtract off other
+
+```{r}
+targetProbs <- confusion %>% filter(trueSketchTarget == possibleSketchTarget)
+
+errorsByObj <- confusion %>%
+  group_by(condition, trueSketchTarget,possibleSketchTarget, trueDomain, possibleDomain) %>%
+  summarize(meanObjectProb = mean(modelProb)) %>%
+  ungroup() %>%
+  arrange(trueDomain, possibleDomain) %>% 
+  mutate(trueSketchTarget = factor(trueSketchTarget, unique(trueSketchTarget)),
+         possibleSketchTarget = factor(possibleSketchTarget, unique(possibleSketchTarget)))
+
+errorsByObj %>% 
+  mutate(sameDomain = ifelse(trueDomain == possibleDomain, 'same', 'different')) %>%
+  mutate(sameObject = ifelse(trueSketchTarget == possibleSketchTarget, 'same', 'different')) %>%
+  group_by(condition, sameDomain, sameObject) %>%
+  summarize(meanProb = mean(meanObjectProb))
+```
+
+Now try visualizing the finer-grained confusion matrix
+
+```{r}
+ggplot(errorsByObj, aes(x = trueSketchTarget, y = desc(possibleSketchTarget), fill = meanObjectProb)) +
+  geom_tile() + 
+  geom_vline(xintercept = c(8.5, 16.5, 24.5)) +
+  geom_hline(yintercept = c(-8.5, -16.5, -24.5)) +
+  facet_wrap(~ condition) +
+  theme(aspect.ratio = 1) 
+```
+
+Zoom in on one object to examine finer level detail, e.g. contexts?
+
+```{r}
+confusion %>% 
+  filter(trueSketchTarget == 'bluejay') %>%
+  filter(possibleSketchTarget == 'bluejay') %>%
+  arrange(condition) %>% 
+  mutate(trueSketch = factor(trueSketch, unique(trueSketch)), 
+         possibleSketch = factor(possibleSketch, unique(possibleSketch))) %>% 
+  ggplot(aes(x = trueSketch, y = desc(possibleSketch), fill = modelProb)) + 
+    geom_tile() 
+```
