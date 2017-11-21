@@ -210,8 +210,33 @@ PNAS prefers that authors submit individual source files to ensure readability. 
 
 \matmethods{Please describe your materials and methods here. This can be more than one paragraph, and may contain subsections and equations as required. Authors should include a statement in the methods section describing how readers will be able to access the data in the paper. 
 
-\subsection*{Subsection for Method}
-Example text for subsection.
+\subsection*{Data augmentation}
+
+Many trials in the dataset reveal a tendency from the participants to concentrate strokes to parts of the sketch. For example, many participants attended to the wheels of a car or the beak of the bird when trying to communicate their particular image, leaving remaining pieces of the image blank or oversimplified. This behavior seems particular useful in close-contexts, where global structure between target and distractor images is hard to distinguish whereas local structure hold more obvious differences. To mimic this behavior from a computational model, and to increase the size of the dataset, we propose the following augmentation technique: given a rendered image, choose a subset of the image and replace the rest of the pixels with a default background color (RGB: 127, 127, 127). This has the effect of obscuring the majority of the image, allowing the visual encoder module to attend to particular fragments. In practice, given an image of size 256x256, we first find a bounding box around the non-background color pixels. Starting from the top-left corner of the bounding box to the bottom-right, we choose continguous 75x75 pixel subsets of the image. This produces between 4 and 32 subsets per image, with an average of 27. The original image remains in the dataset. Using this procedure, we augment the dataset from 3072 to 24576 images. For each image, the corresponding sketch is left untouched. Figure TODO shows examples augmented images. 
+
+\subsection*{Visual encoder specification}
+
+The purpose of the visual encoder is to learn a function from images and sketches to a shared embedding space. The encoder network takes as input mid-level convolutional features from VGG-19. In our experiments, we used the fourth convolutional layer after the second pooling step. We chose a mid-convolutional layer to capitalize on successive layers of abstraction from early convolutional layers and to preserve two-dimensional structure. The encoder produces a shared embedding of size 1000. 
+
+The architecture of the encoder is as follows: a single convolutional layer (conv1) with 64 filters, a kernel size of 3, a padding of 1, and a stride of 1; followed by a max pool layer with a stride of 2 and a dilation of 1; followed by two fully connected layers (fc1, fc2) to project to 4096 units and 1000 units, respectively. We include batch normalization and ReLU nonlinearity after conv1 and fc1. A dropout layer is added after fc1. We emphasize that the architecture of the encoder is purposefully chosen to be light weight. 
+
+
+\subsection*{Visual encoder training procedure}
+
+The dataset is split into training and testing based on the context, which is defined as the set of the target and distractor images (each trial consists of 3 distractor images and 1 target). The contexts of training examples will not overlap with the contexts of test examples. In practice, we have a 75\%, 25\% split ratio.
+
+The binary classification task is to predict whether or not a given sketch is of a given image. Positive examples come from pariticipants' sketches and their corresponding target images. Negative samples come from pairing a participant's sketch with a randomly chosen image from the set of all images excluding the correct image. We note that training and testing sets will include examples from both close- and far-contexts. This training procedure closely resembles training Word2Vec with skip-gram and negative sampling where there is a similar motivation of learning shared embedding spaces.
+
+During training, the model is shown minibatches of tuples, where each tuple contains $(r_{1}, s_{1})$, $(r_{2}, s_{2})$, $(r_{1}, s_{2})$, $(r_{2}, s_{1})$ where $r_{1}$, $r_{2}$ are two rendered images, and $(s_{1}, s_{2})$ are two sketches i.e. a minibatch of 10 would contain 40 examples. Each tuple is as follows: choose the next available image $r_{1}$, find its corresponding sketch $s_{1}$; choose 1 of the 3 distractor images from the same trial as $r_{2}$; its corresponding sketch is $s_{2}$. In each tuple, the first two examples are positive and last two examples are negative. The intuition behind this design is to balance the classes shown to the model at each gradient step.
+
+Given an image $r_{i}$, a sketch $s_{i}$ and the label $l_{i}$, we define the objective function $J$ as 
+
+\begin{multline}
+    J(r_{i}, s_{i}) = -l_{i} \textup{ log}(\sigma(\textup{corr}(f(r_{i}), f(s_{i})))) \\ - (1 - l_{i}) \textup{ log}(1 - \sigma(\textup{corr}(f(r_{i}), f(s_{i}))))
+\end{multline}
+
+where $f$ is the visual encoder network, $\sigma$ is a sigmoid transformation, and $\textup{corr}$ is pearson correlation. We train the model using stochastic gradient descent via Adam with a learning rate of $0.001$, a batch size of $25$ for $20$ epochs. We use early stopping based on a small validation set. The trained model has 73.6\% classification accuracy on the held-out test set, suggesting some generalization to unseen contexts.
+
 }
 
 \showmatmethods{} % Display the Materials and Methods section
