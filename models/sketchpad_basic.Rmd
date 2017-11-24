@@ -305,7 +305,7 @@ sumlogprob <- function(a, b) {
   }
 }
 
-modelOutput = read_csv('./bdaOutput/testingParams.csv', col_types = 'cccdddddd') %>%
+modelOutput = read_csv('./bdaOutput/S1_coarsenedParams.csv', col_types = 'cccdddddd') %>%
   #filter(posteriorProb != -Inf) %>%
   group_by(perception,pragmatics, production) %>%
   summarize(prob = reduce(logLikelihood, sumlogprob) - log(length(logLikelihood)))
@@ -331,19 +331,19 @@ ggsave('modelComparison.pdf')
 ```
 
 ```{r}
-samples = read_csv('./bdaOutput/testingParams.csv', col_types = 'cccdddddd') %>%
-  filter(pragmatics == 'combined' & production == 'cost') %>%
+View(read_csv('./bdaOutput/S1_coarsenedParams.csv', col_types = 'cccdddddd'))
+samples = read_csv('./bdaOutput/S1_coarsenedParams.csv', col_types = 'cccdddddd') %>%
+  filter(pragmatics == 'S1' & production == 'cost') %>%
   filter(posteriorProb != -Inf) %>%
   mutate(posteriorProb = as.numeric(posteriorProb)) %>%
   mutate(intermed = exp(posteriorProb - max(posteriorProb))) %>%
   mutate(posteriorProb = log(intermed/sum(intermed))) %>%
-  select(-intermed, -pragmatics, -production) 
-
-  mutate(MCMCprob = exp(MCMCprob)) %>%
-  filter(MCMCprob > 0.001) %>%
-  mutate(n = floor(MCMCprob*1000)) %>%
-  do(data.frame(.[rep(1:nrow(.), .$n),])) %>%
-  select(-t, -n, -MCMCprob) %>%
+  select(-intermed, -pragmatics, -production) %>%
+  mutate(prob = exp(posteriorProb)) %>%
+  filter(prob > 0.001) %>%
+  mutate(n = floor(prob*1000)) %>%
+  do(data.frame(.[rep(1:nrow(.), .$n),])) #%>%
+  select(-t, -n, -prob) %>%
   gather(parameter, value) %>%
   mutate(value = as.numeric(as.character( value)))
 ```
@@ -432,32 +432,56 @@ Remap costs to [0,1]
 ## Look at ranking measure
 
 ```{r}
-predictives <- read_csv('./bdaOutput/bestFittingPredictives.csv')
+predictives <- read_csv('./bdaOutput/S1_coarsenedPredictives.csv') %>%
+  group_by(coarseGrainedTrueSketch, coarseGrainedPossibleSketch) %>%
+  summarize(modelProb = reduce(modelProb, sumlogprob) - log(length(modelProb))) %>%
+  rename(trueSketch = coarseGrainedTrueSketch, possibleSketch = coarseGrainedPossibleSketch) %>%
+  separate(trueSketch, into = c('trueCondition','trueSketchTarget'), remove = F) %>%
+  separate(possibleSketch, into = c('possibleCondition','possibleSketchTarget'), remove = F) 
+```
+
+Sanity check: should all add up to 1.
+
+```{r}
+predictives %>% group_by(trueSketch) %>% summarize(modelProb = sum(exp(modelProb)))
+```
+
+Sanity check: conditions should add up?
+
+```{r}
+predictives %>%
+  group_by(trueCondition, possibleCondition) %>%
+  summarize(modelProb = reduce(modelProb, sumlogprob) - log(length(modelProb))) #%>%
 ```
 
 ### Make ranking curve
 
 ```{r}
 pcts <- data.frame(topn = c(NA), further = c(NA), closer = c(NA))
-for(num in seq(1, 1000, 10)) {
+num = 1
+for(num in seq(1, 62, 1)) {
+  print(num)
   nums <- predictives %>% 
-    group_by(game, trueSketch) %>%
+    group_by(trueSketch, trueCondition) %>%
     top_n(num, modelProb) %>%
-    select(condition, trueSketch, possibleSketch, modelProb) %>%
-    group_by(game, condition) %>%
+    select(trueSketch, possibleSketch, trueCondition, modelProb) %>%
+    group_by(trueSketch, trueCondition) %>%
     summarize(containsTrueSketch = length(intersect(trueSketch, possibleSketch)) > 0) %>%
-    group_by(condition) %>%
+    group_by(trueCondition) %>%
     summarize(num = mean(containsTrueSketch)) %>%
-    spread(condition, num)
-  pcts <- rbind(pcts, c(num, nums$closer, nums$further))
+    spread(trueCondition, num)
+  pcts <- rbind(pcts, c(num, nums$further, nums$closer))
 }
 ```
 
 ```{r}
-ggplot(pcts %>% gather(condition, val, further, closer), aes(x = topn, y = val, color = condition)) +
+ggplot(pcts %>% gather(trueCondition, val, further, closer), aes(x = topn, y = val, linetype=trueCondition, color = trueCondition)) +
   geom_line() +
+  #geom_point()
   #theme_few() +
-  geom_vline(xintercept = 250) +
+  #geom_vline(xintercept = 2) +
+  theme_few() +
+  ylim(0,1.1) +
   xlab('k') +
   ylab('% of trials where true sketch is in top k')
 ```
@@ -465,16 +489,7 @@ ggplot(pcts %>% gather(condition, val, further, closer), aes(x = topn, y = val, 
 ### Visualize confusion matrix
 
 ```{r}
-# Extract a big lookup table of sketches and their targets
-sketchTargets <- predictives %>% 
-  group_by(trueSketch) %>% 
-  summarize(Target = first(Target)) %>%
-  separate(Target, into = c('garbage1','garbage2','possibleSketchTarget')) %>%
-  rename(possibleSketch = trueSketch) %>%
-  select(possibleSketch, possibleSketchTarget)
-
-confusion <- left_join(predictives, sketchTargets, by = c('possibleSketch')) %>% 
-    separate(Target, into = c('garbage1','garbage2','trueSketchTarget')) %>%
+confusion <- predictives %>% #left_join(predictives, sketchTargets, by = c('possibleSketch')) %>% 
     mutate(trueDomain = case_when(trueSketchTarget %in% chairs ~ 'chair',
                                   trueSketchTarget %in% dogs ~ 'dog',
                                   trueSketchTarget %in% birds ~ 'bird',
@@ -484,24 +499,36 @@ confusion <- left_join(predictives, sketchTargets, by = c('possibleSketch')) %>%
                                   possibleSketchTarget %in% dogs ~ 'dog',
                                   possibleSketchTarget %in% birds ~ 'bird',
                                   possibleSketchTarget %in% cars ~ 'car',
-                                  T ~ 'other'))# %>%
-    # select(condition, trueSketch, possibleSketch, trueSketchTarget, 
-    #        possibleSketchTarget, trueDomain, possibleDomain, modelProb)
+                                  T ~ 'other')) %>%
+    select(trueCondition, possibleCondition, trueSketch, possibleSketch, trueSketchTarget,
+           possibleSketchTarget, trueDomain, possibleDomain, modelProb)
 #write_csv(confusion, 'supplementedPredictives.csv')
+```
+
+```{r}
+confusion %>% group_by(trueSketch) %>% summarize(modelProb = sum(exp(modelProb)))
 ```
 
 ### By domain...
 
 ```{r}
 errorsByDomain <- confusion %>%
-  group_by(trueDomain,possibleDomain, condition) %>%
-  summarize(meanDomainProb = mean(modelProb))
+  unite(trueDomainLabel, trueCondition, trueDomain, remove = F) %>%
+  unite(possibleDomainLabel, possibleCondition, possibleDomain, remove =) %>%
+  group_by(trueDomainLabel,possibleDomainLabel, trueCondition, possibleCondition) %>%
+  summarize(prob = reduce(modelProb, sumlogprob) - log(length(modelProb)))
 
-ggplot(errorsByDomain, aes(x = trueDomain, y = desc(possibleDomain), fill = meanDomainProb)) +
+ggplot(errorsByDomain %>% mutate(prob = ifelse(prob < -4.5, -4.5, prob)), 
+  aes(x = trueDomainLabel, y = desc(possibleDomainLabel), fill = prob)) +
   geom_tile() +
-  facet_wrap(~ condition) +
-  theme(aspect.ratio = 1)
+  #facet_wrap(~ condition) +
+  theme(aspect.ratio = 1, axis.text.x = element_text(angle = 90, hjust = 1))
   
+```
+
+```{r}
+errorsByDomain %>% group_by(trueDomainLabel) %>% summarize(prob = sum(exp(prob)))#summarize(prob = exp(reduce(prob, sumlogprob) - log(length(prob)))) #%>%
+
 ```
 
 Somewhat counterintuitively, averaging across sketches made in *further* condition, RSA model more strongly predicts sketches in the right domain than for sketches made in the *closer* condition -- presumably more confusable with other categories because of pragmatic signal in context (i.e. do *not* make sketch of dog to refer to this car, because your partner will pick the dog --there's no such signal in the close condition because a sketch of a dog is equally poor for all cars). 
@@ -526,28 +553,31 @@ Note: probably better to do some kind of within-class comparison here, like subt
 targetProbs <- confusion %>% filter(trueSketchTarget == possibleSketchTarget)
 
 errorsByObj <- confusion %>%
-  group_by(condition, trueSketchTarget,possibleSketchTarget, trueDomain, possibleDomain) %>%
+  group_by(trueCondition, possibleCondition, trueSketchTarget,possibleSketchTarget,
+           trueDomain, possibleDomain, trueSketch, possibleSketch) %>%
   summarize(meanObjectProb = mean(modelProb)) %>%
   ungroup() %>%
-  arrange(trueDomain, possibleDomain) %>% 
-  mutate(trueSketchTarget = factor(trueSketchTarget, unique(trueSketchTarget)),
-         possibleSketchTarget = factor(possibleSketchTarget, unique(possibleSketchTarget)))
+  arrange(trueCondition, possibleCondition, trueDomain, possibleDomain) %>% 
+  mutate(trueSketch = factor(trueSketch, unique(trueSketch)),
+         possibleSketch = factor(possibleSketch, unique(possibleSketch)))
 
 errorsByObj %>% 
   mutate(sameDomain = ifelse(trueDomain == possibleDomain, 'same', 'different')) %>%
   mutate(sameObject = ifelse(trueSketchTarget == possibleSketchTarget, 'same', 'different')) %>%
-  group_by(condition, sameDomain, sameObject) %>%
+  mutate(sameCondition = ifelse(trueCondition == possibleCondition, 'same', 'different')) %>%
+  group_by(sameDomain, sameObject, sameCondition) %>%
   summarize(meanProb = mean(meanObjectProb))
 ```
 
 Now try visualizing the finer-grained confusion matrix
 
 ```{r}
-ggplot(errorsByObj, aes(x = trueSketchTarget, y = desc(possibleSketchTarget), fill = meanObjectProb)) +
+ggplot(errorsByObj %>% mutate(meanObjectProb = ifelse(meanObjectProb < -5, -5, meanObjectProb)), 
+       aes(x = trueSketch, y = possibleSketch, fill = meanObjectProb)) +
   geom_tile() + 
-  geom_vline(xintercept = c(8.5, 16.5, 24.5)) +
-  geom_hline(yintercept = c(-8.5, -16.5, -24.5)) +
-  facet_wrap(~ condition) +
+  geom_vline(xintercept = seq(8.5, 8.5*10, 8)) +
+  #geom_hline(yintercept = c(-8.5, -8.5*10, -8)) +
+ # facet_wrap(~ condition) +
   theme(aspect.ratio = 1) 
 ```
 
@@ -557,7 +587,7 @@ Zoom in on one object to examine finer level detail, e.g. contexts?
 confusion %>% 
   filter(trueSketchTarget == 'bluejay') %>%
   filter(possibleSketchTarget == 'bluejay') %>%
-  arrange(condition) %>% 
+  arrange(trueCondition, possibleCondition) %>% 
   mutate(trueSketch = factor(trueSketch, unique(trueSketch)), 
          possibleSketch = factor(possibleSketch, unique(possibleSketch))) %>% 
   ggplot(aes(x = trueSketch, y = desc(possibleSketch), fill = modelProb)) + 
