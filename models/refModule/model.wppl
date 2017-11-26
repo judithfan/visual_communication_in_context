@@ -1,47 +1,39 @@
-var initializeModel = function(params) {
+var speakerModel = function(targetObj, context, params, config) {
 
   // For now ignore cost
   var sketchCost = function(sketch) {
-    return params.costs[sketch][0];
+    return config.costs[sketch];
   };
 
   var similarity = function(sketch, object) {
-    return params.similarities[object][sketch];
+    return config.similarities[params.perception][object][sketch];
   };
   
   // Sees sketch and selects among objects in context using similarity
-  // var literalListener = function(sketch, context){
-  //   return Infer({method:'enumerate', model: function(){
-  //     var object = uniformDraw(context);
-  //     factor(params.typWeight * similarity(sketch, object)); 
-  //     return object;
-  //   }});
-  // };
+  var literalListener = function(sketch, context){
+    return Infer({method:'enumerate', model: function(){
+      var object = uniformDraw(context);
+      factor(params.simScaling * similarity(sketch, object)); 
+      return object;
+    }});
+  };
 
   // Selects among sketches given raw similarity to target (ignoring context)
-  var S0 = function(targetObj, context) {
+  var speaker = function(targetObj, context) {
+    var similarities = config.similarities[params.perception];
     return Infer({method:'enumerate', model: function(){
-      var sketch = uniformDraw(params.possibleSketches);
-      var similarity = params.similarities[params.similarityMetric][targetObj][sketch];
-      var utility = ((1-params.costWeight) * similarity
-		     - params.costWeight * sketchCost(sketch));
+      var sketch = uniformDraw(config.possibleSketches);
+      var inf = refModule.getL0score(targetObj, sketch, context, params, config);//(flip(params.pragWeight) ?
+	  //literalListener(sketch, context).score(targetObj) //://Math.exp()
+		// (similarities[targetObj][sketch] + 1) / 2);
+      var utility = ((1-params.costWeight) * inf
+		     + params.costWeight * (1 - sketchCost(sketch)));
+      // console.log(sketch);
+      // console.log(utility);
       factor(params.alpha * utility);
-      return sketch;
-    }});
-  };
-  
-  // Selects among sketches given informativity in context and cost of production,
-  var S1 = function(targetObj, context) {
-    return Infer({method:'enumerate', model: function(){
-      var sketch = uniformDraw(params.possibleSketches);
-      var utility = ((1-params.costWeight) * refModule.getL0score(targetObj, sketch, context, params) 
-		     - params.costWeight * sketchCost(sketch));
-      factor(params.alpha * utility);
-      return sketch;
+      return config.conditionLookup[sketch];
     }});
   };
 
-  console.log(params.speakerModel);
-  console.log(S0);
-  return params.speakerModel === 'S1' ? S1 : S0;
+  return speaker(targetObj, context);
 };

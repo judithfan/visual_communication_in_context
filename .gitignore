@@ -80,3 +80,6 @@ sandbox/assets/fontello/*
 *.fls
 *.xwm
 *.out
+.Rproj.user
+*.Rproj
+

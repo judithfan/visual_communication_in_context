@@ -18,6 +18,10 @@ var getPossibleSketches = function(costs) {
   return _.keys(costs);
 };
 
+var getConditionLookup = function() {
+  return require('../bdaInput/condition-lookup.json');
+};
+
 function _logsumexp(a) {
   var m = Math.max.apply(null, a);
   var sum = 0;
@@ -43,7 +47,7 @@ var getL0score = function(target, sketch, context, params, config) {
 var informativity = function(targetObj, sketch, context, params, config) {
   var similarities = config.similarities[params.perception];
   var S0inf = (similarities[targetObj][sketch] + 1) / 2;
-  var S1inf = Math.exp(getL0score(targetObj, sketch, context, params, config));
+  var S1inf = getL0score(targetObj, sketch, context, params, config); //Math.exp()
   return ((1 - params.pragWeight) * S0inf + params.pragWeight * S1inf);
 };
 
@@ -62,15 +66,15 @@ var getSpeakerScore = function(trueSketch, targetObj, context, params, config) {
     var cost = config.costs[sketch];
     var utility = (1 - costw) * inf + costw * (1 - cost);
     // if rounding error makes true utility <= 0, log isn't defined...    
-    scores.push(params.alpha * Math.log(Math.max(utility, Number.EPSILON)));
+    scores.push(params.alpha * utility);//Math.log(Math.max(utility, Number.EPSILON)));
   }
 
   var trueUtility = ((1 - costw) * informativity(targetObj, trueSketch, context, params, config)
 		     + costw * (1 - config.costs[trueSketch]));
-  var roundedUtility = Math.max(trueUtility, Number.EPSILON);
+  //var roundedUtility = Math.max(trueUtility, Number.EPSILON);
   // console.log(_logsumexp(scores))
-  // console.log(params.alpha * Math.log(roundedUtility))// - _logsumexp(scores));
-  return params.alpha * Math.log(roundedUtility) - _logsumexp(scores);
+  //console.log(params.alpha * Math.log(roundedUtility))// - _logsumexp(scores));
+  return params.alpha * trueUtility - _logsumexp(scores);
 };
 
 function readCSV(filename){
@@ -95,21 +99,30 @@ var supportWriter = function(s, p, handle) {
   }
 };
 
+var predictiveSupportWriter = function(s, p, handle) {
+  var l = s.length;
+  for (var i = 0; i < l; i++) {
+    fs.writeSync(handle, s[i] + '\n');
+  }
+};
+
 // Note this is highly specific to a single type of erp
 var bayesianErpWriter = function(erp, filePrefix) {
-  
   var predictiveFile = fs.openSync(filePrefix + "Predictives.csv", 'w');
-  fs.writeSync(predictiveFile, ["condition", "Target", "Distractor1", "Distractor2", "Distractor3", 
-				"value", "prob", "posteriorProb"] + '\n');
+  fs.writeSync(predictiveFile, ['game', "condition", 'trueSketch', "Target", "Distractor1", "Distractor2", "Distractor3", "possibleSketch", "modelProb"] + '\n');
 
   var paramFile = fs.openSync(filePrefix + "Params.csv", 'w');
   fs.writeSync(paramFile, ["perception,", "pragmatics", "production", "alpha", "simScaling", "pragWeight","costWeight", "logLikelihood", "posteriorProb"] + '\n');
 
   var supp = erp.support();
- 
+  
   supp.forEach(function(s) {
-    supportWriter(s.predictive, erp.score(s), predictiveFile);
-    supportWriter(s.params, erp.score(s), paramFile);
+    if(_.has(s, 'predictives'))
+      predictiveSupportWriter(s.predictives, erp.score(s), predictiveFile);
+    console.log(s);
+    console.log(_.has(s, 'params'));
+    if(_.has(s, 'params'))
+      supportWriter(s.params, erp.score(s), paramFile);
   });
   fs.closeSync(predictiveFile);
   fs.closeSync(paramFile);
@@ -128,7 +141,7 @@ var locParse = function(filename) {
 };
 
 module.exports = {
-  getSimilarities, getPossibleSketches, getCosts, getSubset,
+  getSimilarities, getPossibleSketches, getCosts, getSubset, getConditionLookup,
   getL0score, getSpeakerScore,
   bayesianErpWriter, writeCSV, readCSV, locParse
 };
