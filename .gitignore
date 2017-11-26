@@ -78,3 +78,5 @@ sandbox/assets/img/*
 sandbox/assets/fontello/*
 
 *.fls
+*.xwm
+*.out
