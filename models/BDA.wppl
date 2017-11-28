@@ -10,7 +10,7 @@ console.log("Loading expt data complete..." + data.length + " data points");
 // Note: when moving to model comparison, can precache for all models...
 var similarities = refModule.getSimilarities();
 var costs = refModule.getCosts(experimentVersion);
-var possibleSketches = refModule.getPossibleSketches(costs);
+var possibleSketches = refModule.getPossibleSketches(data);
 var conditionLookup = refModule.getConditionLookup();
 console.log("Loading model data complete..."
 	    + possibleSketches.length + " sketches of " +
@@ -19,23 +19,23 @@ console.log("Loading model data complete..."
 // Package into config
 var globalConfig = {
   similarities, possibleSketches, costs, conditionLookup,
-  outputFileName : 'S1_coarsened'
+  outputFileName : 'S0_vs_S1'
 };
 
 var paramPrior = function() {
   var perception = uniformDraw(['mid-layer']);
-  var pragmatics = uniformDraw(['S1'])//, 'S0', 'combined']);
+  var pragmatics = uniformDraw(['S0', 'S1'])//, 'S0', 'combined']);
   var production = uniformDraw(['cost'])//cost', 'nocost']);  
   return {
     perception, pragmatics, production,
-    alpha : uniformDraw(_.range(0.5, 10, 0.5)),
+    alpha : uniformDraw(_.range(0.5, 10, 1)),
     simScaling : (pragmatics === 'S0' ? 1 :
-		uniformDraw(_.range(0.0, 5, 0.5))),    
+		  uniformDraw(_.range(0.0, 5, 0.5))),    
     pragWeight: (pragmatics == 'S0' ? 0 :
-		pragmatics == 'S1' ? 1 :
+		 pragmatics == 'S1' ? 1 :
 		 uniformDraw(_.range(0, 1.01, 0.1))),
     costWeight : (production === 'nocost' ? 0 :
-		  uniformDraw(_.range(0, 0.5, 0.05)))
+		  uniformDraw(_.range(0, 1.01, 0.1)))
   };
 };
 
@@ -48,14 +48,11 @@ var modelAnalysis = function() {
     var context = [c.Target, c.Distractor1, c.Distractor2, c.Distractor3];
     var target = context[0];
     var modelOutput = speakerModel(target, context, params, globalConfig);
-    // console.log(refModule.getSpeakerScore(
-    //   c.sketchLabel, target, context, params, globalConfig
-    // ))
     // compute log likelihood (score) of data point under model
-    return memo + modelOutput.score(c.coarseGrainedSketchInfo)
-    // refModule.getSpeakerScore(
-    //   c.sketchLabel, target, context, params, globalConfig
-    // );
+    console.log(modelOutput);
+    console.log(c.coarseGrainedSketchInfo);
+    console.log(modelOutput.score(c.coarseGrainedSketchInfo));
+    return memo + modelOutput.score(c.coarseGrainedSketchInfo);
   }, 0, data);    
 
   console.log(params);
