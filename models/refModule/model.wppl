@@ -23,13 +23,12 @@ var speakerModel = function(targetObj, context, params, config) {
     var similarities = config.similarities[params.perception];
     return Infer({method:'enumerate', model: function(){
       var sketch = uniformDraw(config.possibleSketches);
-      var inf = refModule.getL0score(targetObj, sketch, context, params, config);//(flip(params.pragWeight) ?
-	  //literalListener(sketch, context).score(targetObj) //://Math.exp()
-		// (similarities[targetObj][sketch] + 1) / 2);
+      // faster helper function for literalListener(sketch, context).score(targetObj) :
+      var inf = (params.pragmatics === 'S1' ? refModule.getL0score(targetObj, sketch, context, params, config) :
+		 params.pragmatics === 'S0' ? similarity(sketch, targetObj) :
+		 console.error('unknown pragmatics model:' + params.pragmatics));
       var utility = ((1-params.costWeight) * inf
 		     + params.costWeight * (1 - sketchCost(sketch)));
-      // console.log(sketch);
-      // console.log(utility);
       factor(params.alpha * utility);
       return config.conditionLookup[sketch];
     }});

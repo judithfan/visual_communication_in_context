@@ -113,43 +113,117 @@ d.ordered %>%
 Load in different embeddings and make boilerplate iterables for them
 
 ```{r}
-# strictSimilarities <- fromJSON('./RSA/refModule/json/strict-similarity.json', flatten = T)
-# nonstrictSimilarities <- fromJSON('./RSA/refModule/json/nonstrict-similarity.json', flatten = T)
-pragSimilarities <- fromJSON('./RSA/refModule/json/strict-similarity-pragmatics-conv4_2.json', flatten = T)
-
-lookupFixedSimilarity <- function(object, sketch) {
-  fixedSimilarities[[object]]
-  return(fixedSimilarities[[object]][[sketch]])
-}
+pragSimilarities <- fromJSON('./refModule/json/similarity-splitbycontext.json', flatten = T)
 
 lookupPragSimilarity <- function(object, sketch) {
   return(pragSimilarities[[object]][[sketch]])
-}
-
-lookupEarlySimilarity <- function(object, sketch) {
-  return(earlySimilarities[[object]][[sketch]])
 }
 ```
 
 Add columns for the different kinds of similarity
 
 ```{r}
-d.similarity <- d.ordered %>%
-  gather(contextElement, name, Target, Distractor1, Distractor2, Distractor3) %>%
+d.raw <- read_csv('./bdaInput/sketchData_fixedPose_splitbycontext_augmented2_pilot2.csv')
+d.similarity <- d.raw %>%
+  select(sketchLabel, Target) %>%
+  complete(Target, sketchLabel) %>%
+  rename(trueTarget = Target) %>%
+  left_join(d.raw, by = c('sketchLabel')) %>%
+  rename(sketchTarget = Target, sketchCondition = condition) %>%
+  select(sketchLabel, sketchTarget, trueTarget, sketchCondition, coarseGrainedSketchInfo) %>%
   rowwise() %>%
-  mutate(pragSimilarity = lookupPragSimilarity(name, sketchLabel)) %>%
-  rowwise() %>%
-  mutate(fixedSimilarity = lookupFixedSimilarity(name, sketchLabel)) 
+  mutate(pragSimilarity = lookupPragSimilarity(trueTarget, sketchLabel)) %>%
+  separate(trueTarget, into = c('garbage','garbage1','trueTarget'), remove = T) %>%
+  separate(sketchTarget, into = c('garbage2','garbage3', 'sketchTarget'), remove = T) %>%
+  mutate(trueDomain = case_when(trueTarget %in% chairs ~ 'chair',
+                                trueTarget %in% dogs ~ 'dog',
+                                trueTarget %in% birds ~ 'bird',
+                                trueTarget %in% cars ~ 'car',
+                                T ~ 'other')) %>%
+  mutate(sketchDomain = case_when(sketchTarget %in% chairs ~ 'chair',
+                                sketchTarget %in% dogs ~ 'dog',
+                                sketchTarget %in% birds ~ 'bird',
+                                sketchTarget %in% cars ~ 'car',
+                                T ~ 'other')) 
+
+
 ```
 
-Sanity check: is similarity higher for target than distractors?
+```{r}
+
+```
+
+### What is confusion matrix at level of pure object?
 
 ```{r}
-tmp = d.similarity %>% 
-  mutate(contextElement = case_when(contextElement == 'Target' ~ 'target',
-                                    T ~ 'distractor')) %>%
-  filter(condition == 'further') 
+d.similarity %>%
+  group_by(sketchCondition,coarseGrainedSketchInfo,trueTarget,sketchTarget,trueDomain,sketchDomain) %>%
+  summarize(meanSimilarity = mean(pragSimilarity), k = length(pragSimilarity)) %>%
+  group_by(coarseGrainedSketchInfo) %>%
+  summarize(m = mean(k)) %>%
+  ungroup() %>%
+  summarize(sum(m))
+```
 
+```{r}
+d.similarity %>%
+  group_by(sketchCondition,coarseGrainedSketchInfo,trueTarget,sketchTarget,trueDomain,sketchDomain) %>%
+  summarize(meanSimilarity = mean(pragSimilarity), k = length(pragSimilarity)) %>%
+  ungroup() %>%
+  arrange(sketchCondition, trueDomain, sketchDomain, trueTarget, sketchTarget) %>% 
+  mutate(trueTarget = factor(trueTarget, unique(trueTarget)),
+         sketchTarget = factor(sketchTarget, unique(sketchTarget)),
+         coarseGrainedSketchInfo = factor(coarseGrainedSketchInfo, unique(coarseGrainedSketchInfo))) %>%
+  # group_by(trueTarget == sketchTarget, trueDomain == sketchDomain) %>%
+  # summarize(mean(meanSimilarity))
+ggplot(aes(x = coarseGrainedSketchInfo, y = trueTarget, fill = meanSimilarity)) +
+  geom_tile() + 
+  geom_vline(xintercept = seq(8.5, 8.5*10, 8)) +
+  scale_fill_gradient(low = "black", high = "white") +
+  geom_hline(yintercept = seq(8.5, 16*10, 8)) +
+ # facet_wrap(~ condition) +
+  theme(aspect.ratio = .5, axis.text.x = element_text(angle = 90, hjust = 1)) 
+
+ggsave('raw-similarities.png')
+```
+
+## What's the difference between context conditions? 
+
+Seems like embedding thinks 'far' sketches of the target are slightly more similar to the target than 'close' sketches (unintuitive)
+
+```{r}
+d.conditionDiff <- d.similarity %>%
+  group_by(sketchCondition,coarseGrainedSketchInfo,trueTarget,sketchTarget,trueDomain,sketchDomain) %>%
+  summarize(meanSimilarity = mean(pragSimilarity), k = length(pragSimilarity)) %>%
+  ungroup() %>%
+  select(sketchCondition, trueTarget, sketchTarget, trueDomain, sketchDomain, meanSimilarity) %>%
+  spread(key = sketchCondition, value = meanSimilarity) %>%
+  mutate(conditionDiff = closer - further) %>%
+  arrange(trueDomain, sketchDomain, trueTarget, sketchTarget) %>% 
+  mutate(trueTarget = factor(trueTarget, unique(trueTarget)),
+         sketchTarget = factor(sketchTarget, unique(sketchTarget))) 
+
+d.conditionDiff %>% 
+  group_by(trueTarget == sketchTarget) %>%
+  summarize(m = mean(conditionDiff))
+```
+
+Not a lot of structure overall
+
+```{r}
+ggplot(d.conditionDiff, aes(x = sketchTarget, y = desc(trueTarget), fill = conditionDiff)) +
+    geom_tile() + 
+    geom_vline(xintercept = seq(8.5, 8.5*10, 8)) +
+    scale_fill_gradient(low = "black", high = "white") +
+    # geom_hline(yintercept = seq(8.5, 16*10, 8)) +
+   # facet_wrap(~ condition) +
+    theme(aspect.ratio = 1, axis.text.x = element_text(angle = 90, hjust = 1))+ 
+  ggtitle('whiter when close similarity is higher')
+```
+
+Sanity check: is similarity higher for target object than other things?
+
+```{r}
 tmp %>%
   ggplot(aes(x = pragSimilarity, fill = contextElement)) +
     geom_density(alpha = .5) +
@@ -389,7 +463,7 @@ d.ordered %>%
   write_csv('./RSA/bdaInput/sketch_data.csv')
 ```
 
-# Repeated contexts in fixed pose version
+## How many repeated contexts in fixed pose version?
 
 ```{r}
 fixedPose <- read_csv('RSA/bdaInput/sketchData_fixedPose.csv') %>%
@@ -406,10 +480,9 @@ fixedPose %>% group_by(gameid, context) %>% summarize(trialNum = first(trialNum)
 fixedPose %>% group_by(Target, Distractor1, Distractor2, Distractor3) %>% tally() %>% group_by(n) %>% tally()
 ```
 
-# Make dataset from split-by-context
+# Explore train-test split
 
 ```{r}
-d
 fullSketchData <- read_csv('RSA/bdaInput/sketchData_fixedPose.csv')
 length(unique((d %>% separate(sketchLabel, into = c('gameid','trialNum')))$gameid))
 splitTestExamples <- read_csv('RSA/bdaInput/split-by-condition-test-examples.txt', col_names = F) %>%
@@ -427,9 +500,7 @@ d <- raw_fixed %>%
 
 ```
 
-Remap costs to [0,1]
-
-## Look at ranking measure
+# Explore predictives
 
 ```{r}
 predictives <- read_csv('./bdaOutput/S1_coarsenedPredictives.csv') %>%
@@ -483,7 +554,10 @@ ggplot(pcts %>% gather(trueCondition, val, further, closer), aes(x = topn, y = v
   theme_few() +
   ylim(0,1.1) +
   xlab('k') +
-  ylab('% of trials where true sketch is in top k')
+  ylab('% of trials where true sketch is in top k') +
+  theme(aspect.ratio = .5)
+
+ggsave('test.png')
 ```
 
 ### Visualize confusion matrix
@@ -514,7 +588,7 @@ confusion %>% group_by(trueSketch) %>% summarize(modelProb = sum(exp(modelProb))
 ```{r}
 errorsByDomain <- confusion %>%
   unite(trueDomainLabel, trueCondition, trueDomain, remove = F) %>%
-  unite(possibleDomainLabel, possibleCondition, possibleDomain, remove =) %>%
+  unite(possibleDomainLabel, possibleCondition, possibleDomain, remove = F) %>%
   group_by(trueDomainLabel,possibleDomainLabel, trueCondition, possibleCondition) %>%
   summarize(prob = reduce(modelProb, sumlogprob) - log(length(modelProb)))
 
@@ -524,6 +598,7 @@ ggplot(errorsByDomain %>% mutate(prob = ifelse(prob < -4.5, -4.5, prob)),
   #facet_wrap(~ condition) +
   theme(aspect.ratio = 1, axis.text.x = element_text(angle = 90, hjust = 1))
   
+ggsave('context-sensitivity-by-domain.png')
 ```
 
 ```{r}
@@ -537,8 +612,9 @@ More quantiatively... What is mean probability assigned *within* domain vs. *acr
 
 ```{r}
 ## Table (Assign higher probability to true domain than wrong domain)
+## TODO: this isn't right
 errorsByDomain %>% 
-  mutate(withinDomain = ifelse(trueDomain == possibleDomain, 'within', 'across')) %>%
+  mutate(withinDomain = ifelse(trueDomainLabel == possibleDomain, 'within', 'across')) %>%
   group_by(condition, withinDomain) %>%
   summarize(meanProb = mean(meanDomainProb))
 ```
@@ -555,7 +631,7 @@ targetProbs <- confusion %>% filter(trueSketchTarget == possibleSketchTarget)
 errorsByObj <- confusion %>%
   group_by(trueCondition, possibleCondition, trueSketchTarget,possibleSketchTarget,
            trueDomain, possibleDomain, trueSketch, possibleSketch) %>%
-  summarize(meanObjectProb = mean(modelProb)) %>%
+  summarize(prob = reduce(modelProb, sumlogprob) - log(length(modelProb))) %>%
   ungroup() %>%
   arrange(trueCondition, possibleCondition, trueDomain, possibleDomain) %>% 
   mutate(trueSketch = factor(trueSketch, unique(trueSketch)),
@@ -566,19 +642,21 @@ errorsByObj %>%
   mutate(sameObject = ifelse(trueSketchTarget == possibleSketchTarget, 'same', 'different')) %>%
   mutate(sameCondition = ifelse(trueCondition == possibleCondition, 'same', 'different')) %>%
   group_by(sameDomain, sameObject, sameCondition) %>%
-  summarize(meanProb = mean(meanObjectProb))
+  summarize(prob = reduce(prob, sumlogprob) - log(length(prob)))
 ```
 
 Now try visualizing the finer-grained confusion matrix
 
 ```{r}
-ggplot(errorsByObj %>% mutate(meanObjectProb = ifelse(meanObjectProb < -5, -5, meanObjectProb)), 
-       aes(x = trueSketch, y = possibleSketch, fill = meanObjectProb)) +
+ggplot(errorsByObj %>% mutate(prob = ifelse(prob < -4, -4, prob)), 
+       aes(x = trueSketch, y = desc(possibleSketch), fill = prob)) +
   geom_tile() + 
   geom_vline(xintercept = seq(8.5, 8.5*10, 8)) +
   #geom_hline(yintercept = c(-8.5, -8.5*10, -8)) +
  # facet_wrap(~ condition) +
-  theme(aspect.ratio = 1) 
+  theme(aspect.ratio = 1,  axis.text.x = element_text(size=rel(0.5), angle = 90, hjust = 1))
+
+ggsave('confusion-by-object.png')
 ```
 
 Zoom in on one object to examine finer level detail, e.g. contexts?

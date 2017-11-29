@@ -14,8 +14,8 @@ var getCosts = function(name) {
   return require('./json/costs-' + name + '.json');
 };
 
-var getPossibleSketches = function(costs) {
-  return _.keys(costs);
+var getPossibleSketches = function(data) {
+  return _.map(data, 'sketchLabel');
 };
 
 var getConditionLookup = function() {
@@ -108,24 +108,34 @@ var predictiveSupportWriter = function(s, p, handle) {
 
 // Note this is highly specific to a single type of erp
 var bayesianErpWriter = function(erp, filePrefix) {
-  var predictiveFile = fs.openSync(filePrefix + "Predictives.csv", 'w');
-  fs.writeSync(predictiveFile, ['game', "condition", 'trueSketch', "Target", "Distractor1", "Distractor2", "Distractor3", "possibleSketch", "modelProb"] + '\n');
-
-  var paramFile = fs.openSync(filePrefix + "Params.csv", 'w');
-  fs.writeSync(paramFile, ["perception,", "pragmatics", "production", "alpha", "simScaling", "pragWeight","costWeight", "logLikelihood", "posteriorProb"] + '\n');
-
   var supp = erp.support();
+  
+  if(_.has(supp[0], 'predictives')) {
+    var predictiveFile = fs.openSync(filePrefix + "Predictives.csv", 'w');
+    fs.writeSync(predictiveFile, ['game', "condition", 'trueSketch', "Target",
+				  "Distractor1", "Distractor2", "Distractor3",
+				  "coarseGrainedTrueSketch", "coarseGrainedPossibleSketch",
+				  "modelProb"] + '\n');
+  }
+  if(_.has(supp[0], 'params')) {
+    var paramFile = fs.openSync(filePrefix + "Params.csv", 'w');
+    fs.writeSync(paramFile, ["perception", "pragmatics", "production", "alpha",
+			     "simScaling", "pragWeight","costWeight",
+			     "logLikelihood", "posteriorProb"] + '\n');
+  }
   
   supp.forEach(function(s) {
     if(_.has(s, 'predictives'))
       predictiveSupportWriter(s.predictives, erp.score(s), predictiveFile);
-    console.log(s);
-    console.log(_.has(s, 'params'));
     if(_.has(s, 'params'))
       supportWriter(s.params, erp.score(s), paramFile);
   });
-  fs.closeSync(predictiveFile);
-  fs.closeSync(paramFile);
+  if(_.has(supp[0], 'predictives')) {
+    fs.closeSync(predictiveFile);
+  }
+  if(_.has(supp[0], 'params')) {
+    fs.closeSync(paramFile);
+  }
   console.log('writing complete.');
 };
 
