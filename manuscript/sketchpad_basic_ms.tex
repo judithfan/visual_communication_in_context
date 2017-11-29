@@ -18,6 +18,14 @@
 \usepackage{textcomp}
 \usepackage{multirow}
 \usepackage{subfig}
+\usepackage{trackchanges}
+% trackchanges commands:
+%   \note[editor]{The note} 
+% \annote[editor]{Text to annotate}{The note} 
+%    \add[editor]{Text to add} 
+% \remove[editor]{Text to remove} 
+% \change[editor]{Text to remove}{Text to add}
+
 
 \title{Contextual flexibility in visual communication}
 
@@ -231,10 +239,9 @@ Many trials in the dataset reveal a tendency from the participants to concentrat
 
 \subsection*{Visual encoder specification}
 
-The purpose of the visual encoder is to learn a function from images and sketches to a shared embedding space. The encoder network takes as input mid-level convolutional features from VGG-19. In our experiments, we used the fourth convolutional layer after the second pooling step. We chose a mid-convolutional layer to capitalize on successive layers of abstraction from early convolutional layers and to preserve two-dimensional structure. The encoder produces a shared embedding of size 1000. 
+The purpose of the visual encoder is to learn a function from images and sketches to a shared embedding space. The encoder network takes as input mid-level convolutional features from VGG-19. \change[JEF]{In our experiments, we used the fourth convolutional layer after the second pooling step.}{In our experiments, we used the second convolutional layer after the third pooling step.} \note[JEF] {Verify?} We chose a mid-convolutional layer to capitalize on successive layers of abstraction from early convolutional layers and to preserve two-dimensional structure. The encoder produces a shared embedding of size 1000. 
 
 The architecture of the encoder is as follows: a single convolutional layer (conv1) with 64 filters, a kernel size of 3, a padding of 1, and a stride of 1; followed by a max pool layer with a stride of 2 and a dilation of 1; followed by two fully connected layers (fc1, fc2) to project to 4096 units and 1000 units, respectively. We include batch normalization and ReLU nonlinearity after conv1 and fc1. A dropout layer is added after fc1. We emphasize that the architecture of the encoder is purposefully chosen to be light weight. 
-
 
 \subsection*{Visual encoder training procedure}
 
