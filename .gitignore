@@ -82,4 +82,4 @@ sandbox/assets/fontello/*
 *.out
 .Rproj.user
 *.Rproj
-
+auth.txt
