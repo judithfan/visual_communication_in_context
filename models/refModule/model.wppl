@@ -6,7 +6,7 @@ var speakerModel = function(targetObj, context, params, config) {
   };
 
   var similarity = function(sketch, object) {
-    return config.similarities[params.perception][object][sketch];
+    return (config.similarities[params.perception][object][sketch] + 1)/2;
   };
   
   // Sees sketch and selects among objects in context using similarity
@@ -18,19 +18,33 @@ var speakerModel = function(targetObj, context, params, config) {
     }});
   };
 
+  // Note that informativities are always logs of the thing we care about
+  // so that with alpha = 1, you produce sketches directly proportional
+  // to their informativity (because factor adds to log space)
+  var informativity = function(sketch) {
+    var model = (params.pragmatics === 'combined' ?
+		 (flip(params.pragWeight) ? 'S1 ' : 'S0') :
+		 params.pragmatics);
+    if(model === 'S1') {
+      return refModule.getL0score(targetObj, sketch, context, params, config);
+    } else if (model === 'S0') {
+      return similarity(sketch, targetObj);
+    } else {
+      console.error('unknown pragmatics model:' + params.pragmatics);
+    }
+  };
+  
   // Selects among sketches given raw similarity to target (ignoring context)
   var speaker = function(targetObj, context) {
     var similarities = config.similarities[params.perception];
     return Infer({method:'enumerate', model: function(){
       var sketch = uniformDraw(config.possibleSketches);
       // faster helper function for literalListener(sketch, context).score(targetObj) :
-      var inf = (params.pragmatics === 'S1' ? refModule.getL0score(targetObj, sketch, context, params, config) :
-		 params.pragmatics === 'S0' ? similarity(sketch, targetObj) :
-		 console.error('unknown pragmatics model:' + params.pragmatics));
-      var utility = ((1-params.costWeight) * inf
-		     + params.costWeight * (1 - sketchCost(sketch)));
+      var inf = informativity(sketch);
+      var utility = inf;
+      //- params.costWeight * sketchCost(sketch));//(1 - sketchCost(sketch)));
       factor(params.alpha * utility);
-      return config.conditionLookup[sketch];
+      return globalConfig.aggregate ? config.conditionLookup[sketch] : sketch;
     }});
   };
 
