@@ -83,31 +83,6 @@ d.ordered = d %>%
 
 Note: it'd be nicer if we had a smaller space of unique conditions for quicker BDA in webppl, but pretty much every trial was unique due to the pose randomization... 
 
-Write out actual data to condition on
-
-```{r}
-d.ordered %>% 
-  select(condition, sketchLabel, Target, Distractor1, Distractor2, Distractor3) %>%
-  write_csv('./RSA/bdaInput/sketch_data.csv')
-```
-
-Make alternate dataset with only far condition
-
-```{r}
-d.ordered %>%  filter(condition == 'further') %>%
-  select(condition, sketchLabel, Target, Distractor1, Distractor2, Distractor3) %>%
-  write_csv('./RSA/bdaInput/sketch_data_far_only.csv')
-```
-
-Alternate version with test examples
-
-```{r}
-
-d.ordered %>% 
-  select(condition, sketchLabel, Target, Distractor1, Distractor2, Distractor3) %>%
-  write_csv('./RSA/bdaInput/sketchData_splitByContext.csv')
-```
-
 # Analyze raw similarities
 
 Load in different embeddings and make boilerplate iterables for them
@@ -154,16 +129,6 @@ d.similarity <- d.raw %>%
 ```
 
 ### What is confusion matrix at level of pure object?
-
-```{r}
-d.similarity %>%
-  group_by(sketchCondition,coarseGrainedSketchInfo,trueTarget,sketchTarget,trueDomain,sketchDomain) %>%
-  summarize(meanSimilarity = mean(pragSimilarity), k = length(pragSimilarity)) %>%
-  group_by(coarseGrainedSketchInfo) %>%
-  summarize(m = mean(k)) %>%
-  ungroup() %>%
-  summarize(sum(m))
-```
 
 ```{r}
 d.similarity %>%
@@ -379,18 +344,28 @@ sumlogprob <- function(a, b) {
   }
 }
 
-modelOutput = read_csv('./bdaOutput/S1_coarsenedParams.csv', col_types = 'cccdddddd') %>%
-  #filter(posteriorProb != -Inf) %>%
-  group_by(perception,pragmatics, production) %>%
+View()
+View(rbind(
+  read_csv('./bdaOutput/pure_S0_MCMCParams.csv', col_types = 'cccdddddd') %>% mutate(dataset = 'S0'),
+  read_csv('./bdaOutput/pure_S1_MCMCParams.csv', col_types = 'cccdddddd')%>% mutate(dataset = 'S1'),
+  read_csv('./bdaOutput/combined_MCMCParams.csv', col_types = 'cccdddddd') %>% mutate(dataset = 'combined')
+))
+modelOutput = rbind(
+  read_csv('./bdaOutput/pure_S0_MCMCParams.csv', col_types = 'cccdddddd') %>% mutate(dataset = 'S0'),
+  read_csv('./bdaOutput/pure_S1_MCMCParams.csv', col_types = 'cccdddddd')%>% mutate(dataset = 'S1'),
+  read_csv('./bdaOutput/combined_MCMCParams.csv', col_types = 'cccdddddd') %>% mutate(dataset = 'combined')
+) %>%
+  group_by(dataset, perception,pragmatics, production) %>%
   summarize(prob = reduce(logLikelihood, sumlogprob) - log(length(logLikelihood)))
 
+View(  read_csv('./bdaOutput/S0_vs_S1_bareParams.csv', col_types = 'cccdddddd') %>% mutate(dataset = 'bare'))
 print(modelOutput)
 ```
 
 Visualize as bars
 
 ```{r}
-ggplot(modelOutput %>% ungroup() %>% mutate(pragmatics = ordered(pragmatics, levels = c('S0', 'S1', 'combined'))), 
+ggplot(modelOutput %>% ungroup() %>% mutate(pragmatics = ordered(pragmatics, levels = c('S0', 'S1'))), 
 aes(x = pragmatics, y = prob, fill = production)) +
     geom_bar(stat = 'identity', position = 'dodge', width = .75) +
     guides(fill=guide_legend(title="Speaker model")) +
@@ -398,14 +373,13 @@ aes(x = pragmatics, y = prob, fill = production)) +
     scale_fill_colorblind() +
     theme_few(12) +
     #theme(aspect.ratio = )
-    coord_cartesian(ylim=c(-7000, -7300)) +
+    coord_cartesian(ylim=c(-7500, -8000)) +
     theme(legend.position = 'top') 
 
 ggsave('modelComparison.pdf')
 ```
 
 ```{r}
-View(read_csv('./bdaOutput/S1_coarsenedParams.csv', col_types = 'cccdddddd'))
 samples = read_csv('./bdaOutput/S1_coarsenedParams.csv', col_types = 'cccdddddd') %>%
   filter(pragmatics == 'S1' & production == 'cost') %>%
   filter(posteriorProb != -Inf) %>%
@@ -503,7 +477,7 @@ d <- raw_fixed %>%
 # Explore predictives
 
 ```{r}
-predictives <- read_csv('./bdaOutput/S1_coarsenedPredictives.csv') %>%
+predictives <- read_csv('./bdaOutput/S1_fixedPredictives.csv') %>%
   group_by(coarseGrainedTrueSketch, coarseGrainedPossibleSketch) %>%
   summarize(modelProb = reduce(modelProb, sumlogprob) - log(length(modelProb))) %>%
   rename(trueSketch = coarseGrainedTrueSketch, possibleSketch = coarseGrainedPossibleSketch) %>%
@@ -656,7 +630,7 @@ ggplot(errorsByObj %>% mutate(prob = ifelse(prob < -4, -4, prob)),
  # facet_wrap(~ condition) +
   theme(aspect.ratio = 1,  axis.text.x = element_text(size=rel(0.5), angle = 90, hjust = 1))
 
-ggsave('confusion-by-object.png')
+#ggsave('confusion-by-object.png')
 ```
 
 Zoom in on one object to examine finer level detail, e.g. contexts?
