@@ -37,17 +37,23 @@ var getL0score = function(target, sketch, context, params, config) {
   var similarities = config.similarities[params.perception];
   var scores = [];
   for(var i=0; i<context.length; i++){
-    scores.push(params.simScaling * similarities[context[i]][sketch]);
+    var similarity = (similarities[context[i]][sketch] + 1) / 2;
+    scores.push(params.simScaling * similarity);
   }
-  return params.simScaling * similarities[target][sketch] - _logsumexp(scores);
+  var similarity = (similarities[target][sketch] + 1) /2;
+  return params.simScaling * similarity - _logsumexp(scores);
 };
 
 // Interpolates between the 'informativity' term of S0 and S1 based on pragWeight param
 // Try remapping these to [0,1]...
 var informativity = function(targetObj, sketch, context, params, config) {
   var similarities = config.similarities[params.perception];
-  var S0inf = (similarities[targetObj][sketch] + 1) / 2;
+  var S0inf = (similarities[targetObj][sketch] + 1.001) / 2;
+//  console.log(S0inf);
   var S1inf = getL0score(targetObj, sketch, context, params, config); //Math.exp()
+  // console.log(targetObj);
+  // console.log(sketch);
+  // console.log(S1inf);
   return ((1 - params.pragWeight) * S0inf + params.pragWeight * S1inf);
 };
 
@@ -68,8 +74,7 @@ var getSpeakerScore = function(trueSketch, targetObj, context, params, config) {
     // if rounding error makes true utility <= 0, log isn't defined...    
     scores.push(params.alpha * utility);//Math.log(Math.max(utility, Number.EPSILON)));
   }
-
-  var trueUtility = ((1 - costw) * informativity(targetObj, trueSketch, context, params, config)
+  var trueUtility = ((1-costw) * informativity(targetObj, trueSketch, context, params, config)
 		     + costw * (1 - config.costs[trueSketch]));
   //var roundedUtility = Math.max(trueUtility, Number.EPSILON);
   // console.log(_logsumexp(scores))
