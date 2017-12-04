@@ -6,7 +6,8 @@ var babyparse = require('babyparse');
 
 var getSimilarities = function(name) {
   return {
-    'mid-layer' : require('./json/similarity-splitbycontext.json')
+      'mid-layer-triplet' : require('./json/similarity-splitbycontext-triplet.json'),
+      'mid-layer': require('./json/similarity-splitbycontext.json')
   };
 };
 
