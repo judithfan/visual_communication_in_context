@@ -1,5 +1,10 @@
 # 'big data'
 models/refModule/json/*.json
+*.npy
+*.csv
+*.pdf
+*.png
+
 
 # emacs/node cruft
 *~
