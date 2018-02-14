@@ -28,7 +28,18 @@
         trials[i].set_size = params.set_size;
         trials[i].num_trials = params.num_trials;
         trials[i].target = params.target[i];
-        trials[i].sketch_image = params.sketch_image[i];
+        trials[i].sketch = params.sketch[i];
+        trials[i].category = params.category_list,
+        trials[i].distractor1 = params.distractor1,
+        trials[i].distractor2 = params.distractor2,
+        trials[i].distractor3 = params.distractor3,
+        trials[i].context = params.context,
+        trials[i].draw_duration = params.draw_duration,
+        trials[i].num_strokes = params.num_strokes,
+        trials[i].viewer_correct_in_context = params.viewer_correct_in_context,
+        trials[i].viewer_response_in_context = params.viewer_response_in_context,
+        trials[i].viewer_RT_in_context = params.viewer_RT_in_context,
+        trials[i].gameID = params.gameID,
         trials[i].object_size = params.object_size || [100, 100];
         trials[i].sketch_size = params.sketch_size || [16, 16];
         trials[i].circle_diameter = params.circle_diameter || 250;
@@ -85,7 +96,7 @@
 
       function show_sketch() {
         // show sketch
-        var sketch = paper.image(trial.sketch_image, fix_loc[0], fix_loc[1], trial.sketch_size[0], trial.sketch_size[1]);
+        var sketch = paper.image(trial.sketch, fix_loc[0], fix_loc[1], trial.sketch_size[0], trial.sketch_size[1]);
       }
 
       function show_object_array() {
@@ -100,8 +111,8 @@
         // group object images and add hover animation
         images = paper.g(paper.selectAll('image'));
         images.selectAll('image').forEach( function( el, index ) {
-           el.hover( function() { el.animate({ transform: 's2,2' }, 500, mina.easein); },
-                     function() { el.animate({ transform: 's1,1' }, 500 , mina.easein); }
+           el.hover( function() { el.animate({ transform: 's2,2' }, 100, mina.easein); },
+                     function() { el.animate({ transform: 's1,1' }, 100 , mina.easein); }
             )
         } );
 
