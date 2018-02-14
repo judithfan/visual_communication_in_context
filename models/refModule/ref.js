@@ -6,8 +6,10 @@ var babyparse = require('babyparse');
 
 var getSimilarities = function(name) {
   return {
-      'mid-layer-triplet' : require('./json/similarity-splitbycontext-triplet.json'),
-      'mid-layer': require('./json/similarity-splitbycontext.json')
+      'mid-layer-triplet' : require('./json/similarity-splitbycontext-triplet_bugfix.json'),
+      'mid-layer': require('./json/similarity-splitbycontext.json'),
+      'early-layer': require('./json/similarity-splitbycontext-fixedpose_pool1.json'),
+      'mid-layer-augmented': require('./json/strict-similarity-pragmatics-fixedpose-augmented-splitbycontext_conv4_2.json')
   };
 };
 

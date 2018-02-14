@@ -20,12 +20,12 @@ console.log("Loading model data complete..."
 var globalConfig = {
   similarities, possibleSketches, costs, conditionLookup,
   aggregate: false,
-  outputFileName : 'combined_MCMC_triplet_wcost'
+  outputFileName : 'S0_MCMC_mid-layer-augmented_wcostParams'
 };
 
 var paramPrior = function() {
-  var perception = uniformDraw(['mid-layer-triplet']);
-  var pragmatics = uniformDraw(['combined'])//'combined'])//, 'S0', 'S1']);
+  var perception = uniformDraw(['mid-layer-augmented']);
+  var pragmatics = uniformDraw(['S0'])//'combined'])//, 'S0', 'S1']);
   var production = uniformDraw(['cost'])//cost', 'nocost']);  
   return {
     perception, pragmatics, production,
@@ -74,5 +74,5 @@ var modelAnalysis = function() {
 };
 
 //var outputERP = Infer({method:'enumerate', model: modelAnalysis});
-var outputERP = Infer({method: 'MCMC', samples: 1000, burn: 500, lag: 1, model: modelAnalysis});
+var outputERP = Infer({method: 'MCMC', samples: 500, burn: 500, lag: 0, model: modelAnalysis, onlyMAP: true});
 refModule.bayesianErpWriter(outputERP, "./bdaOutput/" + globalConfig.outputFileName);
