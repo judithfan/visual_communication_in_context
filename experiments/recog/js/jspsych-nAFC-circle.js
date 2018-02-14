@@ -25,27 +25,26 @@
 
       for (var i = 0; i < trials.length; i++) {
         trials[i] = {};
-        trials[i].set_size = params.set_size;
-        trials[i].num_trials = params.num_trials;
+        trials[i].set_size = params.set_size || 32;
+        trials[i].num_trials = params.num_trials || 10;
         trials[i].target = params.target[i];
         trials[i].sketch = params.sketch[i];
-        trials[i].category = params.category_list,
-        trials[i].distractor1 = params.distractor1,
-        trials[i].distractor2 = params.distractor2,
-        trials[i].distractor3 = params.distractor3,
-        trials[i].context = params.context,
-        trials[i].draw_duration = params.draw_duration,
-        trials[i].num_strokes = params.num_strokes,
-        trials[i].viewer_correct_in_context = params.viewer_correct_in_context,
-        trials[i].viewer_response_in_context = params.viewer_response_in_context,
-        trials[i].viewer_RT_in_context = params.viewer_RT_in_context,
-        trials[i].gameID = params.gameID,
+        trials[i].category = params.category[i],
+        trials[i].distractor1 = params.distractor1[i],
+        trials[i].distractor2 = params.distractor2[i],
+        trials[i].distractor3 = params.distractor3[i],
+        trials[i].context = params.context[i],
+        trials[i].draw_duration = params.draw_duration[i],
+        trials[i].num_strokes = params.num_strokes[i],
+        trials[i].viewer_correct_in_context = params.viewer_correct_in_context[i],
+        trials[i].viewer_response_in_context = params.viewer_response_in_context[i],
+        trials[i].viewer_RT_in_context = params.viewer_RT_in_context[i],
+        trials[i].gameID = params.gameID[i],
         trials[i].object_size = params.object_size || [100, 100];
         trials[i].sketch_size = params.sketch_size || [16, 16];
         trials[i].circle_diameter = params.circle_diameter || 250;
-        trials[i].timing_max_search = (typeof params.timing_max_search === 'undefined') ? -1 : params.timing_max_search;
-        trials[i].timing_sketch = (typeof params.timing_sketch === 'undefined') ? 500 : params.timing_sketch;
-        trials[i].options = params.options || ['./object/dogs_08_pug_0035.png'];
+        trials[i].timing_sketch = (typeof params.timing_sketch === 'undefined') ? 100 : params.timing_sketch;
+        trials[i].options = params.options || _.times(params.set_size,_.constant('./object/dogs_08_pug_0035.png'))
       }
 
       return trials;
@@ -60,6 +59,9 @@
       var screenh = display_element.height();
       var centerx = screenw / 2;
       var centery = screenh / 2;
+
+      // initialize start_time timestamp
+      var start_time = Date.now();
 
       // circle params
       var diam = trial.circle_diameter; // pixels
@@ -97,6 +99,7 @@
       function show_sketch() {
         // show sketch
         var sketch = paper.image(trial.sketch, fix_loc[0], fix_loc[1], trial.sketch_size[0], trial.sketch_size[1]);
+        var start_time = Date.now();
       }
 
       function show_object_array() {
@@ -130,13 +133,13 @@
         var after_response = function(choice) {
           trial_over = true;
           // measure rt
-          var start_time = Date.now();
           var end_time = Date.now();
-          var rt = end_time - start_time;
-          console.log('choice',choice);
-          console.log('trial.target',trial.target);
+          var rt = end_time - start_time;                    
+          bare_choice = choice.split('/')[2].split('.')[0];
+          console.log('choice',bare_choice);
+          console.log('target',trial.target);         
           var correct = 0;
-          if (choice == trial.target) {
+          if (bare_choice == trial.target) {
             correct = 1;
           }
           clear_display();
@@ -155,16 +158,33 @@
 
       }
 
-      function end_trial(rt, correct, key_press) {
+      function end_trial(rt, correct, choice) {
 
         // data saving
         var trial_data = {
-          correct: correct,
           rt: rt,
+          correct: correct,          
+          choice: choice,
           locations: JSON.stringify(display_locs),
           sketch: trial.sketch,
-          target: trial.target
+          target: trial.target,
+          category: trial.category,
+          distractor1: trial.distractor1,
+          distractor2: trial.distractor2,
+          distractor3: trial.distractor3,
+          context: trial.context,
+          draw_duration: trial.draw_duration,
+          num_strokes: trial.num_strokes,
+          viewer_correct_in_context: trial.viewer_correct_in_context,
+          viewer_response_in_context: trial.viewer_response_in_context,
+          viewer_RT_in_context: trial.viewer_RT_in_context,
+          gameID: trial.gameID,
+          object_size: trial.object_size,
+          sketch_size: trial.sketch_size,
+          circle_diameter: trial.circle_diameter
         };
+
+        console.log(trial_data);
 
         // this line merges together the trial_data object and the generic
         // data object (trial.data), and then stores them.
