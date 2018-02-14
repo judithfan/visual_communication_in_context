@@ -4,7 +4,7 @@ models/refModule/json/*.json
 *.csv
 *.pdf
 *.png
-
+*.ipynb_checkpoints
 
 # emacs/node cruft
 *~
