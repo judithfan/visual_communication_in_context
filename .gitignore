@@ -4,11 +4,16 @@ models/refModule/json/*.json
 *.csv
 *.pdf
 *.png
+
+# ignore checkpoints
 *.ipynb_checkpoints
+
+
 
 # emacs/node cruft
 *~
 models/refModule/node_modules
+node_modules/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
