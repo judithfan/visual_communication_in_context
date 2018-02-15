@@ -70,11 +70,8 @@
             trials[i].timing_sketch = (typeof trials_tmp.timing_sketch === 'undefined') ? 100 : trials_tmp.timing_sketch;
             trials[i].options = trials_tmp.options || _.times(trials_tmp.set_size,_.constant('./object/dogs_08_pug_0035.png'))
 			      }
-			      console.log(trials);
-	  jsPsych.init({
-//            display_element: $('#display-area'),
-            timeline: trials
-          });          
+
+	          jsPsych.init({timeline: trials});          
 
         })
       }      

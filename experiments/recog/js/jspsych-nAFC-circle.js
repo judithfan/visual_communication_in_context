@@ -137,7 +137,7 @@ jsPsych.plugins["nAFC-circle"] = (function() {
     function end_trial(rt, correct, choice) {
 
       // data saving
-      var trial_data = {
+      var current_data = {
         rt: rt,
         correct: correct,          
         choice: choice,
@@ -160,14 +160,14 @@ jsPsych.plugins["nAFC-circle"] = (function() {
         circle_diameter: trial.circle_diameter
       };
 
-      console.log(trial_data);
+      console.log(current_data);
 
       // this line merges together the trial_data object and the generic
       // data object (trial.data), and then stores them.
       jsPsych.data.write(trial_data);
 
-      // this is where we want to write to the database
-      
+      // send data to server to write to database
+      socket.emit('current_data', current_data);      
 
       // go to next trial
       jsPsych.finishTrial();
