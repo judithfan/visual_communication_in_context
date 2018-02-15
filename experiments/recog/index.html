@@ -43,7 +43,9 @@
             object_size: [80,80],
             circle_diameter: 820,  
             options: object_list,
-            set_size: 32
+            set_size: 32,
+            timing_sketch: 100,
+            timing_objects: 1000
           };
 
           var trials = new Array(trials_tmp.options.length + 1);
@@ -80,6 +82,7 @@
             trials[i].sketch_size = trials_tmp.sketch_size || [220, 220];
             trials[i].circle_diameter = trials_tmp.circle_diameter || 800;
             trials[i].timing_sketch = (typeof trials_tmp.timing_sketch === 'undefined') ? 100 : trials_tmp.timing_sketch;
+            trials[i].timing_objects = (typeof trials_tmp.timing_objects === 'undefined') ? 1000 : trials_tmp.timing_objects;
             trials[i].options = trials_tmp.options || _.times(trials_tmp.set_size,_.constant('./object/dogs_08_pug_0035.png'))
 		      }
 

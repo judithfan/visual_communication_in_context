@@ -68,7 +68,9 @@ jsPsych.plugins["nAFC-circle"] = (function() {
     display_element.innerHTML += '<svg id="jspsych-nAFC-circle-svg" width=' + paper_size + ' height=' + paper_size + '></svg>';
     var paper = Snap('#jspsych-nAFC-circle-svg');
 
-    show_object_array();
+
+    // wait
+    setTimeout(function() {show_object_array(); }, trial.timing_sketch);     
 
     function show_sketch() {
       // show sketch
@@ -141,7 +143,7 @@ jsPsych.plugins["nAFC-circle"] = (function() {
         colname: 'sketchpad_basic_recog',        
         rt: rt,
         correct: correct,          
-        choice: choice,
+        choice: choice.split('/')[2].split('.')[0],
         locations: JSON.stringify(display_locs),
         sketch: trial.sketch,
         target: trial.target,
