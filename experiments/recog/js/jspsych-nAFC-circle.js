@@ -26,9 +26,7 @@ jsPsych.plugins["nAFC-circle"] = (function() {
 
   plugin.trial = function(display_element, trial) {
 
-//    trial = jsPsych.evaluateFunctionParameters(trial);
-
-    // screen information
+      // screen information
       var screenw = $(display_element).width();
       var screenh = $(display_element).height();
     var centerx = screenw / 2;
