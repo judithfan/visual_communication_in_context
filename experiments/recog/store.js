@@ -136,7 +136,7 @@ function serve() {
         { $addFields : { numGames: { $size: '$games'} } }, 
         { $sort : { numGames : 1} },  
         { $limit : request.body.numTrials }
-      ]).toArray(function(err, results) => {
+      ]).toArray( (err, results) => {
         if(err) {
           console.log(err);
         } else {
