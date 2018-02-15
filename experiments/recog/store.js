@@ -127,14 +127,15 @@ function serve() {
       const database = connection.db(databaseName);
       const collection = database.collection(collectionName);
 
+      // collection.aggregate([
+      // { $group : {_id : "$numGames", count: { $sum: 1 }}}
+      //     ], (err, results) => {console.log('counts...'); });      
+          
+      // get a random sample of stims that haven't appeared more than k times
       collection.aggregate([
-      { $group : {_id : "$numGames", count: { $sum: 1 }}}
-          ], (err, results) => {console.log('counts...'); console.log(results)});          
-          // get a random sample of stims that haven't appeared more than k times
-          collection.aggregate([
-      { $addFields : { numGames: { $size: '$games'} } }, 
-      { $sort : { numGames : 1} },  
-      { $limit : request.body.numTrials }
+        { $addFields : { numGames: { $size: '$games'} } }, 
+        { $sort : { numGames : 1} },  
+        { $limit : request.body.numTrials }
           ], (err, results) => {
       if(err) {
         console.log(err);
