@@ -55,12 +55,14 @@ window.onload = function() {
       });
     }
 
+    initializeJsPsych();
+
     jsPsych.preloadImages(object_list, start);
 
   })
 }
 
-(function() {
+function initializeJsPsych() {
   jsPsych["nAFC-circle"] = (function() {
 
     var plugin = {};
@@ -253,5 +255,5 @@ window.onload = function() {
     }
 
     return plugin;
-  })();
-})();
+  });
+};
