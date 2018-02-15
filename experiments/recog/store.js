@@ -139,9 +139,7 @@ function serve() {
       ]).toArray( (err, results) => {
         if(err) {
           console.log(err);
-        } else {
-          console.log('getting results')
-          console.log(results);
+        } else {                    
           recordStimUse(collection, request.body.gameid, _.map(results, '_id'));
           response.send(results);
         }
