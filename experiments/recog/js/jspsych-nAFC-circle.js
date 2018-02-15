@@ -70,7 +70,7 @@ jsPsych.plugins["nAFC-circle"] = (function() {
 
 
     // wait
-    setTimeout(function() {show_object_array(); }, trial.timing_sketch);     
+    setTimeout(function() {show_object_array(); }, trial.timing_objects);     
 
     function show_sketch() {
       // show sketch
