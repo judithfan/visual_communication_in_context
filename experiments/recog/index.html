@@ -45,9 +45,20 @@
             set_size: 32
           };
 
-          var trials = new Array(trials_tmp.options.length);
+          var trials = new Array(trials_tmp.options.length + 1);
 
-          for (var i = 0; i < trials_tmp.options.length; i++) {
+          // add welcome page
+          var welcome = {
+              type: 'instructions',
+              pages: [
+                  'Welcome! On each trial, you will see a drawing appear, surrounded by a ring of different objects. Your goal is to select the object in the ring that best matches the drawing. '
+              ],
+              show_clickable_nav: true
+
+          trials[0] = welcome;
+
+          // add rest of trials
+          for (var i = 1; i < trials_tmp.options.length + 1; i++) {
             trials[i] = {type: trials_tmp.type};            
             trials[i].set_size = trials_tmp.set_size || 32;
             trials[i].num_trials = trials_tmp.num_trials || 10;
@@ -71,21 +82,11 @@
             trials[i].options = trials_tmp.options || _.times(trials_tmp.set_size,_.constant('./object/dogs_08_pug_0035.png'))
 		      }
 
-          var welcome = {
-              type: 'instructions',
-              pages: [
-                  'Welcome! On each trial, you will see a drawing appear, surrounded by a ring of different objects. Your goal is to select the object in the ring that best matches the drawing. '
-              ],
-              show_clickable_nav: true
-          }
 
-          var timeline = [];
-          var timeline = timeline.push(welcome);
-          var timeline = timeline.push(trials);
-          console.log(timeline);
+
 
 	          jsPsych.init({
-              timeline: timeline,
+              timeline: trials,
               default_iti: 1000,
               show_progress_bar: true
             });          
