@@ -47,14 +47,19 @@
             set_size: 32
           };
 
-          function start(){
-            jsPsych.init({
-              display_element: $('#display-area'),
-              experiment_structure: [trials]
-            });
-          }
+          jsPsych.init({
+            display_element: $('#display-area'),
+            experiment_structure: [trials]
+          });          
 
-          jsPsych.preloadImages(object_list, start);
+          // function start(){
+          //   jsPsych.init({
+          //     display_element: $('#display-area'),
+          //     experiment_structure: [trials]
+          //   });
+          // }
+
+          // jsPsych.preloadImages(object_list, start);
 
         })
       }      

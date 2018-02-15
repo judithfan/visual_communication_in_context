@@ -77,7 +77,6 @@ io.on('connection', function (socket) {
   })
 })
 
-
 var UUID = function() {
   var baseName = (Math.floor(Math.random() * 10) + '' +
         Math.floor(Math.random() * 10) + '' +
