@@ -42,13 +42,44 @@ app.get('/*', (req, res) => {
   serveFile(req, res); 
 });
 
-// var socket = io.connect('http://localhost:8001');
+
+
+
 
 io.on('connection', function (socket) {
+
+  // write data to db upon getting current data
   socket.on('current_data', function(data) {
       console.log('current_data received: ' + JSON.stringify(data));
       writeDataToMongo(data);
   });
+
+  // get stims and assign gameID
+  startGame(socket);
+
+})
+
+var serveFile = function(req, res) {
+  var fileName = req.params[0];
+  console.log('\t :: Express :: file requested: ' + fileName);
+  return res.sendFile(fileName, {root: __dirname}); 
+};
+
+var UUID = function() {
+  var baseName = (Math.floor(Math.random() * 10) + '' +
+        Math.floor(Math.random() * 10) + '' +
+        Math.floor(Math.random() * 10) + '' +
+        Math.floor(Math.random() * 10));
+  var template = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx';
+  var id = baseName + '-' + template.replace(/[xy]/g, function(c) {
+    var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
+    return v.toString(16);
+  });
+  return id;
+};
+
+
+function startGame(socket) {
 
   var gameID = UUID();
 
@@ -74,31 +105,13 @@ io.on('connection', function (socket) {
         meta: _.sampleSize(require('./sketchpad_basic_recog_meta.js'), num_trials)
       }); 
     }
-  })
-})
-
-var UUID = function() {
-  var baseName = (Math.floor(Math.random() * 10) + '' +
-        Math.floor(Math.random() * 10) + '' +
-        Math.floor(Math.random() * 10) + '' +
-        Math.floor(Math.random() * 10));
-  var template = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx';
-  var id = baseName + '-' + template.replace(/[xy]/g, function(c) {
-    var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
-    return v.toString(16);
   });
-  return id;
-};
 
-var serveFile = function(req, res) {
-  var fileName = req.params[0];
-  console.log('\t :: Express :: file requested: ' + fileName);
-  return res.sendFile(fileName, {root: __dirname}); 
-};
+}
 
 var writeDataToMongo = function(data) {
 	  sendPostRequest(
-    	'http://localhost:4000/db/insert',
+    	'http://localhost:5000/db/insert',
     	{ json: data },
     	(error, res, body) => {
       if (!error && res.statusCode === 200) {
