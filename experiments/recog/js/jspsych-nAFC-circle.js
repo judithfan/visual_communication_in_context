@@ -57,7 +57,7 @@ window.onload = function() {
 
     jsPsych.preloadImages(object_list, start);
 
-  }
+  })
 }
 
 (function($) {
@@ -96,12 +96,6 @@ window.onload = function() {
       return trials;
     };
 
-
-
-
-
-
-    
 
     plugin.trial = function(display_element, trial) {
 
