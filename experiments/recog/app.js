@@ -74,9 +74,9 @@ io.on('connection', function (socket) {
         meta: _.sampleSize(require('./sketchpad_basic_pilot2_sketches.js'), num_trials)
       }); 
     }
-  }
   })
-});
+})
+
 
 var UUID = function() {
   var baseName = (Math.floor(Math.random() * 10) + '' +
