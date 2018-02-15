@@ -26,11 +26,11 @@ jsPsych.plugins["nAFC-circle"] = (function() {
 
   plugin.trial = function(display_element, trial) {
 
-    trial = jsPsych.pluginAPI.evaluateFunctionParameters(trial);
+//    trial = jsPsych.evaluateFunctionParameters(trial);
 
     // screen information
-    var screenw = display_element.width();
-    var screenh = display_element.height();
+      var screenw = $(display_element).width();
+      var screenh = $(display_element).height();
     var centerx = screenw / 2;
     var centery = screenh / 2;
 
@@ -65,7 +65,7 @@ jsPsych.plugins["nAFC-circle"] = (function() {
     }
 
     // get target to draw on
-    display_element.append($('<svg id="jspsych-nAFC-circle-svg" width=' + paper_size + ' height=' + paper_size + '></svg>'));
+      display_element.innerHTML += '<svg id="jspsych-nAFC-circle-svg" width=' + paper_size + ' height=' + paper_size + '></svg>';
     var paper = Snap('#jspsych-nAFC-circle-svg');
 
     show_object_array();
@@ -78,9 +78,13 @@ jsPsych.plugins["nAFC-circle"] = (function() {
 
     function show_object_array() {
       var object_array_images = [];
-      img = new Array;
-      for (var i = 0; i < display_locs.length; i++) {
-        var img = paper.image(trial.options[i], display_locs[i][0], display_locs[i][1], trial.object_size[0], trial.object_size[1]);                
+	img = new Array;
+	console.log('display locs');
+	console.log(display_locs);
+	console.log(trial);
+	for (var i = 0; i < display_locs.length; i++) {
+          var img = paper.image(trial.options[i], display_locs[i][0], display_locs[i][1],
+				trial.object_size[0], trial.object_size[1]);
         object_array_images.push(img);
       }
       var trial_over = false;
