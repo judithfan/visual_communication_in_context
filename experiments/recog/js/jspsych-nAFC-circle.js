@@ -63,7 +63,7 @@ jsPsych.plugins["nAFC-circle"] = (function() {
     }
 
     // get target to draw on
-      display_element.innerHTML += '<svg id="jspsych-nAFC-circle-svg" width=' + paper_size + ' height=' + paper_size + '></svg>';
+    display_element.innerHTML += '<svg id="jspsych-nAFC-circle-svg" width=' + paper_size + ' height=' + paper_size + '></svg>';
     var paper = Snap('#jspsych-nAFC-circle-svg');
 
     show_object_array();
@@ -83,6 +83,10 @@ jsPsych.plugins["nAFC-circle"] = (function() {
         object_array_images.push(img);
       }
       var trial_over = false;
+
+
+
+
 
       // group object images and add hover animation
       images = paper.g(paper.selectAll('image'));
@@ -161,7 +165,7 @@ jsPsych.plugins["nAFC-circle"] = (function() {
 
       // this line merges together the trial_data object and the generic
       // data object (trial.data), and then stores them.
-      jsPsych.data.write(trial_data);
+      jsPsych.data.write(current_data);
 
       // send data to server to write to database
       socket.emit('current_data', current_data);      
