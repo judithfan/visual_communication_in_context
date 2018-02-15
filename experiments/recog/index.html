@@ -79,10 +79,14 @@
               show_clickable_nav: true
           }
 
+          timeline = timeline.push(welcome);
+          timeline = timeline.push(trials);
+          console.log(timeline);
 
 	          jsPsych.init({
-              timeline: trials,
-              default_iti: 1000
+              timeline: timeline,
+              default_iti: 1000,
+              show_progress_bar: true
             });          
 
         })
