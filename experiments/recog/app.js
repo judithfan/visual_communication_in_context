@@ -17,8 +17,8 @@ if(argv.gameport) {
   gameport = argv.gameport;
   console.log('using port ' + gameport);
 } else {
-  gameport = 8880;
-  console.log('no gameport specified: using 8880\nUse the --gameport flag to change');
+  gameport = 8888;
+  console.log('no gameport specified: using 8888\nUse the --gameport flag to change');
 }
 
 try {
@@ -46,14 +46,25 @@ io.on('connection', function (socket) {
       writeDataToMongo(data);
   });
 
-  socket.on('stroke', function(data) {
-      console.log('stroke data received: ' + JSON.stringify(data));
-      var xmlDoc = new parser().parseFromString(data['svg']);
-      var svgData = xmlDoc.documentElement.getAttribute('d');
-      data['svg'] = svgData;
-      writeDataToMongo(data);      
-  })
+  var gameID = UUID();
 
+  sendPostRequest('http://localhost:4000/db/getstims', {
+    json: {
+      dbname: 'stimuli', 
+      colname: 'sketchpad_basic_pilot2_sketches',
+      numTrials: 10, 
+      gameid: gameID
+    }
+  }, (error, res, body) => {
+    if (!error && res.statusCode === 200) {
+      // upon connecting, tell the client some stuff
+      socket.emit('onconnected', { id: gameID, meta: body } );  
+    } else {
+      console.log(`error getting stims: ${error} ${body}`);
+      // console.log(`falling back to local stimList`);          
+    }
+  }
+  })
 });
 
 var UUID = function() {
@@ -88,21 +99,6 @@ var writeDataToMongo = function(data) {
     }
   );
 };
-
-var gameID = UUID();
-
-sendPostRequest('http://localhost:4000/db/getstims', {
-  json: {dbname: 'stimuli', colname: 'sketchpad_basic_pilot2_sketches',
-         numTrials: 10, gameid: gameID}
-      }, (error, res, body) => {
-        if (!error && res.statusCode === 200) {
-          meta = body;
-        } else {
-            console.log(`error getting stims: ${error} ${body}`);
-            console.log(`falling back to local stimList`);                     
-        }
-      }
-})
 
 // EDIT BELOW IN ORDER TO GET STIMS FROM DB
 

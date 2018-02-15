@@ -6,117 +6,11 @@
     <script src="js/jspsych.js"></script>
     <script src="js/jspsych-nAFC-circle.js"></script>
     <script src="js/lodash.min.js"></script>
+    <script src="js/object_list.js"></script>
     <script src="./sketchpad_basic_recog_meta.js"></script>
     <link rel="stylesheet" href="./jspsych-custom.css"></link>
   </head>
   <body>
     <div id="display-area"></div>
   </body>
-  <script>
-
-// high level experiment parameter
-var num_trials = 10;
-
-// list of all 32 objects
-var object_list = ['./object/bluejay.png',
-                  './object/crow.png',
-                  './object/cuckoo.png',
-                  './object/sparrow.png',
-                  './object/nightingale.png',
-                  './object/pigeon.png',
-                  './object/robin.png',
-                  './object/tomtit.png',
-                  './object/straight.png',
-                  './object/squat.png',
-                  './object/woven.png',
-                  './object/inlay.png',
-                  './object/knob.png',
-                  './object/leather.png',
-                  './object/sling.png',
-                  './object/waiting.png',
-                  './object/basset.png',
-                  './object/bloodhound.png',
-                  './object/weimaraner.png',
-                  './object/doberman.png',
-                  './object/goldenretriever.png',
-                  './object/bullmastiff.png',
-                  './object/chihuahua.png',
-                  './object/pug.png',
-                  './object/white.png',
-                  './object/beetle.png',
-                  './object/hatchback.png',
-                  './object/bluesedan.png',
-                  './object/bluesport.png',
-                  './object/brown.png',
-                  './object/redantique.png',
-                  './object/redsport.png']
-
-// from meta loaded in from sketchpad_basic_recog_meta.js (or fetched from db)
-// get data to feed into recognitino experiment
-var target_list = [];
-var sketch_list = [];
-var category_list = [];
-var distractor1 = [];
-var distractor2 = [];
-var distractor3 = [];
-var context = [];
-var draw_duration = [];
-var num_strokes = [];
-var viewer_correct_in_context = [];
-var viewer_response_in_context = [];
-var viewer_RT_in_context = [];
-var gameID = [];
-var original_trial_num = [];
-
-// construct lists corresponding to length of trial list (until fetching from db)
-for (var i = 0; i < num_trials; i++) { 
-  target_list[i] = meta[i].target;
-  sketch_list[i] = './sketch/' + meta[i].filename;
-  category_list[i] = meta[i].category;
-  distractor1[i] = meta[i].Distractor1;
-  distractor2[i] = meta[i].Distractor2;
-  distractor3[i] = meta[i].Distractor3;
-  context[i] = meta[i].condition;
-  draw_duration[i] = meta[i].drawDuration;
-  num_strokes[i] = meta[i].numStrokes;
-  viewer_correct_in_context[i] = meta[i].outcome;
-  viewer_response_in_context[i] = meta[i].response;
-  viewer_RT_in_context[i] = meta[i].viewerRT;
-  gameID[i] = meta[i].gameID;
-}
-
-var trials = {  
-  type: 'nAFC-circle',
-  num_trials: num_trials,
-  target: target_list,
-  sketch: sketch_list,
-  category: category_list,
-  distractor1: distractor1,
-  distractor2: distractor2,
-  distractor3: distractor3,
-  context: context,
-  draw_duration: draw_duration,
-  num_strokes: num_strokes,
-  viewer_correct_in_context: viewer_correct_in_context,
-  viewer_response_in_context: viewer_response_in_context,
-  viewer_RT_in_context: viewer_RT_in_context,
-  gameID: gameID,
-  options: object_list,  
-  sketch_size: [220,220],
-  object_size: [80,80],
-  circle_diameter: 800,  
-  objects: object_list,
-  set_size: 32
-};
-
-  function start(){
-    jsPsych.init({
-      display_element: $('#display-area'),
-      experiment_structure: [trials]
-    });
-  }
-
-  jsPsych.preloadImages(object_list, start);
-
-  </script>
 </html>
