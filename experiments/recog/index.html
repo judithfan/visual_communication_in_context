@@ -8,7 +8,7 @@
     <script src="js/jspsych-nAFC-circle.js"></script>
     <script src="js/lodash.min.js"></script>
     <script src="js/object_list.js"></script>
-    <link rel="stylesheet" href="./jspsych-custom.css"></link>
+    <link rel="stylesheet" href="./custom.css"></link>
 
     <script>
       window.onload = function() { 
@@ -40,7 +40,7 @@
             original_gameID: _.map(meta,'gameID'),
             sketch_size: [220,220],
             object_size: [80,80],
-            circle_diameter: 800,  
+            circle_diameter: 820,  
             options: object_list,
             set_size: 32
           };
@@ -64,14 +64,17 @@
             trials[i].viewer_response_in_context = trials_tmp.viewer_response_in_context[i],
             trials[i].viewer_RT_in_context = trials_tmp.viewer_RT_in_context[i],
             trials[i].original_gameID = trials_tmp.original_gameID[i],
-            trials[i].object_size = trials_tmp.object_size || [100, 100];
-            trials[i].sketch_size = trials_tmp.sketch_size || [16, 16];
-            trials[i].circle_diameter = trials_tmp.circle_diameter || 250;
+            trials[i].object_size = trials_tmp.object_size || [80, 80];
+            trials[i].sketch_size = trials_tmp.sketch_size || [220, 220];
+            trials[i].circle_diameter = trials_tmp.circle_diameter || 800;
             trials[i].timing_sketch = (typeof trials_tmp.timing_sketch === 'undefined') ? 100 : trials_tmp.timing_sketch;
             trials[i].options = trials_tmp.options || _.times(trials_tmp.set_size,_.constant('./object/dogs_08_pug_0035.png'))
 			      }
 
-	          jsPsych.init({timeline: trials});          
+	          jsPsych.init({
+              timeline: trials,
+              default_iti: 1000
+            });          
 
         })
       }      

@@ -76,11 +76,8 @@ jsPsych.plugins["nAFC-circle"] = (function() {
 
     function show_object_array() {
       var object_array_images = [];
-	img = new Array;
-	console.log('display locs');
-	console.log(display_locs);
-	console.log(trial);
-	for (var i = 0; i < display_locs.length; i++) {
+    	img = new Array;
+    	for (var i = 0; i < display_locs.length; i++) {
           var img = paper.image(trial.options[i], display_locs[i][0], display_locs[i][1],
 				trial.object_size[0], trial.object_size[1]);
         object_array_images.push(img);
