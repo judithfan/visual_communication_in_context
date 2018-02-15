@@ -137,8 +137,8 @@ jsPsych.plugins["nAFC-circle"] = (function() {
 
       // data saving
       var current_data = {
-        dbname: 'stimuli', 
-        colname: 'sketchpad_basic_pilot2_sketches',        
+        dbname: '3dObjects', 
+        colname: 'sketchpad_basic_recog',        
         rt: rt,
         correct: correct,          
         choice: choice,
