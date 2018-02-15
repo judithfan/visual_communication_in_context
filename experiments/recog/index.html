@@ -54,7 +54,7 @@
                   'Welcome! On each trial, you will see a drawing appear, surrounded by a ring of different objects. Your goal is to select the object in the ring that best matches the drawing. '
               ],
               show_clickable_nav: true
-
+          }
           trials[0] = welcome;
 
           // add rest of trials
@@ -82,14 +82,11 @@
             trials[i].options = trials_tmp.options || _.times(trials_tmp.set_size,_.constant('./object/dogs_08_pug_0035.png'))
 		      }
 
-
-
-
-	          jsPsych.init({
-              timeline: trials,
-              default_iti: 1000,
-              show_progress_bar: true
-            });          
+          jsPsych.init({
+            timeline: trials,
+            default_iti: 1000,
+            show_progress_bar: true
+          });          
 
         })
       }      
