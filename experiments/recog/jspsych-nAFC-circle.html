@@ -24,7 +24,7 @@
           var num_trials = meta.length;
 
           // define trial list
-          var trials = {  
+          var trials_tmp = {  
             type: 'nAFC-circle',
             num_trials: num_trials,
             target: _.map(meta, 'target'),
@@ -47,9 +47,35 @@
             set_size: 32
           };
 
+          var trials = new Array(trials_tmp.options.length);
+
+          for (var i = 0; i < trials_tmp.length; i++) {
+            trials[i] = {};
+            trials[i].set_size = trials_tmp.set_size || 32;
+            trials[i].num_trials = trials_tmp.num_trials || 10;
+            trials[i].target = trials_tmp.target[i];
+            trials[i].sketch = trials_tmp.sketch[i];
+            trials[i].category = trials_tmp.category[i],
+            trials[i].distractor1 = trials_tmp.distractor1[i],
+            trials[i].distractor2 = trials_tmp.distractor2[i],
+            trials[i].distractor3 = trials_tmp.distractor3[i],
+            trials[i].context = trials_tmp.context[i],
+            trials[i].draw_duration = trials_tmp.draw_duration[i],
+            trials[i].num_strokes = trials_tmp.num_strokes[i],
+            trials[i].viewer_correct_in_context = trials_tmp.viewer_correct_in_context[i],
+            trials[i].viewer_response_in_context = trials_tmp.viewer_response_in_context[i],
+            trials[i].viewer_RT_in_context = trials_tmp.viewer_RT_in_context[i],
+            trials[i].gameID = trials_tmp.gameID[i],
+            trials[i].object_size = trials_tmp.object_size || [100, 100];
+            trials[i].sketch_size = trials_tmp.sketch_size || [16, 16];
+            trials[i].circle_diameter = trials_tmp.circle_diameter || 250;
+            trials[i].timing_sketch = (typeof trials_tmp.timing_sketch === 'undefined') ? 100 : trials_tmp.timing_sketch;
+            trials[i].options = trials_tmp.options || _.times(trials_tmp.set_size,_.constant('./object/dogs_08_pug_0035.png'))
+          }          
+
           jsPsych.init({
             display_element: $('#display-area'),
-            experiment_structure: [trials]
+            experiment_structure: trials
           });          
 
           // function start(){

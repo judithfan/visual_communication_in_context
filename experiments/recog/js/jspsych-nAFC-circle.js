@@ -18,38 +18,6 @@ jsPsych.plugins["nAFC-circle"] = (function() {
 
   var plugin = {};
 
-  plugin.create = function(params) {
-
-    var trials = new Array(params.options.length);
-
-    for (var i = 0; i < trials.length; i++) {
-      trials[i] = {};
-      trials[i].set_size = params.set_size || 32;
-      trials[i].num_trials = params.num_trials || 10;
-      trials[i].target = params.target[i];
-      trials[i].sketch = params.sketch[i];
-      trials[i].category = params.category[i],
-      trials[i].distractor1 = params.distractor1[i],
-      trials[i].distractor2 = params.distractor2[i],
-      trials[i].distractor3 = params.distractor3[i],
-      trials[i].context = params.context[i],
-      trials[i].draw_duration = params.draw_duration[i],
-      trials[i].num_strokes = params.num_strokes[i],
-      trials[i].viewer_correct_in_context = params.viewer_correct_in_context[i],
-      trials[i].viewer_response_in_context = params.viewer_response_in_context[i],
-      trials[i].viewer_RT_in_context = params.viewer_RT_in_context[i],
-      trials[i].gameID = params.gameID[i],
-      trials[i].object_size = params.object_size || [100, 100];
-      trials[i].sketch_size = params.sketch_size || [16, 16];
-      trials[i].circle_diameter = params.circle_diameter || 250;
-      trials[i].timing_sketch = (typeof params.timing_sketch === 'undefined') ? 100 : params.timing_sketch;
-      trials[i].options = params.options || _.times(params.set_size,_.constant('./object/dogs_08_pug_0035.png'))
-    }
-
-    return trials;
-  };
-
-
   plugin.trial = function(display_element, trial) {
 
     trial = jsPsych.pluginAPI.evaluateFunctionParameters(trial);
@@ -189,6 +157,9 @@ jsPsych.plugins["nAFC-circle"] = (function() {
       // this line merges together the trial_data object and the generic
       // data object (trial.data), and then stores them.
       jsPsych.data.write(trial_data);
+
+      // this is where we want to write to the database
+      
 
       // go to next trial
       jsPsych.finishTrial();
