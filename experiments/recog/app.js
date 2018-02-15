@@ -56,6 +56,19 @@ io.on('connection', function (socket) {
 
 });
 
+var UUID = function() {
+  var baseName = (Math.floor(Math.random() * 10) + '' +
+        Math.floor(Math.random() * 10) + '' +
+        Math.floor(Math.random() * 10) + '' +
+        Math.floor(Math.random() * 10));
+  var template = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx';
+  var id = baseName + '-' + template.replace(/[xy]/g, function(c) {
+    var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
+    return v.toString(16);
+  });
+  return id;
+};
+
 var serveFile = function(req, res) {
   var fileName = req.params[0];
   console.log('\t :: Express :: file requested: ' + fileName);
@@ -75,3 +88,46 @@ var writeDataToMongo = function(data) {
     }
   );
 };
+
+var gameID = UUID();
+
+sendPostRequest('http://localhost:4000/db/getstims', {
+  json: {dbname: 'stimuli', colname: 'sketchpad_basic_pilot2_sketches',
+         numTrials: 10, gameid: gameID}
+      }, (error, res, body) => {
+        if (!error && res.statusCode === 200) {
+          meta = body;
+        } else {
+            console.log(`error getting stims: ${error} ${body}`);
+            console.log(`falling back to local stimList`);                     
+        }
+      }
+})
+
+// EDIT BELOW IN ORDER TO GET STIMS FROM DB
+
+  // // if game relies on asynchronous stim logic, need to wait until everything
+  // // is fetched before starting game (otherwise race conditions)
+  // startGame(game) {
+  //   if(game.experimentName == 'chairs_chatbox') {
+  //     sendPostRequest('http://localhost:4000/db/getstims', {
+  // json: {dbname: 'stimuli', colname: 'chairs1k',
+  //        numRounds: game.numRounds, gameid: game.id}
+  //     }, (error, res, body) => {
+  // if(!error && res.statusCode === 200) {
+  //         game.stimList = _.shuffle(body);
+  //         game.trialList = game.makeTrialList();
+  // } else {
+  //   console.log(`error getting stims: ${error} ${body}`);
+  //   console.log(`falling back to local stimList`);
+  //   var closeFamilies = require('./stimList_chairs').closeByFamily;
+  //   game.stimList = _.flatten(_.sampleSize(closeFamilies, game.numRounds));
+  //   game.trialList = game.makeTrialList();
+  // }
+  // game.newRound();
+  //     });
+  //   } else {
+  //     game.newRound();
+  //   }
+  // }
+

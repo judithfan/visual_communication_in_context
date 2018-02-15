@@ -96,6 +96,45 @@ function serve() {
     });
 
 
+    app.post('/db/getstims', (request, response) => {
+      if (!request.body) {
+        return failure(response, '/db/getstims needs post request body');
+      }
+      log(`got request to get stims from ${request.body.dbname}/${request.body.colname}`);
+      
+      const databaseName = request.body.dbname;
+      const collectionName = request.body.colname;
+      if (!collectionName) {
+        return failure(response, '/db/getstims needs collection');
+      }
+      if (!databaseName) {
+        return failure(response, '/db/getstims needs database');
+      }
+
+      const database = connection.db(databaseName);
+      const collection = database.collection(collectionName);
+
+      collection.aggregate([
+      { $group : {_id : "$numGames", count: { $sum: 1 }}}
+          ], (err, results) => {console.log('counts...'); console.log(results)});          
+          // get a random sample of stims that haven't appeared more than k times
+          collection.aggregate([
+      { $addFields : { numGames: { $size: '$games'} } }, 
+      { $sort : { numGames : 1} },  
+      { $limit : request.body.numTrials }
+          ], (err, results) => {
+      if(err) {
+        console.log(err);
+      } else {
+        
+        recordStimUse(collection, request.body.gameid, _.map(results, '_id'));
+        response.send(results);
+      }
+      });
+    });
+
+
+
     app.listen(port, () => {
       log(`running at http://localhost:${port}`);
     });
