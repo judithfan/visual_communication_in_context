@@ -52,7 +52,7 @@ io.on('connection', function (socket) {
 
   var gameID = UUID();
 
-  sendPostRequest('http://localhost:4000/db/getstims', {
+  sendPostRequest('http://localhost:5000/db/getstims', {
     json: {
       dbname: 'stimuli', 
       colname: 'sketchpad_basic_pilot2_sketches',
@@ -71,7 +71,7 @@ io.on('connection', function (socket) {
       console.log(`falling back to local stimList`);
       socket.emit('onconnected', { 
         id: gameID, 
-        meta: _.sampleSize(require('./sketchpad_basic_pilot2_sketches.js'), num_trials)
+        meta: _.sampleSize(require('./sketchpad_basic_recog_meta.js'), num_trials)
       }); 
     }
   })
