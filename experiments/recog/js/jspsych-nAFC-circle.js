@@ -62,7 +62,7 @@ window.onload = function() {
   })
 }
 
-jsPsych["nAFC-circle"] = (function() {
+jsPsych.plugins["nAFC-circle"] = (function() {
 
   var plugin = {};
 
