@@ -18,6 +18,12 @@ jsPsych.plugins["nAFC-circle"] = (function() {
 
   var plugin = {};
 
+  plugin.info = {
+    name: 'nAFC-circle',
+    parameters: {      
+    }
+  }
+
   plugin.trial = function(display_element, trial) {
 
     trial = jsPsych.pluginAPI.evaluateFunctionParameters(trial);
