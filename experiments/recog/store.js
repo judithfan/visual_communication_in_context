@@ -52,6 +52,19 @@ function mongoConnectWithRetry(delayInMilliseconds, callback) {
   });
 }
 
+// Keep track of which games have used each stim
+function recordStimUse(stimdb, gameid, idList) {
+  _.forEach(idList, id => {
+    stimdb.update({_id: id}, {
+      $push : {games : gameid},
+      $inc  : {numGames : 1}
+    }, {multi: true}, function(err, items) {
+      // do something when done?
+    });
+  });
+}
+
+
 function serve() {
 
   mongoConnectWithRetry(2000, (connection) => {
