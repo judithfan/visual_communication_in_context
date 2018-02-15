@@ -76,7 +76,7 @@ function serve() {
       if (!request.body) {
         return failure(response, '/db/insert needs post request body');
       }
-      log(`got request to insert into ${request.body.colname}`);
+      console.log(`got request to insert into ${request.body.colname}`);
       
       const databaseName = request.body.dbname;
       const collectionName = request.body.colname;
