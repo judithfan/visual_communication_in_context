@@ -14,6 +14,8 @@
  *
  **/
 
+socket = io.connect();
+
 jsPsych.plugins["nAFC-circle"] = (function() {
 
   var plugin = {};
@@ -83,10 +85,6 @@ jsPsych.plugins["nAFC-circle"] = (function() {
         object_array_images.push(img);
       }
       var trial_over = false;
-
-
-
-
 
       // group object images and add hover animation
       images = paper.g(paper.selectAll('image'));

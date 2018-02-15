@@ -76,7 +76,7 @@ function serve() {
       if (!request.body) {
         return failure(response, '/db/insert needs post request body');
       }
-      log(`got request to insert into ${request.body.colname}`);
+      console.log(`got request to insert into ${request.body.colname}`);
       
       const databaseName = request.body.dbname;
       const collectionName = request.body.colname;
@@ -113,7 +113,7 @@ function serve() {
       if (!request.body) {
         return failure(response, '/db/getstims needs post request body');
       }
-      log(`got request to get stims from ${request.body.dbname}/${request.body.colname}`);
+      console.log(`got request to get stims from ${request.body.dbname}/${request.body.colname}`);
       
       const databaseName = request.body.dbname;
       const collectionName = request.body.colname;
