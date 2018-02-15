@@ -14,54 +14,6 @@
  *
  **/
 
-window.onload = function() { 
-
-  var socket = io.connect();
-  socket.on('onconnected', function(d) {
-    var meta = d.meta;
-    var id = d.id;
-
-    // high level experiment parameter (placeholder)
-    var num_trials = meta.length;
-
-    // define trial list
-    var trials = {  
-      type: 'nAFC-circle',
-      num_trials: num_trials,
-      target: _.map(meta, 'target'),
-      sketch: _.map(meta, function(x) { return './sketch/' + x.filename }),
-      category: _.map(meta, 'category'),
-      distractor1: _.map(meta, 'Distractor1'),
-      distractor2: _.map(meta, 'Distractor2'),
-      distractor3: _.map(meta, 'Distractor3'),
-      context: _.map(meta, 'condition'),
-      draw_duration: _.map(meta, 'drawDuration'),
-      num_strokes: _.map(meta, 'numStrokes'),
-      viewer_correct_in_context: _.map(meta, 'outcome'),
-      viewer_response_in_context: _.map(meta, 'response'),
-      viewer_RT_in_context: _.map(meta, 'viewerRT'),
-      original_gameID: _.map(meta,'gameID'),
-      sketch_size: [220,220],
-      object_size: [80,80],
-      circle_diameter: 800,  
-      options: object_list,
-      set_size: 32
-    };
-
-    function start(){
-      jsPsych.init({
-        display_element: $('#display-area'),
-        experiment_structure: [trials]
-      });
-    }
-
-    initializeJsPsych();
-
-    jsPsych.preloadImages(object_list, start);
-
-  })
-}
-
 jsPsych.plugins["nAFC-circle"] = (function() {
 
   var plugin = {};
