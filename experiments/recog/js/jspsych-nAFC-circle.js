@@ -26,8 +26,6 @@ jsPsych.plugins["nAFC-circle"] = (function() {
 
   plugin.trial = function(display_element, trial) {
 
-    trial = jsPsych.pluginAPI.evaluateFunctionParameters(trial);
-
     // screen information
     var screenw = display_element.width();
     var screenh = display_element.height();
