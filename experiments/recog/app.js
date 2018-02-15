@@ -11,6 +11,10 @@ var
     XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest,
     sendPostRequest = require('request').post;    
 
+
+// define number of trials to fetch from database (what is length of each recog HIT?)
+var num_trials = 10;
+
 var gameport;
 
 if(argv.gameport) {
@@ -52,7 +56,7 @@ io.on('connection', function (socket) {
     json: {
       dbname: 'stimuli', 
       colname: 'sketchpad_basic_pilot2_sketches',
-      numTrials: 10, 
+      numTrials: num_trials, 
       gameid: gameID
     }
   }, (error, res, body) => {
@@ -64,7 +68,11 @@ io.on('connection', function (socket) {
       });  
     } else {
       console.log(`error getting stims: ${error} ${body}`);
-      // console.log(`falling back to local stimList`);          
+      console.log(`falling back to local stimList`);
+      socket.emit('onconnected', { 
+        id: gameID, 
+        meta: _.sampleSize(require('./sketchpad_basic_pilot2_sketches.js'), num_trials);
+      }); 
     }
   }
   })

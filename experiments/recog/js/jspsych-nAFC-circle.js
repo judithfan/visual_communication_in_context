@@ -24,71 +24,38 @@ window.onload = function() {
     // high level experiment parameter (placeholder)
     var num_trials = meta.length;
 
-    // from meta fetched from db to feed into recognition experiment
-    var target_list = [];
-    var sketch_list = [];
-    var category_list = [];
-    var distractor1 = [];
-    var distractor2 = [];
-    var distractor3 = [];
-    var context = [];
-    var draw_duration = [];
-    var num_strokes = [];
-    var viewer_correct_in_context = [];
-    var viewer_response_in_context = [];
-    var viewer_RT_in_context = [];
-    var gameID = [];
-    var original_trial_num = [];
-
-    // construct lists corresponding to length of trial list (until fetching from db)
-    for (var i = 0; i < num_trials; i++) { 
-      target_list[i] = meta[i].target;
-      sketch_list[i] = './sketch/' + meta[i].filename;
-      category_list[i] = meta[i].category;
-      distractor1[i] = meta[i].Distractor1;
-      distractor2[i] = meta[i].Distractor2;
-      distractor3[i] = meta[i].Distractor3;
-      context[i] = meta[i].condition;
-      draw_duration[i] = meta[i].drawDuration;
-      num_strokes[i] = meta[i].numStrokes;
-      viewer_correct_in_context[i] = meta[i].outcome;
-      viewer_response_in_context[i] = meta[i].response;
-      viewer_RT_in_context[i] = meta[i].viewerRT;
-      gameID[i] = meta[i].gameID;
-    }
-
+    // define trial list
     var trials = {  
       type: 'nAFC-circle',
       num_trials: num_trials,
-      target: target_list,
-      sketch: sketch_list,
-      category: category_list,
-      distractor1: distractor1,
-      distractor2: distractor2,
-      distractor3: distractor3,
-      context: context,
-      draw_duration: draw_duration,
-      num_strokes: num_strokes,
-      viewer_correct_in_context: viewer_correct_in_context,
-      viewer_response_in_context: viewer_response_in_context,
-      viewer_RT_in_context: viewer_RT_in_context,
-      gameID: gameID,
-      options: object_list,  
+      target: _.map(meta, 'target'),
+      sketch: _.map(meta, function(x) { return './sketch/' + x.filename }),
+      category: _.map(meta, 'category'),
+      distractor1: _.map(meta, 'Distractor1'),
+      distractor2: _.map(meta, 'Distractor2'),
+      distractor3: _.map(meta, 'Distractor3'),
+      context: _.map(meta, 'condition'),
+      draw_duration: _.map(meta, 'drawDuration'),
+      num_strokes: _.map(meta, 'numStrokes'),
+      viewer_correct_in_context: _.map(meta, 'outcome'),
+      viewer_response_in_context: _.map(meta, 'response'),
+      viewer_RT_in_context: _.map(meta, 'viewerRT'),
+      original_gameID: _.map(meta,'gameID'),
       sketch_size: [220,220],
       object_size: [80,80],
       circle_diameter: 800,  
-      objects: object_list,
+      options: object_list,
       set_size: 32
     };
 
-      function start(){
-        jsPsych.init({
-          display_element: $('#display-area'),
-          experiment_structure: [trials]
-        });
-      }
+    function start(){
+      jsPsych.init({
+        display_element: $('#display-area'),
+        experiment_structure: [trials]
+      });
+    }
 
-      jsPsych.preloadImages(object_list, start);
+    jsPsych.preloadImages(object_list, start);
 
   }
 }
@@ -128,6 +95,13 @@ window.onload = function() {
 
       return trials;
     };
+
+
+
+
+
+
+    
 
     plugin.trial = function(display_element, trial) {
 
