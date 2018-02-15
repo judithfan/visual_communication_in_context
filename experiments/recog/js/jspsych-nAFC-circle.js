@@ -60,7 +60,7 @@ window.onload = function() {
   })
 }
 
-(function($) {
+(function() {
   jsPsych["nAFC-circle"] = (function() {
 
     var plugin = {};
@@ -254,4 +254,4 @@ window.onload = function() {
 
     return plugin;
   })();
-})(jQuery);
+})();
