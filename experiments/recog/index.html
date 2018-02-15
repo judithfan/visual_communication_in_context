@@ -69,7 +69,16 @@
             trials[i].circle_diameter = trials_tmp.circle_diameter || 800;
             trials[i].timing_sketch = (typeof trials_tmp.timing_sketch === 'undefined') ? 100 : trials_tmp.timing_sketch;
             trials[i].options = trials_tmp.options || _.times(trials_tmp.set_size,_.constant('./object/dogs_08_pug_0035.png'))
-			      }
+		      }
+
+          var welcome = {
+              type: 'instructions',
+              pages: [
+                  'Welcome! On each trial, you will see a drawing appear, surrounded by a ring of different objects. Your goal is to select the object in the ring that best matches the drawing. '
+              ],
+              show_clickable_nav: true
+          }
+
 
 	          jsPsych.init({
               timeline: trials,
