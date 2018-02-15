@@ -71,7 +71,7 @@ io.on('connection', function (socket) {
       console.log(`falling back to local stimList`);
       socket.emit('onconnected', { 
         id: gameID, 
-        meta: _.sampleSize(require('./sketchpad_basic_pilot2_sketches.js'), num_trials);
+        meta: _.sampleSize(require('./sketchpad_basic_pilot2_sketches.js'), num_trials)
       }); 
     }
   }
