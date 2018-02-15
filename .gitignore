@@ -8,7 +8,8 @@ models/refModule/json/*.json
 # ignore checkpoints
 *.ipynb_checkpoints
 
-
+# ignore sensitive things
+auth.json
 
 # emacs/node cruft
 *~
