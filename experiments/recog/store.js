@@ -130,20 +130,21 @@ function serve() {
       // collection.aggregate([
       // { $group : {_id : "$numGames", count: { $sum: 1 }}}
       //     ], (err, results) => {console.log('counts...'); });      
-          
+
       // get a random sample of stims that haven't appeared more than k times
       collection.aggregate([
         { $addFields : { numGames: { $size: '$games'} } }, 
         { $sort : { numGames : 1} },  
         { $limit : request.body.numTrials }
-          ], (err, results) => {
-      if(err) {
-        console.log(err);
-      } else {
-        
-        recordStimUse(collection, request.body.gameid, _.map(results, '_id'));
-        response.send(results);
-      }
+      ]).toArray(function(err, results) => {
+        if(err) {
+          console.log(err);
+        } else {
+          console.log('getting results')
+          console.log(results);
+          recordStimUse(collection, request.body.gameid, _.map(results, '_id'));
+          response.send(results);
+        }
       });
     });
 
