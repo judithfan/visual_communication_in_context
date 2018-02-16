@@ -69,7 +69,8 @@
           for (var i = 0; i < tmp.num_trials; i++) {
             k = i+1;
             trials[k] = {type: tmp.type};   
-            trials[k].trial_num = i; // trial number            
+            trials[k].trial_num = i; // trial number 
+            trials[k].gameID = id;           
             trials[k].set_size = tmp.set_size || 32;
             trials[k].num_trials = tmp.num_trials || 10;
             trials[k].target = tmp.target[i];
