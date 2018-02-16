@@ -30,6 +30,13 @@ p {
     clear:both;
 }
 
+#jspsych-nAFC-circle-svg {
+  display: block;
+  margin: auto;
+  position: absolute;
+  left: 50%;
+}
+
 .very-small {
     font-size: 50%;
 }
