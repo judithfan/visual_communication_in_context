@@ -19,7 +19,7 @@
           var meta = d.meta;
           var id = d.id;
 
-          console.log('meta',meta);
+          // console.log('meta',meta);
 
           // high level experiment parameter (placeholder)
           var num_trials = meta.length;
@@ -68,7 +68,8 @@
           // add rest of trials
           for (var i = 0; i < trials_tmp.num_trials; i++) {
             k = i+1;
-            trials[k] = {type: trials_tmp.type};            
+            trials[k].trial_num = i; // trial number
+            trials[k] = {type: trials_tmp.type};   
             trials[k].set_size = trials_tmp.set_size || 32;
             trials[k].num_trials = trials_tmp.num_trials || 10;
             trials[k].target = trials_tmp.target[i];
@@ -93,7 +94,7 @@
             trials[k].options = trials_tmp.options || _.times(trials_tmp.set_size,_.constant('./object/dogs_08_pug_0035.png'))
 		      }
 
-          console.log('trials',trials);
+          // console.log('trials',trials);
 
           jsPsych.init({
             timeline: trials,

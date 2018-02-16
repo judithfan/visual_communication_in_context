@@ -28,9 +28,9 @@ jsPsych.plugins["nAFC-circle"] = (function() {
 
   plugin.trial = function(display_element, trial) {
 
-      // screen information
-      var screenw = $(display_element).width();
-      var screenh = $(display_element).height();
+    // screen information
+    var screenw = $(display_element).width();
+    var screenh = $(display_element).height();
     var centerx = screenw / 2;
     var centery = screenh / 2;
 
@@ -136,10 +136,20 @@ jsPsych.plugins["nAFC-circle"] = (function() {
 
     function end_trial(rt, correct, choice) {
 
+      var turkInfo = jsPsych.turk.turkInfo();
+
+      // workerID
+      var wID = turkInfo.workerId;
+      // hitID
+      var hitID = turkInfo.hitId;
+      // assignmentID
+      var aID = turkInfo.assignmentId;
+
       // data saving
-      var current_data = {
+      var current_data = {        
         dbname: '3dObjects', 
-        colname: 'sketchpad_basic_recog',        
+        colname: 'sketchpad_basic_recog',
+        trial_num: trial.trial_num,        
         rt: rt,
         correct: correct,          
         choice: choice.split('/')[2].split('.')[0],
@@ -157,6 +167,9 @@ jsPsych.plugins["nAFC-circle"] = (function() {
         viewer_response_in_context: trial.viewer_response_in_context,
         viewer_RT_in_context: trial.viewer_RT_in_context,
         gameID: trial.gameID,
+        wID: wID,
+        hitID: hitID,
+        aID: aID,
         object_size: trial.object_size,
         sketch_size: trial.sketch_size,
         circle_diameter: trial.circle_diameter
