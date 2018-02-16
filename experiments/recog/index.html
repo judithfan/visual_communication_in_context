@@ -50,7 +50,7 @@
             timing_objects: 1000
           };
 
-          var trials = new Array(trials_tmp.options.length + 1);
+          var trials = new Array(trials_tmp.num_trials + 1);
 
           // add welcome page
           var welcome = {
@@ -65,7 +65,7 @@
           trials[0] = welcome;
 
           // add rest of trials
-          for (var i = 1; i < trials_tmp.options.length + 1; i++) {
+          for (var i = 1; i < trials_tmp.num_trials + 1; i++) {
             trials[i] = {type: trials_tmp.type};            
             trials[i].set_size = trials_tmp.set_size || 32;
             trials[i].num_trials = trials_tmp.num_trials || 10;
