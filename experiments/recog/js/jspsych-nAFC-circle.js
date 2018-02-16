@@ -22,7 +22,7 @@ jsPsych.plugins["nAFC-circle"] = (function() {
 
   plugin.info = {
     name: 'nAFC-circle',
-    parameters: {      
+    parameters: {
     }
   }
 
@@ -46,7 +46,7 @@ jsPsych.plugins["nAFC-circle"] = (function() {
     // stimuli width, height
     var stimh = trial.object_size[0];
     var stimw = trial.object_size[1];
-    var hstimh = stimh / 2; 
+    var hstimh = stimh / 2;
     var hstimw = stimw / 2;
 
     // sketch location
@@ -69,7 +69,7 @@ jsPsych.plugins["nAFC-circle"] = (function() {
     var paper = Snap('#jspsych-nAFC-circle-svg');
 
     // wait
-    setTimeout(function() {show_object_array(); }, trial.timing_objects);     
+    setTimeout(function() {show_object_array(); }, trial.timing_objects);
 
     function show_sketch() {
       // show sketch
@@ -110,16 +110,16 @@ jsPsych.plugins["nAFC-circle"] = (function() {
         trial_over = true;
         // measure rt
         var end_time = Date.now();
-        var rt = end_time - start_time;                    
+        var rt = end_time - start_time;
         bare_choice = choice.split('/')[2].split('.')[0];
         console.log('choice',bare_choice);
-        console.log('target',trial.target);         
+        console.log('target',trial.target);
         var correct = 0;
         if (bare_choice == trial.target) {
           correct = 1;
         }
         clear_display();
-        end_trial(rt, correct, choice); 
+        end_trial(rt, correct, choice);
       }
 
       function clear_display() {
@@ -130,7 +130,7 @@ jsPsych.plugins["nAFC-circle"] = (function() {
       setTimeout(function() {
         // after wait is over
         show_sketch();
-      }, trial.timing_sketch);        
+      }, trial.timing_sketch);
 
     }
 
@@ -146,12 +146,12 @@ jsPsych.plugins["nAFC-circle"] = (function() {
       var aID = turkInfo.assignmentId;
 
       // data saving
-      var current_data = {        
-        dbname: '3dObjects', 
+      var current_data = {
+        dbname: '3dObjects',
         colname: 'sketchpad_basic_recog',
-        trial_num: trial.trial_num,        
+        trial_num: trial.trial_num,
         rt: rt,
-        correct: correct,          
+        correct: correct,
         choice: choice.split('/')[2].split('.')[0],
         locations: JSON.stringify(display_locs),
         sketch: trial.sketch,
@@ -166,7 +166,7 @@ jsPsych.plugins["nAFC-circle"] = (function() {
         viewer_correct_in_context: trial.viewer_correct_in_context,
         viewer_response_in_context: trial.viewer_response_in_context,
         viewer_RT_in_context: trial.viewer_RT_in_context,
-        gameID: trial.gameID,        
+        gameID: trial.gameID,
         original_gameID: trial.original_gameID,
         original_trialNum: trial.original_trialNum,
         wID: wID,
@@ -184,12 +184,15 @@ jsPsych.plugins["nAFC-circle"] = (function() {
       jsPsych.data.write(current_data);
 
       // send data to server to write to database
-      socket.emit('current_data', current_data);      
+      socket.emit('current_data', current_data);
 
       // go to next trial
       jsPsych.finishTrial();
+
     }
   };
+
+
 
   // helper function for determining stimulus locations
 

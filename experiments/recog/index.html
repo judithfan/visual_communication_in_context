@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
   <head>
-    <script type="text/javascript" src="/socket.io/socket.io.js"></script>       
+    <script type="text/javascript" src="/socket.io/socket.io.js"></script>
     <script src="js/jquery.min.js"></script>
     <script src="js/snap.svg-min.js"></script>
     <script src="js/jspsych.js"></script>
@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="./custom.css"></link>
 
     <script>
-      window.onload = function() { 
+      window.onload = function() {
 
         var socket = io.connect();
         socket.on('onconnected', function(d) {
@@ -25,7 +25,7 @@
           var num_trials = meta.length;
 
           // define trial list
-          var tmp = {  
+          var tmp = {
             type: 'nAFC-circle',
             num_trials: num_trials,
             target: _.map(meta, 'target'),
@@ -44,14 +44,14 @@
             original_trialNum:_.map(meta,'trialNum'),
             sketch_size: [220,220],
             object_size: [70,70],
-            circle_diameter: 800,  
+            circle_diameter: 800,
             options: object_list,
             set_size: 32,
             timing_sketch: 100,
             timing_objects: 1000
           };
 
-          var trials = new Array(tmp.num_trials + 1);
+          var trials = new Array(tmp.num_trials + 2);
 
           // add welcome page
           var welcome = {
@@ -65,12 +65,23 @@
           }
           trials[0] = welcome;
 
+          var goodbye = {
+            type: 'instructions',
+            pages: [
+              'Thanks for participating in our experiment! You are all done. Please click the button to submit this HIT.'
+            ],
+            show_clickable_nav: true,
+            on_finish: end_of_experiment();
+          }
+          g = tmp.num_trials + 2;
+          trials[g] = goodbye;
+
           // add rest of trials
           for (var i = 0; i < tmp.num_trials; i++) {
             k = i+1;
-            trials[k] = {type: tmp.type};   
-            trials[k].trial_num = i; // trial number 
-            trials[k].gameID = id;           
+            trials[k] = {type: tmp.type};
+            trials[k].trial_num = i; // trial number
+            trials[k].gameID = id;
             trials[k].set_size = tmp.set_size || 32;
             trials[k].num_trials = tmp.num_trials || 10;
             trials[k].target = tmp.target[i];
@@ -101,21 +112,32 @@
             timeline: trials,
             default_iti: 1000,
             show_progress_bar: true
-          });          
+          });
 
         })
-      }      
+      }
 
     window.onbeforeunload = function() {
       return "Data will be lost if you leave the page, are you sure?";
     };
 
+    function end_experiment() {
+      var aID = turkInfo.assignmentId;
+      var data = "data saved to mongo";
+      console.log('posting results to mturk');
+      document.getElementById("assignmentId").value = aID;
+      document.getElementById("data").value = JSON.stringify(data);
+      document.getElementById("postdata").submit();
+    }
+
 
     </script>
-
-
   </head>
   <body>
     <div id="display-area"></div>
+    <form style="visibility:hidden" id="postdata" action="https://www.mturk.com/mturk/externalSubmit" method="post">
+       <input type="text" name="data" id="data" value="">
+       <input type="text" name="assignmentId" id="assignmentId" value="">
+    </form>
   </body>
 </html>
