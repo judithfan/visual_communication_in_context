@@ -127,10 +127,6 @@ function serve() {
       const database = connection.db(databaseName);
       const collection = database.collection(collectionName);
 
-      // collection.aggregate([
-      // { $group : {_id : "$numGames", count: { $sum: 1 }}}
-      //     ], (err, results) => {console.log('counts...'); });      
-
       // get a random sample of stims that haven't appeared more than k times
       collection.aggregate([
         { $addFields : { numGames: { $size: '$games'} } }, 

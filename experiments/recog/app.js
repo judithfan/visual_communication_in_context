@@ -56,6 +56,7 @@ io.on('connection', function (socket) {
 
   // get stims and assign gameID
   startGame(socket);
+  console.log('startGame fired...');
 
 })
 
