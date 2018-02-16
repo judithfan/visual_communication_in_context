@@ -65,9 +65,8 @@ jsPsych.plugins["nAFC-circle"] = (function() {
     }
 
     // get target to draw on
-    display_element.innerHTML += '<svg id="jspsych-nAFC-circle-svg" width=' + paper_size + ' height=' + paper_size + '></svg>';
+    display_element.innerHTML += '<svg id="jspsych-nAFC-circle-svg" width=' + paper_size + ' height=' + paper_size + '></svg> ';
     var paper = Snap('#jspsych-nAFC-circle-svg');
-
 
     // wait
     setTimeout(function() {show_object_array(); }, trial.timing_objects);     
