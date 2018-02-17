@@ -71,11 +71,11 @@
               'Thanks for participating in our experiment! You are all done. Please click the button to submit this HIT.'
             ],
             show_clickable_nav: true,
-            on_finish: end_of_experiment();
+            on_finish: function() { end_experiment();}
           }
-          g = tmp.num_trials + 2;
+          g = tmp.num_trials + 1;
           trials[g] = goodbye;
-
+      
           // add rest of trials
           for (var i = 0; i < tmp.num_trials; i++) {
             k = i+1;
@@ -106,7 +106,7 @@
             trials[k].options = tmp.options || _.times(tmp.set_size,_.constant('./object/dogs_08_pug_0035.png'))
 		      }
 
-          // console.log('trials',trials);
+          console.log('trials',trials);
 
           jsPsych.init({
             timeline: trials,
@@ -122,6 +122,7 @@
     };
 
     function end_experiment() {
+      var turkInfo = jsPsych.turk.turkInfo();
       var aID = turkInfo.assignmentId;
       var data = "data saved to mongo";
       console.log('posting results to mturk');
