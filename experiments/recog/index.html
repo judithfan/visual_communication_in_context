@@ -71,11 +71,11 @@
               'Thanks for participating in our experiment! You are all done. Please click the button to submit this HIT.'
             ],
             show_clickable_nav: true,
-            on_finish: function() { end_experiment();}
+            on_finish: function() { sendData();}
           }
           g = tmp.num_trials + 1;
           trials[g] = goodbye;
-      
+
           // add rest of trials
           for (var i = 0; i < tmp.num_trials; i++) {
             k = i+1;
@@ -121,24 +121,17 @@
       return "Data will be lost if you leave the page, are you sure?";
     };
 
-    function end_experiment() {
-      var turkInfo = jsPsych.turk.turkInfo();
-      var aID = turkInfo.assignmentId;
-      var data = "data saved to mongo";
-      console.log('posting results to mturk');
-      document.getElementById("assignmentId").value = aID;
-      document.getElementById("data").value = JSON.stringify(data);
-      document.getElementById("postdata").submit();
+    function sendData() {
+      console.log('sending data to mturk');
+      jsPsych.turk.submitToTurk({
+        code: "code"
+      });
     }
-
 
     </script>
   </head>
   <body>
     <div id="display-area"></div>
-    <form style="visibility:hidden" id="postdata" action="https://www.mturk.com/mturk/externalSubmit" method="post">
-       <input type="text" name="data" id="data" value="">
-       <input type="text" name="assignmentId" id="assignmentId" value="">
-    </form>
+
   </body>
 </html>
