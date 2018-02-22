@@ -8,12 +8,12 @@ var speakerModel = function(targetObj, context, params, config) {
   var similarity = function(sketch, object) {
     return (config.similarities[params.perception][object][sketch] + 1)/2;
   };
-  
+
   // Sees sketch and selects among objects in context using similarity
   var literalListener = function(sketch, context){
     return Infer({method:'enumerate', model: function(){
       var object = uniformDraw(context);
-      factor(params.simScaling * similarity(sketch, object)); 
+      factor(params.simScaling * similarity(sketch, object));
       return object;
     }});
   };
@@ -33,7 +33,7 @@ var speakerModel = function(targetObj, context, params, config) {
       console.error('unknown pragmatics model:' + params.pragmatics);
     }
   };
-  
+
   // Selects among sketches given raw similarity to target (ignoring context)
   var speaker = function(targetObj, context) {
     var similarities = config.similarities[params.perception];

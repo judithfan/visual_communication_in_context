@@ -34,13 +34,13 @@ function _logsumexp(a) {
   return m + Math.log(sum);
 }
 
-// P(target | sketch) \propto e^{scale * sim(t, s)}
+// P(target | sketch) = e^{scale * sim(t, s)} / (\sum_{i} e^{scale * sim(t, s)})
 // => log(p) = scale * sim(target, sketch) - log(\sum_{i} e^{scale * sim(t, s)})
 var getL0score = function(target, sketch, context, params, config) {
   var similarities = config.similarities[params.perception];
   var scores = [];
   for(var i=0; i<context.length; i++){
-    var similarity = (similarities[context[i]][sketch] + 1) / 2;
+    var similarity = (similarities[context[i]][sketch] + 1) / 2; // transform to range from 0 to 1
     scores.push(params.simScaling * similarity);
   }
   var similarity = (similarities[target][sketch] + 1) /2;
@@ -62,7 +62,7 @@ var informativity = function(targetObj, sketch, context, params, config) {
 
 // note using logsumexp here isn't strictly necessary, because all the scores
 // are *negative* (informativity is log(p of listener)) and there aren't
-// enough terms for precision to matter... 
+// enough terms for precision to matter...
 var getSpeakerScore = function(trueSketch, targetObj, context, params, config) {
   var possibleSketches = config.possibleSketches;
   var costw = params.costWeight;
@@ -74,7 +74,7 @@ var getSpeakerScore = function(trueSketch, targetObj, context, params, config) {
     var inf = informativity(targetObj, sketch, context, params, config);
     var cost = config.costs[sketch];
     var utility = (1 - costw) * inf + costw * (1 - cost);
-    // if rounding error makes true utility <= 0, log isn't defined...    
+    // if rounding error makes true utility <= 0, log isn't defined...
     scores.push(params.alpha * utility);//Math.log(Math.max(utility, Number.EPSILON)));
   }
   var trueUtility = ((1-costw) * informativity(targetObj, trueSketch, context, params, config)
@@ -117,7 +117,7 @@ var predictiveSupportWriter = function(s, p, handle) {
 // Note this is highly specific to a single type of erp
 var bayesianErpWriter = function(erp, filePrefix) {
   var supp = erp.support();
-  
+
   if(_.has(supp[0], 'predictives')) {
     var predictiveFile = fs.openSync(filePrefix + "Predictives.csv", 'w');
     fs.writeSync(predictiveFile, ['game', "condition", 'trueSketch', "Target",
@@ -131,7 +131,7 @@ var bayesianErpWriter = function(erp, filePrefix) {
 			     "simScaling", "pragWeight","costWeight",
 			     "logLikelihood", "posteriorProb"] + '\n');
   }
-  
+
   supp.forEach(function(s) {
     if(_.has(s, 'predictives'))
       predictiveSupportWriter(s.predictives, erp.score(s), predictiveFile);
