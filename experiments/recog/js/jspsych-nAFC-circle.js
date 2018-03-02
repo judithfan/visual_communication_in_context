@@ -38,7 +38,7 @@ jsPsych.plugins["nAFC-circle"] = (function() {
     var start_time = Date.now();
 
     // grid params
-    var num_cells = 8;
+    var num_cells = 6;
     var paper_size = trial.grid_size;
     var cell_size = Math.floor(trial.grid_size / num_cells);
 
@@ -49,7 +49,7 @@ jsPsych.plugins["nAFC-circle"] = (function() {
     var hstimw = stimw / 2;
 
     // sketch location
-    var fix_loc = [Math.floor(paper_size / 2 - trial.sketch_size[0] / 2), Math.floor(paper_size / 2 - trial.sketch_size[1] / 2)];
+    var fix_loc = [Math.floor(paper_size / 2 - trial.sketch_size[0] / 4), Math.floor(paper_size / 2 - trial.sketch_size[1] / 4)];
 
     // possible stimulus locations on the circle
     var display_locs = [];
@@ -82,7 +82,7 @@ jsPsych.plugins["nAFC-circle"] = (function() {
     coordsTL = remove_one_coord(coords,excluded);
 
     // top right
-    xrange = _.map(_.range(cell_size*5,paper_size,cell_size), function(x) {return x + hstimw});
+    xrange = _.map(_.range(cell_size*3,cell_size*6,cell_size), function(x) {return x + hstimw});
     yrange = _.map(_.range(0,cell_size*3,cell_size), function(x) {return x + hstimw});
     excluded = [Math.min.apply(null,xrange),Math.max.apply(null,yrange)];
     coords = get_grid_coords(xrange,yrange);
@@ -90,14 +90,14 @@ jsPsych.plugins["nAFC-circle"] = (function() {
 
     // bottom left
     xrange = _.map(_.range(0,cell_size*3,cell_size), function(x) {return x + hstimw});
-    yrange = _.map(_.range(cell_size*5,paper_size,cell_size), function(x) {return x + hstimw});
+    yrange = _.map(_.range(cell_size*3,cell_size*6,cell_size), function(x) {return x + hstimw});
     excluded = [Math.max.apply(null,xrange),Math.min.apply(null,yrange)];
     coords = get_grid_coords(xrange,yrange);
     coordsBL = remove_one_coord(coords,excluded);
 
     // bottom right
-    xrange = _.map(_.range(cell_size*5,paper_size,cell_size), function(x) {return x + hstimw});
-    yrange = _.map(_.range(cell_size*5,paper_size,cell_size), function(x) {return x + hstimw});
+    xrange = _.map(_.range(cell_size*3,cell_size*6,cell_size), function(x) {return x + hstimw});
+    yrange = _.map(_.range(cell_size*3,cell_size*6,cell_size), function(x) {return x + hstimw});
     excluded = [Math.min.apply(null,xrange),Math.min.apply(null,yrange)];
     coords = get_grid_coords(xrange,yrange);
     coordsBR = remove_one_coord(coords,excluded);
@@ -106,7 +106,8 @@ jsPsych.plugins["nAFC-circle"] = (function() {
     console.log(display_locs);
 
     // get target to draw on
-    display_element.innerHTML += '<svg id="jspsych-nAFC-circle-svg" width=' + paper_size+100 + ' height=' + paper_size+100 + '></svg> ';
+    var bound = parseFloat(paper_size) + 80;
+    display_element.innerHTML += '<svg id="jspsych-nAFC-circle-svg" width=' + bound + ' height=' + bound + '></svg> ';
     var paper = Snap('#jspsych-nAFC-circle-svg');
 
     // wait

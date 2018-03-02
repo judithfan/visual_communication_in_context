@@ -46,7 +46,7 @@
             original_trialNum:_.map(meta,'trialNum'),
             sketch_size: [200,200],
             object_size: [100,100],
-            grid_size: 800,
+            grid_size: 600,
             options: object_list,
             set_size: 32,
             timing_sketch: 100,
@@ -55,18 +55,30 @@
 
           var trials = new Array(tmp.num_trials + 2);
 
+          //<p><b> Please note that if you have recently completed any HIT from this requester (Sketchloop Admin), you will be unable to participate in this HIT. We apologize in advance, and thank you for your interest! </b></p>
+          consentHTML = {
+            'str1' : '<p>In this HIT, you will see some sketches. For each sketch, you will try to guess which of several objects is the best match. </p>',
+            'str2' : '<p>We expect the average game to last approximately 5 minutes, including the time it takes to read instructions.</p>',
+            'str3' : "<p>If you encounter a problem or error, send us an email (sketchloop@gmail.com) and we will make sure you're compensated for your time! Please pay attention and do your best! Thank you!</p><p> Note: We recommend using Chrome. We have not tested this HIT in other browsers.</p>",
+            'str4' : ["<u><p id='legal'>Consenting to Participate:</p></u>",
+                      "<p id='legal'>By completing this HIT, you are participating in a study being performed by cognitive scientists in the Stanford Department of Psychology. If you have questions about this research, please contact the <b>Sketchloop Admin</b> at <b><a href='mailto://sketchloop@gmail.com'>sketchloop@gmail.com</a> </b> or Noah Goodman (ngoodman at stanford dot edu) You must be at least 18 years old to participate. Your participation in this research is voluntary. You may decline to answer any or all of the following questions. You may decline further participation, at any time, without adverse consequences. Your anonymity is assured; the researchers who have requested your participation will not receive any personal information about you.</p>"].join(' ')
+          }
           // add welcome page
-          str1 = 'Welcome! On each trial, you will see a drawing appear, surrounded by an grid of different objects. Your goal is to select the object in the grid that best matches the drawing.'
-          str2 = ' Hover over objects with the mouse cursor to enlarge them, and click the enlarged object only once you have made your final selection. It is very important that you consider the options carefully and try your best!'
-          str3 = ' Please note that once you are finished, the HIT will be automatically submitted for approval. Thanks!'
 
+          str1 = "<p> Here's how the game will work: On each trial, you will see a drawing appear, surrounded by an grid of different objects. Your goal is to select the object in the grid that best matches the drawing. </p>"
+          str2 = ' <p> Hover over objects with the mouse cursor to enlarge them, and click the enlarged object only once you have made your final selection. It is very important that you consider the options carefully and try your best! </p>'
+          str3 = "<p> Please note that once you are finished, the HIT will be automatically submitted for approval. Let's begin! </p>"
 
           var welcome = {
               type: 'instructions',
               pages: [
-                str1,
-                str1 + str2,
-                str1 + str2 + str3
+                consentHTML.str1,
+                // consentHTML.str2,
+                // consentHTML.str3,
+                // consentHTML.str4,
+                // str1,
+                // str2,
+                // str3
               ],
               show_clickable_nav: true
           }
@@ -139,6 +151,5 @@
   </head>
   <body>
     <div id="display-area"></div>
-
   </body>
 </html>
