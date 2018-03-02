@@ -69,7 +69,7 @@ function serve() {
 
   mongoConnectWithRetry(2000, (connection) => {
 
-    app.use(bodyParser.json()); 
+    app.use(bodyParser.json());
     app.use(bodyParser.urlencoded({ extended: true}));
 
     app.post('/db/insert', (request, response) => {
@@ -77,7 +77,7 @@ function serve() {
         return failure(response, '/db/insert needs post request body');
       }
       console.log(`got request to insert into ${request.body.colname}`);
-      
+
       const databaseName = request.body.dbname;
       const collectionName = request.body.colname;
       if (!collectionName) {
@@ -88,7 +88,7 @@ function serve() {
       }
 
       const database = connection.db(databaseName);
-      
+
       // Add collection if it doesn't already exist
       if (!database.collection(collectionName)) {
         console.log('creating collection ' + collectionName);
@@ -114,7 +114,7 @@ function serve() {
         return failure(response, '/db/getstims needs post request body');
       }
       console.log(`got request to get stims from ${request.body.dbname}/${request.body.colname}`);
-      
+
       const databaseName = request.body.dbname;
       const collectionName = request.body.colname;
       if (!collectionName) {
@@ -129,13 +129,13 @@ function serve() {
 
       // get a random sample of stims that haven't appeared more than k times
       collection.aggregate([
-        { $addFields : { numGames: { $size: '$games'} } }, 
-        { $sort : { trialNum: 1, numGames : 1} },  
+        { $addFields : { numGames: { $size: '$games'} } },
+        { $sort : { trialNum: 1, numGames : 1} },
         { $limit : request.body.numTrials }
       ]).toArray( (err, results) => {
         if(err) {
           console.log(err);
-        } else {                    
+        } else {
           recordStimUse(collection, request.body.gameid, _.map(results, '_id'));
           response.send(results);
         }
@@ -147,10 +147,9 @@ function serve() {
     app.listen(port, () => {
       log(`running at http://localhost:${port}`);
     });
-    
+
   });
-  
+
 }
 
 serve();
-

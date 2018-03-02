@@ -37,11 +37,12 @@ jsPsych.plugins["nAFC-circle"] = (function() {
     // initialize start_time timestamp
     var start_time = Date.now();
 
-    // circle params
-    var diam = trial.circle_diameter; // pixels
-    var shrinkage = 0.94; // amount by which to shrink the radius of the circle to not spill off paper
-    var radi = diam / 2 * shrinkage;
-    var paper_size = diam + trial.object_size[0];
+    // grid params
+    var num_cells = 8;
+    var paper_size = trial.grid_size;
+    var cell_size = Math.floor(trial.grid_size / num_cells);
+    console.log('trial.grid_size',trial.grid_size);
+    console.log('cell_size',cell_size);
 
     // stimuli width, height
     var stimh = trial.object_size[0];
@@ -54,15 +55,56 @@ jsPsych.plugins["nAFC-circle"] = (function() {
 
     // possible stimulus locations on the circle
     var display_locs = [];
-    var possible_display_locs = trial.set_size;
-    // var random_offset = Math.floor(Math.random() * 360);
-    var random_offset = 0;
-    for (var i = 0; i < possible_display_locs; i++) {
-      display_locs.push([
-        Math.floor(paper_size / 2 + (cosd(random_offset + (i * (360 / possible_display_locs))) * radi) - hstimw),
-        Math.floor(paper_size / 2 - (sind(random_offset + (i * (360 / possible_display_locs))) * radi) - hstimh)
-      ]);
+
+    function get_grid_coords(xrange,yrange) {
+      var coords = [];
+      for (var i = 0; i < xrange.length; i++) {
+        for (var j = 0; j < yrange.length; j++) {
+          coords.push([xrange[i],yrange[j]]);
+        }
+      }
+      return coords;
     }
+
+    function remove_one_coord(coords,excluded) {
+      var tmp = [];
+      for (var i = 0; i < coords.length; i++) {
+        if (!(coords[i][0] == excluded[0] && coords[i][1] == excluded[1])) {
+          tmp.push(coords[i]);
+        }
+      }
+      return tmp;
+    }
+
+    // top left group
+    xrange = _.map(_.range(0,cell_size*3,cell_size), function(x) {return x + hstimw});
+    yrange = _.map(_.range(0,cell_size*3,cell_size), function(x) {return x + hstimw});
+    excluded = [Math.max.apply(null,xrange),Math.max.apply(null,yrange)];
+    coords = get_grid_coords(xrange,yrange);
+    coordsTL = remove_one_coord(coords,excluded);
+
+    // top right
+    xrange = _.map(_.range(cell_size*5,paper_size,cell_size), function(x) {return x + hstimw});
+    yrange = _.map(_.range(0,cell_size*3,cell_size), function(x) {return x + hstimw});
+    excluded = [Math.min.apply(null,xrange),Math.max.apply(null,yrange)];
+    coords = get_grid_coords(xrange,yrange);
+    coordsTR = remove_one_coord(coords,excluded);
+
+    // bottom left
+    xrange = _.map(_.range(0,cell_size*3,cell_size), function(x) {return x + hstimw});
+    yrange = _.map(_.range(cell_size*5,paper_size,cell_size), function(x) {return x + hstimw});
+    excluded = [Math.max.apply(null,xrange),Math.min.apply(null,yrange)];
+    coords = get_grid_coords(xrange,yrange);
+    coordsBL = remove_one_coord(coords,excluded);
+
+    // bottom right
+    xrange = _.map(_.range(cell_size*5,paper_size,cell_size), function(x) {return x + hstimw});
+    yrange = _.map(_.range(cell_size*5,paper_size,cell_size), function(x) {return x + hstimw});
+    excluded = [Math.min.apply(null,xrange),Math.min.apply(null,yrange)];
+    coords = get_grid_coords(xrange,yrange);
+    coordsBR = remove_one_coord(coords,excluded);
+
+    var display_locs = coordsTL.concat(coordsTR).concat(coordsBL).concat(coordsBR);
 
     // get target to draw on
     display_element.innerHTML += '<svg id="jspsych-nAFC-circle-svg" width=' + paper_size + ' height=' + paper_size + '></svg> ';
@@ -174,7 +216,7 @@ jsPsych.plugins["nAFC-circle"] = (function() {
         aID: aID,
         object_size: trial.object_size,
         sketch_size: trial.sketch_size,
-        circle_diameter: trial.circle_diameter
+        grid_size: trial.grid_size
       };
 
       console.log(current_data);

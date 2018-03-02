@@ -14,6 +14,8 @@
     <script>
       window.onload = function() {
 
+        // number of trials to fetch from database is defined in ./app.js
+
         var socket = io.connect();
         socket.on('onconnected', function(d) {
           var meta = d.meta;
@@ -42,9 +44,9 @@
             viewer_RT_in_context: _.map(meta, 'viewerRT'),
             original_gameID: _.map(meta,'gameID'),
             original_trialNum:_.map(meta,'trialNum'),
-            sketch_size: [220,220],
-            object_size: [70,70],
-            circle_diameter: 800,
+            sketch_size: [200,200],
+            object_size: [100,100],
+            grid_size: 800,
             options: object_list,
             set_size: 32,
             timing_sketch: 100,
@@ -54,12 +56,17 @@
           var trials = new Array(tmp.num_trials + 2);
 
           // add welcome page
+          str1 = 'Welcome! On each trial, you will see a drawing appear, surrounded by an array of different objects. Your goal is to select the object in the ring that best matches the drawing.'
+          str2 = ' Hover over objects with the mouse cursor to enlarge them, and click the enlarged object only once you have made your final selection. It is very important that you consider the options carefully and try your best!'
+          str3 = ' Please note that once you are finished, the HIT will be automatically submitted for approval. Thanks!'
+
+
           var welcome = {
               type: 'instructions',
               pages: [
-                  'Welcome! On each trial, you will see a drawing appear, surrounded by an array of different objects. Your goal is to select the object in the ring that best matches the drawing.'.bold(),
-                  'Welcome! On each trial, you will see a drawing appear, surrounded by an array of different objects. Your goal is to select the object in the ring that best matches the drawing.' + ' Hover over objects with the mouse cursor to enlarge them, and click the enlarged object only once you have made your final selection. It is very important that you consider the options carefully and try your best!'.bold(),
-                  'Welcome! On each trial, you will see a drawing appear, surrounded by an array of different objects. Your goal is to select the object in the ring that best matches the drawing. Hover over objects with the mouse cursor to enlarge them, and click the enlarged object only once you have made your final selection. It is very important that you consider the options carefully and try your best!' + ' Please note that Once you are finished, the HIT will be automatically submitted for approval. Thanks!'.bold()
+                str1,
+                str1 + str2,
+                str1 + str2 + str3
               ],
               show_clickable_nav: true
           }
@@ -100,7 +107,7 @@
             trials[k].original_trialNum = tmp.original_trialNum[i],
             trials[k].object_size = tmp.object_size || [80, 80];
             trials[k].sketch_size = tmp.sketch_size || [220, 220];
-            trials[k].circle_diameter = tmp.circle_diameter || 800;
+            trials[k].grid_size = tmp.grid_size || 800;
             trials[k].timing_sketch = (typeof tmp.timing_sketch === 'undefined') ? 100 : tmp.timing_sketch;
             trials[k].timing_objects = (typeof tmp.timing_objects === 'undefined') ? 1000 : tmp.timing_objects;
             trials[k].options = tmp.options || _.times(tmp.set_size,_.constant('./object/dogs_08_pug_0035.png'))

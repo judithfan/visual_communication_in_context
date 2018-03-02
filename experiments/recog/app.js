@@ -1,6 +1,6 @@
 global.__base = __dirname + '/';
 
-var 
+var
     use_https     = true,
     argv          = require('minimist')(process.argv.slice(2)),
     https         = require('https'),
@@ -9,11 +9,11 @@ var
     _             = require('lodash'),
     parser        = require('xmldom').DOMParser,
     XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest,
-    sendPostRequest = require('request').post;    
+    sendPostRequest = require('request').post;
 
 
 // define number of trials to fetch from database (what is length of each recog HIT?)
-var num_trials = 10;
+var num_trials = 64;
 
 var gameport;
 
@@ -39,12 +39,8 @@ try {
 }
 
 app.get('/*', (req, res) => {
-  serveFile(req, res); 
+  serveFile(req, res);
 });
-
-
-
-
 
 io.on('connection', function (socket) {
 
@@ -63,7 +59,7 @@ io.on('connection', function (socket) {
 var serveFile = function(req, res) {
   var fileName = req.params[0];
   console.log('\t :: Express :: file requested: ' + fileName);
-  return res.sendFile(fileName, {root: __dirname}); 
+  return res.sendFile(fileName, {root: __dirname});
 };
 
 var UUID = function() {
@@ -86,25 +82,25 @@ function startGame(socket) {
 
   sendPostRequest('http://localhost:5000/db/getstims', {
     json: {
-      dbname: 'stimuli', 
+      dbname: 'stimuli',
       colname: 'sketchpad_basic_pilot2_sketches',
-      numTrials: num_trials, 
+      numTrials: num_trials,
       gameid: gameID
     }
   }, (error, res, body) => {
     if (!error && res.statusCode === 200) {
       // upon connecting, tell the client some stuff
-      socket.emit('onconnected', { 
-        id: gameID, 
-        meta: _.shuffle(body) 
-      });  
+      socket.emit('onconnected', {
+        id: gameID,
+        meta: _.shuffle(body)
+      });
     } else {
       console.log(`error getting stims: ${error} ${body}`);
       console.log(`falling back to local stimList`);
-      socket.emit('onconnected', { 
-        id: gameID, 
+      socket.emit('onconnected', {
+        id: gameID,
         meta: _.sampleSize(require('./sketchpad_basic_recog_meta.js'), num_trials)
-      }); 
+      });
     }
   });
 
