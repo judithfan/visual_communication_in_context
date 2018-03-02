@@ -41,8 +41,6 @@ jsPsych.plugins["nAFC-circle"] = (function() {
     var num_cells = 8;
     var paper_size = trial.grid_size;
     var cell_size = Math.floor(trial.grid_size / num_cells);
-    console.log('trial.grid_size',trial.grid_size);
-    console.log('cell_size',cell_size);
 
     // stimuli width, height
     var stimh = trial.object_size[0];
@@ -105,9 +103,10 @@ jsPsych.plugins["nAFC-circle"] = (function() {
     coordsBR = remove_one_coord(coords,excluded);
 
     var display_locs = coordsTL.concat(coordsTR).concat(coordsBL).concat(coordsBR);
+    console.log(display_locs);
 
     // get target to draw on
-    display_element.innerHTML += '<svg id="jspsych-nAFC-circle-svg" width=' + paper_size + ' height=' + paper_size + '></svg> ';
+    display_element.innerHTML += '<svg id="jspsych-nAFC-circle-svg" width=' + paper_size+100 + ' height=' + paper_size+100 + '></svg> ';
     var paper = Snap('#jspsych-nAFC-circle-svg');
 
     // wait
@@ -132,7 +131,7 @@ jsPsych.plugins["nAFC-circle"] = (function() {
       // group object images and add hover animation
       images = paper.g(paper.selectAll('image'));
       images.selectAll('image').forEach( function( el, index ) {
-         el.hover( function() { el.animate({ transform: 's2,2' }, 100, mina.easein); },
+         el.hover( function() { el.animate({ transform: 's1.7,1.7' }, 100, mina.easein); },
                    function() { el.animate({ transform: 's1,1' }, 100 , mina.easein); }
           )
       } );
