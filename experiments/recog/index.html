@@ -26,6 +26,10 @@
           // high level experiment parameter (placeholder)
           var num_trials = meta.length;
 
+          // randomize object list within category
+          object_list_shuffled = _.flatten(_.map(_.chunk(object_list,8), _.shuffle));
+
+
           // define trial list
           var tmp = {
             type: 'nAFC-circle',
@@ -47,7 +51,7 @@
             sketch_size: [200,200],
             object_size: [100,100],
             grid_size: 600,
-            options: object_list,
+            options: object_list_shuffled,
             set_size: 32,
             timing_sketch: 100,
             timing_objects: 1000
