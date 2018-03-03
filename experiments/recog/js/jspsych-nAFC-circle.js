@@ -107,10 +107,13 @@ jsPsych.plugins["nAFC-circle"] = (function() {
     var display_locs = coordsTL.concat(coordsTR).concat(coordsBL).concat(coordsBR);
 
     // get target to draw on
-    var bound = parseFloat(paper_size) + 80;
-    display_element.innerHTML = '<svg id="jspsych-nAFC-circle-svg" width=' + bound + ' height=' + bound + '></svg> ';
+    var upperBound = parseFloat(paper_size) + 50;
+    var sideBound = parseFloat(paper_size) + 80;    
+    display_element.innerHTML = '<svg id="jspsych-nAFC-circle-svg" width=' + sideBound + ' height=' + upperBound + '></svg> ';
     var paper = Snap('#jspsych-nAFC-circle-svg');
-
+    var element = document.getElementById("jspsych-nAFC-circle-svg");
+    element.scrollIntoView(false);
+    
     // wait
     setTimeout(function() {show_object_array(); }, trial.timing_objects);
 
