@@ -14,8 +14,6 @@
  *
  **/
 
-socket = io.connect();
-
 var start_time;
 
 jsPsych.plugins["nAFC-circle"] = (function() {
