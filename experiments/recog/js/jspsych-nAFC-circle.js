@@ -19,7 +19,6 @@
 var start_time;
 
 jsPsych.plugins["nAFC-circle"] = (function() {
-
   var plugin = {};
 
   plugin.info = {
@@ -230,7 +229,7 @@ jsPsych.plugins["nAFC-circle"] = (function() {
       jsPsych.data.write(current_data);
 
       // send data to server to write to database
-      socket.emit('current_data', current_data);
+      trial.socket.emit('current_data', current_data);
 
       // go to next trial
       jsPsych.finishTrial();
