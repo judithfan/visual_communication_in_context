@@ -16,6 +16,8 @@
 
 socket = io.connect();
 
+var start_time;
+
 jsPsych.plugins["nAFC-circle"] = (function() {
 
   var plugin = {};
@@ -34,8 +36,8 @@ jsPsych.plugins["nAFC-circle"] = (function() {
     var centerx = screenw / 2;
     var centery = screenh / 2;
 
-    // initialize start_time timestamp
-    var start_time = Date.now();
+    // // initialize start_time timestamp
+    // var start_time = Date.now();
 
     // grid params
     var num_cells = 6;
@@ -103,7 +105,6 @@ jsPsych.plugins["nAFC-circle"] = (function() {
     coordsBR = remove_one_coord(coords,excluded);
 
     var display_locs = coordsTL.concat(coordsTR).concat(coordsBL).concat(coordsBR);
-    console.log(display_locs);
 
     // get target to draw on
     var bound = parseFloat(paper_size) + 80;
@@ -116,7 +117,7 @@ jsPsych.plugins["nAFC-circle"] = (function() {
     function show_sketch() {
       // show sketch
       var sketch = paper.image(trial.sketch, fix_loc[0], fix_loc[1], trial.sketch_size[0], trial.sketch_size[1]);
-      var start_time = Date.now();
+      start_time = Date.now();
     }
 
     function show_object_array() {
@@ -132,7 +133,7 @@ jsPsych.plugins["nAFC-circle"] = (function() {
       // group object images and add hover animation
       images = paper.g(paper.selectAll('image'));
       images.selectAll('image').forEach( function( el, index ) {
-         el.hover( function() { el.animate({ transform: 's1.7,1.7' }, 100, mina.easein); },
+         el.hover( function() { el.animate({ transform: 's1.5,1.5' }, 100, mina.easein); },
                    function() { el.animate({ transform: 's1,1' }, 100 , mina.easein); }
           )
       } );
