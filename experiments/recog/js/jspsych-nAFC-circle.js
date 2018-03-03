@@ -17,6 +17,7 @@
 // socket = io.connect();
 
 var start_time;
+var score = 0;
 
 jsPsych.plugins["nAFC-circle"] = (function() {
 
@@ -160,6 +161,7 @@ jsPsych.plugins["nAFC-circle"] = (function() {
         var correct = 0;
         if (bare_choice == trial.target) {
           correct = 1;
+          score += 1;
         }
         clear_display();
         end_trial(rt, correct, choice);
@@ -180,7 +182,6 @@ jsPsych.plugins["nAFC-circle"] = (function() {
     function end_trial(rt, correct, choice) {
 
       var turkInfo = jsPsych.turk.turkInfo();
-
       // workerID
       var wID = turkInfo.workerId;
       // hitID
@@ -192,9 +193,11 @@ jsPsych.plugins["nAFC-circle"] = (function() {
       var current_data = {
         dbname: '3dObjects',
         colname: 'sketchpad_basic_recog',
+        iterationName: trial.iterationName,
         trial_num: trial.trial_num,
         rt: rt,
         correct: correct,
+        score: score,
         choice: choice.split('/')[2].split('.')[0],
         locations: JSON.stringify(display_locs),
         sketch: trial.sketch,

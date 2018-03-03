@@ -22,8 +22,6 @@
           var meta = d.meta;
           var id = d.id;
 
-          // console.log('meta',meta);
-
           // high level experiment parameter (placeholder)
           var num_trials = meta.length;
 
@@ -33,6 +31,7 @@
           // define trial list
           var tmp = {
             type: 'nAFC-circle',
+            iterationName: 'testing',
             num_trials: num_trials,
             target: _.map(meta, 'target'),
             sketch: _.map(meta, function(x) { return './sketch/' + x.filename }),
@@ -103,6 +102,7 @@
           for (var i = 0; i < tmp.num_trials; i++) {
             k = i+1;
             trials[k] = {type: tmp.type};
+            trials[k].iterationName = tmp.iterationName;
             trials[k].trial_num = i; // trial number
             trials[k].gameID = id;
             trials[k].set_size = tmp.set_size || 32;
