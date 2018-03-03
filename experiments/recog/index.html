@@ -12,12 +12,10 @@
     <link rel="stylesheet" href="./custom.css"></link>
 
     <script>
-      var socket;
       window.onload = function() {
 
         // number of trials to fetch from database is defined in ./app.js
-
-        socket = io.connect();
+      var socket = io.connect();      
         socket.on('onconnected', function(d) {
           var meta = d.meta;
           var id = d.id;
@@ -30,7 +28,6 @@
 
           // define trial list
           var tmp = {
-            socket : socket,
             type: 'nAFC-circle',
             iterationName: 'testing',
             num_trials: num_trials,
@@ -103,7 +100,6 @@
           for (var i = 0; i < tmp.num_trials; i++) {
             k = i+1;
             trials[k] = {type: tmp.type};
-            trials[k] = tmp.socket;
             trials[k].iterationName = tmp.iterationName;
             trials[k].trial_num = i; // trial number
             trials[k].gameID = id;
@@ -136,7 +132,9 @@
           jsPsych.init({
             timeline: trials,
             default_iti: 1000,
-            show_progress_bar: true
+			      show_progress_bar: true,
+			      on_trial_finish: function(data) {socket.emit('current_data', data)}
+
           });
 
         })

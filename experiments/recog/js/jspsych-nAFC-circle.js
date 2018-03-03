@@ -29,7 +29,7 @@ jsPsych.plugins["nAFC-circle"] = (function() {
   }
 
   plugin.trial = function(display_element, trial) {
-
+    
     // screen information
     var screenw = $(display_element).width();
     var screenh = $(display_element).height();
@@ -230,9 +230,6 @@ jsPsych.plugins["nAFC-circle"] = (function() {
       // this line merges together the trial_data object and the generic
       // data object (trial.data), and then stores them.
       jsPsych.data.write(current_data);
-
-      // send data to server to write to database
-      trial.socket.emit('current_data', current_data);
 
       // go to next trial
       jsPsych.finishTrial();
