@@ -108,7 +108,7 @@ jsPsych.plugins["nAFC-circle"] = (function() {
 
     // get target to draw on
     var bound = parseFloat(paper_size) + 80;
-    display_element.innerHTML += '<svg id="jspsych-nAFC-circle-svg" width=' + bound + ' height=' + bound + '></svg> ';
+    display_element.innerHTML = '<svg id="jspsych-nAFC-circle-svg" width=' + bound + ' height=' + bound + '></svg> ';
     var paper = Snap('#jspsych-nAFC-circle-svg');
 
     // wait
