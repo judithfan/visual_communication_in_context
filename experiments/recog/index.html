@@ -103,6 +103,7 @@
           for (var i = 0; i < tmp.num_trials; i++) {
             k = i+1;
             trials[k] = {type: tmp.type};
+            trials[k] = tmp.socket;
             trials[k].iterationName = tmp.iterationName;
             trials[k].trial_num = i; // trial number
             trials[k].gameID = id;
