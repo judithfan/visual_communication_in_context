@@ -205,6 +205,7 @@ jsPsych.plugins["nAFC-circle"] = (function() {
         choice: choice.split('/')[2].split('.')[0],
         locations: JSON.stringify(display_locs),
         sketch: trial.sketch,
+	sketchID: trial.sketchID,
         target: trial.target,
         category: trial.category,
         distractor1: trial.distractor1,
@@ -227,7 +228,7 @@ jsPsych.plugins["nAFC-circle"] = (function() {
         grid_size: trial.grid_size
       };
 
-      // console.log(current_data);
+      console.log(current_data);
 
       // load stims for next trial before proceedings
       jsPsych.finishTrial(current_data);

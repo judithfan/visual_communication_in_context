@@ -52,19 +52,6 @@ function mongoConnectWithRetry(delayInMilliseconds, callback) {
   });
 }
 
-// Keep track of which games have used each stim
-function recordStimUse(stimdb, gameid, idList) {
-  _.forEach(idList, id => {
-    stimdb.update({_id: id}, {
-      $push : {games : gameid},
-      $inc  : {numGames : 1}
-    }, {multi: true}, function(err, items) {
-      // do something when done?
-    });
-  });
-}
-
-
 function serve() {
 
   mongoConnectWithRetry(2000, (connection) => {
@@ -72,6 +59,25 @@ function serve() {
     app.use(bodyParser.json());
     app.use(bodyParser.urlencoded({ extended: true}));
 
+    app.post('/db/markAnnotation', (request, response) => {
+      // Keep track of which games have used each stim
+      const databaseName = request.body.dbname;
+      const collectionName = request.body.colname;
+
+      const database = connection.db(databaseName);
+      const collection = database.collection(collectionName);
+
+      console.log(request.body.gameid);
+      console.log(request.body.sketchid);
+
+      collection.update({_id: request.body.sketchid}, {
+	$push : {games : request.body.gameid},
+	$inc  : {numGames : 1}
+      }, function(err, items) {
+	// do something when done?
+      });
+    });
+    
     app.post('/db/insert', (request, response) => {
       if (!request.body) {
         return failure(response, '/db/insert needs post request body');
@@ -94,8 +100,8 @@ function serve() {
         console.log('creating collection ' + collectionName);
         database.createCollection(collectionName);
       }
-
-      const collection = database.collection(collectionName);
+      
+      const collection = database.collection(collectionName)
 
       const data = _.omit(request.body, ['colname', 'dbname']);
       // log(`inserting data: ${JSON.stringify(data)}`);
@@ -136,7 +142,6 @@ function serve() {
         if(err) {
           console.log(err);
         } else {
-          recordStimUse(collection, request.body.gameid, _.map(results, '_id'));
           response.send(results);
         }
       });

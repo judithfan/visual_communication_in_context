@@ -91,6 +91,7 @@ function setupGame () {
       oldCallback = newCallback;
       var newCallback = function(d) {
 	trial.sketch = './sketch/' + d.filename ;
+	trial.sketchID = d._id;
 	jsPsych.resumeExperiment();
       };
       socket.removeListener('stimulus', oldCallback);
