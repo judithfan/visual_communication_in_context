@@ -109,8 +109,8 @@ button:hover {
 
 .jspsych-display-element {
     width: 100%;
-    height: 100%;
-    margin: 50px auto 50px auto;
+    height: 600px;
+    margin: 0 0 0 0;
 }
 
 /*
@@ -123,9 +123,9 @@ button:hover {
 	color: #777;
 	border-bottom: 2px solid #dedede;
 	background-color: #f3f3f3;
-	margin-bottom: 1em;
+	margin-bottom: 0em;
 	text-align: center;
-	padding: 5px 0px;
+	padding: 0px 0px;
 }
 
 #jspsych-progressbar-container s {
