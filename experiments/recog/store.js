@@ -130,8 +130,8 @@ function serve() {
       // get a random sample of stims that haven't appeared more than k times
       collection.aggregate([
         { $addFields : { numGames: { $size: '$games'} } },
-        { $sort : {numGames : 1, trialNum: 1} },
-        { $limit : request.body.numTrials }
+        { $sort : {numGames : 1} },
+        { $limit : 100 }
       ]).toArray( (err, results) => {
         if(err) {
           console.log(err);
