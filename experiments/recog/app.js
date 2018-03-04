@@ -48,7 +48,7 @@ io.on('connection', function (socket) {
   socket.on('currentData', function(data) {
     console.log('currentData received: ' + JSON.stringify(data));
     // Increment games list in mongo here
-    data.writeDataToMongo(data);
+    writeDataToMongo(data);
   });
 
   socket.on('getStim', function(data) {
@@ -107,14 +107,14 @@ function sendStim(socket, data) {
 }
 
 var writeDataToMongo = function(data) {
-	  sendPostRequest(
-    	'http://localhost:5000/db/insert',
-    	{ json: data },
-    	(error, res, body) => {
+  sendPostRequest(
+    'http://localhost:5000/db/insert',
+    { json: data },
+    (error, res, body) => {
       if (!error && res.statusCode === 200) {
         console.log(`sent data to store`);
       } else {
-		console.log(`error sending data to store: ${error} ${body}`);
+	console.log(`error sending data to store: ${error} ${body}`);
       }
     }
   );
