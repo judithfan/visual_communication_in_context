@@ -14,9 +14,11 @@
     <script>
       window.onload = function() {
 
-        // number of trials to fetch from database is defined in ./app.js
-      var socket = io.connect();
-        socket.on('onconnected', function(d) {
+          var score = 0;
+
+          // number of trials to fetch from database is defined in ./app.js
+          var socket = io.connect();
+          socket.on('onconnected', function(d) {
           var meta = d.meta;
           var id = d.id;
 
@@ -134,8 +136,13 @@
             timeline: trials,
             default_iti: 1000,
 			      show_progress_bar: true,
-			      on_trial_finish: function(data) {socket.emit('current_data', data)}
-
+			      on_trial_finish: function(data) {
+              if (data.score) {
+                score = data.score;
+                console.log(score);
+              }
+              socket.emit('current_data', data);
+            }
           });
 
         })
@@ -147,9 +154,7 @@
 
     function sendData() {
       console.log('sending data to mturk');
-      jsPsych.turk.submitToTurk({
-        code: document.getElementById('score').value
-      });
+      jsPsych.turk.submitToTurk({'score':score});
     }
 
     </script>

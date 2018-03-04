@@ -13,7 +13,7 @@ var
 
 
 // define number of trials to fetch from database (what is length of each recog HIT?)
-var num_trials = 64;
+var num_trials = 5;
 
 var gameport;
 
