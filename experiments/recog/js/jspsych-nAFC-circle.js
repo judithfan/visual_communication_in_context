@@ -29,7 +29,7 @@ jsPsych.plugins["nAFC-circle"] = (function() {
   }
 
   plugin.trial = function(display_element, trial) {
-    
+
     // screen information
     var screenw = $(display_element).width();
     var screenh = $(display_element).height();
@@ -158,8 +158,8 @@ jsPsych.plugins["nAFC-circle"] = (function() {
         var end_time = Date.now();
         var rt = end_time - start_time;
         bare_choice = choice.split('/')[2].split('.')[0];
-        console.log('choice',bare_choice);
-        console.log('target',trial.target);
+        // console.log('choice',bare_choice);
+        // console.log('target',trial.target);
         var correct = 0;
         if (bare_choice == trial.target) {
           correct = 1;
@@ -196,7 +196,7 @@ jsPsych.plugins["nAFC-circle"] = (function() {
         dbname: '3dObjects',
         colname: 'sketchpad_basic_recog',
         iterationName: trial.iterationName,
-        trial_num: trial.trial_num,
+        trialNum: trial.trialNum,
         rt: rt,
         correct: correct,
         score: score,
@@ -227,12 +227,12 @@ jsPsych.plugins["nAFC-circle"] = (function() {
 
       console.log(current_data);
 
-      // this line merges together the trial_data object and the generic
-      // data object (trial.data), and then stores them.
-      jsPsych.data.write(current_data);
+      // // this line merges together the trial_data object and the generic
+      // // data object (trial.data), and then stores them.
+      // jsPsych.data.write(current_data);
 
       // go to next trial
-      jsPsych.finishTrial();
+      jsPsych.finishTrial(current_data);
 
     }
   };
