@@ -109,6 +109,7 @@ jsPsych.plugins["nAFC-circle"] = (function() {
     var upperBound = parseFloat(paper_size) + 50;
     var sideBound = parseFloat(paper_size) + 80;
     display_element.innerHTML = '<svg id="jspsych-nAFC-circle-svg" width=' + sideBound + ' height=' + upperBound + '></svg> ';
+    display_element.innerHTML += '<div id="score">' + score + '</div>'
     var paper = Snap('#jspsych-nAFC-circle-svg');
     var element = document.getElementById("jspsych-nAFC-circle-svg");
     element.scrollIntoView(false);
@@ -163,6 +164,8 @@ jsPsych.plugins["nAFC-circle"] = (function() {
         if (bare_choice == trial.target) {
           correct = 1;
           score += 1;
+          // update hidden scoreboard
+          $('#score').html(score);
         }
         clear_display();
         end_trial(rt, correct, choice);
@@ -224,7 +227,7 @@ jsPsych.plugins["nAFC-circle"] = (function() {
         grid_size: trial.grid_size
       };
 
-      console.log(current_data);
+      // console.log(current_data);
 
       // load stims for next trial before proceedings
       jsPsych.finishTrial(current_data);

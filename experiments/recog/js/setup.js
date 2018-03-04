@@ -1,7 +1,36 @@
 var oldCallback;
+var score = 0;
+
+function sendData() {
+  console.log('sending data to mturk');
+  jsPsych.turk.submitToTurk({'score':score});
+}
+
 function setupGame () {
   // number of trials to fetch from database is defined in ./app.js
   var socket = io.connect();
+
+  // at end of each trial save score locally and send data to server
+  var main_on_finish = function(data) {
+    if (data.score) {
+      score = data.score;
+    }
+    socket.emit('currentData', data);
+  };
+
+  // Only start next trial once sketch comes back
+  // have to remove and reattach to have local trial in scope...
+  var main_on_start = function(trial) {
+    oldCallback = newCallback;
+    var newCallback = function(d) {
+      trial.sketch = './sketch/' + d.filename ;
+      jsPsych.resumeExperiment();
+    };
+    socket.removeListener('stimulus', oldCallback);
+    socket.on('stimulus', newCallback);
+    socket.emit('getStim', {gameID: id});
+  };
+  
   socket.on('onConnected', function(d) {
     var meta = d.meta;
     var id = d.id;
@@ -28,7 +57,6 @@ function setupGame () {
 
     var trials = new Array(tmp.num_trials + 2);
 
-    //<p><b> Please note that if you have recently completed any HIT from this requester (Sketchloop Admin), you will be unable to participate in this HIT. We apologize in advance, and thank you for your interest! </b></p>
     consentHTML = {
       'str1' : '<p>In this HIT, you will see some sketches. For each sketch, you will try to guess which of several objects is the best match. For each correct match, you will receive a bonus. </p>',
       'str2' : '<p>We expect the average game to last approximately 10 minutes, including the time it takes to read instructions.</p>',
@@ -66,43 +94,31 @@ function setupGame () {
       show_clickable_nav: true,
       on_finish: function() { sendData();}
     }
-    g = tmp.num_trials + 1;
+    var g = tmp.num_trials + 1;
     trials[g] = goodbye;
 
     // add rest of trials
     for (var i = 0; i < tmp.num_trials; i++) {
-      k = i+1;
-      trials[k] = {type: tmp.type};
-      trials[k].iterationName = tmp.iterationName;
-      trials[k].trialNum = i; // trial number
-      trials[k].gameID = id;
-      trials[k].set_size = tmp.set_size || 32;
-      trials[k].num_trials = tmp.num_trials || 10;
-      trials[k].sketch = undefined;
-      trials[k].object_size = tmp.object_size || [80, 80];
-      trials[k].sketch_size = tmp.sketch_size || [220, 220];
-      trials[k].grid_size = tmp.grid_size || 800;
-      trials[k].timing_sketch = (typeof tmp.timing_sketch === 'undefined') ? 100 : tmp.timing_sketch;
-      trials[k].timing_objects = (typeof tmp.timing_objects === 'undefined') ? 1000 : tmp.timing_objects;
-      trials[k].options = tmp.options || _.times(tmp.set_size,_.constant('./object/dogs_08_pug_0035.png'))
-      trials[k].on_finish = function(data) {
-	socket.emit('current_data', data);
-      };
-      trials[k].on_start = function(trial) {
-	// Start next trial once sketch comes back
-	// have to remove and reattach to have local trial in scope...
-	oldCallback = newCallback;
-	var newCallback = function(d) {
-	  trial.sketch = './sketch/' + d.filename ;
-	  jsPsych.resumeExperiment();
-	};
-	socket.removeListener('stimulus', oldCallback);
-	socket.on('stimulus', newCallback);
-	// Now that listener is set up, get stim
-	socket.emit('getStim', {gameID: id});
+      var k = i+1;
+      trials[k] = {
+	type: tmp.type,
+	iterationName : tmp.iterationName,
+	trialNum : i, // trial number
+	gameID: id,
+	set_size: tmp.set_size || 32,
+	num_trials: tmp.num_trials || 10,
+	sketch: undefined, // will fill in dynamically
+	object_size: tmp.object_size || [80, 80],
+	sketch_size: tmp.sketch_size || [220, 220],
+	grid_size: tmp.grid_size || 800,
+	timing_sketch: (typeof tmp.timing_sketch === 'undefined') ? 100 : tmp.timing_sketch,
+	timing_objects: (typeof tmp.timing_objects === 'undefined') ? 1000 : tmp.timing_objects,
+	options: tmp.options || _.times(tmp.set_size,_.constant('./object/dogs_08_pug_0035.png')),
+	on_finish: main_on_finish,
+	on_start: main_on_start
       };
     }
-
+    
     jsPsych.init({
       timeline: trials,
       default_iti: 1000,
