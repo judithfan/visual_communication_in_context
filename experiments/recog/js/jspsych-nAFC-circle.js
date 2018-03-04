@@ -29,7 +29,6 @@ jsPsych.plugins["nAFC-circle"] = (function() {
   }
 
   plugin.trial = function(display_element, trial) {
-
     // screen information
     var screenw = $(display_element).width();
     var screenh = $(display_element).height();
@@ -227,13 +226,9 @@ jsPsych.plugins["nAFC-circle"] = (function() {
 
       console.log(current_data);
 
-      // // this line merges together the trial_data object and the generic
-      // // data object (trial.data), and then stores them.
-      // jsPsych.data.write(current_data);
-
-      // go to next trial
+      // load stims for next trial before proceedings
       jsPsych.finishTrial(current_data);
-
+      jsPsych.pauseExperiment();
     }
   };
 

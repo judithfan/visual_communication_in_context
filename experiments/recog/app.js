@@ -45,16 +45,25 @@ app.get('/*', (req, res) => {
 io.on('connection', function (socket) {
 
   // write data to db upon getting current data
-  socket.on('current_data', function(data) {
-      console.log('current_data received: ' + JSON.stringify(data));
-      writeDataToMongo(data);
+  socket.on('currentData', function(data) {
+    console.log('currentData received: ' + JSON.stringify(data));
+    // Increment games list in mongo here
+    data.writeDataToMongo(data);
   });
 
-  // get stims and assign gameID
-  startGame(socket);
-  console.log('startGame fired...');
+  socket.on('getStim', function(data) {
+    sendStim(socket, data);
+  });
+  
+  // upon connecting, tell the client some metainfo
+  socket.emit('onConnected', {
+    id: UUID(),
+    meta: {
+      num_trials: num_trials
+    }
+  });
 
-})
+});
 
 var serveFile = function(req, res) {
   var fileName = req.params[0];
@@ -76,34 +85,25 @@ var UUID = function() {
 };
 
 
-function startGame(socket) {
-
-  var gameID = UUID();
-
+function sendStim(socket, data) {
   sendPostRequest('http://localhost:5000/db/getstims', {
     json: {
       dbname: 'stimuli',
       colname: 'sketchpad_basic_pilot2_sketches',
-      numTrials: num_trials,
-      gameid: gameID
+      numTrials: 1,
+      gameid: data.gameID
     }
   }, (error, res, body) => {
     if (!error && res.statusCode === 200) {
-      // upon connecting, tell the client some stuff
-      socket.emit('onconnected', {
-        id: gameID,
-        meta: _.shuffle(body)
-      });
+      socket.emit('stimulus', _.sampleSize(body, 1)[0]);
     } else {
       console.log(`error getting stims: ${error} ${body}`);
       console.log(`falling back to local stimList`);
-      socket.emit('onconnected', {
-        id: gameID,
-        meta: _.sampleSize(require('./sketchpad_basic_recog_meta.js'), num_trials)
+      socket.emit('stimulus', {
+        stim: _.sampleSize(require('./sketchpad_basic_recog_meta.js'), 1)
       });
     }
   });
-
 }
 
 var writeDataToMongo = function(data) {
