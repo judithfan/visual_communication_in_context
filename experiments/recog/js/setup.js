@@ -9,27 +9,6 @@ function sendData() {
 function setupGame () {
   // number of trials to fetch from database is defined in ./app.js
   var socket = io.connect();
-
-  // at end of each trial save score locally and send data to server
-  var main_on_finish = function(data) {
-    if (data.score) {
-      score = data.score;
-    }
-    socket.emit('currentData', data);
-  };
-
-  // Only start next trial once sketch comes back
-  // have to remove and reattach to have local trial in scope...
-  var main_on_start = function(trial) {
-    oldCallback = newCallback;
-    var newCallback = function(d) {
-      trial.sketch = './sketch/' + d.filename ;
-      jsPsych.resumeExperiment();
-    };
-    socket.removeListener('stimulus', oldCallback);
-    socket.on('stimulus', newCallback);
-    socket.emit('getStim', {gameID: id});
-  };
   
   socket.on('onConnected', function(d) {
     var meta = d.meta;
@@ -39,7 +18,7 @@ function setupGame () {
     var num_trials = meta.num_trials;
 
     // randomize object list within category
-    object_list_shuffled = _.flatten(_.map(_.chunk(object_list,8), _.shuffle));
+    var object_list_shuffled = _.flatten(_.map(_.chunk(object_list,8), _.shuffle));
 
     // define trial list
     var tmp = {
@@ -98,6 +77,27 @@ function setupGame () {
     trials[g] = goodbye;
 
     // add rest of trials
+    // at end of each trial save score locally and send data to server
+    var main_on_finish = function(data) {
+      if (data.score) {
+	score = data.score;
+      }
+      socket.emit('currentData', data);
+    };
+
+    // Only start next trial once sketch comes back
+    // have to remove and reattach to have local trial in scope...
+    var main_on_start = function(trial) {
+      oldCallback = newCallback;
+      var newCallback = function(d) {
+	trial.sketch = './sketch/' + d.filename ;
+	jsPsych.resumeExperiment();
+      };
+      socket.removeListener('stimulus', oldCallback);
+      socket.on('stimulus', newCallback);
+      socket.emit('getStim', {gameID: id});
+    };
+
     for (var i = 0; i < tmp.num_trials; i++) {
       var k = i+1;
       trials[k] = {
