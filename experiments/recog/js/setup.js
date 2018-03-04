@@ -1,0 +1,113 @@
+var oldCallback;
+function setupGame () {
+  // number of trials to fetch from database is defined in ./app.js
+  var socket = io.connect();
+  socket.on('onConnected', function(d) {
+    var meta = d.meta;
+    var id = d.id;
+
+    // high level experiment parameter (placeholder)
+    var num_trials = meta.num_trials;
+
+    // randomize object list within category
+    object_list_shuffled = _.flatten(_.map(_.chunk(object_list,8), _.shuffle));
+
+    // define trial list
+    var tmp = {
+      type: 'nAFC-circle',
+      iterationName: 'testing',
+      num_trials: num_trials,
+      sketch_size: [200,200],
+      object_size: [100,100],
+      grid_size: 600,
+      options: object_list_shuffled,
+      set_size: 32,
+      timing_sketch: 100,
+      timing_objects: 1000
+    };
+
+    var trials = new Array(tmp.num_trials + 2);
+
+    //<p><b> Please note that if you have recently completed any HIT from this requester (Sketchloop Admin), you will be unable to participate in this HIT. We apologize in advance, and thank you for your interest! </b></p>
+    consentHTML = {
+      'str1' : '<p>In this HIT, you will see some sketches. For each sketch, you will try to guess which of several objects is the best match. For each correct match, you will receive a bonus. </p>',
+      'str2' : '<p>We expect the average game to last approximately 10 minutes, including the time it takes to read instructions.</p>',
+      'str3' : "<p>If you encounter a problem or error, send us an email (sketchloop@gmail.com) and we will make sure you're compensated for your time! Please pay attention and do your best! Thank you!</p><p> Note: We recommend using Chrome. We have not tested this HIT in other browsers.</p>",
+      'str4' : ["<u><p id='legal'>Consenting to Participate:</p></u>",
+		"<p id='legal'>By completing this HIT, you are participating in a study being performed by cognitive scientists in the Stanford Department of Psychology. If you have questions about this research, please contact the <b>Sketchloop Admin</b> at <b><a href='mailto://sketchloop@gmail.com'>sketchloop@gmail.com</a> </b> or Noah Goodman (n goodman at stanford dot edu) You must be at least 18 years old to participate. Your participation in this research is voluntary. You may decline to answer any or all of the following questions. You may decline further participation, at any time, without adverse consequences. Your anonymity is assured; the researchers who have requested your participation will not receive any personal information about you.</p>"].join(' ')
+    }
+    // add welcome page
+    instructionsHTML = {
+      'str1' : "<p> Here's how the game will work: On each trial, you will see a drawing appear, surrounded by an grid of different objects. Your goal is to select the object in the grid that best matches the drawing. </p>",
+      'str2' : '<p> Hover over objects with the mouse cursor to enlarge them, and click the enlarged object only once you have made your final selection. For each correct match, you will receive a $0.01 bonus. It is very important that you consider the options carefully and try your best! </p>',
+      'str3' : "<p> Please note that once you are finished, the HIT will be automatically submitted for approval. If you enjoyed this HIT, please know that you are welcome to perform it multiple times. Let's begin! </p>"
+    }
+
+    var welcome = {
+      type: 'instructions',
+      pages: [
+	consentHTML.str1,
+	consentHTML.str2,
+	consentHTML.str3,
+	consentHTML.str4,
+	instructionsHTML.str1,
+	instructionsHTML.str2,
+	instructionsHTML.str3
+      ],
+      show_clickable_nav: true
+    }
+    trials[0] = welcome;
+
+    var goodbye = {
+      type: 'instructions',
+      pages: [
+	'Thanks for participating in our experiment! You are all done. Please click the button to submit this HIT.'
+      ],
+      show_clickable_nav: true,
+      on_finish: function() { sendData();}
+    }
+    g = tmp.num_trials + 1;
+    trials[g] = goodbye;
+
+    // add rest of trials
+    for (var i = 0; i < tmp.num_trials; i++) {
+      k = i+1;
+      trials[k] = {type: tmp.type};
+      trials[k].iterationName = tmp.iterationName;
+      trials[k].trialNum = i; // trial number
+      trials[k].gameID = id;
+      trials[k].set_size = tmp.set_size || 32;
+      trials[k].num_trials = tmp.num_trials || 10;
+      trials[k].sketch = undefined;
+      trials[k].object_size = tmp.object_size || [80, 80];
+      trials[k].sketch_size = tmp.sketch_size || [220, 220];
+      trials[k].grid_size = tmp.grid_size || 800;
+      trials[k].timing_sketch = (typeof tmp.timing_sketch === 'undefined') ? 100 : tmp.timing_sketch;
+      trials[k].timing_objects = (typeof tmp.timing_objects === 'undefined') ? 1000 : tmp.timing_objects;
+      trials[k].options = tmp.options || _.times(tmp.set_size,_.constant('./object/dogs_08_pug_0035.png'))
+      trials[k].on_finish = function(data) {
+	socket.emit('current_data', data);
+      };
+      trials[k].on_start = function(trial) {
+	// Start next trial once sketch comes back
+	// have to remove and reattach to have local trial in scope...
+	oldCallback = newCallback;
+	var newCallback = function(d) {
+	  trial.sketch = './sketch/' + d.filename ;
+	  jsPsych.resumeExperiment();
+	};
+	socket.removeListener('stimulus', oldCallback);
+	socket.on('stimulus', newCallback);
+	// Now that listener is set up, get stim
+	socket.emit('getStim', {gameID: id});
+      };
+    }
+
+    jsPsych.init({
+      timeline: trials,
+      default_iti: 1000,
+      show_progress_bar: true
+    });
+  });
+}
+	   
