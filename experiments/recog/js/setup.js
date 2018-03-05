@@ -9,7 +9,7 @@ function sendData() {
 function setupGame () {
   // number of trials to fetch from database is defined in ./app.js
   var socket = io.connect();
-  
+
   socket.on('onConnected', function(d) {
     var meta = d.meta;
     var id = d.id;
@@ -91,7 +91,7 @@ function setupGame () {
       oldCallback = newCallback;
       var newCallback = function(d) {
 	trial.sketch = './sketch/' + d.filename ;
-	trial.target = d.target ;	
+	trial.target = d.target ;
 	trial.sketchID = d._id;
 	jsPsych.resumeExperiment();
       };
@@ -121,7 +121,7 @@ function setupGame () {
 	on_start: main_on_start
       };
     }
-    
+
     jsPsych.init({
       timeline: trials,
       default_iti: 1000,
@@ -129,4 +129,3 @@ function setupGame () {
     });
   });
 }
-	   

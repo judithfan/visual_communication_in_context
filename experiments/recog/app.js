@@ -54,7 +54,7 @@ io.on('connection', function (socket) {
   socket.on('getStim', function(data) {
     sendStim(socket, data);
   });
-  
+
   // upon connecting, tell the client some metainfo
   socket.emit('onConnected', {
     id: UUID(),
