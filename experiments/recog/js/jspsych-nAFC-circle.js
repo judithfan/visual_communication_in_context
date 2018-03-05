@@ -109,7 +109,7 @@ jsPsych.plugins["nAFC-circle"] = (function() {
     var upperBound = parseFloat(paper_size) + 50;
     var sideBound = parseFloat(paper_size) + 80;
     display_element.innerHTML = '<svg id="jspsych-nAFC-circle-svg" width=' + sideBound + ' height=' + upperBound + '></svg> ';
-    display_element.innerHTML += '<div id="score">' + score + '</div>'
+    display_element.innerHTML += '<div id="score"> <p> bonus points earned: ' + score + '</p></div>'
     var paper = Snap('#jspsych-nAFC-circle-svg');
     var element = document.getElementById("jspsych-nAFC-circle-svg");
     element.scrollIntoView(false);
