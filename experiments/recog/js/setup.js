@@ -46,8 +46,8 @@ function setupGame () {
     // add welcome page
     instructionsHTML = {
       'str1' : "<p> Here's how the game will work: On each trial, you will see a drawing appear, surrounded by a grid of 32 different objects belonging to four categories: birds, cars, chairs, and dogs. Your goal is to select the object in the grid that best matches the drawing. Here is an example: <img src='recognition_demo_grid_annotated.png'></img></p>",
-      'str2' : '<p> Hover over objects with the mouse cursor to enlarge them, and click the enlarged object only once you have made your final selection. For each correct match, you will receive a $0.01 bonus. It is very important that you consider the options carefully and try your best! <img src="recognition_demo_grid_annotated_selected.png"></img> </p>',
-      'str3' : "<p> Please take a moment now to familiarize yourself with these objects. Once you are finished, the HIT will be automatically submitted for approval. If you enjoyed this HIT, please know that you are welcome to perform it multiple times. Let's begin! <img src='recognition_demo_grid_annotated_selected.png'></img> </p>"
+      'str2' : '<p> Hover over objects with the mouse cursor to enlarge them, and click the enlarged object only once you have made your final selection. For each correct match, you will receive a $0.01 bonus. Please take a moment now to familiarize yourself with these objects. It is very important that you consider the options carefully and try your best! <img src="recognition_demo_grid_annotated_selected.png"></img> </p>',
+      'str3' : "<p> Once you are finished, the HIT will be automatically submitted for approval. If you enjoyed this HIT, please know that you are welcome to perform it multiple times. Let's begin! </p>"
     }
 
     var welcome = {
