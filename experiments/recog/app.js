@@ -48,7 +48,6 @@ io.on('connection', function (socket) {
   socket.on('currentData', function(data) {
     console.log('currentData received: ' + JSON.stringify(data));
     // Increment games list in mongo here
-    markAnnotation(data);
     writeDataToMongo(data);
   });
 
@@ -85,23 +84,6 @@ var UUID = function() {
   return id;
 };
 
-function markAnnotation(data) {
-  sendPostRequest('http://localhost:5000/db/markAnnotation', {
-    json: {
-      dbname: 'stimuli',
-      colname: 'sketchpad_basic_pilot2_sketches',
-      gameid: data.gameID,
-      sketchid: data.sketchID
-    }
-  }, (error, res, body) => {
-    if (!error && res.statusCode === 200) {
-      console.log(`marked annotation`);
-    } else {
-      console.log(`error marking annotation: ${error} ${body}`);
-    }
-  });
-};
-
 function sendStim(socket, data) {
   sendPostRequest('http://localhost:5000/db/getstims', {
     json: {
@@ -112,7 +94,7 @@ function sendStim(socket, data) {
     }
   }, (error, res, body) => {
     if (!error && res.statusCode === 200) {
-      socket.emit('stimulus', _.sampleSize(body, 1)[0]);
+      socket.emit('stimulus', body);
     } else {
       console.log(`error getting stims: ${error} ${body}`);
       console.log(`falling back to local stimList`);

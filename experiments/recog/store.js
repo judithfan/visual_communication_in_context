@@ -53,33 +53,26 @@ function mongoConnectWithRetry(delayInMilliseconds, callback) {
   });
 }
 
+function markAnnotation(collection, gameid, sketchid) {
+  collection.update({_id: ObjectID(sketchid)}, {
+    $push : {games : gameid},
+    $inc  : {numGames : 1}
+  }, function(err, items) {
+    if (err) {
+      console.log(`error marking annotation data: ${err}`);
+    } else {
+      console.log(`successfully marked annotation. result: ${JSON.stringify(items)}`);
+    }
+  });
+};
+    
+
 function serve() {
 
   mongoConnectWithRetry(2000, (connection) => {
 
     app.use(bodyParser.json());
     app.use(bodyParser.urlencoded({ extended: true}));
-
-    app.post('/db/markAnnotation', (request, response) => {
-      console.log(`got request to mark annotation in ${request.body.colname}`);
-      // Keep track of which games have used each stim
-      const databaseName = request.body.dbname;
-      const collectionName = request.body.colname;
-
-      const database = connection.db(databaseName);
-      const collection = database.collection(collectionName);
-
-      collection.update({_id: ObjectID(request.body.sketchid)}, {
-	$push : {games : request.body.gameid},
-	$inc  : {numGames : 1}
-      }, function(err, items) {
-	if (err) {
-          return failure(response, `error marking annotation data: ${err}`);
-        } else {
-          return success(response, `successfully marked annotation. result: ${JSON.stringify(items)}`);
-	}
-      });
-    });
     
     app.post('/db/insert', (request, response) => {
       if (!request.body) {
@@ -104,7 +97,7 @@ function serve() {
         database.createCollection(collectionName);
       }
       
-      const collection = database.collection(collectionName)
+      const collection = database.collection(collectionName);
 
       const data = _.omit(request.body, ['colname', 'dbname']);
       // log(`inserting data: ${JSON.stringify(data)}`);
@@ -136,21 +129,21 @@ function serve() {
       const database = connection.db(databaseName);
       const collection = database.collection(collectionName);
 
-      // get a random sample of stims that haven't appeared more than k times
+      // sort by number of times previously served up and take the first
       collection.aggregate([
         { $addFields : { numGames: { $size: '$games'} } },
-        { $sort : {numGames : 1} },
-        { $limit : 100 }
+        { $sort : {numGames : 1, trialNum: 1} },
+        { $limit : 1}
       ]).toArray( (err, results) => {
         if(err) {
           console.log(err);
         } else {
-          response.send(results);
+	  // Immediately mark as annotated so others won't get it too
+	  markAnnotation(collection, request.body.gameid, results[0]['_id']);
+          response.send(results[0]);
         }
       });
     });
-
-
 
     app.listen(port, () => {
       log(`running at http://localhost:${port}`);

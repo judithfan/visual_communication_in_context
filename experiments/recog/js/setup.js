@@ -97,8 +97,8 @@ function setupGame () {
       };
       socket.removeListener('stimulus', oldCallback);
       socket.on('stimulus', newCallback);
-      // wait a little before calling server for stims to wait until database updated
-      setTimeout(function() {socket.emit('getStim', {gameID: id})}, 500);
+      // call server for stims
+      socket.emit('getStim', {gameID: id});
     };
 
     for (var i = 0; i < tmp.num_trials; i++) {
