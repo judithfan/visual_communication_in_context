@@ -91,12 +91,14 @@ function setupGame () {
       oldCallback = newCallback;
       var newCallback = function(d) {
 	trial.sketch = './sketch/' + d.filename ;
+	trial.target = d.target ;	
 	trial.sketchID = d._id;
 	jsPsych.resumeExperiment();
       };
       socket.removeListener('stimulus', oldCallback);
       socket.on('stimulus', newCallback);
-      socket.emit('getStim', {gameID: id});
+      // wait a little before calling server for stims to wait until database updated
+      setTimeout(function() {socket.emit('getStim', {gameID: id})}, 500);
     };
 
     for (var i = 0; i < tmp.num_trials; i++) {

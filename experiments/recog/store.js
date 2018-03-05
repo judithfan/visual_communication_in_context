@@ -10,6 +10,7 @@ const sendPostRequest = require('request').post;
 const colors = require('colors/safe');
 
 const app = express();
+const ObjectID = mongodb.ObjectID;
 const MongoClient = mongodb.MongoClient;
 const port = 5000;
 const mongoCreds = require('./auth.json');
@@ -60,6 +61,7 @@ function serve() {
     app.use(bodyParser.urlencoded({ extended: true}));
 
     app.post('/db/markAnnotation', (request, response) => {
+      console.log(`got request to mark annotation in ${request.body.colname}`);
       // Keep track of which games have used each stim
       const databaseName = request.body.dbname;
       const collectionName = request.body.colname;
@@ -67,14 +69,15 @@ function serve() {
       const database = connection.db(databaseName);
       const collection = database.collection(collectionName);
 
-      console.log(request.body.gameid);
-      console.log(request.body.sketchid);
-
-      collection.update({_id: request.body.sketchid}, {
+      collection.update({_id: ObjectID(request.body.sketchid)}, {
 	$push : {games : request.body.gameid},
 	$inc  : {numGames : 1}
       }, function(err, items) {
-	// do something when done?
+	if (err) {
+          return failure(response, `error marking annotation data: ${err}`);
+        } else {
+          return success(response, `successfully marked annotation. result: ${JSON.stringify(items)}`);
+	}
       });
     });
     

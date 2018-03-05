@@ -230,8 +230,8 @@ jsPsych.plugins["nAFC-circle"] = (function() {
 
       console.log(current_data);
 
-      // load stims for next trial before proceedings
       jsPsych.finishTrial(current_data);
+      // Pause until data from next round is obtained
       jsPsych.pauseExperiment();
     }
   };

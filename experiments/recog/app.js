@@ -86,7 +86,7 @@ var UUID = function() {
 };
 
 function markAnnotation(data) {
-  sendPostRequest('http://localhost:5000/db/getstims', {
+  sendPostRequest('http://localhost:5000/db/markAnnotation', {
     json: {
       dbname: 'stimuli',
       colname: 'sketchpad_basic_pilot2_sketches',
