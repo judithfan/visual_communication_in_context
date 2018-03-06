@@ -20,12 +20,12 @@ console.log("Loading model data complete..."
 var globalConfig = {
   similarities, possibleSketches, costs, conditionLookup,
   aggregate: false,
-  outputFileName : 'S0_MCMC_mid-layer-augmented_wcostParams'
+  outputFileName : 'S1_MCMC_human_wcostParams'
 };
 
 var paramPrior = function() {
-  var perception = uniformDraw(['mid-layer-augmented']); // 'mid-layer-augmented', 'human'
-  var pragmatics = uniformDraw(['S0'])// 'combined', 'S0', 'S1']);
+  var perception = uniformDraw(['human']); // 'mid-layer-augmented', 'human'
+  var pragmatics = uniformDraw(['S1'])// 'combined', 'S0', 'S1']);
   var production = uniformDraw(['cost'])//cost', 'nocost']);
   return {
     perception, pragmatics, production,
