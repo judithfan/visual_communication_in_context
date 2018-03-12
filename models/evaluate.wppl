@@ -27,12 +27,12 @@ var globalConfig = {
 var paramPrior = function() {
   var perception = uniformDraw(['human']);
   var pragmatics = 'combined'//uniformDraw(['S1', 'S0', 'combined']);
-  var production = 'cost'//uniformDraw(['cost', 'nocost']);  
+  var production = 'cost'//uniformDraw(['cost', 'nocost']);
   return {
     perception, pragmatics, production,
     alpha : 7.72,//uniformDraw(_.range(0.5, 9, 0.5)),
     simScaling : 9.98,//(pragmatics === 'S0' ? 1 :
-		//uniformDraw(_.range(0.5, 5, 0.5))),    
+		//uniformDraw(_.range(0.5, 5, 0.5))),
     pragWeight: 0.997,//(pragmatics == 'S0' ? 0 :
 		 //pragmatics == 'S1' ? 1 :
 		 //uniformDraw(_.range(0, 1.01, 0.1))),

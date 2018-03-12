@@ -23,11 +23,11 @@ var speakerModel = function(targetObj, context, params, config) {
   // to their informativity (because factor adds to log space)
   var informativity = function(sketch) {
     var model = (params.pragmatics === 'combined' ?
-		 (flip(params.pragWeight) ? 'S1 ' : 'S0') :
+		 (flip(params.pragWeight) ? 'S1' : 'S0') :
 		 params.pragmatics);
-    if(model === 'S1') {
+    if(model == 'S1') {
       return refModule.getL0score(targetObj, sketch, context, params, config);
-    } else if (model === 'S0') {
+    } else if (model == 'S0') {
       return similarity(sketch, targetObj);
     } else {
       console.error('unknown pragmatics model:' + params.pragmatics);
