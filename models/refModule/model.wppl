@@ -6,7 +6,7 @@ var speakerModel = function(targetObj, context, params, config) {
   };
 
   var similarity = function(sketch, object) {
-    return (config.similarities[params.perception][object][sketch] + 1)/2;
+    return (config.similarities[params.perception][object][sketch] + 1.001)/2;
   };
 
   // Sees sketch and selects among objects in context using similarity
@@ -41,8 +41,7 @@ var speakerModel = function(targetObj, context, params, config) {
       var sketch = uniformDraw(config.possibleSketches);
       // faster helper function for literalListener(sketch, context).score(targetObj) :
       var inf = informativity(sketch);
-      var utility = inf;
-      //- params.costWeight * sketchCost(sketch));//(1 - sketchCost(sketch)));
+      var utility = (1 - sketchCost(sketch)) * inf - params.costWeight * sketchCost(sketch);
       factor(params.alpha * utility);
       return globalConfig.aggregate ? config.conditionLookup[sketch] : sketch;
     }});
