@@ -10,30 +10,32 @@ console.log("Loading expt data complete..." + data.length + " data points");
 // Note: when moving to model comparison, can precache for all models...
 var similarities = refModule.getSimilarities();
 var costs = refModule.getCosts(experimentVersion);
-var possibleSketches = refModule.getPossibleSketches(costs);
+var possibleSketches = refModule.getPossibleSketches(data);
+var conditionLookup = refModule.getConditionLookup();
 console.log("Loading model data complete..."
 	    + possibleSketches.length + " sketches of " +
 	    + _.keys(similarities['strict']).length + " objects." );
 
 // Package into config
 var globalConfig = {
-  similarities, possibleSketches, costs,
-  outputFileName : 'bestFitting'
+  similarities, possibleSketches, costs, conditionLookup,
+  aggregate: true,
+  outputFileName : 'S1_fixed'
 };
 
 var paramPrior = function() {
-  var perception = uniformDraw(['mid-layer']);
-  var pragmatics = 'S1'//uniformDraw(['S1', 'S0', 'combined']);
+  var perception = uniformDraw(['human']);
+  var pragmatics = 'combined'//uniformDraw(['S1', 'S0', 'combined']);
   var production = 'cost'//uniformDraw(['cost', 'nocost']);  
   return {
     perception, pragmatics, production,
-    alpha : 10,//uniformDraw(_.range(0.5, 9, 0.5)),
-    simScaling : 4,//(pragmatics === 'S0' ? 1 :
+    alpha : 7.72,//uniformDraw(_.range(0.5, 9, 0.5)),
+    simScaling : 9.98,//(pragmatics === 'S0' ? 1 :
 		//uniformDraw(_.range(0.5, 5, 0.5))),    
-    pragWeight: 1,//(pragmatics == 'S0' ? 0 :
+    pragWeight: 0.997,//(pragmatics == 'S0' ? 0 :
 		 //pragmatics == 'S1' ? 1 :
 		 //uniformDraw(_.range(0, 1.01, 0.1))),
-    costWeight : 0.0//(production === 'nocost' ? 0 :
+    costWeight : 0.142//(production === 'nocost' ? 0 :
 		  //uniformDraw(_.range(0, 1.01, 0.1)))
   };
 };
@@ -42,6 +44,12 @@ var modelAnalysis = function() {
 
   var params = paramPrior();
   console.log(params);
+
+  // var context = ['trial_19_pigeon','trial_20_cuckoo',
+  // 		 'trial_26_crow','trial_29_sparrow'];
+  // var target = context[0];
+  // var modelOutput = speakerModel(target,context,params,globalConfig);
+  // console.log(modelOutput);
   var predictives = map(function(c) {
     // Extract condition information
     var conditionType = c.condition;
