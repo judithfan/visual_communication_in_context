@@ -6,10 +6,10 @@ var babyparse = require('babyparse');
 
 var getSimilarities = function(name) {
   return {
-      'mid-layer-triplet' : require('./json/similarity-splitbycontext-triplet_bugfix.json'),
+    //'mid-layer-triplet' : require('./json/similarity-splitbycontext-triplet_bugfix.json'),
       // 'mid-layer': require('./json/similarity-splitbycontext.json'),
       // 'early-layer': require('./json/similarity-splitbycontext-fixedpose_pool1.json'),
-      'mid-layer-augmented': require('./json/strict-similarity-pragmatics-fixedpose-augmented-splitbycontext_conv4_2.json'),
+    //'mid-layer-augmented': require('./json/strict-similarity-pragmatics-fixedpose-augmented-splitbycontext_conv4_2.json'),
       'human': require('./json/similarity-human.json')
   };
 };
@@ -52,7 +52,7 @@ var getL0score = function(target, sketch, context, params, config) {
 // Try remapping these to [0,1]...
 var informativity = function(targetObj, sketch, context, params, config) {
   var similarities = config.similarities[params.perception];
-  var S0inf = (similarities[targetObj][sketch] + 1.001) / 2;
+  var S0inf = (similarities[targetObj][sketch]);// + 1.001) / 2;
 //  console.log(S0inf);
   var S1inf = getL0score(targetObj, sketch, context, params, config); //Math.exp()
   // console.log(targetObj);
