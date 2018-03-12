@@ -6,7 +6,7 @@ var speakerModel = function(targetObj, context, params, config) {
   };
 
   var similarity = function(sketch, object) {
-    return (config.similarities[params.perception][object][sketch] + 1.001)/2;
+    return (config.similarities[params.perception][object][sketch])// + 1.001)/2;
   };
 
   // Sees sketch and selects among objects in context using similarity
