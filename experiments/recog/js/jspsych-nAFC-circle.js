@@ -14,12 +14,12 @@
  *
  **/
 
-socket = io.connect();
+// socket = io.connect();
 
 var start_time;
+var score = 0;
 
 jsPsych.plugins["nAFC-circle"] = (function() {
-
   var plugin = {};
 
   plugin.info = {
@@ -29,7 +29,6 @@ jsPsych.plugins["nAFC-circle"] = (function() {
   }
 
   plugin.trial = function(display_element, trial) {
-
     // screen information
     var screenw = $(display_element).width();
     var screenh = $(display_element).height();
@@ -107,9 +106,13 @@ jsPsych.plugins["nAFC-circle"] = (function() {
     var display_locs = coordsTL.concat(coordsTR).concat(coordsBL).concat(coordsBR);
 
     // get target to draw on
-    var bound = parseFloat(paper_size) + 80;
-    display_element.innerHTML += '<svg id="jspsych-nAFC-circle-svg" width=' + bound + ' height=' + bound + '></svg> ';
+    var upperBound = parseFloat(paper_size) + 50;
+    var sideBound = parseFloat(paper_size) + 80;
+    display_element.innerHTML = '<svg id="jspsych-nAFC-circle-svg" width=' + sideBound + ' height=' + upperBound + '></svg> ';
+    display_element.innerHTML += '<div id="score"> <p> bonus points earned: ' + score + '</p></div>'
     var paper = Snap('#jspsych-nAFC-circle-svg');
+    var element = document.getElementById("jspsych-nAFC-circle-svg");
+    element.scrollIntoView(false);
 
     // wait
     setTimeout(function() {show_object_array(); }, trial.timing_objects);
@@ -155,11 +158,14 @@ jsPsych.plugins["nAFC-circle"] = (function() {
         var end_time = Date.now();
         var rt = end_time - start_time;
         bare_choice = choice.split('/')[2].split('.')[0];
-        console.log('choice',bare_choice);
-        console.log('target',trial.target);
+        // console.log('choice',bare_choice);
+        // console.log('target',trial.target);
         var correct = 0;
         if (bare_choice == trial.target) {
           correct = 1;
+          score += 1;
+          // update hidden scoreboard
+          $('#score').html(score);
         }
         clear_display();
         end_trial(rt, correct, choice);
@@ -180,7 +186,6 @@ jsPsych.plugins["nAFC-circle"] = (function() {
     function end_trial(rt, correct, choice) {
 
       var turkInfo = jsPsych.turk.turkInfo();
-
       // workerID
       var wID = turkInfo.workerId;
       // hitID
@@ -192,12 +197,15 @@ jsPsych.plugins["nAFC-circle"] = (function() {
       var current_data = {
         dbname: '3dObjects',
         colname: 'sketchpad_basic_recog',
-        trial_num: trial.trial_num,
+        iterationName: trial.iterationName,
+        trialNum: trial.trialNum,
         rt: rt,
         correct: correct,
+        score: score,
         choice: choice.split('/')[2].split('.')[0],
         locations: JSON.stringify(display_locs),
         sketch: trial.sketch,
+	sketchID: trial.sketchID,
         target: trial.target,
         category: trial.category,
         distractor1: trial.distractor1,
@@ -222,16 +230,9 @@ jsPsych.plugins["nAFC-circle"] = (function() {
 
       console.log(current_data);
 
-      // this line merges together the trial_data object and the generic
-      // data object (trial.data), and then stores them.
-      jsPsych.data.write(current_data);
-
-      // send data to server to write to database
-      socket.emit('current_data', current_data);
-
-      // go to next trial
-      jsPsych.finishTrial();
-
+      jsPsych.finishTrial(current_data);
+      // Pause until data from next round is obtained
+      jsPsych.pauseExperiment();
     }
   };
 

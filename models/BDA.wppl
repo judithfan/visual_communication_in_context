@@ -14,7 +14,7 @@ var possibleSketches = refModule.getPossibleSketches(data);
 var conditionLookup = refModule.getConditionLookup();
 console.log("Loading model data complete..."
 	    + possibleSketches.length + " sketches of " +
-	    + _.keys(similarities['strict']).length + " objects." );
+	    + _.keys(similarities['human']).length + " objects." );
 
 // Package into config
 var globalConfig = {
@@ -24,15 +24,15 @@ var globalConfig = {
 };
 
 var paramPrior = function() {
-  var perception = uniformDraw(['mid-layer-augmented']);
-  var pragmatics = uniformDraw(['S0'])//'combined'])//, 'S0', 'S1']);
-  var production = uniformDraw(['cost'])//cost', 'nocost']);  
+  var perception = uniformDraw(['mid-layer-augmented']); // 'mid-layer-augmented', 'human'
+  var pragmatics = uniformDraw(['S0'])// 'combined', 'S0', 'S1']);
+  var production = uniformDraw(['cost'])//cost', 'nocost']);
   return {
     perception, pragmatics, production,
     alpha : uniformDrift({a:0,b:20, width: 2}),//uniformDraw(_.range(0.5, 3, 0.05)),
     simScaling : (pragmatics === 'S0' ? 1 :
 		  uniformDrift({a:0,b:10,width:1})),
-		  //uniformDraw(_.range(0.2, 4.5, 0.1))),    
+		  //uniformDraw(_.range(0.2, 4.5, 0.1))),
     pragWeight: (pragmatics == 'S0' ? 0 :
 		 pragmatics == 'S1' ? 1 :
 		 uniformDrift({a:0,b:1,width:0.1})),//uniformDraw(_.range(0, 1.01, 0.5))),
@@ -49,7 +49,7 @@ var modelAnalysis = function() {
     var conditionType = c.condition;
     var context = [c.Target, c.Distractor1, c.Distractor2, c.Distractor3];
     var target = context[0];
-    
+
     //var modelOutput = speakerModel(target, context, params, globalConfig);
     // compute log likelihood (score) of data point under model
     // console.log(modelOutput);
@@ -60,7 +60,7 @@ var modelAnalysis = function() {
       c.sketchLabel, target, context, params, globalConfig
     );
     //return memo + modelOutput.score(sketchInfo);
-  }, 0, data);    
+  }, 0, data);
 
   console.log(params);
   console.log(score);

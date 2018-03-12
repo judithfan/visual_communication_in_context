@@ -10,6 +10,7 @@ const sendPostRequest = require('request').post;
 const colors = require('colors/safe');
 
 const app = express();
+const ObjectID = mongodb.ObjectID;
 const MongoClient = mongodb.MongoClient;
 const port = 5000;
 const mongoCreds = require('./auth.json');
@@ -52,18 +53,19 @@ function mongoConnectWithRetry(delayInMilliseconds, callback) {
   });
 }
 
-// Keep track of which games have used each stim
-function recordStimUse(stimdb, gameid, idList) {
-  _.forEach(idList, id => {
-    stimdb.update({_id: id}, {
-      $push : {games : gameid},
-      $inc  : {numGames : 1}
-    }, {multi: true}, function(err, items) {
-      // do something when done?
-    });
+function markAnnotation(collection, gameid, sketchid) {
+  collection.update({_id: ObjectID(sketchid)}, {
+    $push : {games : gameid},
+    $inc  : {numGames : 1}
+  }, function(err, items) {
+    if (err) {
+      console.log(`error marking annotation data: ${err}`);
+    } else {
+      console.log(`successfully marked annotation. result: ${JSON.stringify(items)}`);
+    }
   });
-}
-
+};
+    
 
 function serve() {
 
@@ -71,7 +73,7 @@ function serve() {
 
     app.use(bodyParser.json());
     app.use(bodyParser.urlencoded({ extended: true}));
-
+    
     app.post('/db/insert', (request, response) => {
       if (!request.body) {
         return failure(response, '/db/insert needs post request body');
@@ -94,7 +96,7 @@ function serve() {
         console.log('creating collection ' + collectionName);
         database.createCollection(collectionName);
       }
-
+      
       const collection = database.collection(collectionName);
 
       const data = _.omit(request.body, ['colname', 'dbname']);
@@ -127,22 +129,21 @@ function serve() {
       const database = connection.db(databaseName);
       const collection = database.collection(collectionName);
 
-      // get a random sample of stims that haven't appeared more than k times
+      // sort by number of times previously served up and take the first
       collection.aggregate([
         { $addFields : { numGames: { $size: '$games'} } },
-        { $sort : { trialNum: 1, numGames : 1} },
-        { $limit : request.body.numTrials }
+        { $sort : {numGames : 1, trialNum: 1} },
+        { $limit : 1}
       ]).toArray( (err, results) => {
         if(err) {
           console.log(err);
         } else {
-          recordStimUse(collection, request.body.gameid, _.map(results, '_id'));
-          response.send(results);
+	  // Immediately mark as annotated so others won't get it too
+	  markAnnotation(collection, request.body.gameid, results[0]['_id']);
+          response.send(results[0]);
         }
       });
     });
-
-
 
     app.listen(port, () => {
       log(`running at http://localhost:${port}`);

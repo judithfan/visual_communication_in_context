@@ -1,5 +1,5 @@
 // run using:
-// webppl BDA.wppl --require ./refModule/
+// webppl evaluate.wppl --require ./refModule/
 
 // Load in experimental data to condition on
 var experimentVersion = 'fixedPose96'; // 'fixedPose', 'varyingPose', etc
@@ -14,7 +14,8 @@ var possibleSketches = refModule.getPossibleSketches(data);
 var conditionLookup = refModule.getConditionLookup();
 console.log("Loading model data complete..."
 	    + possibleSketches.length + " sketches of " +
-	    + _.keys(similarities['strict']).length + " objects." );
+	    // + _.keys(similarities['strict']).length + " objects." );
+			+ _.keys(similarities).length + " objects." );
 
 // Package into config
 var globalConfig = {
@@ -36,7 +37,6 @@ var paramPrior = function() {
 		 //pragmatics == 'S1' ? 1 :
 		 //uniformDraw(_.range(0, 1.01, 0.1))),
     costWeight : 0.142//(production === 'nocost' ? 0 :
-		  //uniformDraw(_.range(0, 1.01, 0.1)))
   };
 };
 
@@ -59,8 +59,8 @@ var modelAnalysis = function() {
     return map(function(s){
       return  _.values(c).concat(s).concat(modelOutput.score(s)).join(',')
     }, modelOutput.support());
-  }, data);    
-  
+  }, data);
+
   // console.log(params);
   // console.log(score);
 
