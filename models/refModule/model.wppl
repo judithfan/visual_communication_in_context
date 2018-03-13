@@ -22,16 +22,9 @@ var speakerModel = function(targetObj, context, params, config) {
   // so that with alpha = 1, you produce sketches directly proportional
   // to their informativity (because factor adds to log space)
   var informativity = function(sketch) {
-    var model = (params.pragmatics === 'combined' ?
-		 (flip(params.pragWeight) ? 'S1' : 'S0') :
-		 params.pragmatics);
-    if(model == 'S1') {
-      return refModule.getL0score(targetObj, sketch, context, params, config);
-    } else if (model == 'S0') {
-      return similarity(sketch, targetObj);
-    } else {
-      console.error('unknown pragmatics model:' + params.pragmatics);
-    }
+    var S1_inf = refModule.getL0score(targetObj, sketch, context, params, config);
+    var S0_inf = similarity(sketch, targetObj);
+    return params.pragWeight * S1_inf  + (1 - params.pragWeight) * S0_inf;
   };
 
   // Selects among sketches given raw similarity to target (ignoring context)
@@ -39,9 +32,9 @@ var speakerModel = function(targetObj, context, params, config) {
     var similarities = config.similarities[params.perception];
     return Infer({method:'enumerate', model: function(){
       var sketch = uniformDraw(config.possibleSketches);
-      // faster helper function for literalListener(sketch, context).score(targetObj) :
       var inf = informativity(sketch);
-      var utility = (1 - sketchCost(sketch)) * inf - params.costWeight * sketchCost(sketch);
+      var utility = ((1 - params.costWeight) * inf
+		     - params.costWeight * sketchCost(sketch));
       factor(params.alpha * utility);
       return globalConfig.aggregate ? config.conditionLookup[sketch] : sketch;
     }});

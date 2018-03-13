@@ -41,10 +41,10 @@ var getL0score = function(target, sketch, context, params, config) {
   var similarities = config.similarities[params.perception];
   var scores = [];
   for(var i=0; i<context.length; i++){
-    var similarity = (similarities[context[i]][sketch] + 1) / 2; // transform to range from 0 to 1
+    var similarity = (similarities[context[i]][sketch]); // transform to range from 0 to 1
     scores.push(params.simScaling * similarity);
   }
-  var similarity = (similarities[target][sketch] + 1) /2;
+  var similarity = (similarities[target][sketch]);
   return params.simScaling * similarity - _logsumexp(scores);
 };
 
@@ -74,12 +74,11 @@ var getSpeakerScore = function(trueSketch, targetObj, context, params, config) {
     var sketch = possibleSketches[i];
     var inf = informativity(targetObj, sketch, context, params, config);
     var cost = config.costs[sketch];
-    var utility = (1 - costw) * inf + costw * (1 - cost);
-    // if rounding error makes true utility <= 0, log isn't defined...
+    var utility = (1 - costw) * inf - costw * cost;
     scores.push(params.alpha * utility);//Math.log(Math.max(utility, Number.EPSILON)));
   }
   var trueUtility = ((1-costw) * informativity(targetObj, trueSketch, context, params, config)
-		     + costw * (1 - config.costs[trueSketch]));
+		     - costw * config.costs[trueSketch]);
   //var roundedUtility = Math.max(trueUtility, Number.EPSILON);
   // console.log(_logsumexp(scores))
   //console.log(params.alpha * Math.log(roundedUtility))// - _logsumexp(scores));
