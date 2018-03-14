@@ -35,7 +35,7 @@ cars = c('beetle', 'bluesport', 'brown', 'white', 'redsport', 'redantique', 'hat
 ```
 
 ```{r}
-predictives <- read_csv('./bdaOutput/drawDurationPredictives.csv') %>%
+predictives <- read_csv('./bdaOutput/human_combined_costPredictives.csv') %>%
   group_by(coarseGrainedTrueSketch, coarseGrainedPossibleSketch) %>%
   summarize(modelProb = reduce(modelProb, sumlogprob) - log(length(modelProb))) %>%
   rename(trueSketch = coarseGrainedTrueSketch, possibleSketch = coarseGrainedPossibleSketch) %>%
