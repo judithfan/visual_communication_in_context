@@ -3,7 +3,7 @@
 
 // Load in experimental data to condition on
 var experimentVersion = 'fixedPose96'; // 'fixedPose', 'varyingPose', etc
-var data = refModule.readCSV('./bdaInput/sketchData_fixedPose_splitbycontext_augmented2_pilot2_costOutliersRemoved.csv');
+var data = refModule.readCSV('./bdaInput/sketchData_fixedPose_alldata_augmented2_pilot2_costOutliersRemoved.csv');
 console.log("Loading expt data complete..." + data.length + " data points");
 
 // Cache some properties of model
@@ -20,13 +20,13 @@ console.log("Loading model data complete..."
 var globalConfig = {
   similarities, possibleSketches, costs, conditionLookup,
   aggregate: false,
-  outputFileName : 'combined_MCMC_human_mean_intensity'
+  outputFileName : 'combined_human_nocost_alldata'
 };
 
 var paramPrior = function() {
   var perception = uniformDraw(['human']); // 'mid-layer-augmented', 'human'
   var pragmatics = uniformDraw(['combined'])// 'combined', 'S0', 'S1']);
-  var production = uniformDraw(['cost'])//cost', 'nocost']);
+  var production = uniformDraw(['nocost'])//cost', 'nocost']);
   return {
     perception, pragmatics, production,
     alpha : uniformDrift({a:0,b:30, width: 2}),
