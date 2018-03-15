@@ -129,7 +129,7 @@ var bayesianErpWriter = function(erp, filePrefix) {
 
   if(_.has(supp[0], 'predictives')) {
     var predictiveFile = fs.openSync(filePrefix + "Predictives.csv", 'w');
-    fs.writeSync(predictiveFile, ['game', "condition", 'trueSketch', "Target",
+    fs.writeSync(predictiveFile, ['index','game', "condition", 'trueSketch', "Target",
 				  "Distractor1", "Distractor2", "Distractor3",
 				  "coarseGrainedTrueSketch", "coarseGrainedPossibleSketch",
 				  "modelProb"] + '\n');

@@ -9,14 +9,30 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 library(ggthemes)
-library(lme4)
-library(stringr)
+# library(lme4)
+# library(stringr)
 # # Note: to install langcog, 
 # library(langcog)
 library(jsonlite)
 ```
 
 # Explore predictives
+
+```{r}
+# helpers
+sumlogprob <- function(a, b) {
+  if(a>b) {
+    return(a+log1p(exp(b-a)))
+  } else{
+    return(b+log1p(exp(a-b)))
+  }
+}
+
+dogs <- c('weimaraner', 'chihuahua', 'basset', 'doberman', 'bloodhound', 'bullmastiff', 'goldenretriever', 'pug')
+chairs = c('leather', 'straight', 'squat', 'sling', 'woven', 'waiting', 'inlay','knob')
+birds = c('crow', 'pigeon', 'robin', 'sparrow', 'tomtit', 'nightingale', 'bluejay', 'cuckoo')
+cars = c('beetle', 'bluesport', 'brown', 'white', 'redsport', 'redantique', 'hatchback', 'bluesedan')
+```
 
 ```{r}
 predictives <- read_csv('./bdaOutput/drawDurationPredictives.csv') %>%
@@ -465,10 +481,6 @@ invalid_trials <- (read_csv('./invalid_trial_paths.txt', col_names = F) %>%
   mutate(X1 = str_sub(gsub("-", "", X1), start = 25)))$X1
 
 
-dogs <- c('weimaraner', 'chihuahua', 'basset', 'doberman', 'bloodhound', 'bullmastiff', 'goldenretriever', 'pug')
-chairs = c('leather', 'straight', 'squat', 'sling', 'woven', 'waiting', 'inlay','knob')
-birds = c('crow', 'pigeon', 'robin', 'sparrow', 'tomtit', 'nightingale', 'bluejay', 'cuckoo')
-cars = c('beetle', 'bluesport', 'brown', 'white', 'redsport', 'redantique', 'hatchback', 'bluesedan')
 d <- raw %>% 
   mutate(gameid = str_sub(gsub("-", "", gameID), start = -12)) %>%
   mutate(sketchLabel = sprintf('%s_%s', gameid, trialNum)) %>%
@@ -522,13 +534,6 @@ Note: it'd be nicer if we had a smaller space of unique conditions for quicker B
 Compute likelihood for each model... 
 
 ```{r}
-sumlogprob <- function(a, b) {
-  if(a>b) {
-    return(a+log1p(exp(b-a)))
-  } else{
-    return(b+log1p(exp(a-b)))
-  }
-}
 
 View()
 View(rbind(

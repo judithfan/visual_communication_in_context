@@ -31,6 +31,7 @@ var paramPrior = function() {
   var perception = argv.perception;
   var pragmatics = argv.pragmatics;
   var production = argv.production;
+
   return {
     perception, pragmatics, production,
     alpha : softplus(gaussian(0,100)),//uniformDrift({a:0,b:30, width: 3}),
