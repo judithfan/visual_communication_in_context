@@ -1,11 +1,11 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% pnas-new.cls, v1.42, 2017/07/03
+% pnas-new.cls, v1.43, 2017/08/23
 %
-% This class file enables authors to prepare research 
+% This class file enables authors to prepare research
 % articles for submission to PNAS.
-% 
-% Please note that whilst this template provides a 
-% preview of the typeset manuscript for submission, it 
+%
+% Please note that whilst this template provides a
+% preview of the typeset manuscript for submission, it
 % will not necessarily be the final publication layout.
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -18,12 +18,12 @@
 % of LaTeX version 2005/12/01 or later.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-% For use with latex+dvipdfm, pdflatex, xelatex & lualatex 
-% For compiling with plain latex, please use latex+dvipdfm 
+% For use with latex+dvipdfm, pdflatex, xelatex & lualatex
+% For compiling with plain latex, please use latex+dvipdfm
 % to produce the PDF, not dvis -> ps -> pdf nor dvipdf
-% 
+%
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{pnas-new}[03/07/2017, v1.42]
+\ProvidesClass{pnas-new}[23/08/2017, v1.43]
 \AtEndOfClass{\RequirePackage{microtype}}
 % Option for line numbers
 \newif\if@pnaslineno
@@ -55,11 +55,12 @@
 \RequirePackage[framemethod=tikz]{mdframed}
 
 %% For single column equations and balancing the columns on final page
-% \RequirePackage{widetext}
+\RequirePackage{widetext}
+
 %% Hyperlinking
 \RequirePackage[colorlinks=true, allcolors=blue]{hyperref}
 
-%% Set up main title page fonts 
+%% Set up main title page fonts
 \newcommand{\headerfont}{\normalfont\sffamily\fontsize{7}{9} \selectfont}
 \newcommand{\footerfont}{\normalfont\sffamily\fontsize{7}{9} \selectfont}
 \newcommand{\titlefont}{\fontfamily{lmss}\bfseries\fontsize{22pt}{24pt}\selectfont}
@@ -94,13 +95,17 @@
 %% For numbering just one line of an equation
 \newcommand\numberthis{\addtocounter{equation}{1}\tag{\theequation}}
 
-%% Watermark 
-\usepackage[printwatermark]{xwatermark}
+%% Watermark
 \newboolean{displaywatermark}
 \setboolean{displaywatermark}{true} % Set to false to remove the watermark
 \AtBeginDocument{%
   \ifthenelse{\boolean{displaywatermark}}{%
-  \newwatermark[allpages,color=gray!20,angle=45,scale=3,xpos=0,ypos=0]{DRAFT}}{}
+  \RequirePackage{draftwatermark}
+  \SetWatermarkAngle{45}
+  \SetWatermarkColor{gray!20}
+  \SetWatermarkFontSize{3cm}
+  \SetWatermarkText{{\fontfamily{bch}\bfseries DRAFT}}
+}{}
 }
 
 %% Copyright statement (not used)
@@ -167,7 +172,7 @@
 \renewcommand{\bibsection}{} % Remove header
 \renewcommand\bibfont{\normalfont\sffamily\fontsize{6}{8}\selectfont} % set font to be sans serif
 
-\makeatletter 
+\makeatletter
 \renewcommand\@biblabel[1]{ #1.} % Remove brackets from label
 \def\tagform@#1{\maketag@@@{\bfseries(\ignorespaces#1\unskip\@@italiccorr)}}
 \renewcommand{\eqref}[1]{\textup{{\normalfont Eq.~(\ref{#1}}\normalfont)}}
@@ -268,7 +273,7 @@
   {}
   {0em}
   {#1}
-  []  
+  []
 \titleformat{\subsection}[runin]
   {\sffamily\bfseries}
   {\thesubsection.}
@@ -280,12 +285,12 @@
   {\thesubsubsection.}
   {0.5em}
   {#1. }
-  []    
+  []
 \titleformat{\paragraph}[runin]
   {\sffamily\small\bfseries}
   {}
   {0em}
-  {#1} 
+  {#1}
 \titlespacing*{\section}{0pc}{3ex \@plus4pt \@minus3pt}{5pt}
 \titlespacing*{\subsection}{0pc}{2.5ex \@plus3pt \@minus2pt}{2pt}
 \titlespacing*{\subsubsection}{0pc}{2ex \@plus2.5pt \@minus1.5pt}{2pt}
@@ -311,7 +316,7 @@
 
 %% Abstract formatting
 \def\xabstract{abstract}
-\long\def\abstract#1\end#2{\def\two{#2}\ifx\two\xabstract 
+\long\def\abstract#1\end#2{\def\two{#2}\ifx\two\xabstract
 \long\gdef\theabstract{\ignorespaces#1}
 \def\go{\end{abstract}}\else
 \typeout{^^J^^J PLEASE DO NOT USE ANY \string\begin\space \string\end^^J
@@ -348,7 +353,7 @@ THE ABSTRACT\vskip12pt}\let\go\relax\fi
 \newlength\pnas@vertadjust
 \newcommand\verticaladjustment[1]{\setlength{\pnas@vertadjust}{#1}}
 
-%% Custom title page 
+%% Custom title page
 \renewcommand{\@maketitle}{%
 {%
 \ifthenelse{\boolean{shortarticle}}
@@ -356,7 +361,7 @@ THE ABSTRACT\vskip12pt}\let\go\relax\fi
 {\raggedright\baselineskip= 24pt\titlefont \@title\par}%
 \vskip10pt% 21pts between base of title and base of author line
 {\raggedright \@author\par}
-\vskip8pt% 16pts between base of affiliations and base of dates line 
+\vskip8pt% 16pts between base of affiliations and base of dates line
 {\raggedright \datesfont \@ifundefined{@dates}{}{\@dates}\par}
 \vskip12pt%
 }}
@@ -366,7 +371,7 @@ THE ABSTRACT\vskip12pt}\let\go\relax\fi
 {\raggedright\baselineskip= 24pt\titlefont \@title\par}%
 \vskip10pt% 21pts between base of title and base of author line
 {\raggedright \@author\par}
-\vskip8pt% 16pts between base of affiliations and base of dates line 
+\vskip8pt% 16pts between base of affiliations and base of dates line
 {\raggedright \datesfont \@ifundefined{@dates}{}{\@dates}\par}
 \vskip12pt
 {%
