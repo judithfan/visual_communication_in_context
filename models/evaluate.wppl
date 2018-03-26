@@ -3,7 +3,7 @@
 
 // Load in experimental data to condition on
 var experimentVersion = 'fixedPose96'; // 'fixedPose', 'varyingPose', etc
-var data = refModule.readCSV('./bdaInput/sketchData_fixedPose_splitbycontext_augmented2_pilot2_costOutliersRemoved.csv');
+var data = refModule.readCSV('./bdaInput/sketchData_fixedPose_alldata_augmented2_pilot2_costOutliersRemoved.csv');
 console.log("Loading expt data complete..." + data.length + " data points");
 
 // Cache some properties of model
@@ -21,7 +21,7 @@ console.log("Loading model data complete..."
 var globalConfig = {
   similarities, possibleSketches, costs, conditionLookup,
   aggregate: true,
-  outputFileName : 'drawDuration'
+  outputFileName : 'human_combined_nocost'
 };
 
 var paramPrior = function() {
@@ -30,13 +30,13 @@ var paramPrior = function() {
   var production = 'nocost'//uniformDraw(['cost', 'nocost']);
   return {
     perception, pragmatics, production,
-    alpha : 9.8,//uniformDraw(_.range(0.5, 9, 0.5)),
-    simScaling : 14.79,//(pragmatics === 'S0' ? 1 :
+    alpha : 8.357474 ,//uniformDraw(_.range(0.5, 9, 0.5)),
+    simScaling : 13.722197,//(pragmatics === 'S0' ? 1 :
 		//uniformDraw(_.range(0.5, 5, 0.5))),
-    pragWeight: 0.99,//(pragmatics == 'S0' ? 0 :
+    pragWeight: 0.999743,//(pragmatics == 'S0' ? 0 :
 		 //pragmatics == 'S1' ? 1 :
 		 //uniformDraw(_.range(0, 1.01, 0.1))),
-    costWeight : 0.04//(production === 'nocost' ? 0 :
+    costWeight : 0//(production === 'nocost' ? 0 :
   };
 };
 
@@ -48,7 +48,7 @@ var modelAnalysis = function() {
   // var context = ['trial_19_pigeon','trial_20_cuckoo',
   //  		 'trial_26_crow','trial_29_sparrow'];
   // var context = ['trial_16_bloodhound','trial_7_basset','trial_28_chihuahua','trial_30_doberman']
-//  var context = ['trial_7_basset', 'trial_8_knob',	'trial_17_redsport',	'trial_26_crow']
+  //  var context = ['trial_7_basset', 'trial_8_knob',	'trial_17_redsport',	'trial_26_crow']
   // var target = context[0];
   // var modelOutput = speakerModel(target,context,params,globalConfig);
   // console.log(modelOutput);
