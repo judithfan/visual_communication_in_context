@@ -6,11 +6,12 @@ var babyparse = require('babyparse');
 
 var getSimilarities = function(name) {
   return {
-    //'mid-layer-triplet' : require('./json/similarity-splitbycontext-triplet_bugfix.json'),
+      //'mid-layer-triplet' : require('./json/similarity-splitbycontext-triplet_bugfix.json'),
       // 'mid-layer': require('./json/similarity-splitbycontext.json'),
       // 'early-layer': require('./json/similarity-splitbycontext-fixedpose_pool1.json'),
-    //'mid-layer-augmented': require('./json/strict-similarity-pragmatics-fixedpose-augmented-splitbycontext_conv4_2.json'),
-      'human': require('./json/similarity-human.json')
+      //'mid-layer-augmented': require('./json/strict-similarity-pragmatics-fixedpose-augmented-splitbycontext_conv4_2.json'),
+      'human': require('./json/similarity-human.json'),
+      'fc6':  require('./json/similarity-fc6.json')
   };
 };
 
@@ -46,7 +47,7 @@ var getL0score = function(target, sketch, context, params, config) {
   var trueVal = ad.scalar.mul(params.simScaling, similarities[target][sketch]);
   var sum = 0;
   for(var i=0; i<context.length; i++){
-    var similarity = similarities[context[i]][sketch];
+    var similarity = similarities[context[i]][sketch] + 0.000001;
     sum = ad.scalar.add(sum,
 			ad.scalar.exp(ad.scalar.mul(params.simScaling,
 						    similarity)));

@@ -78,31 +78,56 @@ Graphical representation was transformative because it provided a means for peop
 
 %%%%%%%%%%%%%%%%%%%%
 
-Communicative drawing poses a key challenge for understanding how core cognitive systems are coordinated to support complex, natural behaviors. Successful visual communication by drawing inherently combines the activity of three such core systems:
+Communicative drawing poses a key challenge for understanding how core cognitive systems are coordinated to support complex, natural behaviors. Successful visual communication by drawing inherently combines the activity of three such core systems: \textit{visual perception} --- the set of computations that transform raw visual inputs into semantically meaningful internal representations; \textit{social reasoning} --- our robust capacity to evaluate other people's beliefs, intentions, and knowledge; and \textit{action planning} --- the ability to compose sequences of actions to efficiently achieve task goals. Drawing thus provides a natural domain to interrogate how visually-guided actions are constrained by high-level goals, including social communication, and likewise, how communicative behavior is constrained by our perceptual system.
 
-\textit{perception} --- the set of computations that transform raw visual inputs into semantically meaningful internal representations;
+A long-standing debate concerns the relative contribution of these systems for explaining how drawings derive their referential meaning. On the one hand, there is strong evidence that the perceptual system is sufficient to explain how people are able to perceive the correspondence between drawings and real-world objects, suggesting that this ability can arise from the same general-purpose neural architecture evolved to handle natural visual inputs
+\cite{fan2015common,yamins2014performance}. On the other hand, several influential theorists have argued that socially-mediated experience with pictorial representations is always necessary to be able to extract semantic content from drawings \cite{goodman1976languages,gombrich1989story}.
 
-\textit{social reasoning} --- our robust capacity to evaluate other people's beliefs, intentions, and knowledge;
+How can these two opposing perspectives on the basis for fluency with graphical representations be reconciled? And how does such variation in visual communication behavior, ranging from the depictive to the symbolic, arise from the same cognitive architecture? Here we propose a unified theoretical framework for understanding how such variation naturally arises from variation in context, affecting how perception and social inference are combined to generate communicative actions. Our approach is to develop an integrated computational model of visual communication that combines high-performing models of sensory representation from deep learning with insights from Bayesian cognitive models of social reasoning in language. This novel synthesis will provide fundamental and novel insights into the core computations that connect perception, action, and social cognition to support visual communication.
 
-and \textit{decision-making} --- the ability to efficiently navigate large action spaces to achieve task goals.
 
-Drawing thus provides a natural domain to interrogate how visually-guided actions are constrained by high-level goals, including social communication, and likewise, how communicative behavior is constrained by our perceptual system.
+
+
 
 %%%%%%%%%%%%%%%%%%%%
+
+The goal of this paper is to evaluate the hypothesis that contextual flexibility in human visual communication can be captured by combining constraints from perception and pragmatic reasoning.
+
+Specifically, are \emph{pragmatic visual communicators} who proactively account for their viewer's expectations and take advantage of shared knowledge to be informative \cite[]{wilson1986relevance,frank2012predicting} while  \cite[]{zipf1936psycho}.
+
+
 
 
 \section*{Results}
 
-\subsection*{Communication experiment}
 
-If sketchers aim to make their sketches informative without being too costly to produce, they will modulate the level of detail in their drawings according to the set of alternative hypotheses under consideration by the viewer. For instance, in the \textit{close} condition where the target and distractors belong to the same basic-level category, sketchers should make detailed drawings to highlight fine-grained distinctions, even though this requires including additional detail. By contrast, in the \textit{far} condition where the target and distractors belong to different basic-level categories, the sketcher can afford to produce simpler drawings by omitting excess detail.
+
+\subsection*{Communication task performance}
+
+We hypothesized that sketchers aim to be informative yet parsimonious in communicating about the target object in context.
+
+We evaluated several predictions that this hypothesis makes:
+
+first, that sketchers are generally successful at conveying the identity of the target to viewers in both
+
+
+sketchers will modulate the level of detail in their drawings according to the similarity of the alternatives under consideration by the viewer.
+
+
+
+If sketchers aim to make their sketches informative without being too costly to produce, they will modulate the level of detail in their drawings according to the set of alternatives under consideration by the viewer.
+
+For instance, in the \textit{close} condition where the target and distractors belong to the same basic-level category, sketchers should make detailed drawings to highlight fine-grained distinctions, even though this requires including additional detail. By contrast, in the \textit{far} condition where the target and distractors belong to different basic-level categories, the sketcher can afford to produce simpler drawings by omitting excess detail.
 
 Consistent with this prediction, we found that sketchers applied fewer strokes (close = 8.03, far = 13.5, \textit{p} $<$ 0.001), used less ink (measured by proportion of the canvas marked: close = 0.054, far = 0.042, \textit{p} $<$ 0.001) and spent less time (close = 30.3s, far = 13.7s, \textit{p} $<$ 0.001) to make their drawings in the far condition than in the close condition.
 
 Despite the relative sparsity of drawings produced on far trials, viewers were close to ceiling on inferring the target (99.7\%). Performance was also high on close trials (87.7\%), even though this required that people discriminate the correspondence between a sketch and its referent in the context of highly similar distractors.
 
-\subsection*{Recognition experiment}
+We hypothesized that the context manipulation in the communication experiment systematically affected the high-level perceptual content in participants' sketches, resulting in Far sketches that were highly informative about the target \textit{in context} yet less recognizable (i.e., worse match to the target object) than Close sketches \textit{out of context}.
 
+In other words, we predicted that the decreased effort expended by participants on Far trials reduced the absolute perceptual similarity between sketches and the target. The goal of this experiment was validate this assumption and to provide independent training data to train a light adaptor network to merge photorealistic images and sketches into a common latent space, from which perceptual similarity can be easily read out.
+
+%%% recognition experiments
 %% report close vs. far Accuracy
 %% report variation in different categories
 %% report confusion matrix results: diagonal vs. off-diagonal block results
@@ -120,7 +145,7 @@ Despite the relative sparsity of drawings produced on far trials, viewers were c
 \subsubsection*{Code availability} The code for the analyses presented in this article is publicly available in a Github repository at: XX.
 
 \subsubsection*{Data availability} The data presented in this article are publicly available at this URL: XX.
-
+ras
 \subsection*{Supporting Information (SI)}
 
 % The main text of the paper must stand on its own without the SI. Refer to SI in the manuscript at an appropriate point in the text. Number supporting figures and tables starting with S1, S2, etc. Authors are limited to no more than 10 SI files, not including movie files. Authors who place detailed materials and methods in SI must provide sufficient detail in the main text methods to enable a reader to follow the logic of the procedures and results and also must reference the online methods. If a paper is fundamentally a study of a new method or technique, then the methods must be described completely in the main text. Because PNAS edits SI and composes it into a single PDF, authors must provide the following file formats only.
@@ -149,11 +174,11 @@ For each pair, objects were grouped into eight quartets: Four of these quartets 
 
 \subsection*{Recognition experiment: Measuring perceptual similarity between sketches and objects}
 
-We hypothesized that the context manipulation in the communication experiment systematically affected the high-level perceptual content in participants' sketches, resulting in Far sketches that were highly informative about the target \textit{in context} yet less recognizable (i.e., worse match to the target object) than Close sketches \textit{out of context}. In other words, we predicted that the decreased effort expended by participants on Far trials reduced the absolute perceptual similarity between sketches and the target. The goal of this experiment was validate this assumption and to provide independent training data to train a light adaptor network to merge photorealistic images and sketches into a common latent space, from which perceptual similarity can be easily read out.
+
 
 \subsubsection*{Participants}
 
-A total of XX participants were recruited via Amazon Mechanical Turk (AMT). They were provided a base compensation of \$1.00 for their participation, and earned an additional \$0.01 bonus for each correct response.
+A total of 112 participants were recruited via Amazon Mechanical Turk (AMT). They were provided a base compensation of \$1.00 for their participation, and earned an additional \$0.01 bonus for each correct response.
 
 \subsubsection*{Task}
 
