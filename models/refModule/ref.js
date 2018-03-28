@@ -27,10 +27,6 @@ var getConditionLookup = function() {
   return require('../bdaInput/condition-lookup.json');
 };
 
-var normalize = function(truth, sum) {
-  return ad.scalar.sub(truth, ad.scalar.log(sum));
-};
-
 function _logsumexp(a) {
   var m = Math.max.apply(null, a);
   var sum = 0;
@@ -44,34 +40,27 @@ function _logsumexp(a) {
 // => log(p) = scale * sim(target, sketch) - log(\sum_{i} e^{scale * sim(t, s)})
 var getL0score = function(target, sketch, context, params, config) {
   var similarities = config.similarities[params.perception];
-  var trueVal = ad.scalar.mul(params.simScaling, similarities[target][sketch]);
-  var sum = 0;
+  var scores = [];
   for(var i=0; i<context.length; i++){
-    var similarity = similarities[context[i]][sketch] + 0.000001;
-    sum = ad.scalar.add(sum,
-			ad.scalar.exp(ad.scalar.mul(params.simScaling,
-						    similarity)));
+    var similarity = (similarities[context[i]][sketch]); // transform to range from 0 to 1
+    scores.push(params.simScaling * similarity);
   }
-  return normalize(trueVal, sum);
-  // ad.scalar.sub(params.simScaling * similarity - _logsumexp(scores);
+  var similarity = (similarities[target][sketch]);
+  return params.simScaling * similarity - _logsumexp(scores);
 };
 
 // Interpolates between the 'informativity' term of S0 and S1 based on pragWeight param
 // Try remapping these to [0,1]...
 var informativity = function(targetObj, sketch, context, params, config) {
-  var similarities = config.similarities[params.perception];
-  var S0inf = similarities[targetObj][sketch];
-  var S1inf = getL0score(targetObj, sketch, context, params, config);
-  var term1 = ad.scalar.mul(ad.scalar.sub(1, params.pragWeight), S0inf);
-  var term2 = ad.scalar.mul(params.pragWeight, S1inf);
-  return ad.scalar.add(term1, term2);
-  //((1 - params.pragWeight) * S0inf + params.pragWeight * S1inf);
+  var sim = config.similarities[params.perception];
+  var S0inf = (sim[targetObj][sketch]);// + 1.001) / 2;
+//  console.log(S0inf);
+  var S1inf = getL0score(targetObj, sketch, context, params, config); //Math.exp()
+  // console.log(targetObj);
+  // console.log(sketch);
+  // console.log(S1inf);
+  return ((1 - params.pragWeight) * S0inf + params.pragWeight * S1inf);
 };
-
-var getUtility = function(costw, inf, cost) {
-  return ad.scalar.sub(ad.scalar.mul(ad.scalar.sub(1, costw), inf),
-		       ad.scalar.mul(costw, cost));
-}
 
 // note using logsumexp here isn't strictly necessary, because all the scores
 // are *negative* (informativity is log(p of listener)) and there aren't
@@ -79,20 +68,22 @@ var getUtility = function(costw, inf, cost) {
 var getSpeakerScore = function(trueSketch, targetObj, context, params, config) {
   var possibleSketches = config.possibleSketches;
   var costw = params.costWeight;
-  var sum = 0;
+  var scores = [];
   // note: could memoize this for moderate optimization...
   // (only needs to be computed once per context per param, not for every sketch)
   for(var i=0; i<possibleSketches.length; i++){
     var sketch = possibleSketches[i];
     var inf = informativity(targetObj, sketch, context, params, config);
     var cost = config.costs[sketch];
-    var utility = getUtility(costw, inf, cost);
-    sum = ad.scalar.add(sum,
-			ad.scalar.exp(ad.scalar.mul(params.alpha, utility)));
-    //scores.push(params.alpha * utility);//Math.log(Math.max(utility, Number.EPSILON)));
+    var utility = (1 - costw) * inf - costw * cost;
+    scores.push(params.alpha * utility);//Math.log(Math.max(utility, Number.EPSILON)));
   }
-  var trueUtility = getUtility(costw, informativity(targetObj, trueSketch, context, params, config), config.costs[trueSketch]);
-  return normalize(ad.scalar.mul(params.alpha, trueUtility), sum);
+  var trueUtility = ((1-costw) * informativity(targetObj, trueSketch, context, params, config)
+		     - costw * config.costs[trueSketch]);
+  //var roundedUtility = Math.max(trueUtility, Number.EPSILON);
+  // console.log(_logsumexp(scores))
+  //console.log(params.alpha * Math.log(roundedUtility))// - _logsumexp(scores));
+  return params.alpha * trueUtility - _logsumexp(scores);
 };
 
 function readCSV(filename){
