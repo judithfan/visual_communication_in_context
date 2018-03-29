@@ -1,5 +1,8 @@
 // run using:
 // webppl BDA.wppl --require ./refModule/ -- --perception fc6 --pragmatics combined --production cost
+// webppl BDA.wppl --require ./refModule/ -- --perception fc6 --pragmatics S0 --production cost
+// webppl BDA.wppl --require ./refModule/ -- --perception fc6 --pragmatics combined --production nocost
+// webppl BDA.wppl --require ./refModule/ -- --perception fc6 --pragmatics S0 --production nocost
 
 // Load in experimental data to condition on
 var experimentVersion = 'fixedPose96'; // 'fixedPose', 'varyingPose', etc
