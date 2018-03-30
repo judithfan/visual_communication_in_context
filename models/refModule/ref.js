@@ -11,7 +11,7 @@ var getSimilarities = function(name) {
       // 'early-layer': require('./json/similarity-splitbycontext-fixedpose_pool1.json'),
       //'mid-layer-augmented': require('./json/strict-similarity-pragmatics-fixedpose-augmented-splitbycontext_conv4_2.json'),
       'human': require('./json/similarity-human.json'),
-      'fc6':  require('./json/similarity-fc6.json')
+      'fc6':  require('./json/similarity-fc6-centroid.json')
   };
 };
 
