@@ -99,49 +99,45 @@ function appendCSV(jsonCSV, filename){
   fs.appendFileSync(filename, babyparse.unparse(jsonCSV) + '\n');
 }
 
-var supportWriter = function(s, p, handle) {
+var paramSupportWriter = function(s, p, handle) {
   var sLst = _.toPairs(s);
   var l = sLst.length;
 
   for (var i = 0; i < l; i++) {
-    fs.writeSync(handle, sLst[i].join(',')+','+p+'\n');
+    fs.writeSync(handle, i + sLst[i].join(',')+','+p+'\n');
   }
 };
 
-var predictiveSupportWriter = function(s, p, handle) {
+var predictiveSupportWriter = function(s, filePrefix) {
+  var predictiveFile = fs.openSync(filePrefix + "Predictives.csv", 'w');
+  fs.writeSync(predictiveFile, ['index','game', "condition", 'trueSketch', "Target",
+				"Distractor1", "Distractor2", "Distractor3",
+				"coarseGrainedTrueSketch", "coarseGrainedPossibleSketch",
+				"modelProb"] + '\n');
+
   var l = s.length;
   for (var i = 0; i < l; i++) {
-    fs.writeSync(handle, s[i] + '\n');
+    fs.writeSync(predictiveFile, s[i] + '\n');
   }
+
+  fs.closeSync(predictiveFile);
 };
 
 // Note this is highly specific to a single type of erp
 var bayesianErpWriter = function(erp, filePrefix) {
   var supp = erp.support();
 
-  if(_.has(supp[0], 'predictives')) {
-    var predictiveFile = fs.openSync(filePrefix + "Predictives.csv", 'w');
-    fs.writeSync(predictiveFile, ['index','game', "condition", 'trueSketch', "Target",
-				  "Distractor1", "Distractor2", "Distractor3",
-				  "coarseGrainedTrueSketch", "coarseGrainedPossibleSketch",
-				  "modelProb"] + '\n');
-  }
   if(_.has(supp[0], 'params')) {
     var paramFile = fs.openSync(filePrefix + "Params.csv", 'w');
-    fs.writeSync(paramFile, ["perception", "pragmatics", "production", "alpha",
+    fs.writeSync(paramFile, ["id", "perception", "pragmatics", "production", "alpha",
 			     "simScaling", "pragWeight","costWeight",
 			     "logLikelihood", "posteriorProb"] + '\n');
   }
 
   supp.forEach(function(s) {
-    if(_.has(s, 'predictives'))
-      predictiveSupportWriter(s.predictives, erp.score(s), predictiveFile);
     if(_.has(s, 'params'))
-      supportWriter(s.params, erp.score(s), paramFile);
+      paramSupportWriter(s.params, erp.score(s), paramFile);
   });
-  if(_.has(supp[0], 'predictives')) {
-    fs.closeSync(predictiveFile);
-  }
   if(_.has(supp[0], 'params')) {
     fs.closeSync(paramFile);
   }
@@ -161,6 +157,7 @@ var locParse = function(filename) {
 
 module.exports = {
   getSimilarities, getPossibleSketches, getCosts, getSubset, getConditionLookup,
+  predictiveSupportWriter,
   getL0score, getSpeakerScore,
   bayesianErpWriter, writeCSV, readCSV, locParse
 };
