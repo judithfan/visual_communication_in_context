@@ -18,13 +18,6 @@
 \usepackage{textcomp}
 \usepackage{multirow}
 \usepackage{subfig}
-% \usepackage{trackchanges}
-% trackchanges commands:
-%   \note[editor]{The note}
-% \annote[editor]{Text to annotate}{The note}
-%    \add[editor]{Text to add}
-% \remove[editor]{Text to remove}
-% \change[editor]{Text to remove}{Text to add}
 
 
 \title{Contextual flexibility in visual communication}
@@ -81,19 +74,17 @@ Graphical representation was transformative because it provided a means for peop
 Communicative drawing poses a key challenge for understanding how core cognitive systems are coordinated to support complex, natural behaviors. Successful visual communication by drawing inherently combines the activity of three such core systems: \textit{visual perception} --- the set of computations that transform raw visual inputs into semantically meaningful internal representations; \textit{social reasoning} --- our robust capacity to evaluate other people's beliefs, intentions, and knowledge; and \textit{action planning} --- the ability to compose sequences of actions to efficiently achieve task goals. Drawing thus provides a natural domain to interrogate how visually-guided actions are constrained by high-level goals, including social communication, and likewise, how communicative behavior is constrained by our perceptual system.
 
 A long-standing debate concerns the relative contribution of these systems for explaining how drawings derive their referential meaning. On the one hand, there is strong evidence that the perceptual system is sufficient to explain how people are able to perceive the correspondence between drawings and real-world objects, suggesting that this ability can arise from the same general-purpose neural architecture evolved to handle natural visual inputs
-\cite{fan2015common,yamins2014performance}. On the other hand, several influential theorists have argued that socially-mediated experience with pictorial representations is always necessary to be able to extract semantic content from drawings \cite{goodman1976languages,gombrich1989story}.
+\cite{fan2015common, yamins2014performance}. On the other hand, several influential theorists have argued that socially-mediated experience with pictorial representations is always necessary to be able to extract semantic content from drawings \cite{goodman1976languages,gombrich1989story}.
 
 How can these two opposing perspectives on the basis for fluency with graphical representations be reconciled? And how does such variation in visual communication behavior, ranging from the depictive to the symbolic, arise from the same cognitive architecture? Here we propose a unified theoretical framework for understanding how such variation naturally arises from variation in context, affecting how perception and social inference are combined to generate communicative actions. Our approach is to develop an integrated computational model of visual communication that combines high-performing models of sensory representation from deep learning with insights from Bayesian cognitive models of social reasoning in language. This novel synthesis will provide fundamental and novel insights into the core computations that connect perception, action, and social cognition to support visual communication.
-
-
-
-
 
 %%%%%%%%%%%%%%%%%%%%
 
 The goal of this paper is to evaluate the hypothesis that contextual flexibility in human visual communication can be captured by combining constraints from perception and pragmatic reasoning.
 
-Specifically, are \emph{pragmatic visual communicators} who proactively account for their viewer's expectations and take advantage of shared knowledge to be informative \cite[]{wilson1986relevance,frank2012predicting} while  \cite[]{zipf1936psycho}.
+Specifically, are \emph{pragmatic visual communicators} who proactively account for their viewer's expectations and take advantage of shared knowledge to be informative
+\cite{wilson1986relevance,goodman2016pragmatic}
+while also being parsimonious \cite{zipf1936psycho}.
 
 
 
@@ -108,12 +99,10 @@ We hypothesized that sketchers aim to be informative yet parsimonious in communi
 
 We evaluated several predictions that this hypothesis makes:
 
-first, that sketchers are generally successful at conveying the identity of the target to viewers in both
+first, that sketchers are generally successful at conveying the identity of the target to viewers in both close and far contexts.
 
 
-sketchers will modulate the level of detail in their drawings according to the similarity of the alternatives under consideration by the viewer.
-
-
+second, that sketchers will modulate the level of detail in their drawings according to the similarity of the alternatives under consideration by the viewer.
 
 If sketchers aim to make their sketches informative without being too costly to produce, they will modulate the level of detail in their drawings according to the set of alternatives under consideration by the viewer.
 
@@ -125,10 +114,13 @@ Despite the relative sparsity of drawings produced on far trials, viewers were c
 
 We hypothesized that the context manipulation in the communication experiment systematically affected the high-level perceptual content in participants' sketches, resulting in Far sketches that were highly informative about the target \textit{in context} yet less recognizable (i.e., worse match to the target object) than Close sketches \textit{out of context}.
 
-In other words, we predicted that the decreased effort expended by participants on Far trials reduced the absolute perceptual similarity between sketches and the target. The goal of this experiment was validate this assumption and to provide independent training data to train a light adaptor network to merge photorealistic images and sketches into a common latent space, from which perceptual similarity can be easily read out.
+In other words, we predicted that the decreased effort expended by participants on Far trials reduced the absolute perceptual similarity between sketches and the target. The goal of this experiment was to validate this assumption and to provide independent training data to train a shallow adaptor network to merge photorealistic images and sketches into a common latent space, from which perceptual similarity can be easily read out.
 
 %%% recognition experiments
 %% report close vs. far Accuracy
+
+Consistent with our prediction, we found that Close sketches were matched with their corresponding object rendering much more frequently than Far sketches were (Close: 54.2\%; Far: 37.5\%; $Z$=14.1, $p$<0.001).
+
 %% report variation in different categories
 %% report confusion matrix results: diagonal vs. off-diagonal block results
 
@@ -173,8 +165,6 @@ Sketchers drew using black ink on digital canvas (pen width = 5 pixels; 300 x 30
 For each pair, objects were grouped into eight quartets: Four of these quartets contained objects from the same category (``close''); the other four of these quartets contained objects from different categories (``far'' condition). Each quartet was presented four times, such that each object in the quartet served as the target exactly once. The assignment of objects to quartet and condition was randomized across pairs.
 
 \subsection*{Recognition experiment: Measuring perceptual similarity between sketches and objects}
-
-
 
 \subsubsection*{Participants}
 
