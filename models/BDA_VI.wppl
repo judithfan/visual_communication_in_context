@@ -1,13 +1,16 @@
 // run using:
-// webppl BDA.wppl --require ./refModule/ -- --perception fc6 --pragmatics combined --production cost
-// webppl BDA.wppl --require ./refModule/ -- --perception fc6 --pragmatics S0 --production cost
-// webppl BDA.wppl --require ./refModule/ -- --perception fc6 --pragmatics combined --production nocost
-// webppl BDA.wppl --require ./refModule/ -- --perception fc6 --pragmatics S0 --production nocost
+// webppl BDA.wppl --require ./refModule/ --param-store file --param-id <name of param json> -- --perception human --pragmatics combined --production cost
+
+// webppl BDA.wppl --require ./refModule/ --param-store file --param-id out_params -- --perception fc6 --pragmatics combined --production cost
 
 // Load in experimental data to condition on
 var experimentVersion = 'fixedPose96'; // 'fixedPose', 'varyingPose', etc
 var data = refModule.readCSV('./bdaInput/sketchData_fixedPose_alldata_augmented2_pilot2_costOutliersRemoved.csv');
 console.log("Loading expt data complete..." + data.length + " data points");
+
+var softplus = function(x) {
+  return ad.scalar.log(ad.scalar.add(ad.scalar.exp(x), 1));
+};
 
 // Cache some properties of model
 // Note: when moving to model comparison, can precache for all models...
@@ -22,51 +25,60 @@ console.log("Loading model data complete..."
 // Package into config
 var globalConfig = {
   similarities, possibleSketches, costs, conditionLookup,
-  aggregate: true,
-  outputFileName : argv.perception + '_' + argv.pragmatics + '_' + argv.production + '_alldata'
+  aggregate: false,
+  outputFileName : argv.perception + argv.pragmatics + argv.production + '_alldata'
 };
 
 var paramPrior = function() {
-	var perception = argv.perception; // human, fc6
-  var pragmatics = argv.pragmatics; // S0, S1, combined
-  var production = argv.production; // cost, nocost
+  var perception = argv.perception;
+  var pragmatics = argv.pragmatics;
+  var production = argv.production;
 
   return {
     perception, pragmatics, production,
-    alpha : uniformDrift({a:0,b:30, width: 2}),
+    alpha : softplus(gaussian(0,100)),//uniformDrift({a:0,b:30, width: 3}),
     simScaling : (pragmatics === 'S0' ? 1 :
-		  uniformDrift({a:0,b:30,width:1})),
+		  softplus(gaussian(0,100))),//uniformDrift({a:0,b:30,width:3})),
     pragWeight: (pragmatics == 'S0' ? 0 :
 		 pragmatics == 'S1' ? 1 :
-		 uniformDrift({a:0,b:1,width:0.1})),
+		 uniform(0,1)),//uniformDrift({a:0,b:1,width:0.1})),
     costWeight : (production === 'nocost' ? 0 :
-		  uniformDrift({a:0,b:1,width:0.1}))
+		  uniform(0,1))//uniformDrift({a:0,b:1,width:0.1}))
   };
 };
 
 var modelAnalysis = function() {
   var params = paramPrior();
-  var score = reduce(function(c, memo) {
+  globalStore.score = 0;
+  mapData({data, batchSize: 10}, function(c) {
     // Extract condition information
+//    console.log(c)
     var conditionType = c.condition;
     var context = [c.Target, c.Distractor1, c.Distractor2, c.Distractor3];
     var target = context[0];
     var sketchInfo = globalConfig.aggregate ? c.coarseGrainedSketchInfo : c.sketchLabel;
-    return memo + refModule.getSpeakerScore(
+    var score = refModule.getSpeakerScore(
       c.sketchLabel, target, context, params, globalConfig
     );
-  }, 0, data);
+    // console.log(score);
+    factor(score);
+    globalStore.score += score;
+  });
 
-  console.log(params);
-  console.log(score);
+  // console.log(params);
+  // console.log(score);
 
-  factor(score);
+
 
   var paramsKey = _.values(params).join(',');
   return {
-    params : _.zipObject([paramsKey], [score])
+    params : _.zipObject([paramsKey], [globalStore.score])
   };
 };
 
-var outputERP = Infer({method: 'MCMC', samples: 1000, burn: 250, lag: 0, model: modelAnalysis, onlyMAP: false});
-refModule.bayesianErpWriter(outputERP, "./bdaOutput/" + globalConfig.outputFileName);
+var outputERP = Infer({method: 'optimize', steps: 200, //kernel: {HMC: {steps: 1, stepSize: 1}},
+		       samples: 1,
+		       verbose: true, model: modelAnalysis, onlyMAP: true,
+		       optMethod: {adam: {stepSize: 0.1}}});
+console.log(outputERP);
+//refModule.bayesianErpWriter(outputERP, "./bdaOutput/" + globalConfig.outputFileName);

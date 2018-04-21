@@ -53,13 +53,13 @@ function setupGame () {
     var welcome = {
       type: 'instructions',
       pages: [
-	consentHTML.str1,
-	consentHTML.str2,
-	consentHTML.str3,
-	consentHTML.str4,
-	instructionsHTML.str1,
-	instructionsHTML.str2,
-	instructionsHTML.str3
+      	consentHTML.str1,
+      	consentHTML.str2,
+      	consentHTML.str3,
+      	consentHTML.str4,
+      	instructionsHTML.str1,
+      	instructionsHTML.str2,
+      	instructionsHTML.str3
       ],
       show_clickable_nav: true
     }
@@ -90,10 +90,10 @@ function setupGame () {
     var main_on_start = function(trial) {
       oldCallback = newCallback;
       var newCallback = function(d) {
-	trial.sketch = './sketch/' + d.filename ;
-	trial.target = d.target ;
-	trial.sketchID = d._id;
-	jsPsych.resumeExperiment();
+      	trial.sketch = './sketch/' + d.filename ;
+      	trial.target = d.target ;
+      	trial.sketchID = d._id;
+      	jsPsych.resumeExperiment();
       };
       socket.removeListener('stimulus', oldCallback);
       socket.on('stimulus', newCallback);
@@ -104,21 +104,21 @@ function setupGame () {
     for (var i = 0; i < tmp.num_trials; i++) {
       var k = i+1;
       trials[k] = {
-	type: tmp.type,
-	iterationName : tmp.iterationName,
-	trialNum : i, // trial number
-	gameID: id,
-	set_size: tmp.set_size || 32,
-	num_trials: tmp.num_trials || 10,
-	sketch: undefined, // will fill in dynamically
-	object_size: tmp.object_size || [80, 80],
-	sketch_size: tmp.sketch_size || [220, 220],
-	grid_size: tmp.grid_size || 800,
-	timing_sketch: (typeof tmp.timing_sketch === 'undefined') ? 100 : tmp.timing_sketch,
-	timing_objects: (typeof tmp.timing_objects === 'undefined') ? 1000 : tmp.timing_objects,
-	options: tmp.options || _.times(tmp.set_size,_.constant('./object/dogs_08_pug_0035.png')),
-	on_finish: main_on_finish,
-	on_start: main_on_start
+      	type: tmp.type,
+      	iterationName : tmp.iterationName,
+      	trialNum : i, // trial number
+      	gameID: id,
+      	set_size: tmp.set_size || 32,
+      	num_trials: tmp.num_trials || 10,
+      	sketch: undefined, // will fill in dynamically
+      	object_size: tmp.object_size || [80, 80],
+      	sketch_size: tmp.sketch_size || [220, 220],
+      	grid_size: tmp.grid_size || 800,
+      	timing_sketch: (typeof tmp.timing_sketch === 'undefined') ? 100 : tmp.timing_sketch,
+      	timing_objects: (typeof tmp.timing_objects === 'undefined') ? 1000 : tmp.timing_objects,
+      	options: tmp.options || _.times(tmp.set_size,_.constant('./object/dogs_08_pug_0035.png')),
+      	on_finish: main_on_finish,
+      	on_start: main_on_start
       };
     }
 

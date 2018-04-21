@@ -205,7 +205,7 @@ jsPsych.plugins["nAFC-circle"] = (function() {
         choice: choice.split('/')[2].split('.')[0],
         locations: JSON.stringify(display_locs),
         sketch: trial.sketch,
-	sketchID: trial.sketchID,
+	      sketchID: trial.sketchID,
         target: trial.target,
         category: trial.category,
         distractor1: trial.distractor1,

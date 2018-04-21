@@ -65,7 +65,7 @@ function markAnnotation(collection, gameid, sketchid) {
     }
   });
 };
-    
+
 
 function serve() {
 
@@ -73,7 +73,7 @@ function serve() {
 
     app.use(bodyParser.json());
     app.use(bodyParser.urlencoded({ extended: true}));
-    
+
     app.post('/db/insert', (request, response) => {
       if (!request.body) {
         return failure(response, '/db/insert needs post request body');
@@ -96,7 +96,7 @@ function serve() {
         console.log('creating collection ' + collectionName);
         database.createCollection(collectionName);
       }
-      
+
       const collection = database.collection(collectionName);
 
       const data = _.omit(request.body, ['colname', 'dbname']);
