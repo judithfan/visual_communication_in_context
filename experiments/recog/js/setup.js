@@ -23,7 +23,7 @@ function setupGame () {
     // define trial list
     var tmp = {
       type: 'nAFC-circle',
-      iterationName: 'pilot1',
+      iterationName: 'testing',
       num_trials: num_trials,
       sketch_size: [200,200],
       object_size: [100,100],
