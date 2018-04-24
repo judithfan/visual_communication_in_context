@@ -4,9 +4,12 @@
 // webppl BDA.wppl --require ./refModule/ -- --perception fc6 --pragmatics combined --production nocost
 // webppl BDA.wppl --require ./refModule/ -- --perception fc6 --pragmatics S0 --production nocost
 
+// webppl BDA.wppl --require ./refModule/ -- --perception sketch-unroll-synthetic --pragmatics combined --production cost
+
 // Load in experimental data to condition on
 var experimentVersion = 'fixedPose96'; // 'fixedPose', 'varyingPose', etc
-var data = refModule.readCSV('./bdaInput/sketchData_fixedPose_alldata_augmented2_pilot2_costOutliersRemoved.csv');
+var splitType = 'splitbyobject';
+var data = refModule.readCSV('./bdaInput/sketchData_fixedPose_' + splitType + '_sketchUnrollSynthetic_pilot2_costOutliersRemoved.csv');
 console.log("Loading expt data complete..." + data.length + " data points");
 
 // Cache some properties of model
@@ -23,11 +26,11 @@ console.log("Loading model data complete..."
 var globalConfig = {
   similarities, possibleSketches, costs, conditionLookup,
   aggregate: true,
-  outputFileName : argv.perception + '_' + argv.pragmatics + '_' + argv.production + '_alldata'
+  outputFileName : argv.perception + '_' + argv.pragmatics + '_' + argv.production + '_' + splitType
 };
 
 var paramPrior = function() {
-	var perception = argv.perception; // human, fc6
+	var perception = argv.perception; // human, fc6, sketch-unroll-synthetic
   var pragmatics = argv.pragmatics; // S0, S1, combined
   var production = argv.production; // cost, nocost
 
