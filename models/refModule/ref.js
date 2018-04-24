@@ -85,12 +85,12 @@ var getSpeakerScore = function(trueSketch, targetObj, context, params, config) {
     var utility = infw * inf - costw * cost; // independent informativity weight parameter
     scores.push(params.alpha * utility);//Math.log(Math.max(utility, Number.EPSILON)));
   }
-  var trueUtility = ((1-costw) * informativity(targetObj, trueSketch, context, params, config)
+  var trueUtility = (infw * informativity(targetObj, trueSketch, context, params, config)
 		     - costw * config.costs[trueSketch]);
   //var roundedUtility = Math.max(trueUtility, Number.EPSILON);
   // console.log(_logsumexp(scores))
   //console.log(params.alpha * Math.log(roundedUtility))// - _logsumexp(scores));
-  return params.alpha * trueUtility - _logsumexp(scores);
+  return params.alpha * trueUtility - _logsumexp(scores); // softmax subtraction bc log space,
 };
 
 function readCSV(filename){
