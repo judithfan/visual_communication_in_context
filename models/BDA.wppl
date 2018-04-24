@@ -5,6 +5,7 @@
 // webppl BDA.wppl --require ./refModule/ -- --perception fc6 --pragmatics S0 --production nocost
 
 // webppl BDA.wppl --require ./refModule/ -- --perception sketch-unroll-synthetic --pragmatics combined --production cost
+// webppl BDA.wppl --require ./refModule/ -- --perception sketch-unroll-synthetic --pragmatics S0 --production nocost
 
 // Load in experimental data to condition on
 var experimentVersion = 'fixedPose96'; // 'fixedPose', 'varyingPose', etc
@@ -43,7 +44,8 @@ var paramPrior = function() {
 		 pragmatics == 'S1' ? 1 :
 		 uniformDrift({a:0,b:1,width:0.1})),
     costWeight : (production === 'nocost' ? 0 :
-		  uniformDrift({a:0,b:1,width:0.1}))
+		  uniformDrift({a:0,b:1,width:0.1})),
+		infWeight : uniformDrift({a:0,b:1,width:0.1})
   };
 };
 

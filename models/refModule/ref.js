@@ -55,7 +55,7 @@ var getL0score = function(target, sketch, context, params, config) {
 var informativity = function(targetObj, sketch, context, params, config) {
   var sim = config.similarities[params.perception];
   var S0inf = (sim[targetObj][sketch]);// + 1.001) / 2;
-//  console.log(S0inf);
+   // console.log(S0inf);
   var S1inf = getL0score(targetObj, sketch, context, params, config); //Math.exp()
   // console.log(targetObj);
   // console.log(sketch);
@@ -69,6 +69,7 @@ var informativity = function(targetObj, sketch, context, params, config) {
 var getSpeakerScore = function(trueSketch, targetObj, context, params, config) {
   var possibleSketches = config.possibleSketches;
   var costw = params.costWeight;
+  var infw = params.infWeight;
   var scores = [];
   // note: could memoize this for moderate optimization...
   // (only needs to be computed once per context per param, not for every sketch)
@@ -76,7 +77,12 @@ var getSpeakerScore = function(trueSketch, targetObj, context, params, config) {
     var sketch = possibleSketches[i];
     var inf = informativity(targetObj, sketch, context, params, config);
     var cost = config.costs[sketch];
-    var utility = (1 - costw) * inf - costw * cost;
+    if (isNaN(cost)) {
+      console.log(targetObj,sketch,context);
+      console.log(cost);
+    }
+    // console.log(cost);
+    var utility = infw * inf - costw * cost; // independent informativity weight parameter
     scores.push(params.alpha * utility);//Math.log(Math.max(utility, Number.EPSILON)));
   }
   var trueUtility = ((1-costw) * informativity(targetObj, trueSketch, context, params, config)
