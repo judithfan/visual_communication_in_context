@@ -6,13 +6,9 @@ var babyparse = require('babyparse');
 
 var getSimilarities = function(name) {
   return {
-      //'mid-layer-triplet' : require('./json/similarity-splitbycontext-triplet_bugfix.json'),
-      // 'mid-layer': require('./json/similarity-splitbycontext.json'),
-      // 'early-layer': require('./json/similarity-splitbycontext-fixedpose_pool1.json'),
-      //'mid-layer-augmented': require('./json/strict-similarity-pragmatics-fixedpose-augmented-splitbycontext_conv4_2.json'),
-      'human': require('./json/similarity-human.json'),
+      'human-avg': require('./json/similarity-human.json'),
       'fc6':  require('./json/similarity-fc6-centroid.json'),
-      'sketch-avg-full25k': require('./json/similarity-splitbyobject-sketch_average_full25k.json')
+      'sketch_avg_full25k': require('./json/similarity-splitbyobject-sketch_average_full25k.json')
   };
 };
 
@@ -83,14 +79,14 @@ var getSpeakerScore = function(trueSketch, targetObj, context, params, config) {
     }
     // console.log(cost);
     var utility = infw * inf - costw * cost; // independent informativity weight parameter
-    scores.push(params.alpha * utility);//Math.log(Math.max(utility, Number.EPSILON)));
+    scores.push( utility);//Math.log(Math.max(utility, Number.EPSILON)));
   }
   var trueUtility = (infw * informativity(targetObj, trueSketch, context, params, config)
 		     - costw * config.costs[trueSketch]);
   //var roundedUtility = Math.max(trueUtility, Number.EPSILON);
   // console.log(_logsumexp(scores))
   //console.log(params.alpha * Math.log(roundedUtility))// - _logsumexp(scores));
-  return params.alpha * trueUtility - _logsumexp(scores); // softmax subtraction bc log space,
+  return  trueUtility - _logsumexp(scores); // softmax subtraction bc log space,
 };
 
 function readCSV(filename){
@@ -109,13 +105,16 @@ function appendCSV(jsonCSV, filename){
 var paramSupportWriter = function(s, p, handle) {
   var sLst = _.toPairs(s);
   var l = sLst.length;
-
   for (var i = 0; i < l; i++) {
-    fs.writeSync(handle, i + sLst[i].join(',')+','+p+'\n');
+    fs.writeSync(handle, i + ',' + sLst[i].join(',')+','+p+'\n');
   }
 };
 
 var predictiveSupportWriter = function(s, filePrefix) {
+  var dir = filePrefix.split('/').slice(0,3).join('/');
+  if (!fs.existsSync(dir)){
+      fs.mkdirSync(dir);
+  }
   var predictiveFile = fs.openSync(filePrefix + "Predictives.csv", 'w');
   fs.writeSync(predictiveFile, ['index','game', "condition", 'trueSketch', "Target",
 				"Distractor1", "Distractor2", "Distractor3",
@@ -136,7 +135,7 @@ var bayesianErpWriter = function(erp, filePrefix) {
 
   if(_.has(supp[0], 'params')) {
     var paramFile = fs.openSync(filePrefix + "Params.csv", 'w');
-    fs.writeSync(paramFile, ["id", "perception", "pragmatics", "production", "alpha",
+    fs.writeSync(paramFile, ["id", "perception", "pragmatics", "production",
 			     "simScaling", "pragWeight","costWeight",
 			     "logLikelihood", "posteriorProb"] + '\n');
   }

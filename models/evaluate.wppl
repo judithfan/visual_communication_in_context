@@ -1,13 +1,15 @@
 // run using:
-// webppl evaluate.wppl --require ./refModule/ -- --paramSetting fc6_combined_cost
+// webppl evaluate.wppl --require ./refModule/ -- --paramSetting sketch_avg_full25k_combined_cost
+// webppl evaluate.wppl --require ./refModule/ -- --paramSetting sketch_avg_full25k_S0_cost
 
 // Load in experimental data to condition on
 var experimentVersion = 'fixedPose96'; // 'fixedPose', 'varyingPose', etc
 var splitType = 'splitbyobject';
-var data = refModule.readCSV('./bdaInput/sketchData_fixedPose_' + splitType + '_sketch-avg-full25k_pilot2_costOutliersRemoved.csv');
+var adaptorType = 'sketch_avg_full25k'
+var data = refModule.readCSV('./bdaInput/sketchData_fixedPose_' + splitType + '_' + adaptorType + '_pilot2_costOutliersRemoved.csv');
 console.log("Loading expt data complete..." + data.length + " data points");
 
-var params = refModule.readCSV('./bdaOutput/' + argv.paramSetting + '_alldataParams.csv');
+var params = refModule.readCSV('./bdaOutput/' + argv.paramSetting + '_' + splitType + 'Params.csv');
 console.log("Loading params complete..." + params.length + " param settings");
 
 // Cache some properties of model

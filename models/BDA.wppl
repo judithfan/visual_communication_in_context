@@ -4,13 +4,14 @@
 // webppl BDA.wppl --require ./refModule/ -- --perception fc6 --pragmatics combined --production nocost
 // webppl BDA.wppl --require ./refModule/ -- --perception fc6 --pragmatics S0 --production nocost
 
-// webppl BDA.wppl --require ./refModule/ -- --perception sketch-avg-full25k --pragmatics combined --production cost
-// webppl BDA.wppl --require ./refModule/ -- --perception sketch-avg-full25k --pragmatics S0 --production nocost
+// webppl BDA.wppl --require ./refModule/ -- --perception sketch_avg_full25k --pragmatics combined --production cost
+// webppl BDA.wppl --require ./refModule/ -- --perception sketch_avg_full25k --pragmatics S0 --production cost
 
 // Load in experimental data to condition on
 var experimentVersion = 'fixedPose96'; // 'fixedPose', 'varyingPose', etc
+var adaptorType = 'sketch_avg_full25k'
 var splitType = 'splitbyobject';
-var data = refModule.readCSV('./bdaInput/sketchData_fixedPose_' + splitType + '_sketchUnrollSynthetic_pilot2_costOutliersRemoved.csv');
+var data = refModule.readCSV('./bdaInput/sketchData_fixedPose_' + splitType + '_' + adaptorType + '_pilot2_costOutliersRemoved.csv');
 
 console.log("Loading expt data complete..." + data.length + " data points");
 
@@ -32,13 +33,13 @@ var globalConfig = {
 };
 
 var paramPrior = function() {
-	var perception = argv.perception; // human, fc6, sketch-unroll-synthetic
+	var perception = argv.perception; // human, fc6, sketch_average_full25k
   var pragmatics = argv.pragmatics; // S0, S1, combined
   var production = argv.production; // cost, nocost
 
   return {
     perception, pragmatics, production,
-    alpha : uniformDrift({a:0,b:30, width: 2}),
+    // alpha : uniformDrift({a:0,b:30, width: 2}),
     simScaling : (pragmatics === 'S0' ? 1 :
 		 uniformDrift({a:0,b:30,width:1})),
     pragWeight: (pragmatics == 'S0' ? 0 :
@@ -74,5 +75,5 @@ var modelAnalysis = function() {
   };
 };
 
-var outputERP = Infer({method: 'MCMC', samples: 1000, burn: 250, lag: 0, model: modelAnalysis, onlyMAP: false});
+var outputERP = Infer({method: 'MCMC', samples: 10, burn: 5, lag: 0, model: modelAnalysis, onlyMAP: false});
 refModule.bayesianErpWriter(outputERP, "./bdaOutput/" + globalConfig.outputFileName);
