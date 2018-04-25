@@ -102,12 +102,10 @@ function appendCSV(jsonCSV, filename){
   fs.appendFileSync(filename, babyparse.unparse(jsonCSV) + '\n');
 }
 
-var paramSupportWriter = function(s, p, handle) {
+var paramSupportWriter = function(i, s, p, handle) {
   var sLst = _.toPairs(s);
   var l = sLst.length;
-  for (var i = 0; i < l; i++) {
-    fs.writeSync(handle, i + ',' + sLst[i].join(',')+','+p+'\n');
-  }
+  fs.writeSync(handle, i + ',' + sLst[0].join(',')+','+p+'\n');
 };
 
 var predictiveSupportWriter = function(s, filePrefix) {
@@ -140,11 +138,12 @@ var bayesianErpWriter = function(erp, filePrefix) {
 			     "logLikelihood", "posteriorProb"] + '\n');
   }
 
-  supp.forEach(function(s) {
-    if(_.has(s, 'params'))
-      paramSupportWriter(s.params, erp.score(s), paramFile);
+  supp.forEach(function(s, index) {
+    if(_.has(s, 'params')) {
+      paramSupportWriter(index, s.params, erp.score(s), paramFile);
+    }
   });
-  if(_.has(supp[0], 'params')) {
+    if(_.has(supp[0], 'params')) {
     fs.closeSync(paramFile);
   }
   console.log('writing complete.');
