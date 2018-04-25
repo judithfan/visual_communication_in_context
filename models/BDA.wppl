@@ -4,13 +4,14 @@
 // webppl BDA.wppl --require ./refModule/ -- --perception fc6 --pragmatics combined --production nocost
 // webppl BDA.wppl --require ./refModule/ -- --perception fc6 --pragmatics S0 --production nocost
 
-// webppl BDA.wppl --require ./refModule/ -- --perception sketch-unroll-synthetic --pragmatics combined --production cost
-// webppl BDA.wppl --require ./refModule/ -- --perception sketch-unroll-synthetic --pragmatics S0 --production nocost
+// webppl BDA.wppl --require ./refModule/ -- --perception sketch-avg-full25k --pragmatics combined --production cost
+// webppl BDA.wppl --require ./refModule/ -- --perception sketch-avg-full25k --pragmatics S0 --production nocost
 
 // Load in experimental data to condition on
 var experimentVersion = 'fixedPose96'; // 'fixedPose', 'varyingPose', etc
 var splitType = 'splitbyobject';
 var data = refModule.readCSV('./bdaInput/sketchData_fixedPose_' + splitType + '_sketchUnrollSynthetic_pilot2_costOutliersRemoved.csv');
+
 console.log("Loading expt data complete..." + data.length + " data points");
 
 // Cache some properties of model
@@ -39,13 +40,13 @@ var paramPrior = function() {
     perception, pragmatics, production,
     alpha : uniformDrift({a:0,b:30, width: 2}),
     simScaling : (pragmatics === 'S0' ? 1 :
-		  uniformDrift({a:0,b:30,width:1})),
+		 uniformDrift({a:0,b:30,width:1})),
     pragWeight: (pragmatics == 'S0' ? 0 :
 		 pragmatics == 'S1' ? 1 :
 		 uniformDrift({a:0,b:1,width:0.1})),
     costWeight : (production === 'nocost' ? 0 :
-		  uniformDrift({a:0,b:1,width:0.1})),
-		infWeight : uniformDrift({a:0,b:1,width:0.1})
+		 uniformDrift({a:0,b:5,width:0.1})),
+		infWeight : uniformDrift({a:0,b:5,width:0.1})
   };
 };
 

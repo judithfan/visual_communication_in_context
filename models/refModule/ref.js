@@ -12,7 +12,7 @@ var getSimilarities = function(name) {
       //'mid-layer-augmented': require('./json/strict-similarity-pragmatics-fixedpose-augmented-splitbycontext_conv4_2.json'),
       'human': require('./json/similarity-human.json'),
       'fc6':  require('./json/similarity-fc6-centroid.json'),
-      'sketch-unroll-synthetic': require('./json/similarity-splitbyobject-sketch_unroll_synthetic.json')
+      'sketch-avg-full25k': require('./json/similarity-splitbyobject-sketch_average_full25k.json')
   };
 };
 
