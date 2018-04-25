@@ -3,7 +3,8 @@
 
 // Load in experimental data to condition on
 var experimentVersion = 'fixedPose96'; // 'fixedPose', 'varyingPose', etc
-var data = refModule.readCSV('./bdaInput/sketchData_fixedPose_alldata_augmented2_pilot2_costOutliersRemoved.csv');
+var splitType = 'splitbyobject';
+var data = refModule.readCSV('./bdaInput/sketchData_fixedPose_' + splitType + '_sketch-avg-full25k_pilot2_costOutliersRemoved.csv');
 console.log("Loading expt data complete..." + data.length + " data points");
 
 var params = refModule.readCSV('./bdaOutput/' + argv.paramSetting + '_alldataParams.csv');
@@ -34,6 +35,6 @@ var predictives = foreach(params, function(paramVal) {
       return  _.values(c).concat(s).concat(modelOutput.score(s)).join(',');
     }, modelOutput.support());
   }, data);
-  
+
   refModule.predictiveSupportWriter(_.flatten(output), outPath);
 });
