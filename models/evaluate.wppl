@@ -1,6 +1,6 @@
 // run using:
-// webppl evaluate.wppl --require ./refModule/ -- --paramSetting sketch_avg_full25k_combined_cost
-// webppl evaluate.wppl --require ./refModule/ -- --paramSetting sketch_avg_full25k_S0_cost
+// webppl evaluate.wppl --require ./refModule/ -- --paramSetting human_full25k_combined_cost
+// webppl evaluate.wppl --require ./refModule/ -- --paramSetting human_full25k_S0_cost
 
 // Load in experimental data to condition on
 var experimentVersion = 'fixedPose96'; // 'fixedPose', 'varyingPose', etc

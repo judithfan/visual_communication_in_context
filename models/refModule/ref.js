@@ -80,7 +80,7 @@ var getSpeakerScore = function(trueSketch, targetObj, context, params, config) {
     }
     // console.log(cost);
     var utility = infw * inf - costw * cost; // independent informativity weight parameter
-    scores.push( utility);//Math.log(Math.max(utility, Number.EPSILON)));
+    scores.push(utility);//Math.log(Math.max(utility, Number.EPSILON)));
   }
   var trueUtility = (infw * informativity(targetObj, trueSketch, context, params, config)
 		     - costw * config.costs[trueSketch]);
@@ -135,7 +135,7 @@ var bayesianErpWriter = function(erp, filePrefix) {
   if(_.has(supp[0], 'params')) {
     var paramFile = fs.openSync(filePrefix + "Params.csv", 'w');
     fs.writeSync(paramFile, ["id", "perception", "pragmatics", "production",
-			     "simScaling", "pragWeight","costWeight",
+			     "simScaling", "pragWeight","costWeight", "infWeight",
 			     "logLikelihood", "posteriorProb"] + '\n');
   }
 

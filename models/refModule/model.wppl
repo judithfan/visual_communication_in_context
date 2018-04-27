@@ -33,9 +33,12 @@ var speakerModel = function(targetObj, context, params, config) {
     return Infer({method:'enumerate', model: function(){
       var sketch = uniformDraw(config.possibleSketches);
       var inf = informativity(sketch);
-      var utility = ((1 - params.costWeight) * inf
-		     - params.costWeight * sketchCost(sketch));
-      factor(params.alpha * utility);
+      var costw = params.costWeight;
+      var infw = params.infWeight;
+      var utility = infw * inf - costw * sketchCost(sketch); // independent informativity weight parameter
+      // var utility = ((1 - params.costWeight) * inf
+		  //    - params.costWeight * sketchCost(sketch));
+      factor(utility);
       return globalConfig.aggregate ? config.conditionLookup[sketch] : sketch;
     }});
   };
