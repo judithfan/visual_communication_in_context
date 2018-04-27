@@ -1,4 +1,10 @@
 // run using:
+
+// webppl BDA.wppl --require ./refModule/ -- --perception human_full25k --pragmatics combined --production cost
+// webppl BDA.wppl --require ./refModule/ -- --perception human_full25k --pragmatics S0 --production cost
+// webppl BDA.wppl --require ./refModule/ -- --perception human_full25k --pragmatics combined --production nocost
+// webppl BDA.wppl --require ./refModule/ -- --perception human_full25k --pragmatics S0 --production nocost
+
 // webppl BDA.wppl --require ./refModule/ -- --perception fc6 --pragmatics combined --production cost
 // webppl BDA.wppl --require ./refModule/ -- --perception fc6 --pragmatics S0 --production cost
 // webppl BDA.wppl --require ./refModule/ -- --perception fc6 --pragmatics combined --production nocost
@@ -6,12 +12,13 @@
 
 // webppl BDA.wppl --require ./refModule/ -- --perception sketch_avg_full25k --pragmatics combined --production cost
 // webppl BDA.wppl --require ./refModule/ -- --perception sketch_avg_full25k --pragmatics S0 --production cost
+// webppl BDA.wppl --require ./refModule/ -- --perception sketch_avg_full25k --pragmatics combined --production nocost
+// webppl BDA.wppl --require ./refModule/ -- --perception sketch_avg_full25k --pragmatics S0 --production nocost
 
 // Load in experimental data to condition on
 var experimentVersion = 'fixedPose96'; // 'fixedPose', 'varyingPose', etc
-var adaptorType = 'sketch_avg_full25k'
 var splitType = 'splitbyobject';
-var data = refModule.readCSV('./bdaInput/sketchData_fixedPose_' + splitType + '_' + adaptorType + '_pilot2_costOutliersRemoved.csv');
+var data = refModule.readCSV('./bdaInput/sketchData_fixedPose_' + splitType + '_' + argv.perception + '_pilot2_costOutliersRemoved.csv');
 
 console.log("Loading expt data complete..." + data.length + " data points");
 
@@ -23,7 +30,7 @@ var possibleSketches = refModule.getPossibleSketches(data);
 var conditionLookup = refModule.getConditionLookup();
 console.log("Loading model data complete..."
 	    + possibleSketches.length + " sketches of " +
-	    + _.keys(similarities['human']).length + " objects." );
+	    + _.keys(similarities['sketch_avg_full25k']).length + " objects." );
 
 // Package into config
 var globalConfig = {
