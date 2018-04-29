@@ -1,6 +1,7 @@
 // run using:
 
 // webppl BDA.wppl --require ./refModule/ -- --perception human_full25k --pragmatics combined --production cost
+// webppl BDA.wppl --require ./refModule/ -- --perception human_full25k --pragmatics S1 --production cost
 // webppl BDA.wppl --require ./refModule/ -- --perception human_full25k --pragmatics S0 --production cost
 // webppl BDA.wppl --require ./refModule/ -- --perception human_full25k --pragmatics combined --production nocost
 // webppl BDA.wppl --require ./refModule/ -- --perception human_full25k --pragmatics S0 --production nocost
