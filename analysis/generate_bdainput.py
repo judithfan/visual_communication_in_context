@@ -173,7 +173,7 @@ if __name__ == "__main__":
     parser.add_argument('--iterationName', type=str, help='iteration name', default='pilot2')
     parser.add_argument('--analysis_dir', type=str, help='path to analysis dir', default='./')
     parser.add_argument('--adaptor_type', type=str,
-                        help='which generation of sketch photo adaptor? options: sketch_unroll_full25k | human_full25k',
+                        help='which generation of sketch photo adaptor? options: sketch_unroll_full25k | human_full25k | multimodal_full25k',
                         default='sketch_unroll_full25k')
     parser.add_argument('--split_type', type=str, help='train/test split dimension', default='splitbyobject')
     args = parser.parse_args()
