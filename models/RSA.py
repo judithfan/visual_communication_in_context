@@ -17,36 +17,36 @@ if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser()
     parser.add_argument('--wppl', type=str, help='options: BDA | evaluate', default='BDA')
-    parser.add_argument('--perception', type=list, \
-                        help='which generation of sketch photo adaptor? options: sketch_unroll_full25k | human_full25k', \
-                        default='human_full25k')
-    parser.add_argument('--pragmatics', type=list, \
-                        help='which pragmatics model? options: combined | S1 | S0 ', \
-                        default='combined')
-    parser.add_argument('--production', type=list, \
-                        help='which cost levels? options: cost | nocost', \
-                        default='cost')
+    parser.add_argument('--perception', nargs='+', type=str, \
+                        help='option: options: sketch_unroll_full25k | human_full25k | multimodal_full25k',\
+                        default = 'human_full25k')
+    parser.add_argument('--pragmatics', nargs='+', type=str, \
+                        help='option: combined | S1 | S0',\
+                        default = 'combined')
+    parser.add_argument('--production', nargs='+', type=str, \
+                        help='option: cost | nocost',\
+                        default = 'cost')
     args = parser.parse_args()
 
-    perception_opts = ['sketch_unroll_full25k']
-    production_opts = ['cost','nocost']
-    pragmatics_opts = ['combined','S1','S0']
+    perception = args.perception
+    production = args.production
+    pragmatics = args.pragmatics
 
     assert args.wppl in ['BDA','evaluate']
 
     ## first run BDA.wppl
     if args.wppl=='BDA':
-        for perc in perception_opts:
-            for prag in pragmatics_opts:
-                for prod in production_opts:
+        for perc in perception:
+            for prag in pragmatics:
+                for prod in production:
                     run_bda(perc,prag,prod)
 
     elif args.wppl=='evaluate':
         ## then on output, run evaluate.wppl
-        for perc in perception_opts:
+        for perc in perception:
             print perc
-            for prag in pragmatics_opts:
-                for prod in production_opts:
+            for prag in pragmatics:
+                for prod in production:
                     run_evaluate(perc,prag,prod)
 
     else:
