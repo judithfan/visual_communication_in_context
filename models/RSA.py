@@ -45,14 +45,20 @@ if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser()
     parser.add_argument('--wppl', type=str, help='options: BDA | evaluate', default='BDA')
-    parser.add_argument('--perception', type=str, help='which generation of sketch photo adaptor? options: sketch_unroll_full25k | human_full25k', default='sketch_unroll_full25k')
-    parser.add_argument('--pragmatics', type=str, help='which pragmatics model? options: combined | S1 | S0 ')
-    parser.add_argument('--production', type=str, help='options: cost | nocost', default='cost')
+    parser.add_argument('--perception', type=list, \
+                        help='which generation of sketch photo adaptor? options: sketch_unroll_full25k | human_full25k', \
+                        default=['sketch_unroll_full25k','human_full25k'])
+    parser.add_argument('--pragmatics', type=list, \
+                        help='which pragmatics model? options: combined | S1 | S0 ', \
+                        default=['combined','S1','S0'])
+    parser.add_argument('--production', type=list, \
+                        help='which cost levels? options: cost | nocost', \
+                        default=['cost','nocost'])
     args = parser.parse_args()
 
-    perception_opts = ['sketch_unroll_full25k']
-    production_opts = ['cost','nocost']
-    pragmatics_opts = ['combined','S1','S0']
+    perception_opts = args.perception
+    production_opts = args.production
+    pragmatics_opts = args.pragmatics
 
     assert args.wppl in ['BDA','evaluate']
 
