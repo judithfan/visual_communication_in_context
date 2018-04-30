@@ -178,51 +178,52 @@ if __name__ == "__main__":
     parser.add_argument('--split_type', type=str, help='train/test split dimension', default='splitbyobject')
     args = parser.parse_args()
 
-    ##### if we are dealing with a human encoder, then need to generate similarity json firststyle
-    X = pd.read_csv(os.path.join(args.analysis_dir,'sketchpad_basic_recog_group_data_2_augmented.csv'))
-    print 'Shape of augmented sketch annotation csv: {}'.format(X.shape)
+    if 'human' in args.adaptor_type:
+        ##### if we are dealing with a human encoder, then need to generate similarity json firststyle
+        X = pd.read_csv(os.path.join(args.analysis_dir,'sketchpad_basic_recog_group_data_2_augmented.csv'))
+        print 'Shape of augmented sketch annotation csv: {}'.format(X.shape)
 
-    from collections import Counter
-    import analysis_helpers as h
-    reload(h)
-    ## get standardized object list
-    categories = ['bird','car','chair','dog']
-    obj_list = []
-    for cat in categories:
-        for i,j in h.objcat.iteritems():
-            if j==cat:
-                obj_list.append(i)
+        from collections import Counter
+        import analysis_helpers as h
+        reload(h)
+        ## get standardized object list
+        categories = ['bird','car','chair','dog']
+        obj_list = []
+        for cat in categories:
+            for i,j in h.objcat.iteritems():
+                if j==cat:
+                    obj_list.append(i)
 
 
-    print 'Generating similarity JSON based on human annotations'
-    ## define list of renders and sketches
-    render_list = obj_list
-    sketch_list = np.unique(X['sketchID'])
+        print 'Generating similarity JSON based on human annotations'
+        ## define list of renders and sketches
+        render_list = obj_list
+        sketch_list = np.unique(X['sketchID'])
 
-    out_json = {}
-    for i, this_render in enumerate(render_list):
-        print '{} {}'.format(i, this_render)
-        out_json[this_render] = {}
-        for j,this_sketch in enumerate(sketch_list):
-            counts = np.zeros(len(obj_list)) ## initialize the probability vector
-            choices = X[X['sketchID']==this_sketch]['choice'].values ## get list of all choices
+        out_json = {}
+        for i, this_render in enumerate(render_list):
+            print '{} {}'.format(i, this_render)
+            out_json[this_render] = {}
+            for j,this_sketch in enumerate(sketch_list):
+                counts = np.zeros(len(obj_list)) ## initialize the probability vector
+                choices = X[X['sketchID']==this_sketch]['choice'].values ## get list of all choices
 
-            ## get counter dictionary
-            cdict = Counter(choices)
-            ## populate count vector accordingly
-            for k,o in enumerate(obj_list):
-                if o in cdict:
-                    counts[k] = cdict[o]
+                ## get counter dictionary
+                cdict = Counter(choices)
+                ## populate count vector accordingly
+                for k,o in enumerate(obj_list):
+                    if o in cdict:
+                        counts[k] = cdict[o]
 
-            ## get probability vector by dividing by sum
-            prob = counts/np.sum(counts)
-            ### pluck the probability from the vector that corresponds to current render
-            out_json[this_render][this_sketch] = prob[i]
+                ## get probability vector by dividing by sum
+                prob = counts/np.sum(counts)
+                ### pluck the probability from the vector that corresponds to current render
+                out_json[this_render][this_sketch] = prob[i]
 
-        ## output json in the same format as the other similarity jsons
-        output_path = '../models/refModule/json/similarity-{}.json'.format(args.adaptor_type)
-        with open(output_path, 'wb') as fp:
-            json.dump(out_json, fp)
+            ## output json in the same format as the other similarity jsons
+            output_path = '../models/refModule/json/similarity-{}.json'.format(args.adaptor_type)
+            with open(output_path, 'wb') as fp:
+                json.dump(out_json, fp)
 
 
     # #### load in sketch data and filter to generate sketchData CSVs
