@@ -9,7 +9,8 @@ var getSimilarities = function(name) {
       'human_avg': require('./json/similarity-human.json'),
       'human_full25k': require('./json/similarity-human_full25k.json'),
       'fc6':  require('./json/similarity-fc6-centroid.json'),
-      'sketch_avg_full25k': require('./json/similarity-splitbyobject-sketch_average_full25k.json')
+      'sketch_avg_full25k': require('./json/similarity-splitbyobject-sketch_average_full25k.json'),
+      'sketch_unroll_full25k': require('./json/similarity-splitbyobject-sketch_unroll_full25k.json')
   };
 };
 

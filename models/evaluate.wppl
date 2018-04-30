@@ -6,12 +6,12 @@
 // webppl evaluate.wppl --require ./refModule/ -- --paramSetting human_full25k_S1_nocost
 // webppl evaluate.wppl --require ./refModule/ -- --paramSetting human_full25k_S0_nocost
 
-// webppl evaluate.wppl --require ./refModule/ -- --paramSetting sketch_unroll_full25k_cost
-// webppl evaluate.wppl --require ./refModule/ -- --paramSetting sketch_unroll_full25k_cost
-// webppl evaluate.wppl --require ./refModule/ -- --paramSetting sketch_unroll_full25k_cost
-// webppl evaluate.wppl --require ./refModule/ -- --paramSetting sketch_unroll_full25k_nocost
-// webppl evaluate.wppl --require ./refModule/ -- --paramSetting sketch_unroll_full25k_nocost
-// webppl evaluate.wppl --require ./refModule/ -- --paramSetting sketch_unroll_full25k_nocost
+// webppl evaluate.wppl --require ./refModule/ -- --paramSetting sketch_unroll_full25k_combined_cost --adaptorType sketch_unroll_full25k
+// webppl evaluate.wppl --require ./refModule/ -- --paramSetting sketch_unroll_full25k_S1_cost --adaptorType sketch_unroll_full25k
+// webppl evaluate.wppl --require ./refModule/ -- --paramSetting sketch_unroll_full25k_S0_ost --adaptorType sketch_unroll_full25k
+// webppl evaluate.wppl --require ./refModule/ -- --paramSetting sketch_unroll_full25k_combined_nocost --adaptorType sketch_unroll_full25k
+// webppl evaluate.wppl --require ./refModule/ -- --paramSetting sketch_unroll_full25k_S1_nocost --adaptorType sketch_unroll_full25k
+// webppl evaluate.wppl --require ./refModule/ -- --paramSetting sketch_unroll_full25k_S0_nocost --adaptorType sketch_unroll_full25k
 
 // Load in experimental data to condition on
 var experimentVersion = 'fixedPose96'; // 'fixedPose', 'varyingPose', etc
