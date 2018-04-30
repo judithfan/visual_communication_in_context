@@ -9,7 +9,7 @@ def run_bda(perception, pragmatics, production):
     thread.start_new_thread(os.system,(cmd_string,))
 
 def run_evaluate(perception, pragmatics, production):
-    cmd_string = 'webppl evaluate.wppl --require ./refModule/ -- --paramSetting {}_{}_{} --adaptorType {}'.format(perception, pragmatics, production, perception_opts)
+    cmd_string = 'webppl evaluate.wppl --require ./refModule/ -- --paramSetting {}_{}_{} --adaptorType {}'.format(perception, pragmatics, production, perception)
     print 'Running: {}'.format(cmd_string)
     thread.start_new_thread(os.system,(cmd_string,))
 
@@ -44,6 +44,7 @@ if __name__ == "__main__":
     elif args.wppl=='evaluate':
         ## then on output, run evaluate.wppl
         for perc in perception_opts:
+            print perc
             for prag in pragmatics_opts:
                 for prod in production_opts:
                     run_evaluate(perc,prag,prod)
