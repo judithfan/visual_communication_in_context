@@ -28,7 +28,7 @@ if __name__ == "__main__":
                         default='cost')
     args = parser.parse_args()
 
-    perception_opts = ['sketch_unroll_full25k']
+    perception_opts = ['sketch_avg_full25k']
     production_opts = ['cost','nocost']
     pragmatics_opts = ['combined','S1','S0']
 

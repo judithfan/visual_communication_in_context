@@ -1,6 +1,7 @@
 import os
 import json
 import numpy as np
+import re
 
 exp_dir = './'
 
@@ -94,6 +95,21 @@ def get_summary_stats(_D, all_games, correct_only=True):
     further_drawDuration, closer_drawDuration, further_accuracy, closer_accuracy, \
     further_pixelintensity, closer_pixelintensity
 
+    
+def atoi(text):
+    return int(text) if text.isdigit() else text
+
+def natural_keys(text):
+    '''
+    alist.sort(key=natural_keys) sorts in human order
+    http://nedbatchelder.com/blog/200712/human_sorting.html
+    (See Toothy's implementation in the comments)
+    '''
+    return [ atoi(c) for c in re.split('(\d+)', text) ]
+
+def sort_filelist(files):
+    return files.sort(key=natural_keys)    
+    
 def get_close_accuracy_by_category(D, all_games):
     car_accuracy = []
     dog_accuracy = []    
@@ -175,4 +191,27 @@ def plot_gallery(category):
         subord = c.split('_')[2]
         plt.title(subord)
     plt.tight_layout()
-        
+
+    
+###### MODEL COMPARISON HELPERS ######
+
+def sumlogprob(a,b):
+    if (a > b):
+        return a + np.log1p(np.exp(b-a))
+    else:
+        return b + np.log1p(np.exp(a-b))  
+    
+dogs = sorted(['weimaraner', 'chihuahua', 'basset', 'doberman', 'bloodhound', 'bullmastiff', 'goldenretriever', 'pug'])
+chairs = sorted(['leather', 'straight', 'squat', 'sling', 'woven', 'waiting', 'inlay','knob'])
+birds = sorted(['crow', 'pigeon', 'robin', 'sparrow', 'tomtit', 'nightingale', 'bluejay', 'cuckoo'])
+cars = sorted(['beetle', 'bluesport', 'brown', 'white', 'redsport', 'redantique', 'hatchback', 'bluesedan'])
+
+def flatten(x):
+    return [item for sublist in x for item in sublist]
+
+def make_category_by_obj_palette():
+    import itertools
+    col = []
+    for j in sns.color_palette("hls", 4):
+        col.append([i for i in itertools.repeat(j, 8)])
+    return flatten(col)
