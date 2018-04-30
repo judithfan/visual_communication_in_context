@@ -54,6 +54,8 @@ if __name__ == "__main__":
     production_opts = ['cost','nocost']
     pragmatics_opts = ['combined','S1','S0']
 
+    assert args.wppl in ['BDA','evaluate']
+
     ## first run BDA.wppl
     if args.wppl=='BDA':
         for perc in perception_opts:
@@ -61,9 +63,12 @@ if __name__ == "__main__":
                 for prod in production_opts:
                     run_bda(perc,prag,prod)
 
-    if args.wppl=='evaluate':
-    ## then on output, run evaluate.wppl
-    for perc in perception_opts:
-        for prag in pragmatics_opts:
-            for prod in production_opts:
-                run_evaluate(perc,prag,prod)
+    elif args.wppl=='evaluate':
+        ## then on output, run evaluate.wppl
+        for perc in perception_opts:
+            for prag in pragmatics_opts:
+                for prod in production_opts:
+                    run_evaluate(perc,prag,prod)
+
+    else:
+        print '{} wppl command not recognized'.format(args.wppl)
