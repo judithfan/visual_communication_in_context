@@ -1,0 +1,86 @@
+// run using:
+
+// webppl BDA.wppl --require ./refModule/ -- --perception human_full25k --pragmatics combined --production cost
+// webppl BDA.wppl --require ./refModule/ -- --perception human_full25k --pragmatics S1 --production cost
+// webppl BDA.wppl --require ./refModule/ -- --perception human_full25k --pragmatics S0 --production cost
+// webppl BDA.wppl --require ./refModule/ -- --perception human_full25k --pragmatics combined --production nocost
+// webppl BDA.wppl --require ./refModule/ -- --perception human_full25k --pragmatics S1 --production nocost
+// webppl BDA.wppl --require ./refModule/ -- --perception human_full25k --pragmatics S0 --production nocost
+
+// webppl BDA.wppl --require ./refModule/ -- --perception sketch_unroll_full25k --pragmatics combined --production cost
+// webppl BDA.wppl --require ./refModule/ -- --perception sketch_unroll_full25k --pragmatics S1 --production cost
+// webppl BDA.wppl --require ./refModule/ -- --perception sketch_unroll_full25k --pragmatics S0 --production cost
+// webppl BDA.wppl --require ./refModule/ -- --perception sketch_unroll_full25k --pragmatics combined --production nocost
+// webppl BDA.wppl --require ./refModule/ -- --perception sketch_unroll_full25k --pragmatics S1 --production nocost
+// webppl BDA.wppl --require ./refModule/ -- --perception sketch_unroll_full25k --pragmatics S0 --production nocost
+
+// Load in experimental data to condition on
+var experimentVersion = 'fixedPose96'; // 'fixedPose', 'varyingPose', etc
+var splitType = 'splitbyobject';
+var data = refModule.readCSV('./bdaInput/sketchData_fixedPose_' + splitType + '_' + argv.perception + '_pilot2_costOutliersRemoved.csv');
+
+console.log("Loading expt data complete..." + data.length + " data points");
+
+// Cache some properties of model
+// Note: when moving to model comparison, can precache for all models...
+var similarities = refModule.getSimilarities();
+var costs = refModule.getCosts(experimentVersion + '-drawDuration');
+var possibleSketches = refModule.getPossibleSketches(data);
+var conditionLookup = refModule.getConditionLookup();
+console.log("Loading model data complete..."
+	    + possibleSketches.length + " sketches of " +
+	    + _.keys(similarities['sketch_avg_full25k']).length + " objects." );
+
+// Package into config
+var globalConfig = {
+  similarities, possibleSketches, costs, conditionLookup,
+  aggregate: true,
+  outputFileName : argv.perception + '_' + argv.pragmatics + '_' + argv.production + '_' + splitType
+};
+
+var paramPrior = function() {
+  var perception = argv.perception; // human, fc6, sketch_average_full25k
+  var pragmatics = argv.pragmatics; // S0, S1, combined
+  var production = argv.production; // cost, nocost
+
+  return {
+    perception, pragmatics, production,
+    // alpha : uniformDrift({a:0,b:30, width: 2}),
+    infWeight : uniformDraw(_.range(0,8,0.5)),//uniformDrift({a:0,b:10,width:0.1})
+    simScaling : (pragmatics === 'S0' ? 1 :
+		  uniformDraw(_.range(0,20,0.5))),//{a:0,b:30,width:1})),
+    pragWeight: (pragmatics == 'S0' ? 0 :
+		 pragmatics == 'S1' ? 1 :
+		 uniformDraw(_.range(0,1,0.05))),//uniformDrift({a:0,b:1,width:0.1})),
+    costWeight : (production === 'nocost' ? 0 :
+		  uniformDraw(_.range(0,8,0.5)))//{a:0,b:10,width:0.1})),
+  };
+};
+
+var modelAnalysis = function() {
+  var params = paramPrior();
+  var score = reduce(function(c, memo) {
+    // Extract condition information
+    var conditionType = c.condition;
+    var context = [c.Target, c.Distractor1, c.Distractor2, c.Distractor3];
+    var target = context[0];
+    var sketchInfo = globalConfig.aggregate ? c.coarseGrainedSketchInfo : c.sketchLabel;
+    return memo + refModule.getSpeakerScore(
+      c.sketchLabel, target, context, params, globalConfig
+    );
+  }, 0, data);
+
+  console.log(params);
+  console.log(score);
+
+  factor(score);
+
+  var paramsKey = _.values(params).join(',');
+  return {
+    params : _.zipObject([paramsKey], [score])
+  };
+};
+
+// var outputERP = Infer({method: 'MCMC', samples: 1000, burn: 250, lag: 0, model: modelAnalysis, onlyMAP: false});
+var outputERP = Infer({method: 'enumerate', model: modelAnalysis});
+refModule.bayesianErpWriter(outputERP, "./bdaOutput/" + globalConfig.outputFileName);
