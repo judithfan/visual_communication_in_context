@@ -8,9 +8,9 @@ var getSimilarities = function(name) {
   return {
       'human_avg': require('./json/similarity-human.json'),
       'human_full25k': require('./json/similarity-human_full25k.json'),
-      'fc6':  require('./json/similarity-fc6-centroid.json'),
       'sketch_avg_full25k': require('./json/similarity-splitbyobject-sketch_average_full25k.json'),
-      'sketch_unroll_full25k': require('./json/similarity-splitbyobject-sketch_unroll_full25k.json')
+      'sketch_unroll_full25k': require('./json/similarity-splitbyobject-sketch_unroll_full25k.json'),
+      'multimodal_full25k': require('./json/similarity-splitbyobject-multimodal_full25k.json')
   };
 };
 
@@ -135,8 +135,8 @@ var bayesianErpWriter = function(erp, filePrefix) {
 
   if(_.has(supp[0], 'params')) {
     var paramFile = fs.openSync(filePrefix + "Params.csv", 'w');
-    fs.writeSync(paramFile, ["id", "perception", "pragmatics", "production",
-			     "simScaling", "pragWeight","costWeight", "infWeight",
+    fs.writeSync(paramFile, ["id", "perception", "pragmatics","production",
+			     "simScaling", "pragWeight","costWeight","infWeight",
 			     "logLikelihood", "posteriorProb"] + '\n');
   }
 

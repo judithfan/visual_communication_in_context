@@ -1,4 +1,4 @@
-id,perception,pragmatics,production,simScaling,pragWeight,costWeight, infWeight,logLikelihood,posteriorProb
+id,perception,pragmatics,production,simScaling,pragWeight,costWeight,infWeight,logLikelihood,posteriorProb
 0,human_full25k,combined,nocost,8.380834238281428,0.99914089424651,0,1.984441005848221,-2524.4073491918175,-5.298317366548036
 1,human_full25k,combined,nocost,8.514401909256343,0.99914089424651,0,1.984441005848221,-2524.037451182364,-6.907755278982137
 2,human_full25k,combined,nocost,8.848010387505338,0.99914089424651,0,1.984441005848221,-2523.4490902900325,-6.214608098422191
