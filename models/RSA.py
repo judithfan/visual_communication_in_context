@@ -68,7 +68,7 @@ if __name__ == "__main__":
         for perc in perception_opts:
             for prag in pragmatics_opts:
                 for prod in production_opts:
-                    run_evaluate(perc,prag,prod)
+                    run_evaluate(perc,prag,prod,perc)
 
     else:
         print '{} wppl command not recognized'.format(args.wppl)
