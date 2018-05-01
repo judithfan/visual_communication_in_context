@@ -51,7 +51,7 @@ if __name__ == "__main__":
         for perc in perception:
             for prag in pragmatics:
                 for prod in production:
-                    run_bda(perc,prag,prod)
+                    run_bda_enumerate(perc,prag,prod)
 
     elif args.wppl=='evaluate':
         ## then on output, run evaluate.wppl
