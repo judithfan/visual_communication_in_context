@@ -1,18 +1,6 @@
 // run using:
 
-// webppl BDA.wppl --require ./refModule/ -- --perception human_full25k --pragmatics combined --production cost
-// webppl BDA.wppl --require ./refModule/ -- --perception human_full25k --pragmatics S1 --production cost
-// webppl BDA.wppl --require ./refModule/ -- --perception human_full25k --pragmatics S0 --production cost
-// webppl BDA.wppl --require ./refModule/ -- --perception human_full25k --pragmatics combined --production nocost
-// webppl BDA.wppl --require ./refModule/ -- --perception human_full25k --pragmatics S1 --production nocost
-// webppl BDA.wppl --require ./refModule/ -- --perception human_full25k --pragmatics S0 --production nocost
-
-// webppl BDA.wppl --require ./refModule/ -- --perception sketch_unroll_full25k --pragmatics combined --production cost
-// webppl BDA.wppl --require ./refModule/ -- --perception sketch_unroll_full25k --pragmatics S1 --production cost
-// webppl BDA.wppl --require ./refModule/ -- --perception sketch_unroll_full25k --pragmatics S0 --production cost
-// webppl BDA.wppl --require ./refModule/ -- --perception sketch_unroll_full25k --pragmatics combined --production nocost
-// webppl BDA.wppl --require ./refModule/ -- --perception sketch_unroll_full25k --pragmatics S1 --production nocost
-// webppl BDA.wppl --require ./refModule/ -- --perception sketch_unroll_full25k --pragmatics S0 --production nocost
+// webppl BDA-enumerate.wppl --require ./refModule/ -- --perception multimodal_full25k --pragmatics combined --production cost
 
 // Load in experimental data to condition on
 var experimentVersion = 'fixedPose96'; // 'fixedPose', 'varyingPose', etc
@@ -35,25 +23,26 @@ console.log("Loading model data complete..."
 var globalConfig = {
   similarities, possibleSketches, costs, conditionLookup,
   aggregate: true,
-  outputFileName : argv.perception + '_' + argv.pragmatics + '_' + argv.production + '_' + splitType
+  outputFileName : argv.perception + '_' + argv.pragmatics + '_' + argv.production + '_enumerate' 
 };
 
 var paramPrior = function() {
   var perception = argv.perception; // human, fc6, sketch_average_full25k
   var pragmatics = argv.pragmatics; // S0, S1, combined
   var production = argv.production; // cost, nocost
-
+  var infWeight  = uniformDraw(_.range(0,8,.5));//uniformDrift({a:0,b:10,width:0.1}) 
+  console.log('inf: ' + infWeight); 
+  var simScaling = uniformDraw(_.range(0,20,.5));//{a:0,b:30,width:1})),
+  console.log('sim: ' + simScaling);
+  var pragWeight = uniformDraw(_.range(0,1.01,0.05));//uniformDrift({a:0,b:1,width:0.1})),
+  console.log('prag: ' + pragWeight);
   return {
-    perception, pragmatics, production,
-    // alpha : uniformDrift({a:0,b:30, width: 2}),
-    infWeight : uniformDraw(_.range(0,8,0.5)),//uniformDrift({a:0,b:10,width:0.1})
-    simScaling : (pragmatics === 'S0' ? 1 :
-		  uniformDraw(_.range(0,20,0.5))),//{a:0,b:30,width:1})),
-    pragWeight: (pragmatics == 'S0' ? 0 :
-		 pragmatics == 'S1' ? 1 :
-		 uniformDraw(_.range(0,1,0.05))),//uniformDrift({a:0,b:1,width:0.1})),
-    costWeight : (production === 'nocost' ? 0 :
-		  uniformDraw(_.range(0,8,0.5)))//{a:0,b:10,width:0.1})),
+    pragmatics, production,
+    perception : uniformDraw(['multimodal_full25k', 'human_full25k']),
+    infWeight: infWeight,
+    simScaling : simScaling,
+    pragWeight: pragWeight,
+    costWeight : uniformDraw(_.range(0,8.01,0.5))//{a:0,b:10,width:0.1})),
   };
 };
 
@@ -70,14 +59,11 @@ var modelAnalysis = function() {
     );
   }, 0, data);
 
-  console.log(params);
-  console.log(score);
-
   factor(score);
 
-  var paramsKey = _.values(params).join(',');
+  var paramsKey = _.values(_.omit(params, ['pragmatics', 'production'])).join(',');
   return {
-    params : _.zipObject([paramsKey], [score])
+    params : _.zipObject([paramsKey], [score.toFixed(2)])
   };
 };
 
