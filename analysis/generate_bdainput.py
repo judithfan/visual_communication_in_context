@@ -55,7 +55,7 @@ def add_extra_label_columns(D):
     return D
 
 def generate_bdaInput_csv(D,filtration_level,train_test_split=True,
-                          adaptor_type='sketch_unroll_full25k',
+                          adaptor_type='multimodal_full25k',
                           split_type='splitbyobject'):
 
     ### filter out training examples
@@ -174,11 +174,13 @@ if __name__ == "__main__":
     parser.add_argument('--analysis_dir', type=str, help='path to analysis dir', default='./')
     parser.add_argument('--adaptor_type', type=str,
                         help='which generation of sketch photo adaptor? options: sketch_unroll_full25k | human_full25k | multimodal_full25k',
-                        default='sketch_unroll_full25k')
+                        default='multimodal_full25k')
+    parser.add_argument('--do_not_gen_similarity', type=bool, help='even if you are generating for human, do not generate similarity json to save time',
+                        default=False)
     parser.add_argument('--split_type', type=str, help='train/test split dimension', default='splitbyobject')
     args = parser.parse_args()
 
-    if 'human' in args.adaptor_type:
+    if ('human' in args.adaptor_type) & (args.do_not_gen_similarity==False):
         ##### if we are dealing with a human encoder, then need to generate similarity json firststyle
         X = pd.read_csv(os.path.join(args.analysis_dir,'sketchpad_basic_recog_group_data_2_augmented.csv'))
         print 'Shape of augmented sketch annotation csv: {}'.format(X.shape)
