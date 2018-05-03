@@ -8,7 +8,7 @@
 
 // webppl evaluate.wppl --require ./refModule/ -- --paramSetting multimodal_full25k_combined_cost --adaptorType multimodal_full25k
 // webppl evaluate.wppl --require ./refModule/ -- --paramSetting multimodal_full25k_S1_cost --adaptorType multimodal_full25k
-// webppl evaluate.wppl --require ./refModule/ -- --paramSetting multimodal_full25k_S0_ost --adaptorType multimodal_full25k
+// webppl evaluate.wppl --require ./refModule/ -- --paramSetting multimodal_full25k_S0_cost --adaptorType multimodal_full25k
 // webppl evaluate.wppl --require ./refModule/ -- --paramSetting multimodal_full25k_combined_nocost --adaptorType multimodal_full25k
 // webppl evaluate.wppl --require ./refModule/ -- --paramSetting multimodal_full25k_S1_nocost --adaptorType multimodal_full25k
 // webppl evaluate.wppl --require ./refModule/ -- --paramSetting multimodal_full25k_S0_nocost --adaptorType multimodal_full25k
@@ -38,7 +38,7 @@ var globalConfig = {
 var predictives = foreach(params, function(paramVal) {
   console.log('now on param: ');
   console.log(paramVal);
-  var outPath = ['/data2/jefan/sketchpad_basic_model_output', 'evaluateOutput', argv.paramSetting, paramVal.id].join('/');
+  var outPath = ['.', 'evaluateOutput', argv.paramSetting, paramVal.id].join('/');
   console.log(outPath);
   var output = map(function(c) {
     var conditionType = c.condition;
