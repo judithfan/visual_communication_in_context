@@ -59,11 +59,12 @@ def generate_bdaInput_csv(D,filtration_level,train_test_split=True,
                           split_type='splitbyobject'):
 
     ### filter out training examples
+    print 'adaptor: {} split: {} train_test_split: {}'.format(adaptor_type, split_type, train_test_split)
     test_examples = pd.read_json('{}_{}_test_examples.json'.format(args.iterationName,args.adaptor_type),orient='records')
     test_examples = list(test_examples[0].values)
     test_examples = [i.split('.')[0] + '.png' for i in test_examples]
 
-    if train_test_split==True:
+    if (train_test_split==True) and (split_type != 'alldata'):
         keep_examples = test_examples
     else:
         keep_examples = D['fname_no_target'].values ## keep all datapoints
@@ -97,7 +98,7 @@ def generate_bdaInput_csv(D,filtration_level,train_test_split=True,
     D2.columns = ['condition','sketchLabel','Target','Distractor1','Distractor2','Distractor3','coarseGrainedSketchInfo']
     print '{} datapoints x {} columns'.format(D2.shape[0],D2.shape[1])
 
-    if train_test_split==True:
+    if (train_test_split==True) and (split_type != 'alldata'):
         print 'saving CSV with only test data'
         if len(filtration_level)==0:
             D2.to_csv('../models/bdaInput/sketchData_fixedPose_{}_{}_pilot2.csv'.format(split_type,adaptor_type))
@@ -169,18 +170,21 @@ def simplify_sketch(path): ## example path: 'gameID_9903-d6e6a9ff-a878-4bee-b2d5
 
 if __name__ == "__main__":
     import argparse
+    def str2bool(v):
+        return v.lower() in ("yes", "true", "t", "1")
+
     parser = argparse.ArgumentParser()
     parser.add_argument('--iterationName', type=str, help='iteration name', default='pilot2')
     parser.add_argument('--analysis_dir', type=str, help='path to analysis dir', default='./')
     parser.add_argument('--adaptor_type', type=str,
                         help='which generation of sketch photo adaptor? options: sketch_unroll_full25k | human_full25k | multimodal_full25k',
                         default='multimodal_full25k')
-    parser.add_argument('--do_not_gen_similarity', type=bool, help='even if you are generating for human, do not generate similarity json to save time',
-                        default=False)
+    parser.add_argument('--gen_similarity', type=str2bool, help='even if you are generating for human, do not generate similarity json to save time',
+                        default='True')
     parser.add_argument('--split_type', type=str, help='train/test split dimension', default='splitbyobject')
     args = parser.parse_args()
 
-    if ('human' in args.adaptor_type) & (args.do_not_gen_similarity==False):
+    if ('human' in args.adaptor_type) & (args.gen_similarity):
         ##### if we are dealing with a human encoder, then need to generate similarity json firststyle
         X = pd.read_csv(os.path.join(args.analysis_dir,'sketchpad_basic_recog_group_data_2_augmented.csv'))
         print 'Shape of augmented sketch annotation csv: {}'.format(X.shape)
@@ -274,20 +278,23 @@ if __name__ == "__main__":
 
     # #### now actually generate and save out the bdaInputCSV, both the split and alldata versions
     print ' '
-    print 'Now generating bdaInptu CSV, both the split and alldata versions ...'
-    # first split versions
+    print 'Now generating bdaInput CSV, both the split and alldata versions ...'
+
     adaptor_type = args.adaptor_type
     split_type = args.split_type
+
+    # now alldata versions
+    generate_bdaInput_csv(D,'',train_test_split=False,adaptor_type = adaptor_type,split_type = 'alldata')
+    generate_bdaInput_csv(DNOINC,'no_incorrect',train_test_split=False,adaptor_type = adaptor_type,split_type = 'alldata')
+    generate_bdaInput_csv(DNOINV,'no_invalid',train_test_split=False,adaptor_type = adaptor_type,split_type = 'alldata')
+    generate_bdaInput_csv(DUNFIL,'unfiltered',train_test_split=False,adaptor_type = adaptor_type,split_type = 'alldata')
+
+    # then split versions
     generate_bdaInput_csv(D,'',adaptor_type = adaptor_type,split_type = split_type)
     generate_bdaInput_csv(DNOINC,'no_incorrect',adaptor_type = adaptor_type,split_type = split_type)
     generate_bdaInput_csv(DNOINV,'no_invalid',adaptor_type = adaptor_type,split_type = split_type)
     generate_bdaInput_csv(DUNFIL,'unfiltered',adaptor_type = adaptor_type,split_type = split_type)
 
-    # now alldata versions
-    generate_bdaInput_csv(D,'',train_test_split=False,adaptor_type = adaptor_type,split_type = split_type)
-    generate_bdaInput_csv(DNOINC,'no_incorrect',train_test_split=False,adaptor_type = adaptor_type,split_type = split_type)
-    generate_bdaInput_csv(DNOINV,'no_invalid',train_test_split=False,adaptor_type = adaptor_type,split_type = split_type)
-    generate_bdaInput_csv(DUNFIL,'unfiltered',train_test_split=False,adaptor_type = adaptor_type,split_type = split_type)
 
     # #### remove cost outliers
     print ' '
@@ -297,12 +304,13 @@ if __name__ == "__main__":
     D2 = remove_outliers(D2,'mean_intensity')
     D2 = remove_outliers(D2,'numStrokes')
 
-    splits = [args.split_type,'alldata']
+    splits = [args.split_type]
     for split in splits:
         ### subset drawing data csv by sketches that are accounted for here (i.e., that were not cost outliers)
         B = pd.read_csv('../models/bdaInput/sketchData_fixedPose_{}_{}_pilot2.csv'.format(split_type,adaptor_type))
 
         remaining_sketches = list(np.unique(D2['sketch_label'].values))
+        print '{} remaining sketches after removing cost outliers'.format(len(remaining_sketches))
         _B = B[B['sketchLabel'].isin(remaining_sketches)]
         _B.to_csv('../models/bdaInput/sketchData_fixedPose_{}_{}_pilot2_costOutliersRemoved.csv'.format(split,adaptor_type))
 
