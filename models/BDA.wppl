@@ -1,29 +1,15 @@
 // run using:
 
-// webppl BDA.wppl --require ./refModule/ -- --perception human_full25k --pragmatics combined --production cost
-// webppl BDA.wppl --require ./refModule/ -- --perception human_full25k --pragmatics S1 --production cost
-// webppl BDA.wppl --require ./refModule/ -- --perception human_full25k --pragmatics S0 --production cost
-// webppl BDA.wppl --require ./refModule/ -- --perception human_full25k --pragmatics combined --production nocost
-// webppl BDA.wppl --require ./refModule/ -- --perception human_full25k --pragmatics S1 --production nocost
-// webppl BDA.wppl --require ./refModule/ -- --perception human_full25k --pragmatics S0 --production nocost
-
-// webppl BDA.wppl --require ./refModule/ -- --perception sketch_unroll_full25k --pragmatics combined --production cost
-// webppl BDA.wppl --require ./refModule/ -- --perception sketch_unroll_full25k --pragmatics S1 --production cost
-// webppl BDA.wppl --require ./refModule/ -- --perception sketch_unroll_full25k --pragmatics S0 --production cost
-// webppl BDA.wppl --require ./refModule/ -- --perception sketch_unroll_full25k --pragmatics combined --production nocost
-// webppl BDA.wppl --require ./refModule/ -- --perception sketch_unroll_full25k --pragmatics S1 --production nocost
-// webppl BDA.wppl --require ./refModule/ -- --perception sketch_unroll_full25k --pragmatics S0 --production nocost
-
-// webppl BDA.wppl --require ./refModule/ -- --perception sketch_avg_full25k --pragmatics combined --production cost
-// webppl BDA.wppl --require ./refModule/ -- --perception sketch_avg_full25k --pragmatics S1 --production cost
-// webppl BDA.wppl --require ./refModule/ -- --perception sketch_avg_full25k --pragmatics S0 --production cost
-// webppl BDA.wppl --require ./refModule/ -- --perception sketch_avg_full25k --pragmatics combined --production nocost
-// webppl BDA.wppl --require ./refModule/ -- --perception sketch_avg_full25k --pragmatics S1 --production nocost
-// webppl BDA.wppl --require ./refModule/ -- --perception sketch_avg_full25k --pragmatics S0 --production nocost
+// webppl BDA.wppl --require ./refModule/ -- --perception human_full25k --pragmatics combined --production cost --splitType splitbyobject
+// webppl BDA.wppl --require ./refModule/ -- --perception human_full25k --pragmatics S1 --production cost --splitType splitbyobject
+// webppl BDA.wppl --require ./refModule/ -- --perception human_full25k --pragmatics S0 --production cost --splitType splitbyobject
+// webppl BDA.wppl --require ./refModule/ -- --perception human_full25k --pragmatics combined --production nocost --splitType splitbyobject
+// webppl BDA.wppl --require ./refModule/ -- --perception human_full25k --pragmatics S1 --production nocost --splitType splitbyobject
+// webppl BDA.wppl --require ./refModule/ -- --perception human_full25k --pragmatics S0 --production nocost --splitType splitbyobject
 
 // Load in experimental data to condition on
 var experimentVersion = 'fixedPose96'; // 'fixedPose', 'varyingPose', etc
-var splitType = 'splitbyobject';
+var splitType = argv.splitType;
 var data = refModule.readCSV('./bdaInput/sketchData_fixedPose_' + splitType + '_' + argv.perception + '_pilot2_costOutliersRemoved.csv');
 
 console.log("Loading expt data complete..." + data.length + " data points");

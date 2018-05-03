@@ -289,7 +289,6 @@ if __name__ == "__main__":
     generate_bdaInput_csv(DNOINV,'no_invalid',train_test_split=False,adaptor_type = adaptor_type,split_type = split_type)
     generate_bdaInput_csv(DUNFIL,'unfiltered',train_test_split=False,adaptor_type = adaptor_type,split_type = split_type)
 
-
     # #### remove cost outliers
     print ' '
     print 'Removing cost outliers ...'

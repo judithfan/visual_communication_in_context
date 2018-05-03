@@ -3,8 +3,8 @@ import os
 import thread
 import numpy as np
 
-def run_bda(perception, pragmatics, production):
-    cmd_string = 'webppl BDA.wppl --require ./refModule/ -- --perception {} --pragmatics {} --production {}'.format(perception, pragmatics, production)
+def run_bda(perception, pragmatics, production, split_type):
+    cmd_string = 'webppl BDA.wppl --require ./refModule/ -- --perception {} --pragmatics {} --production {} --splitType {}'.format(perception, pragmatics, production, split_type)
     print 'Running: {}'.format(cmd_string)
     thread.start_new_thread(os.system,(cmd_string,))
 
@@ -14,7 +14,7 @@ def run_bda_enumerate(perception, pragmatics, production):
     thread.start_new_thread(os.system,(cmd_string,))
 
 def run_evaluate(perception, pragmatics, production):
-    cmd_string = 'webppl evaluate.wppl --require ./refModule/ -- --paramSetting {}_{}_{} --adaptorType {}'.format(perception, pragmatics, production, perception)
+    cmd_string = 'webppl evaluate.wppl --require ./refModule/ -- --paramSetting {}_{}_{} --adaptorType {} --splitType {}'.format(perception, pragmatics, production, perception, split_type)
     print 'Running: {}'.format(cmd_string)
     thread.start_new_thread(os.system,(cmd_string,))
 
@@ -31,11 +31,16 @@ if __name__ == "__main__":
     parser.add_argument('--production', nargs='+', type=str, \
                         help='option: cost | nocost',\
                         default = 'cost')
+    parser.add_argument('--split_type', nargs='+', type=str, \
+                        help='option: splitbyobject | alldata',\
+                        default = 'splitbyobject')
+
     args = parser.parse_args()
 
     perception = args.perception
     production = args.production
     pragmatics = args.pragmatics
+    split_type = args.split_type
 
     assert args.wppl in ['BDA','evaluate', 'BDA-enumerate']
 
@@ -44,7 +49,7 @@ if __name__ == "__main__":
         for perc in perception:
             for prag in pragmatics:
                 for prod in production:
-                    run_bda(perc,prag,prod)
+                        run_bda(perc,prag,prod,split_type)
 
     ## first run BDA-enumerate.wppl
     if args.wppl=='BDA-enumerate':
@@ -59,7 +64,7 @@ if __name__ == "__main__":
             print perc
             for prag in pragmatics:
                 for prod in production:
-                    run_evaluate(perc,prag,prod)
+                    run_evaluate(perc,prag,prod,split_type)
 
     else:
         print '{} wppl command not recognized'.format(args.wppl)
