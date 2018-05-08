@@ -23,8 +23,8 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--wppl', type=str, help='options: BDA | BDA-enumerate | evaluate', default='BDA')
     parser.add_argument('--perception', nargs='+', type=str, \
-                        help='option: options: sketch_unroll_full25k | human_full25k | multimodal_full25k',\
-                        default = 'human_full25k')
+                        help='option: options: human| multimodal_conv42 | multimodal_pool1 | multimodal_fc6',\
+                        default = 'multimodal_conv42')
     parser.add_argument('--pragmatics', nargs='+', type=str, \
                         help='option: combined | S1 | S0',\
                         default = 'combined')

@@ -1,9 +1,9 @@
 // run using:
 
-// webppl BDA.wppl --require ./refModule/ -- --perception human_full25k --pragmatics combined --production cost --splitType splitbyobject
-// webppl BDA.wppl --require ./refModule/ -- --perception human_full25k --pragmatics S0 --production cost --splitType splitbyobject
-// webppl BDA.wppl --require ./refModule/ -- --perception human_full25k --pragmatics combined --production nocost --splitType splitbyobject
-// webppl BDA.wppl --require ./refModule/ -- --perception human_full25k --pragmatics S0 --production nocost --splitType splitbyobject
+// webppl BDA.wppl --require ./refModule/ -- --perception multimodal_conv42 --pragmatics combined --production cost --splitType splitbyobject
+// webppl BDA.wppl --require ./refModule/ -- --perception multimodal_conv42 --pragmatics S0 --production cost --splitType splitbyobject
+// webppl BDA.wppl --require ./refModule/ -- --perception multimodal_conv42 --pragmatics combined --production nocost --splitType splitbyobject
+// webppl BDA.wppl --require ./refModule/ -- --perception multimodal_conv42 --pragmatics S0 --production nocost --splitType splitbyobject
 
 // Load in experimental data to condition on
 var experimentVersion = 'fixedPose96'; // 'fixedPose', 'varyingPose', etc
@@ -20,7 +20,7 @@ var possibleSketches = refModule.getPossibleSketches(data);
 var conditionLookup = refModule.getConditionLookup();
 console.log("Loading model data complete..."
 	    + possibleSketches.length + " sketches of " +
-	    + _.keys(similarities['sketch_avg_full25k']).length + " objects." );
+	    + _.keys(similarities['multimodal_conv42']).length + " objects." );
 
 // Package into config
 var globalConfig = {
@@ -30,7 +30,7 @@ var globalConfig = {
 };
 
 var paramPrior = function() {
-	var perception = argv.perception; // human, fc6, sketch_average_full25k
+	var perception = argv.perception; // human, fc6, sketch_average
   var pragmatics = argv.pragmatics; // S0, S1, combined
   var production = argv.production; // cost, nocost
 

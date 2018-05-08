@@ -55,7 +55,7 @@ def add_extra_label_columns(D):
     return D
 
 def generate_bdaInput_csv(D,filtration_level,train_test_split=True,
-                          adaptor_type='multimodal_full25k',
+                          adaptor_type='multimodal_conv42',
                           split_type='splitbyobject'):
 
     ### filter out training examples
@@ -177,8 +177,8 @@ if __name__ == "__main__":
     parser.add_argument('--iterationName', type=str, help='iteration name', default='pilot2')
     parser.add_argument('--analysis_dir', type=str, help='path to analysis dir', default='./')
     parser.add_argument('--adaptor_type', type=str,
-                        help='which generation of sketch photo adaptor? options: sketch_unroll_full25k | human_full25k | multimodal_full25k',
-                        default='multimodal_full25k')
+                        help='which generation of sketch photo adaptor? options: human| multimodal_conv42 | multimodal_pool1 | multimodal_fc6',
+                        default='multimodal_conv42')
     parser.add_argument('--gen_similarity', type=str2bool, help='even if you are generating for human, do not generate similarity json to save time',
                         default='True')
     parser.add_argument('--split_type', type=str, help='train/test split dimension', default='splitbyobject')
