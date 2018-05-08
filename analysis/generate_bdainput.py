@@ -7,6 +7,7 @@ import numpy as np
 import scipy.stats as stats
 import pandas as pd
 import json
+import shutil
 
 import analysis_helpers as h
 
@@ -172,6 +173,13 @@ def simplify_sketch(path): ## example path: 'gameID_9903-d6e6a9ff-a878-4bee-b2d5
     path = path.replace('_trial', '')
     return path
 
+def normalize(x):
+    x = np.array(x)
+    u = np.mean(x)
+    sd = np.std(x)
+    normed = (x - u) / np.maximum(sd, 1e-5)
+    return normed
+
 if __name__ == "__main__":
     import argparse
     def str2bool(v):
@@ -234,6 +242,29 @@ if __name__ == "__main__":
             output_path = '../models/refModule/json/similarity-{}.json'.format(args.adaptor_type)
             with open(output_path, 'wb') as fp:
                 json.dump(out_json, fp)
+
+    #### preprocess similarities so that they fall in similar range for all sketches and objects
+
+    path = '../models/refModule/json/similarity-splitbyobject-{}.json'.format(args.adaptor_type)
+    shutil.copy(path,'../models/refModule/json/similarity-splitbyobject-{}-raw.json'.format(args.adaptor_type))
+    with open(path) as f:
+        sims = json.load(f)
+
+    normed_sims = {}
+    obj_list = sims.keys()
+    if np.round(np.mean(sims[obj_list[0]].values()),1)==0:
+        print 'Skipping normalization, similarities already normalized'
+    else:
+        print 'Now normalizing similarity values...'
+        for obj in obj_list:
+            sketches = sims[obj].keys()
+            preds = sims[obj].values()
+            normed = normalize(preds)
+            normed_sims[obj] = dict(zip(sketches,normed))
+
+        out_path = '../models/refModule/json/similarity-splitbyobject-{}.json'.format(args.adaptor_type)
+        with open(out_path, 'wb') as fp:
+            json.dump(normed_sims, fp)
 
 
     # #### load in sketch data and filter to generate sketchData CSVs
