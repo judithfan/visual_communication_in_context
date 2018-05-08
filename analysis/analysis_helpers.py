@@ -209,6 +209,25 @@ cars = sorted(['beetle', 'bluesport', 'brown', 'white', 'redsport', 'redantique'
 def flatten(x):
     return [item for sublist in x for item in sublist]
 
+def bootstrapCI(x,nIter=1000):
+    '''
+    input: x is an array
+    '''
+    u = []
+    for i in np.arange(nIter):
+        inds = np.random.RandomState(i).choice(len(x),len(x))
+        boot = x[inds]
+        u.append(np.mean(boot))
+
+    u = np.array(u)
+    p1 = sum(u<0)/len(u) * 2
+    p2 = sum(u>0)/len(u) * 2
+    p = np.min([p1,p2])
+    U = np.mean(u)
+    lb = np.percentile(u,2.5)
+    ub = np.percentile(u,97.5)
+    return U,lb,ub,p
+
 def make_category_by_obj_palette():
     import itertools
     col = []
