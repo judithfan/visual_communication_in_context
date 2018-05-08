@@ -8,8 +8,6 @@ var getSimilarities = function(name) {
   return {
       'human_avg': require('./json/similarity-human.json'),
       'human_image': require('./json/similarity-human_full25k.json'),
-      'sketch_avg': require('./json/similarity-splitbyobject-sketch_average.json'),
-      'sketch_unroll': require('./json/similarity-splitbyobject-sketch_unroll.json'),
       'multimodal_pool1': require('./json/similarity-splitbyobject-multimodal_pool1.json'),
       'multimodal_conv42': require('./json/similarity-splitbyobject-multimodal_conv42.json'),
       'multimodal_fc6': require('./json/similarity-splitbyobject-multimodal_fc6.json')

@@ -3,6 +3,8 @@ import os
 import thread
 import numpy as np
 
+### python RSA.py --wppl evaluate --perception multimodal_conv42 --pragmatics combined S1 S0 --production cost nocost
+
 def run_bda(perception, pragmatics, production, split_type):
     cmd_string = 'webppl BDA.wppl --require ./refModule/ -- --perception {} --pragmatics {} --production {} --splitType {}'.format(perception, pragmatics, production, split_type)
     print 'Running: {}'.format(cmd_string)
@@ -13,7 +15,7 @@ def run_bda_enumerate(perception, pragmatics, production):
     print 'Running: {}'.format(cmd_string)
     thread.start_new_thread(os.system,(cmd_string,))
 
-def run_evaluate(perception, pragmatics, production):
+def run_evaluate(perception, pragmatics, production, split_type):
     cmd_string = 'webppl evaluate.wppl --require ./refModule/ -- --paramSetting {}_{}_{} --adaptorType {} --splitType {}'.format(perception, pragmatics, production, perception, split_type)
     print 'Running: {}'.format(cmd_string)
     thread.start_new_thread(os.system,(cmd_string,))
