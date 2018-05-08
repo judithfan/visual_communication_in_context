@@ -265,7 +265,6 @@ if __name__ == "__main__":
         with open(out_path, 'wb') as fp:
             json.dump(normed_sims, fp)
 
-
     # #### load in sketch data and filter to generate sketchData CSVs
 
     # directory & file hierarchy
