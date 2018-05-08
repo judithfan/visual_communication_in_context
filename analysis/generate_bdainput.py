@@ -182,7 +182,7 @@ def normalize(x):
 
 def sigmoid(x):
     return 1 / (1 + np.exp(-x))
-    
+
 if __name__ == "__main__":
     import argparse
     def str2bool(v):
@@ -246,23 +246,24 @@ if __name__ == "__main__":
             with open(output_path, 'wb') as fp:
                 json.dump(out_json, fp)
 
-    #### preprocess similarities so that they fall in similar range for all sketches and objects
-    path = '../models/refModule/json/similarity-splitbyobject-{}-raw.json'.format(args.adaptor_type)
-    with open(path) as f:
-        sims = json.load(f)
+    #### preprocess non-human similarities so that they fall btw 0,1
+    if 'human' not in args.adaptor_type:
+        path = '../models/refModule/json/similarity-splitbyobject-{}-raw.json'.format(args.adaptor_type)
+        with open(path) as f:
+            sims = json.load(f)
 
-    normed_sims = {}
-    obj_list = sims.keys()
-    print 'Now normalizing similarity values...'
-    for obj in obj_list:
-        sketches = sims[obj].keys()
-        preds = sims[obj].values()
-        normed = sigmoid(normalize(preds))
-        normed_sims[obj] = dict(zip(sketches,normed))
+        normed_sims = {}
+        obj_list = sims.keys()
+        print 'Now normalizing similarity values...'
+        for obj in obj_list:
+            sketches = sims[obj].keys()
+            preds = sims[obj].values()
+            normed = sigmoid(normalize(preds))
+            normed_sims[obj] = dict(zip(sketches,normed))
 
-    out_path = '../models/refModule/json/similarity-splitbyobject-{}.json'.format(args.adaptor_type)
-    with open(out_path, 'wb') as fp:
-        json.dump(normed_sims, fp)
+        out_path = '../models/refModule/json/similarity-splitbyobject-{}.json'.format(args.adaptor_type)
+        with open(out_path, 'wb') as fp:
+            json.dump(normed_sims, fp)
 
 
     # #### load in sketch data and filter to generate sketchData CSVs
