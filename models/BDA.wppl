@@ -1,10 +1,8 @@
 // run using:
 
 // webppl BDA.wppl --require ./refModule/ -- --perception human_full25k --pragmatics combined --production cost --splitType splitbyobject
-// webppl BDA.wppl --require ./refModule/ -- --perception human_full25k --pragmatics S1 --production cost --splitType splitbyobject
 // webppl BDA.wppl --require ./refModule/ -- --perception human_full25k --pragmatics S0 --production cost --splitType splitbyobject
 // webppl BDA.wppl --require ./refModule/ -- --perception human_full25k --pragmatics combined --production nocost --splitType splitbyobject
-// webppl BDA.wppl --require ./refModule/ -- --perception human_full25k --pragmatics S1 --production nocost --splitType splitbyobject
 // webppl BDA.wppl --require ./refModule/ -- --perception human_full25k --pragmatics S0 --production nocost --splitType splitbyobject
 
 // Load in experimental data to condition on

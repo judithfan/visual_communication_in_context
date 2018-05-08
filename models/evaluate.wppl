@@ -1,16 +1,12 @@
 // run using:
-// webppl evaluate.wppl --require ./refModule/ -- --paramSetting human_full25k_combined_cost --adaptorType human_full25k --splitType splitbyobject
-// webppl evaluate.wppl --require ./refModule/ -- --paramSetting human_full25k_S1_cost --adaptorType human_full25k --splitType splitbyobject
-// webppl evaluate.wppl --require ./refModule/ -- --paramSetting human_full25k_S0_cost --adaptorType human_full25k --splitType splitbyobject
-// webppl evaluate.wppl --require ./refModule/ -- --paramSetting human_full25k_combined_nocost --adaptorType human_full25k --splitType splitbyobject
-// webppl evaluate.wppl --require ./refModule/ -- --paramSetting human_full25k_S1_nocost --adaptorType human_full25k --splitType splitbyobject
-// webppl evaluate.wppl --require ./refModule/ -- --paramSetting human_full25k_S0_nocost --adaptorType human_full25k --splitType splitbyobject
+// webppl evaluate.wppl --require ./refModule/ -- --paramSetting human_full25k_combined_cost --adaptorType human_full25k --splitType alldata
+// webppl evaluate.wppl --require ./refModule/ -- --paramSetting human_full25k_S0_cost --adaptorType human_full25k --splitType alldata
+// webppl evaluate.wppl --require ./refModule/ -- --paramSetting human_full25k_combined_nocost --adaptorType human_full25k --splitType alldata
+// webppl evaluate.wppl --require ./refModule/ -- --paramSetting human_full25k_S0_nocost --adaptorType human_full25k --splitType alldata
 
 // webppl evaluate.wppl --require ./refModule/ -- --paramSetting multimodal_full25k_combined_cost --adaptorType multimodal_full25k --splitType splitbyobject
-// webppl evaluate.wppl --require ./refModule/ -- --paramSetting multimodal_full25k_S1_cost --adaptorType multimodal_full25k --splitType splitbyobject
 // webppl evaluate.wppl --require ./refModule/ -- --paramSetting multimodal_full25k_S0_cost --adaptorType multimodal_full25k --splitType splitbyobject
 // webppl evaluate.wppl --require ./refModule/ -- --paramSetting multimodal_full25k_combined_nocost --adaptorType multimodal_full25k --splitType splitbyobject
-// webppl evaluate.wppl --require ./refModule/ -- --paramSetting multimodal_full25k_S1_nocost --adaptorType multimodal_full25k --splitType splitbyobject
 // webppl evaluate.wppl --require ./refModule/ -- --paramSetting multimodal_full25k_S0_nocost --adaptorType multimodal_full25k --splitType splitbyobject
 
 // Load in experimental data to condition on
