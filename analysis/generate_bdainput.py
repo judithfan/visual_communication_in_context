@@ -106,15 +106,15 @@ def generate_bdaInput_csv(D,filtration_level,train_test_split=True,
     if (train_test_split==True) and (split_type != 'alldata'):
         print 'saving CSV with only test data'
         if len(filtration_level)==0:
-            D2.to_csv('../models/bdaInput/sketchData_fixedPose_{}_{}_pilot2.csv'.format(split_type,adaptor_type))
+            D2.to_csv('../models/bdaInput/sketchData_fixedPose_{}_{}_pilot2.csv'.format(split_type,adaptor_type),index=False)
         else:
-            D2.to_csv('../models/bdaInput/sketchData_fixedPose_{}_{}_pilot2_{}.csv'.format(split_type,adaptor_type,filtration_level))
+            D2.to_csv('../models/bdaInput/sketchData_fixedPose_{}_{}_pilot2_{}.csv'.format(split_type,adaptor_type,filtration_level),index=False)
     else: ## run bda on ALL datapoints (not just test split)
         print 'saving CSV including all datapoints'
         if len(filtration_level)==0:
-            D2.to_csv('../models/bdaInput/sketchData_fixedPose_alldata_{}_pilot2.csv'.format(adaptor_type))
+            D2.to_csv('../models/bdaInput/sketchData_fixedPose_alldata_{}_pilot2.csv'.format(adaptor_type),index=False)
         else:
-            D2.to_csv('../models/bdaInput/sketchData_fixedPose_alldata_{}_pilot2_{}.csv'.format(adaptor_type,filtration_level))
+            D2.to_csv('../models/bdaInput/sketchData_fixedPose_alldata_{}_pilot2_{}.csv'.format(adaptor_type,filtration_level),index=False)
     print 'Saved out bdaInput CSV ... {}'.format(filtration_level)
 
 
@@ -345,8 +345,7 @@ if __name__ == "__main__":
         remaining_sketches = list(np.unique(D2['sketch_label'].values))
         print '{} remaining sketches after removing cost outliers'.format(len(remaining_sketches))
         _B = B[B['sketchLabel'].isin(remaining_sketches)]
-        _B.to_csv('../models/bdaInput/sketchData_fixedPose_{}_{}_pilot2_costOutliersRemoved.csv'.format(split,adaptor_type))
-
+        _B.to_csv('../models/bdaInput/sketchData_fixedPose_{}_{}_pilot2_costOutliersRemoved.csv'.format(split,adaptor_type),index=False)
 
     # ### make condition-lookup json
     print ' '

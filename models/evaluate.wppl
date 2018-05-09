@@ -9,6 +9,9 @@
 // webppl evaluate.wppl --require ./refModule/ -- --paramSetting multimodal_combined_nocost --adaptorType multimodal --splitType splitbyobject
 // webppl evaluate.wppl --require ./refModule/ -- --paramSetting multimodal_S0_nocost --adaptorType multimodal --splitType splitbyobject
 
+// webppl evaluate.wppl --require ./refModule/ -- --paramSetting multimodal_conv42_S1_cost --adaptorType multimodal_conv42 --splitType splitbyobject
+
+
 // Load in experimental data to condition on
 var experimentVersion = 'fixedPose96'; // 'fixedPose', 'varyingPose', etc
 var splitType = argv.splitType;
