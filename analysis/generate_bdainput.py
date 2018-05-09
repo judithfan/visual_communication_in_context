@@ -345,7 +345,7 @@ if __name__ == "__main__":
         remaining_sketches = list(np.unique(D2['sketch_label'].values))
         print '{} remaining sketches after removing cost outliers'.format(len(remaining_sketches))
         _B = B[B['sketchLabel'].isin(remaining_sketches)]
-        # _B.to_csv('../models/bdaInput/sketchData_fixedPose_{}_{}_pilot2_costOutliersRemoved.csv'.format(split,adaptor_type),index=False)
+        _B.to_csv('../models/bdaInput/sketchData_fixedPose_{}_{}_pilot2_costOutliersRemoved.csv'.format(split,adaptor_type),index=False)
 
     # ### make condition-lookup json
     print ' '
@@ -370,7 +370,7 @@ if __name__ == "__main__":
     D2 = add_rescaled_metric(D2,'mean_intensity',transform='minmaxnorm')
     D2 = add_rescaled_metric(D2,'drawDuration',transform='minmaxnorm')
     ## save out version with the rescaled cost metrics
-    D2.to_csv('../models/bdaInput/sketchData_fixedPose_{}_{}_pilot2_costOutliersRemoved.csv'.format(split,adaptor_type),index=False)
+    D2.to_csv('../models/bdaInput/sketchData_fixedPose_{}_{}_pilot2_costOutliersRemoved_full.csv'.format(split,adaptor_type),index=False)
 
     ## now actually generate cost dictionaries
     print 'Number of unique sketchIDs: {}'.format(len(np.unique(D2['sketch_label'].values)))
