@@ -17,7 +17,7 @@ console.log("Loading expt data complete..." + data.length + " data points");
 // Cache some properties of model
 // Note: when moving to model comparison, can precache for all models...
 var similarities = refModule.getSimilarities();
-var costs = refModule.getCosts(experimentVersion + '-drawDuration');
+var costs = refModule.getCosts(experimentVersion + '-normed_cost_duration');
 var possibleSketches = refModule.getPossibleSketches(data);
 var conditionLookup = refModule.getConditionLookup();
 console.log("Loading model data complete..."

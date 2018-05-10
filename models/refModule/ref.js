@@ -6,8 +6,7 @@ var babyparse = require('babyparse');
 
 var getSimilarities = function(name) {
   return {
-      'human': require('./json/similarity-human-centroid.json'),
-      // 'human_average': require('./json/similarity-centroid.json'),
+      'human': require('./json/similarity-human.json'),
       'multimodal_pool1': require('./json/similarity-splitbyobject-multimodal_pool1.json'),
       'multimodal_conv42': require('./json/similarity-splitbyobject-multimodal_conv42.json'),
       'multimodal_fc6': require('./json/similarity-splitbyobject-multimodal_fc6.json')
@@ -15,7 +14,7 @@ var getSimilarities = function(name) {
 };
 
 var getCosts = function(name) {
-  return require('./json/costs-' + name + '-average.json');
+  return require('./json/costs-' + name + '.json');
 };
 
 var getPossibleSketches = function(data) {
