@@ -127,6 +127,7 @@ def add_rescaled_metric(X,metric,transform='maxnorm',k=5):
             transform options include:
                 :'maxnorm', which means dividing each value by maximum in list
                 :'minmaxnorm', look at it
+                :'minmaxnorm_sqrt': minmaxnorm then passed through square root (helps with symmetry, normalization)
                 :'sigmoid', which means passing each value through logistic function with mean
     output: X with additional column that has the rescaled metric
     '''
@@ -146,6 +147,13 @@ def add_rescaled_metric(X,metric,transform='maxnorm',k=5):
         rescaled_val = []
         for i,d in X.iterrows():
             rescaled_val.append((d['vals']-bottom_val)/(top_val-bottom_val))
+    elif transform=='minmaxnorm_sqrt':
+        bottom_val = np.min(vals)
+        top_val = np.max(vals)
+        rescaled_val = []
+        for i,d in X.iterrows():
+            rescaled_val.append((d['vals']-bottom_val)/(top_val-bottom_val))
+        rescaled_val = np.sqrt(np.array(rescaled_val)) ## apply sqrt at end to symmetrize
     elif transform=='sigmoid':
         median_val = np.median(vals)
         rescaled_val = []
@@ -366,6 +374,52 @@ if __name__ == "__main__":
     D2 = remove_outliers(D2,'mean_intensity')
     D2 = remove_outliers(D2,'numStrokes')
 
+    ### if you're going to normalize costs do it at this point
+    ## get each subject-specific mean and standard deviation and bundle into a dictionary
+    ## so you can z-score each subject's cost
+    g = [i[0] for i in D2.groupby('gameID')['gameID'].unique().values]
+    m_dur = D2.groupby('gameID')['drawDuration'].mean().values
+    s_dur = D2.groupby('gameID')['drawDuration'].std().values
+    m_str = D2.groupby('gameID')['numStrokes'].mean().values
+    s_str = D2.groupby('gameID')['numStrokes'].std().values
+    m_ink = D2.groupby('gameID')['mean_intensity'].mean().values
+    s_ink = D2.groupby('gameID')['mean_intensity'].std().values
+
+    zscoredict = {}
+    for i,_g in enumerate(g):
+        zscoredict[_g] =  {}
+        zscoredict[_g]['mean_duration'] = m_dur[i]
+        zscoredict[_g]['sd_duration'] = s_dur[i]
+        zscoredict[_g]['mean_strokes'] = m_str[i]
+        zscoredict[_g]['sd_strokes'] = s_str[i]
+        zscoredict[_g]['mean_ink'] = m_ink[i]
+        zscoredict[_g]['sd_ink'] = s_ink[i]
+
+    ## now get normalized cost measures and add to dataframe
+    normed_cost_duration = []
+    normed_cost_strokes = []
+    normed_cost_ink = []
+    for i,d in D2.iterrows():
+        gameID = d['gameID']
+        cost_duration = d['drawDuration']
+        cost_strokes = d['numStrokes']
+        cost_ink = d['mean_intensity']
+        m_dur = zscoredict[gameID]['mean_duration']
+        s_dur = zscoredict[gameID]['sd_duration']
+        m_str = zscoredict[gameID]['mean_strokes']
+        s_str = zscoredict[gameID]['sd_strokes']
+        m_ink = zscoredict[gameID]['mean_ink']
+        s_ink = zscoredict[gameID]['sd_ink']
+        ## get subject-specific z-scored costs
+        normed_cost_duration.append((cost_duration - m_dur)/s_dur)
+        normed_cost_strokes.append((cost_strokes - m_str)/s_str)
+        normed_cost_ink.append((cost_ink - m_ink)/s_ink)
+
+    ## add z-scored values to dataframe
+    D2 = D2.assign(normed_cost_duration=pd.Series(normed_cost_duration).values)
+    D2 = D2.assign(normed_cost_strokes=pd.Series(normed_cost_strokes).values)
+    D2 = D2.assign(normed_cost_ink=pd.Series(normed_cost_ink).values)
+
     splits = [args.split_type]
     for split in splits:
         ### subset drawing data csv by sketches that are accounted for here (i.e., that were not cost outliers)
@@ -398,13 +452,20 @@ if __name__ == "__main__":
     D2 = add_rescaled_metric(D2,'numStrokes',transform='minmaxnorm')
     D2 = add_rescaled_metric(D2,'mean_intensity',transform='minmaxnorm')
     D2 = add_rescaled_metric(D2,'drawDuration',transform='minmaxnorm')
+
+    ## transform z-scored values to 0,1 and also apply square root which substantially improves symmetry of cost distribution
+    D2 = add_rescaled_metric(D2,'normed_cost_strokes',transform='minmaxnorm_sqrt')
+    D2 = add_rescaled_metric(D2,'normed_cost_duration',transform='minmaxnorm_sqrt')
+    D2 = add_rescaled_metric(D2,'normed_cost_ink',transform='minmaxnorm_sqrt')
+
     ## save out version with the rescaled cost metrics
     D2.to_csv('../models/bdaInput/sketchData_fixedPose_{}_{}_pilot2_costOutliersRemoved_full.csv'.format(split,adaptor_type),index=False)
 
     ## now actually generate cost dictionaries
+    print 'Generating cost dictionaries ...'
     print 'Number of unique sketchIDs: {}'.format(len(np.unique(D2['sketch_label'].values)))
     sketchID_list = np.unique(D2['sketch_label'].values)
-    metrics = ['drawDuration','mean_intensity','numStrokes']
+    metrics = ['normed_cost_duration','normed_cost_ink','normed_cost_strokes']
 
     for metric in metrics:
         print metric
