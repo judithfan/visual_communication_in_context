@@ -196,6 +196,8 @@ if __name__ == "__main__":
                         default='multimodal_conv42')
     parser.add_argument('--gen_similarity', type=str2bool, help='even if you are generating for human, do not generate similarity json to save time',
                         default='True')
+    parser.add_argument('--gen_centroid', type=str2bool, help='do you want to use object/condition-level similarities or image-level ones?',
+                        default='False')
     parser.add_argument('--split_type', type=str, help='train/test split dimension', default='splitbyobject')
     args = parser.parse_args()
 
@@ -217,32 +219,59 @@ if __name__ == "__main__":
 
 
         print 'Generating similarity JSON based on human annotations'
-        ## define list of renders and sketches
-        render_list = obj_list
-        sketch_list = np.unique(X['sketchID'])
 
-        out_json = {}
-        for i, this_render in enumerate(render_list):
-            print '{} {}'.format(i, this_render)
-            out_json[this_render] = {}
-            for j,this_sketch in enumerate(sketch_list):
-                counts = np.zeros(len(obj_list)) ## initialize the probability vector
-                choices = X[X['sketchID']==this_sketch]['choice'].values ## get list of all choices
+        if args.gen_centroid=='False':
+            ## define list of renders and sketches
+            render_list = obj_list
+            sketch_list = np.unique(X['sketchID'])
 
-                ## get counter dictionary
-                cdict = Counter(choices)
-                ## populate count vector accordingly
-                for k,o in enumerate(obj_list):
-                    if o in cdict:
-                        counts[k] = cdict[o]
+            out_json = {}
+            for i, this_render in enumerate(render_list):
+                print '{} {}'.format(i, this_render)
+                out_json[this_render] = {}
+                for j,this_sketch in enumerate(sketch_list):
+                    counts = np.zeros(len(obj_list)) ## initialize the probability vector
+                    choices = X[X['sketchID']==this_sketch]['choice'].values ## get list of all choices
 
-                ## get probability vector by dividing by sum
-                prob = counts/np.sum(counts)
-                ### pluck the probability from the vector that corresponds to current render
-                out_json[this_render][this_sketch] = prob[i]
+                    ## get counter dictionary
+                    cdict = Counter(choices)
+                    ## populate count vector accordingly
+                    for k,o in enumerate(obj_list):
+                        if o in cdict:
+                            counts[k] = cdict[o]
+
+                    ## get probability vector by dividing by sum
+                    prob = counts/np.sum(counts)
+                    ### pluck the probability from the vector that corresponds to current render
+                    out_json[this_render][this_sketch] = prob[i]
 
             ## output json in the same format as the other similarity jsons
             output_path = '../models/refModule/json/similarity-{}.json'.format(args.adaptor_type)
+            with open(output_path, 'wb') as fp:
+                json.dump(out_json, fp)
+
+        elif args.gen_centroid=='True': ### generate
+            ## define list of renders and sketches
+            render_list = obj_list
+            sketch_list = np.unique(X['sketchID'])
+            try:
+                confusion = np.load('human_confusion.npy') ## first dimension is ground truth, second is response, third is [close, far]
+            except:
+                print 'Make sure you have made a human confusion matrix so you can grab the average similarity value.'
+            out_json = {}
+            for i, this_render in enumerate(render_list):
+                print '{} {}'.format(i, this_render)
+                out_json[this_render] = {}
+                for j,this_sketch in enumerate(sketch_list):
+                    cond =  X[X['sketchID']==this_sketch]['condition'].values[0]
+                    obj_ind = np.array(obj_list)==X[X['sketchID']==this_sketch]['target'].values[0]
+                    if cond=='closer':
+                        out_json[this_render][this_sketch] = confusion[obj_ind,i,0][0] ## 2nd dimension is which render we're on
+                    elif cond=='further':
+                        out_json[this_render][this_sketch] = confusion[obj_ind,i,1][0]
+
+            ## output json in the same format as the other similarity jsons
+            output_path = '../models/refModule/json/similarity-{}-average.json'.format(args.adaptor_type)
             with open(output_path, 'wb') as fp:
                 json.dump(out_json, fp)
 
