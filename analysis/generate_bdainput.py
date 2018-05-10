@@ -250,7 +250,7 @@ if __name__ == "__main__":
             with open(output_path, 'wb') as fp:
                 json.dump(out_json, fp)
 
-        elif args.gen_centroid=='True': ### generate
+        elif args.gen_centroid=='True': ### generate similarity aggregated at sketch category
             ## define list of renders and sketches
             render_list = obj_list
             sketch_list = np.unique(X['sketchID'])

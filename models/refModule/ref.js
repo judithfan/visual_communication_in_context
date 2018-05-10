@@ -7,7 +7,7 @@ var babyparse = require('babyparse');
 var getSimilarities = function(name) {
   return {
       'human': require('./json/similarity-human.json'),
-      'human_average': require('./json/similarity-centroid.json')
+      'human_average': require('./json/similarity-centroid.json'),
       'multimodal_pool1': require('./json/similarity-splitbyobject-multimodal_pool1.json'),
       'multimodal_conv42': require('./json/similarity-splitbyobject-multimodal_conv42.json'),
       'multimodal_fc6': require('./json/similarity-splitbyobject-multimodal_fc6.json')

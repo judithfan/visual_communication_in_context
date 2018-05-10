@@ -5,7 +5,7 @@
 // webppl BDA.wppl --require ./refModule/ -- --perception multimodal_conv42 --pragmatics combined --production nocost --splitType splitbyobject
 // webppl BDA.wppl --require ./refModule/ -- --perception multimodal_conv42 --pragmatics S0 --production nocost --splitType splitbyobject
 
-// webppl BDA.wppl --require ./refModule/ -- --perception human --pragmatics combined --production cost --splitType splitbyobject
+// webppl BDA.wppl --require ./refModule/ -- --perception human_average --pragmatics combined --production cost --splitType splitbyobject
 
 // Load in experimental data to condition on
 var experimentVersion = 'fixedPose96'; // 'fixedPose', 'varyingPose', etc
