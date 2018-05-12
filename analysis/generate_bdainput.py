@@ -307,6 +307,7 @@ if __name__ == "__main__":
             sims = json.load(f)
 
         ### if aggregating at the sketch category level
+        analysis_dir = os.getcwd()        
         D = pd.read_csv(os.path.join(analysis_dir,'sketchpad_basic_pilot2_group_data.csv'))
         D = add_extra_label_columns(D)
         target_dict = dict(zip(D['sketch_label'],D['target']))
