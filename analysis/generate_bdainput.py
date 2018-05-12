@@ -207,6 +207,8 @@ if __name__ == "__main__":
     parser.add_argument('--gen_centroid', type=str2bool, help='do you want to use object/condition-level similarities or image-level ones?',
                         default='False')
     parser.add_argument('--split_type', type=str, help='train/test split dimension', default='splitbyobject')
+    parser.add_argument('--coarse_grained_similarity', type=str2bool, help='do you want to use coarse grained similarity (object/condition)?',
+                        default='True')
     args = parser.parse_args()
 
     if ('human' in args.adaptor_type) & (args.gen_similarity):
@@ -224,7 +226,6 @@ if __name__ == "__main__":
             for i,j in h.objcat.iteritems():
                 if j==cat:
                     obj_list.append(i)
-
 
         print 'Generating similarity JSON based on human annotations'
 
@@ -284,8 +285,8 @@ if __name__ == "__main__":
                 json.dump(out_json, fp)
 
     #### preprocess non-human similarities so that they fall btw 0,1
-    if 'human' not in args.adaptor_type:
-        path = '../models/refModule/json/similarity-splitbyobject-{}-raw.json'.format(args.adaptor_type)
+    if ('human' not in args.adaptor_type) & (args.coarse_grained_similarity==False):
+        path = '../models/refModule/json/similarity-{}-{}-raw.json'.format(args.split_type,args.adaptor_type)
         with open(path) as f:
             sims = json.load(f)
 
@@ -298,12 +299,58 @@ if __name__ == "__main__":
             normed = sigmoid(normalize(preds))
             normed_sims[obj] = dict(zip(sketches,normed))
 
-        out_path = '../models/refModule/json/similarity-splitbyobject-{}.json'.format(args.adaptor_type)
+        out_path = '../models/refModule/json/similarity-{}-{}.json'.format(args.split_type,args.adaptor_type)
         with open(out_path, 'wb') as fp:
             json.dump(normed_sims, fp)
 
-    # #### load in sketch data and filter to generate sketchData CSVs
+    elif ('human' not in args.adaptor_type) & (args.coarse_grained_similarity==True):
 
+        path = '../models/refModule/json/similarity-{}-{}-raw.json'.format(args.split_type,args.adaptor_type)
+        with open(path) as f:
+            sims = json.load(f)
+
+        ### if aggregating at the sketch category level
+        D = pd.read_csv(os.path.join(analysis_dir,'sketchpad_basic_pilot2_group_data.csv'))
+        D = add_extra_label_columns(D)
+        target_dict = dict(zip(D['sketch_label'],D['target']))
+        cond_dict = dict(zip(D['sketch_label'],D['condition']))
+
+        ## initialize the avg_sim dictionary, where you store the sketch condition/object mean similarity
+        ## initialize normed_sims dictionary, where you store the similarities following z-scoring and sigmoid nonlinearity
+        avg_sims = {}
+        normed_sims = {}
+        obj_list = sims.keys()
+
+        print 'Now getting mean similarity values for each object/condition...'
+        for obj in obj_list:
+            image_sims = sims[obj]
+            test_sketches = image_sims.keys()
+            raw_sims = np.array(image_sims.values()) ## array of raw similarity values
+            coarse_list = np.array(['{}_{}'.format(target_dict[i], cond_dict[i]) for i in test_sketches]) ## coarse grained categories
+            unique_coarse = np.unique(coarse_list)
+            assert len(unique_coarse)==64
+
+            ## initialize new sims vector and fill in values with mean similarity within condition/object category
+            agg_sims = np.zeros(len(raw_sims))
+            for i,oc in enumerate(unique_coarse):
+                inds = (coarse_list==oc)
+                sim_mean = np.mean(raw_sims[inds])
+                agg_sims[inds] = sim_mean
+            assert len(np.unique(agg_sims))==64
+            avg_sims[obj] = dict(zip(test_sketches,agg_sims))
+
+            ## normalizing similarity values to fall between 0,1
+            sketches = avg_sims[obj].keys() ## original sketch labels
+            preds = avg_sims[obj].values() ## averaged within sketch category
+            normed = sigmoid(normalize(preds))
+            normed_sims[obj] = dict(zip(sketches,normed))
+
+        out_path = '../models/refModule/json/similarity-{}-{}.json'.format(args.split_type,args.adaptor_type)
+        with open(out_path, 'wb') as fp:
+            json.dump(normed_sims, fp)
+
+
+    # #### load in sketch data and filter to generate sketchData CSVs
     # directory & file hierarchy
     iterationName = args.iterationName
     exp_path = './'
