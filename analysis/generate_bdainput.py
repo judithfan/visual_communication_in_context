@@ -207,8 +207,6 @@ if __name__ == "__main__":
     parser.add_argument('--gen_centroid', type=str2bool, help='do you want to use object/condition-level similarities or image-level ones?',
                         default='False')
     parser.add_argument('--split_type', type=str, help='train/test split dimension', default='splitbyobject')
-    parser.add_argument('--coarse_grained_similarity', type=str2bool, help='do you want to use coarse grained similarity (object/condition)?',
-                        default='True')
     args = parser.parse_args()
 
     if ('human' in args.adaptor_type) & (args.gen_similarity):
@@ -285,14 +283,14 @@ if __name__ == "__main__":
                 json.dump(out_json, fp)
 
     #### preprocess non-human similarities so that they fall btw 0,1
-    if ('human' not in args.adaptor_type) & (args.coarse_grained_similarity==False):
+    if ('human' not in args.adaptor_type):
         path = '../models/refModule/json/similarity-{}-{}-raw.json'.format(args.split_type,args.adaptor_type)
         with open(path) as f:
             sims = json.load(f)
 
         normed_sims = {}
         obj_list = sims.keys()
-        print 'Now normalizing similarity values...'
+        print 'Now normalizing similarity values at the image level...'
         for obj in obj_list:
             sketches = sims[obj].keys()
             preds = sims[obj].values()
@@ -303,8 +301,7 @@ if __name__ == "__main__":
         with open(out_path, 'wb') as fp:
             json.dump(normed_sims, fp)
 
-    elif ('human' not in args.adaptor_type) & (args.coarse_grained_similarity==True):
-
+        ### now also do the same and output coarse-grained similarities
         path = '../models/refModule/json/similarity-{}-{}-raw.json'.format(args.split_type,args.adaptor_type)
         with open(path) as f:
             sims = json.load(f)
@@ -321,7 +318,7 @@ if __name__ == "__main__":
         normed_sims = {}
         obj_list = sims.keys()
 
-        print 'Now getting mean similarity values for each object/condition...'
+        print 'Now getting mean similarity values for each object/condition, then normalizing...'
         for obj in obj_list:
             image_sims = sims[obj]
             test_sketches = image_sims.keys()
@@ -345,7 +342,7 @@ if __name__ == "__main__":
             normed = sigmoid(normalize(preds))
             normed_sims[obj] = dict(zip(sketches,normed))
 
-        out_path = '../models/refModule/json/similarity-{}-{}.json'.format(args.split_type,args.adaptor_type)
+        out_path = '../models/refModule/json/similarity-{}-{}-avg.json'.format(args.split_type,args.adaptor_type)
         with open(out_path, 'wb') as fp:
             json.dump(normed_sims, fp)
 
