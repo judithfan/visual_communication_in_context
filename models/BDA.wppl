@@ -40,13 +40,13 @@ var paramPrior = function() {
     perception, pragmatics, production,
     // alpha : uniformDrift({a:0,b:30, width: 2}),
     simScaling : (pragmatics === 'S0' ? 1 :
-		 uniformDrift({a:0,b:50,width:5})),
+		 uniformDrift({a:0,b:100,width:10})),
     pragWeight: (pragmatics == 'S0' ? 0 :
 		 pragmatics == 'S1' ? 1 :
 		 uniformDrift({a:0,b:1,width:0.1})),
     costWeight : (production === 'nocost' ? 0 :
 		 uniformDrift({a:0,b:10,width:1})),
-		infWeight : uniformDrift({a:0,b:10,width:1})
+    infWeight : uniformDrift({a:0,b:10,width:1})
   };
 };
 

@@ -33,7 +33,7 @@ if __name__ == "__main__":
     parser.add_argument('--production', nargs='+', type=str, \
                         help='option: cost | nocost',\
                         default = 'cost')
-    parser.add_argument('--split_type', nargs='+', type=str, \
+    parser.add_argument('--split_type', type=str, \
                         help='option: splitbyobject | alldata',\
                         default = 'splitbyobject')
 
@@ -44,6 +44,7 @@ if __name__ == "__main__":
     pragmatics = args.pragmatics
     split_type = args.split_type
 
+    
     assert args.wppl in ['BDA','evaluate', 'BDA-enumerate']
 
     ## first run BDA.wppl
