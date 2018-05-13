@@ -204,7 +204,7 @@ if __name__ == "__main__":
                         default='multimodal_conv42')
     parser.add_argument('--gen_similarity', type=str2bool, help='even if you are generating for human, do not generate similarity json to save time',
                         default='True')
-    parser.add_argument('--gen_centroid', type=str2bool, help='do you want to use object/condition-level similarities or image-level ones?',
+    parser.add_argument('--gen_centroid', type=str2bool, help='in specific case when using human similarities, do you want to use object/condition-level similarities or image-level ones?',
                         default='False')
     parser.add_argument('--split_type', type=str, help='train/test split dimension', default='splitbyobject')
     args = parser.parse_args()
@@ -307,7 +307,7 @@ if __name__ == "__main__":
             sims = json.load(f)
 
         ### if aggregating at the sketch category level
-        analysis_dir = os.getcwd()        
+        analysis_dir = os.getcwd()
         D = pd.read_csv(os.path.join(analysis_dir,'sketchpad_basic_pilot2_group_data.csv'))
         D = add_extra_label_columns(D)
         target_dict = dict(zip(D['sketch_label'],D['target']))
@@ -507,7 +507,7 @@ if __name__ == "__main__":
     D2.to_csv('../models/bdaInput/sketchData_fixedPose_{}_{}_pilot2_costOutliersRemoved_full.csv'.format(split,adaptor_type),index=False)
 
     ## now actually generate cost dictionaries
-    print 'Generating cost dictionaries ...'
+    print 'Generating image-level cost dictionaries ...'
     print 'Number of unique sketchIDs: {}'.format(len(np.unique(D2['sketch_label'].values)))
     sketchID_list = np.unique(D2['sketch_label'].values)
     metrics = ['normed_cost_duration','normed_cost_ink','normed_cost_strokes']
@@ -521,5 +521,44 @@ if __name__ == "__main__":
 
         ## output json in the same format as the other cost json
         output_path = '../models/refModule/json/costs-fixedPose96-{}.json'.format(metric)
+        with open(output_path, 'wb') as fp:
+            json.dump(cost_json, fp)
+
+    print 'Generating object/condition aggregate cost dictionaries ...'
+    ## read in both expanded (w2) and simplified bdaInput dataframe (w2)
+    w = pd.read_csv('../models/bdaInput/sketchData_fixedPose_splitbyobject_human_pilot2_costOutliersRemoved.csv')
+    w2 = pd.read_csv('../models/bdaInput/sketchData_fixedPose_splitbyobject_human_pilot2_costOutliersRemoved_full.csv')
+
+    ## add cost metrics to this simplified dataframe
+    cost_duration = []
+    cost_intensity = []
+    cost_strokes = []
+    for i,d in w.iterrows():
+        cost_duration.append(w2[w2['sketch_label']==d['sketchLabel']]['rescaled_drawDuration'].values[0])
+        cost_intensity.append(w2[w2['sketch_label']==d['sketchLabel']]['rescaled_mean_intensity'].values[0])
+        cost_strokes.append(w2[w2['sketch_label']==d['sketchLabel']]['rescaled_numStrokes'].values[0])
+    w = w.assign(cost_duration=pd.Series(cost_duration).values)
+    w = w.assign(cost_intensity=pd.Series(cost_intensity).values)
+    w = w.assign(cost_strokes=pd.Series(cost_strokes).values)
+
+    ## make dataframe with avg costs for each sketch category
+    r = w.groupby(['Target','condition'])['cost_duration'].mean()
+    R = pd.DataFrame(r)
+    R = R.reset_index()
+
+    ## making new cost jsons with average cost subbed in for image-level cost
+    metrics = ['cost_duration','cost_ink','cost_strokes']
+    for metric in metrics:
+        print metric
+
+        ## make new cost json
+        cost_json = {}
+        for i,d in w.iterrows():
+            this_sketch = d['sketchLabel']
+            agg_cost = R[(R['Target']==d['Target']) & (R['condition']==d['condition'])][metric].values[0]
+            cost_json[this_sketch] = agg_cost
+
+        ## output json in the same format as the other cost json
+        output_path = '../models/refModule/json/costs-fixedPose96-{}-average.json'.format(metric)
         with open(output_path, 'wb') as fp:
             json.dump(cost_json, fp)
