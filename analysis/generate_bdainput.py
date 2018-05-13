@@ -531,14 +531,14 @@ if __name__ == "__main__":
 
     ## add cost metrics to this simplified dataframe
     cost_duration = []
-    cost_intensity = []
+    cost_ink = []
     cost_strokes = []
     for i,d in w.iterrows():
         cost_duration.append(w2[w2['sketch_label']==d['sketchLabel']]['rescaled_drawDuration'].values[0])
-        cost_intensity.append(w2[w2['sketch_label']==d['sketchLabel']]['rescaled_mean_intensity'].values[0])
+        cost_ink.append(w2[w2['sketch_label']==d['sketchLabel']]['rescaled_mean_intensity'].values[0])
         cost_strokes.append(w2[w2['sketch_label']==d['sketchLabel']]['rescaled_numStrokes'].values[0])
     w = w.assign(cost_duration=pd.Series(cost_duration).values)
-    w = w.assign(cost_intensity=pd.Series(cost_intensity).values)
+    w = w.assign(cost_ink=pd.Series(cost_ink).values)
     w = w.assign(cost_strokes=pd.Series(cost_strokes).values)
 
     ## make dataframe with avg costs for each sketch category
