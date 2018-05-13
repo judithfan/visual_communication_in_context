@@ -541,15 +541,15 @@ if __name__ == "__main__":
     w = w.assign(cost_ink=pd.Series(cost_ink).values)
     w = w.assign(cost_strokes=pd.Series(cost_strokes).values)
 
-    ## make dataframe with avg costs for each sketch category
-    r = w.groupby(['Target','condition'])['cost_duration'].mean()
-    R = pd.DataFrame(r)
-    R = R.reset_index()
-
     ## making new cost jsons with average cost subbed in for image-level cost
     metrics = ['cost_duration','cost_ink','cost_strokes']
     for metric in metrics:
         print metric
+
+        ## make dataframe with avg costs for each sketch category
+        r = w.groupby(['Target','condition'])[metric].mean()
+        R = pd.DataFrame(r)
+        R = R.reset_index()
 
         ## make new cost json
         cost_json = {}
