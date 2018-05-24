@@ -258,7 +258,7 @@ if __name__ == "__main__":
                 json.dump(out_json, fp)
 
         elif args.gen_centroid==True: ### generate similarity aggregated at sketch category
-            
+
             ## define list of renders and sketches
             render_list = obj_list
             sketch_list = np.unique(X['sketchID'])
@@ -283,8 +283,8 @@ if __name__ == "__main__":
             with open(output_path, 'wb') as fp:
                 json.dump(out_json, fp)
 
-    #### preprocess non-human similarities so that they fall btw 0,1
     if ('human' not in args.adaptor_type):
+        #### preprocess non-human similarities so that they fall btw 0,1
         path = '../models/refModule/json/similarity-{}-{}-raw.json'.format(args.split_type,args.adaptor_type)
         with open(path) as f:
             sims = json.load(f)

@@ -47,7 +47,7 @@ var paramPrior = function() {
     costWeight : (production === 'nocost' ? 0 :
 		 uniformDrift({a:0,b:30,width:1})),
     infWeight : uniformDrift({a:0,b:30,width:1})
-  };
+};
 };
 
 var modelAnalysis = function() {
