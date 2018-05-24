@@ -36,8 +36,6 @@ var speakerModel = function(targetObj, context, params, config) {
       var costw = params.costWeight;
       var infw = params.infWeight;
       var utility = infw * inf - costw * sketchCost(sketch); // independent informativity weight parameter
-      // var utility = ((1 - params.costWeight) * inf
-		  //    - params.costWeight * sketchCost(sketch));
       factor(utility);
       return globalConfig.aggregate ? config.conditionLookup[sketch] : sketch;
     }});
