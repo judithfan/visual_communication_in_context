@@ -56,11 +56,13 @@ var modelAnalysis = function() {
     // Extract condition information
     var conditionType = c.condition;
     var context = [c.Target, c.Distractor1, c.Distractor2, c.Distractor3];
-    var target = context[0];
+    var modelOutput = speakerModel(c.Target, context, params, globalConfig);
     var sketchInfo = globalConfig.aggregate ? c.coarseGrainedSketchInfo : c.sketchLabel;
-    return memo + refModule.getSpeakerScore(
-      c.sketchLabel, target, context, params, globalConfig
-    );
+    return memo + modelOutput.score(sketchInfo)
+;    // var sketchInfo = globalConfig.aggregate ? c.coarseGrainedSketchInfo : c.sketchLabel;
+    // return memo + refModule.getSpeakerScore(
+    //   c.sketchLabel, target, context, params, globalConfig
+    // );
   }, 0, data);
 
   console.log(params);

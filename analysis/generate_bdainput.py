@@ -227,7 +227,7 @@ if __name__ == "__main__":
 
         print 'Generating similarity JSON based on human annotations'
 
-        if args.gen_centroid=='False':
+        if args.gen_centroid==False:
             ## define list of renders and sketches
             render_list = obj_list
             sketch_list = np.unique(X['sketchID'])
@@ -257,7 +257,8 @@ if __name__ == "__main__":
             with open(output_path, 'wb') as fp:
                 json.dump(out_json, fp)
 
-        elif args.gen_centroid=='True': ### generate similarity aggregated at sketch category
+        elif args.gen_centroid==True: ### generate similarity aggregated at sketch category
+
             ## define list of renders and sketches
             render_list = obj_list
             sketch_list = np.unique(X['sketchID'])
