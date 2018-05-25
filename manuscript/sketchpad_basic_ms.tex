@@ -139,6 +139,15 @@ We hypothesized that the context manipulation in the communication experiment sy
 
 In other words, we predicted that the decreased effort expended by participants on Far trials reduced the absolute perceptual similarity between sketches and the target. The goal of this experiment was to validate this assumption and to provide independent training data to train a shallow adaptor network to merge photorealistic images and sketches into a common latent space, from which perceptual similarity can be easily read out.
 
+
+\begin{figure*}[htbp]
+\centering
+\includegraphics[width=0.95\textwidth]{figures/2_behavioral_performance.pdf}
+\caption{(A-C) Sketchers used fewer strokes, less ink, and spent less time producing sketches in the far condition, relative to the close condition. (D-E) Viewers were at ceiling accuracy in identifying the target in the far condition, and were highly accurate in the close condition. (F) Naive matcher participants were more accurate for close sketches than far sketches.}
+\label{task_performance}
+\end{figure*}
+
+
 %%% recognition experiments
 %% report close vs. far Accuracy
 
@@ -249,26 +258,29 @@ where $f$ is the visual encoder network, $\sigma$ is a sigmoid transformation, a
 
 \subsubsection*{Social reasoning and decision-making module}
 
-Formally, our sketcher, $\mathcal{S}$, is a decision-theoretic agent who produces sketches, $s$, by (soft)-maximizing their utility function, $U$, given a particular object referent, $o$:
+We compare an \emph{asocial sketcher} $S_0$ that simply aims to make a drawing with high perceptual similarity to the target against a \emph{social sketcher} $S_1$ that takes into account context. To instantiate communicative flexibility in context, we generalize the Rational Speech Act (RSA) modeling framework, originally developed for linguistic communication. At the core of the RSA framework, as applied to linguistic communication, is the Gricean maxim of quantity: to make your contribution as informative as is required by context but no more so. In particular,
+
+Formally, the sketcher, $\mathcal{S}$, is a decision-theoretic agent who produces drawings, $d$, by (soft) maximizing their utility function, $U$, given a particular object referent, $o$:
 
 \begin{equation}
-\mathcal{S}(s|o) \propto \exp\{{U(s,o)\}}
+\mathcal{S}(d|o) \propto e^{\alpha U(d,o)}
 \end{equation}
 
-The sketcher's utility function, $U$, trades off the extent to which the sketch is informative to the viewer, $\mathcal{V}$, and the cost of producing the sketch, $C(s)$. This notion of informativity is defined by the (natural log) probability that a viewer would select the true object referent given the drawing and current context:
+Here, $\alpha$ is a softmax parameter. As $\alpha \rightarrow \infty$, the sketcher approaches the optimal maximizing policy.
+
+The sketcher's utility function, $U$, trades off the extent to which the drawing is informative to the viewer, $\mathcal{V}$, and the cost of producing the drawing, $C(d)$. This notion of informativity is defined by the (natural log) probability that a viewer would select the true object referent given the drawing and current context:
+
 \begin{equation} \label{sketcher_utility}
-U(s, o) = w_1 \ln \mathcal{V}(o|s) - w_2 C(s)
+U(d, o) = \ln \mathcal{V}(o|d) - C(d)
 \end{equation}
-where $w_1$ and $w_2$ are inferred parameters weighting the influences of the informativity and cost terms, respectively. 
 
 This sketcher $\mathcal{S}$ is \emph{pragmatic} because they evaluate informativity by considering rational viewer agent ($\mathcal{V}$) who assigns a score to the correspondence between the drawing and each object that is proportional to the perceptual similarity, $P$, between the drawing and each potential object referent in context:
 
 \begin{equation} \label{literal_viewer_score}
-\mathcal{V}(o|s) \propto \alpha \cdot \textrm{sim}(s, o)
+\mathcal{V}(o|d) \propto P_{o,d}
 \end{equation}
-where $\alpha$ is a scaling parameter determining the assumed optimality of the listener's decision policy: as $\alpha \rightarrow \infty$, the listener increasingly chooses the object with maximum perceptual similarity to the sketch. 
 
-To compute the perceptual similarity scores, the sketcher agent (who can also view the sketch and objects) extracts a feature vector representation from each of the target and distractor objects using the fixed visual encoder, and computes the distances between each of these vectors and the potential sketches it could produce.
+To compute these perceptual similarity scores, the sketcher agent (who can also view the sketch and objects) extracts a feature vector representation from each of the target and distractor objects using the fixed visual encoder, and computes the distances between each of these vectors and the potential sketches it could produce.
 
 This has the effect of biasing the model to depict properties of the target object that distinguish it from the distractors, while also preferring sketches that are less costly to produce, $C(d)$, i.e., requiring fewer strokes or less ink.
 
