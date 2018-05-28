@@ -9,7 +9,7 @@ var getSimilarities = function(name) {
       'human': require('./json/similarity-human.json'),
       // 'multimodal_pool1': require('./json/similarity-splitbyobject-multimodal_pool1-avg.json'),
       // 'multimodal_conv42': require('./json/similarity-splitbyobject-multimodal_conv42-avg.json'),
-      'multimodal_fc6': require('./json/similarity-balancedavg-multimodal_fc6-avg.json')
+      'multimodal_fc6': require('./json/similarity-balancedavg-multimodal_fc6.json')
   };
 };
 
