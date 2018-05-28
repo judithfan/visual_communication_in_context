@@ -527,8 +527,8 @@ if __name__ == "__main__":
 
     print 'Generating object/condition aggregate cost dictionaries ...'
     ## read in both expanded (w2) and simplified bdaInput dataframe (w2)
-    w = pd.read_csv('../models/bdaInput/sketchData_fixedPose_splitbyobject_human_pilot2_costOutliersRemoved.csv')
-    w2 = pd.read_csv('../models/bdaInput/sketchData_fixedPose_splitbyobject_human_pilot2_costOutliersRemoved_full.csv')
+    w = pd.read_csv('../models/bdaInput/sketchData_fixedPose_{}_human_pilot2_costOutliersRemoved.csv'.format(args.split_type))
+    w2 = pd.read_csv('../models/bdaInput/sketchData_fixedPose_{}_human_pilot2_costOutliersRemoved_full.csv'.format(args.split_type))
 
     ## add cost metrics to this simplified dataframe
     cost_duration = []
