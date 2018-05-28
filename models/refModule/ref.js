@@ -6,10 +6,10 @@ var babyparse = require('babyparse');
 
 var getSimilarities = function(name) {
   return {
-      'human': require('./json/similarity-human.json'),
+      'human': require('./json/similarity-human-avg.json'),
       // 'multimodal_pool1': require('./json/similarity-splitbyobject-multimodal_pool1-avg.json'),
       // 'multimodal_conv42': require('./json/similarity-splitbyobject-multimodal_conv42-avg.json'),
-      'multimodal_fc6': require('./json/similarity-balancedavg-multimodal_fc6-avg.json')
+      'multimodal_fc6': require('./json/similarity-balancedunroll-multimodal_fc6-avg.json')
   };
 };
 
