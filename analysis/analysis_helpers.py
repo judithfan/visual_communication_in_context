@@ -206,6 +206,21 @@ chairs = sorted(['leather', 'straight', 'squat', 'sling', 'woven', 'waiting', 'i
 birds = sorted(['crow', 'pigeon', 'robin', 'sparrow', 'tomtit', 'nightingale', 'bluejay', 'cuckoo'])
 cars = sorted(['beetle', 'bluesport', 'brown', 'white', 'redsport', 'redantique', 'hatchback', 'bluesedan'])
 
+def flatten_mcmc_to_samples(raw_params,num_samples=1000):
+    flat_params = pd.DataFrame(columns=raw_params.columns)
+    counter = 0
+    for i,d in raw_params.iterrows():
+        multiples = int(np.round(np.exp(d['posteriorProb'])*num_samples))
+        for m in np.arange(multiples):
+            flat_params.loc[counter] = d
+            counter += 1
+
+    ## correct the posteriorProb column so that each sample has prob 1/num_samples, where num_samples prob is 1000
+    flat_params.drop(labels=['posteriorProb'], axis="columns", inplace=True)
+    flat_params['posteriorProb'] = np.tile(np.log(1/num_samples),len(flat_params))
+    assert len(flat_params)==num_samples
+    return flat_params 
+
 def flatten(x):
     return [item for sublist in x for item in sublist]
 
