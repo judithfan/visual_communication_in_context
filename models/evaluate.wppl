@@ -10,7 +10,7 @@ var adaptorType = argv.adaptorType;
 var data = refModule.readCSV('./bdaInput/sketchData_fixedPose_' + splitType + '_' + adaptorType + '_pilot2_costOutliersRemoved.csv');
 console.log("Loading expt data complete..." + data.length + " data points");
 
-var params = refModule.readCSV('./bdaOutput/' + argv.paramSetting + '_' + splitType + 'Params.csv');
+var params = refModule.readCSV('./bdaOutput/' + argv.adaptorType + "_" + argv.splitType + "/flattened/" + argv.paramSetting + '_' + splitType + 'ParamsFlattened.csv');
 console.log("Loading params complete..." + params.length + " param settings");
 
 // Cache some properties of model
