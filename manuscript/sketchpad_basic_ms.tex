@@ -244,6 +244,8 @@ In order to better approximate the granularity with which human observers can di
 
 This approach has been successfully used in prior work to better predict human semantic categorization judgments \cite[]{peterson2016adapting}, and to improve sketch-based image retrieval \cite[]{sangkloy2016sketchy}.
 
+
+
 %% adaptor architecture
 The purpose of the visual encoder is to learn a function from images and sketches to a shared embedding space. The encoder network takes as input mid-level convolutional features from VGG-19. In our experiments, we used the second convolutional layer after the third pooling step. We chose a mid-convolutional layer to capitalize on successive layers of abstraction from early convolutional layers and to preserve two-dimensional structure. The encoder produces a shared embedding of size 1000.
 
