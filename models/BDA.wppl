@@ -17,7 +17,7 @@ var possibleSketches = refModule.getPossibleSketches(data);
 var conditionLookup = refModule.getConditionLookup();
 console.log("Loading model data complete..."
 	    + possibleSketches.length + " sketches of " +
-	    + _.keys(similarities['multimodal_conv42']).length + " objects." );
+	    + _.keys(similarities['multimodal_fc6']).length + " objects." );
 
 // Package into config
 var globalConfig = {

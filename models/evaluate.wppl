@@ -1,16 +1,7 @@
 // run using:
+// webppl evaluate.wppl --require ./refModule/ -- --paramSetting human_combined_cost --adaptorType human --splitType balancedavg
 // webppl evaluate.wppl --require ./refModule/ -- --paramSetting human_combined_cost --adaptorType human --splitType alldata
-// webppl evaluate.wppl --require ./refModule/ -- --paramSetting human_S0_cost --adaptorType human --splitType alldata
-// webppl evaluate.wppl --require ./refModule/ -- --paramSetting human_combined_nocost --adaptorType human --splitType alldata
-// webppl evaluate.wppl --require ./refModule/ -- --paramSetting human_S0_nocost --adaptorType human --splitType alldata
-
-// webppl evaluate.wppl --require ./refModule/ -- --paramSetting multimodal_combined_cost --adaptorType multimodal --splitType splitbyobject
-// webppl evaluate.wppl --require ./refModule/ -- --paramSetting multimodal_S0_cost --adaptorType multimodal --splitType splitbyobject
-// webppl evaluate.wppl --require ./refModule/ -- --paramSetting multimodal_combined_nocost --adaptorType multimodal --splitType splitbyobject
-// webppl evaluate.wppl --require ./refModule/ -- --paramSetting multimodal_S0_nocost --adaptorType multimodal --splitType splitbyobject
-
-// webppl evaluate.wppl --require ./refModule/ -- --paramSetting multimodal_conv42_S1_cost --adaptorType multimodal_conv42 --splitType splitbyobject
-
+// webppl evaluate.wppl --require ./refModule/ -- --paramSetting multimodal_fc6_combined_cost --adaptorType multimodal_fc6 --splitType balancedavg
 
 // Load in experimental data to condition on
 var experimentVersion = 'fixedPose96'; // 'fixedPose', 'varyingPose', etc
@@ -24,7 +15,7 @@ console.log("Loading params complete..." + params.length + " param settings");
 
 // Cache some properties of model
 var similarities = refModule.getSimilarities();
-var costs = refModule.getCosts(experimentVersion + '-drawDuration');
+var costs = refModule.getCosts(experimentVersion + '-normed_cost_duration');
 var possibleSketches = refModule.getPossibleSketches(data);
 var conditionLookup = refModule.getConditionLookup();
 
