@@ -40,8 +40,8 @@ var paramPrior = function() {
 		 pragmatics == 'S1' ? 1 :
 		 uniformDrift({a:0,b:1,width:0.1})),
     costWeight : (production === 'nocost' ? 0 :
-		 uniformDrift({a:0,b:30,width:1})),
-    infWeight : uniformDrift({a:0,b:30,width:1})
+		 uniformDrift({a:0,b:100,width:10})),
+    infWeight : uniformDrift({a:0,b:100,width:10})
 };
 };
 
@@ -71,5 +71,6 @@ var modelAnalysis = function() {
   };
 };
 
-var outputERP = Infer({method: 'MCMC', samples: 1000, burn: 250, lag: 0, model: modelAnalysis, onlyMAP: false});
+var outputERP = Infer({method: 'MCMC', samples: 1000, burn: 500, lag: 0, model: modelAnalysis, onlyMAP: false});
+
 refModule.bayesianErpWriter(outputERP, "./bdaOutput/" + argv.perception + "_" + argv.splitType + "/raw/" + globalConfig.outputFileName);
