@@ -30,7 +30,7 @@ if __name__ == "__main__":
         splits = clean_dirlist(os.listdir(os.path.join(args.path_to_src_similarities,layer)))
         for split_num in splits:
             fname ='similarity-{}{}-multimodal_{}-raw.json'.format(args.split_type,split_num,layer)
-            out_path = os.path.join(path_to_dest_similarities,fname)
+            out_path = os.path.join(path_to_dest_similarities,'{}{}'.format(args.split_type,split_num),fname)
             in_path = os.path.join(args.path_to_src_similarities,layer,split_num,'dump.json')
             print 'Copying {} to {}'.format(in_path, out_path)
             shutil.copy(in_path,out_path)
@@ -39,7 +39,7 @@ if __name__ == "__main__":
     splits = clean_dirlist(os.listdir(os.path.join(args.path_to_src_similarities,split_dir)))
     for split_num in splits:
         fname = 'pilot2_multimodal_{}{}_test_examples.json'.format(args.split_type,split_num)
-        out_path = os.path.join('./',fname)
+        out_path = os.path.join('./','{}{}'.format(args.split_type,split_num),fname)
         in_path = os.path.join(args.path_to_src_similarities,split_dir,split_num,'test_split.json')
         print 'Copying {} to {}'.format(in_path, out_path)
         shutil.copy(in_path,out_path)
