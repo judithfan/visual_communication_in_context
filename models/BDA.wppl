@@ -1,6 +1,6 @@
 // run using:
 
-// webppl BDA.wppl --require ./refModule/ -- --perception multimodal_fc6 --pragmatics combined --production cost --splitType balancedavg1
+// webppl BDA.wppl --require ./refModule/ -- --perception multimodal_fc6 --pragmatics combined --production cost --splitType balancedavg3
 
 // Load in experimental data to condition on
 var experimentVersion = 'fixedPose96'; // 'fixedPose', 'varyingPose', etc
@@ -13,7 +13,6 @@ console.log("Loading expt data complete..." + data.length + " data points");
 // Note: when moving to model comparison, can precache for all models...
 var splitNum = splitType.slice(-1);
 var similarities = refModule.getSimilarities(splitType); // pass which split number you're using, so which similarities to use
-console.log(similarities['multimodal_fc6']);
 var costs = refModule.getCosts(experimentVersion + '-cost_duration-average',splitType);
 var possibleSketches = refModule.getPossibleSketches(data);
 var conditionLookup = refModule.getConditionLookup(splitType);

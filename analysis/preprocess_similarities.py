@@ -11,7 +11,7 @@ def clean_dirlist(x):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--path_to_src_similarities', type=str, help='path to dir containing similarities, \
-                        multiple crossval splits expected', default='../pix2svg-similarities-052918')
+                        multiple crossval splits expected', default='../pix2svg-similarities-053018')
     parser.add_argument('--split_type', type=str, help='type of split and learning objective during adaptor training', default='balancedavg')
 
     args = parser.parse_args()
