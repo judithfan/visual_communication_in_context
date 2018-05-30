@@ -4,7 +4,6 @@ from __future__ import division
 import os
 import pymongo as pm
 import numpy as np
-import scipy.stats as stats
 import pandas as pd
 import json
 import shutil
