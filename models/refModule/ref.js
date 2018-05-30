@@ -5,7 +5,7 @@ var babyparse = require('babyparse');
 // var es = require('event-stream');
 
 var getSimilarities = function(splitType,splitNum) {
-  return {
+    return {
       'human': require('./json/' + splitType + '/similarity-human-avg.json'),      
       'multimodal_pool1': require('./json/' + splitType + '/similarity-balancedavg' + splitNum + '-multimodal_pool1-avg.json'),
       'multimodal_conv42': require('./json/' + splitType + '/similarity-balancedavg' + splitNum + '-multimodal_conv42-avg.json'),
