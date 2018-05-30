@@ -106,15 +106,15 @@ def generate_bdaInput_csv(D,filtration_level,train_test_split=True,
     if (train_test_split==True) and (split_type != 'alldata'):
         print 'saving CSV with only test data'
         if len(filtration_level)==0:
-            D2.to_csv('../models/bdaInput/sketchData_fixedPose_{}_{}_pilot2.csv'.format(split_type,adaptor_type),index=False)
+            D2.to_csv('../models/bdaInput/{}/sketchData_fixedPose_{}_{}_pilot2.csv'.format(split_type,split_type,adaptor_type),index=False)
         else:
-            D2.to_csv('../models/bdaInput/sketchData_fixedPose_{}_{}_pilot2_{}.csv'.format(split_type,adaptor_type,filtration_level),index=False)
+            D2.to_csv('../models/bdaInput/{}/sketchData_fixedPose_{}_{}_pilot2_{}.csv'.format(split_type,split_type,adaptor_type,filtration_level),index=False)
     else: ## run bda on ALL datapoints (not just test split)
         print 'saving CSV including all datapoints'
         if len(filtration_level)==0:
-            D2.to_csv('../models/bdaInput/sketchData_fixedPose_alldata_{}_pilot2.csv'.format(adaptor_type),index=False)
+            D2.to_csv('../models/bdaInput/{}/sketchData_fixedPose_alldata_{}_pilot2.csv'.format(split_type,adaptor_type),index=False)
         else:
-            D2.to_csv('../models/bdaInput/sketchData_fixedPose_alldata_{}_pilot2_{}.csv'.format(adaptor_type,filtration_level),index=False)
+            D2.to_csv('../models/bdaInput/{}/sketchData_fixedPose_alldata_{}_pilot2_{}.csv'.format(split_type,adaptor_type,filtration_level),index=False)
     print 'Saved out bdaInput CSV ... {}'.format(filtration_level)
 
 
@@ -471,12 +471,12 @@ if __name__ == "__main__":
     splits = [args.split_type]
     for split in splits:
         ### subset drawing data csv by sketches that are accounted for here (i.e., that were not cost outliers)
-        B = pd.read_csv('../models/bdaInput/sketchData_fixedPose_{}_{}_pilot2.csv'.format(split_type,adaptor_type))
+        B = pd.read_csv('../models/bdaInput/{}/sketchData_fixedPose_{}_{}_pilot2.csv'.format(split_type,split_type,adaptor_type))
 
         remaining_sketches = list(np.unique(D2['sketch_label'].values))
         print '{} remaining sketches after removing cost outliers'.format(len(remaining_sketches))
         _B = B[B['sketchLabel'].isin(remaining_sketches)]
-        _B.to_csv('../models/bdaInput/sketchData_fixedPose_{}_{}_pilot2_costOutliersRemoved.csv'.format(split,adaptor_type),index=False)
+        _B.to_csv('../models/bdaInput/{}/sketchData_fixedPose_{}_{}_pilot2_costOutliersRemoved.csv'.format(split_type,split,adaptor_type),index=False)
 
     # ### make condition-lookup json
     print ' '
@@ -507,7 +507,7 @@ if __name__ == "__main__":
     D2 = add_rescaled_metric(D2,'normed_cost_ink',transform='minmaxnorm_sqrt')
 
     ## save out version with the rescaled cost metrics
-    D2.to_csv('../models/bdaInput/sketchData_fixedPose_{}_{}_pilot2_costOutliersRemoved_full.csv'.format(split,adaptor_type),index=False)
+    D2.to_csv('../models/bdaInput/{}/sketchData_fixedPose_{}_{}_pilot2_costOutliersRemoved_full.csv'.format(split_type,split,adaptor_type),index=False)
 
     ## now actually generate cost dictionaries
     print 'Generating image-level cost dictionaries ...'
@@ -530,8 +530,8 @@ if __name__ == "__main__":
     print 'Generating object/condition aggregate cost dictionaries ...'
     ## read in both expanded (w2) and simplified bdaInput dataframe (w2)
 
-    w = pd.read_csv('../models/bdaInput/sketchData_fixedPose_{}_{}_pilot2_costOutliersRemoved.csv'.format(args.split_type,args.adaptor_type))
-    w2 = pd.read_csv('../models/bdaInput/sketchData_fixedPose_{}_{}_pilot2_costOutliersRemoved_full.csv'.format(args.split_type,args.adaptor_type))
+    w = pd.read_csv('../models/bdaInput/{}/sketchData_fixedPose_{}_{}_pilot2_costOutliersRemoved.csv'.format(split_type,args.split_type,args.adaptor_type))
+    w2 = pd.read_csv('../models/bdaInput/{}/sketchData_fixedPose_{}_{}_pilot2_costOutliersRemoved_full.csv'.format(split_type,args.split_type,args.adaptor_type))
 
     ## add cost metrics to this simplified dataframe
     cost_duration = []
