@@ -102,6 +102,8 @@ def generate_bdaInput_csv(D,filtration_level,train_test_split=True,
     D2 = D2.transpose()
     D2.columns = ['condition','sketchLabel','Target','Distractor1','Distractor2','Distractor3','coarseGrainedSketchInfo']
     print '{} datapoints x {} columns'.format(D2.shape[0],D2.shape[1])
+    if not os.path.exists('../models/bdaInput/{}'.format(split_type)):
+        os.makedirs('../models/bdaInput/{}'.format(split_type))
 
     if (train_test_split==True) and (split_type != 'alldata'):
         print 'saving CSV with only test data'
