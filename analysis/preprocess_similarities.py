@@ -36,12 +36,16 @@ if __name__ == "__main__":
             shutil.copy(in_path,out_path)
 
     ## copy test_examples to this analysis dir
-    template = 'pilot2_multimodal_test_examples.json'
-
     splits = clean_dirlist(os.listdir(os.path.join(args.path_to_src_similarities,split_dir)))
     for split_num in splits:
         fname = 'pilot2_multimodal_{}{}_test_examples.json'.format(args.split_type,split_num)
         out_path = os.path.join('./',fname)
         in_path = os.path.join(args.path_to_src_similarities,split_dir,split_num,'test_split.json')
+        print 'Copying {} to {}'.format(in_path, out_path)
+        shutil.copy(in_path,out_path)
+
+        ## save another copy for humans
+        fname = 'pilot2_human_{}{}_test_examples.json'.format(args.split_type,split_num)
+        out_path = os.path.join('./',fname)
         print 'Copying {} to {}'.format(in_path, out_path)
         shutil.copy(in_path,out_path)
