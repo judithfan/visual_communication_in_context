@@ -339,14 +339,13 @@ if __name__ == "__main__":
             trunc_sketch_list = [i.split('_')[0] for i in sketch_list]
             invalid_inds = []
             for i,s in enumerate(trunc_sketch_list):
-                if s not in trunc_gameids: ## if sketch gameid is NOT in list of valid gameids, do NOT include 
+                if s not in trunc_gameids: ## if sketch gameid is NOT in list of valid gameids, do NOT include
                     print s
                     invalid_inds.append(i)
             ## 5/30/18: now carefully remove those indices from test_sketches and raw_sims
             test_sketches, raw_sims = map(np.array,[test_sketches,raw_sims])
             test_sketches = np.delete(test_sketches,invalid_inds)
-            raw_sims = np.delete(raw_sims,invalid_inds)
-            test_sketches, raw_sims = map(list[test_sketches,raw_sims])
+            raw_sims = np.delete(raw_sims,invalid_inds)                        
 
             coarse_list = np.array(['{}_{}'.format(target_dict[i], cond_dict[i]) for i in test_sketches]) ## coarse grained categories
             unique_coarse = np.unique(coarse_list)
