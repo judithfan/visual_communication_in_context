@@ -19,6 +19,8 @@
 \usepackage{multirow}
 \usepackage{subfig}
 
+\newcommand{\mwu}[1]{{\color{green}{[mwu: #1]}}}
+
 
 \title{Contextual flexibility in visual communication}
 
@@ -239,37 +241,36 @@ On each trial, participants were presented with a randomly selected sketch colle
 
 Features were extracted using VGG-19 \cite{simonyan2014very}, a high-performing deep convolutional neural network model architecture that had been pretrained to categorize objects on the Imagenet database, which contains millions of photographs from hundreds of object categories \cite{deng2009imagenet}. Despite the fact that drawings are highly abstracted away from natural visual inputs, prior work has shown a striking isomorphism in the similarity structure \cite{kriegeskorte2008matching} of object categories in drawings and photos at higher layers in these models \cite{fan2015common}, without any additional training.
 
-While these models excel at (and were indeed optimized for) categorization of objects, two additional competencies are required to succeed at the visual communication task described above.
+While these models excel at (and were indeed optimized for) categorization of objects, two additional competencies are required to succeed at the visual communication task described above. First, an observer must be able to represent fine-grained relationships between different images of objects from the same category; second, this observer must also be able to discern image-level correspondences between drawings and photos of the same object. In order to better approximate the granularity with which human observers can distinguish different images, we augment VGG19 with a smaller \textit{adaptor} network that learns a common feature representation for drawings and photos. This approach has been successfully used in prior work to better predict human semantic categorization judgments \cite[]{peterson2016adapting}, and to improve sketch-based image retrieval \cite[]{sangkloy2016sketchy}.
 
-First, an observer must be able to represent fine-grained relationships between different images of objects from the same category; second, this observer must also be able to discern image-level correspondences between drawings and photos of the same object.
+We explore adapting features from three different layers of VGG-19: the first max pooling layer (vgg-early), the tenth convolutional layer (vgg-mid), and the first fully connected layer (vgg-high), respectively representing low, medium, and high level visual abstraction. As such, we design three different encoder models, intentionally keeping them lightweight and comparable in number of parameters (Table~\ref{table:parameters}). We respectively refer to these as \textit{adaptor-early}, \textit{adaptor-mid}, and \textit{adaptor-high}. Below, we detail the architecture and hyperparameter choices:
 
-In order to better approximate the granularity with which human observers can distinguish different images, we augment VGG19 with a smaller \textit{adaptor} network that learns a common feature representation for drawings and photos.
+Adaptor-high is composed of a linear layer from 8192 to 512, followed by a swish nonlinearity \cite[]{ramachandran2018searching} and dropout, then a linear layer from 512 to 1. Each vgg-high feature has 4096 dimensions. A photo and sketch feature is first concatenated to form a vector of size 8192, then passed to adaptor-high. Empirically, we find the ability of the model to fit the data robust to the choice of nonlinearity and hidden dimensionality. 
 
-This approach has been successfully used in prior work to better predict human semantic categorization judgments \cite[]{peterson2016adapting}, and to improve sketch-based image retrieval \cite[]{sangkloy2016sketchy}.
+\begin{table}
+\centering
+\begin{tabular}{| l | c |}
+\hline
+Model & Parameters \\
+\hline
+\hline 
+adaptor-early & 4195329 \\ 
+\hline
+adaptor-mid & 526881 \\  
+\hline
+adaptor-high & 33409 \\
+\hline
+\end{tabular}
+\caption{Number of parameters in the visual encoder modules.}
+\label{table:parameters}
+\end{table}
 
+Similarly, adaptor-mid consists of a linear layer of 1024 to 512, swish, dropout, then a linear layer from 512 to 1. Since vgg-mid features are three dimensional (512 by 28 by 28), we first flatten the input into a one dimensional vector of size 512 using a weighted linear combination $\sum_{i=1}^{28}\sum_{j=1}^{28} w_{ij} * x_{ij}$, where $x_{ij}$ represents a cross-section from vgg-mid. The parameters $\{w_{ij}|1\leq i,j \leq 28\}$ are learned along with the parameters of adaptor-mid. Intuitively, this is akin to attention over the spatial features of vgg-mid. We separately attend over photo and sketch spatial features, creating two vectors of size 512, then concatenate prior to adaptor-mid.
 
-
-%% adaptor architecture
-The purpose of the visual encoder is to learn a function from images and sketches to a shared embedding space. The encoder network takes as input mid-level convolutional features from VGG-19. In our experiments, we used the second convolutional layer after the third pooling step. We chose a mid-convolutional layer to capitalize on successive layers of abstraction from early convolutional layers and to preserve two-dimensional structure. The encoder produces a shared embedding of size 1000.
-
-The architecture of the encoder is as follows: a single convolutional layer (conv1) with 64 filters, a kernel size of 3, a padding of 1, and a stride of 1; followed by a max pool layer with a stride of 2 and a dilation of 1; followed by two fully connected layers (fc1, fc2) to project to 4096 units and 1000 units, respectively. We include batch normalization and ReLU nonlinearity after conv1 and fc1. A dropout layer is added after fc1. We emphasize that the architecture of the encoder is purposefully chosen to be light weight.
+Finally, adaptor-low is almost identical to adaptor-mid, except each feature is of size 64 by 112 by 112. Explicitly, this network starts with a linear layer of 4096 to 64, swish, dropout, then a linear layer form 512 to 1. Due to the input size, each attention module has 12,544 learnable weights. 
 
 %% adaptor training procedure
-
-The dataset is split into training and testing based on the context, which is defined as the set of the target and distractor images (each trial consists of 3 distractor images and 1 target). The contexts of training examples will not overlap with the contexts of test examples. In practice, we have a 75\%, 25\% split ratio.
-
-The binary classification task is to predict whether or not a given sketch is of a given image. Positive examples come from pariticipants' sketches and their corresponding target images. Negative samples come from pairing a participant's sketch with a randomly chosen image from the set of all images excluding the correct image. We note that training and testing sets will include examples from both close- and far-contexts. This training procedure closely resembles training Word2Vec with skip-gram and negative sampling where there is a similar motivation of learning shared embedding spaces.
-
-During training, the model is shown minibatches of tuples, where each tuple contains $(r_{1}, s_{1})$, $(r_{2}, s_{2})$, $(r_{1}, s_{2})$, $(r_{2}, s_{1})$ where $r_{1}$, $r_{2}$ are two rendered images, and $(s_{1}, s_{2})$ are two sketches i.e. a minibatch of 10 would contain 40 examples. Each tuple is as follows: choose the next available image $r_{1}$, find its corresponding sketch $s_{1}$; choose 1 of the 3 distractor images from the same trial as $r_{2}$; its corresponding sketch is $s_{2}$. In each tuple, the first two examples are positive and last two examples are negative. The intuition behind this design is to balance the classes shown to the model at each gradient step.
-
-Given an image $r_{i}$, a sketch $s_{i}$ and the label $l_{i}$, we define the objective function $J$ as
-
-\begin{multline}
-    J(r_{i}, s_{i}) = -l_{i} \textup{ log}(\sigma(\textup{corr}(f(r_{i}), f(s_{i})))) \\ - (1 - l_{i}) \textup{ log}(1 - \sigma(\textup{corr}(f(r_{i}), f(s_{i}))))
-\end{multline}
-
-where $f$ is the visual encoder network, $\sigma$ is a sigmoid transformation, and $\textup{corr}$ is pearson correlation. We train the model using stochastic gradient descent via Adam with a learning rate of $0.001$, a batch size of $25$ for $20$ epochs. We use early stopping based on a small validation set. The trained model has 73.6\% classification accuracy on the held-out test set, suggesting some generalization to unseen contexts.
-
+We now describe the training procedure for each visual encoder. The sketch dataset is split into training, validation, and test sets in a 80\%, 10\%, and 10\% ratio. This division is performed based on context, which is defined as the set of the target and distractor images (each trial consists of 3 distractor images and 1 target). Doing so, the contexts of training examples will not overlap with the contexts of either validation or test examples. Given a photo and a sketch, the adaptor network outputs a single real number, which we use as a similarity measure. We construct of similarity vector of size 32 between a sketch and each photo in the domain (32 total), and apply a softmax on top to induce a probability distribution over photos. To fit network parameters, we optimize via stochastic gradient descent on a cross entropy loss between the induced distribution and a distribution of average human choices (\mwu{@judy add more details about how we get labels}). Specifically we use Adam \cite[]{kingma2014adam} with a learning rate of 1e-4 with a minibatch size of 10 for 100 epochs. As a property of the input domain, the gradients with respect to adaptor parameters are by default, very small. While increasing the learning rate may lead to unstable optimization, we find that multiplying the loss by a large constant $C$ is necessary to sufficiently optimize the objective for good test performance. In practice, $C = 10000$. Post-training, we use the model with the best loss on a held-out validation set. For each photo and sketch pair in the test set, we calculate the similarity score as input to a social reasoning module.
 
 \subsubsection*{Social reasoning and decision-making module}
 
