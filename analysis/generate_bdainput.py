@@ -378,7 +378,7 @@ if __name__ == "__main__":
 
             coarse_sketch_label = []
             coarse_sim = []
-            for key,value in normed_sims['knob'].iteritems():
+            for key,value in normed_sims[obj].iteritems():
                 coarse_sketch_label.append(cond_json[key])
                 coarse_sim.append(value)
             normed_sims_coarse[obj] = dict(zip(coarse_sketch_label,coarse_sim))
@@ -596,12 +596,21 @@ if __name__ == "__main__":
 
         ## make new cost json
         cost_json = {}
+        cost_json_coarse = {}
         for i,d in w.iterrows():
             this_sketch = d['sketchLabel']
             agg_cost = R[(R['Target']==d['Target']) & (R['condition']==d['condition'])][metric].values[0]
             cost_json[this_sketch] = agg_cost
 
+        ## the average version of the cost dictionary should also be coarse grained
+        coarse_sketch_label = []
+        coarse_cost = []
+        for key,value in cost_json.iteritems():
+            coarse_sketch_label.append(cond_json[key])
+            coarse_cost.append(value)
+        cost_json_coarse = dict(zip(coarse_sketch_label,coarse_cost))
+
         ## output json in the same format as the other cost json
         output_path = '../models/refModule/json/{}/costs-fixedPose96-{}-average.json'.format(args.split_type,metric)
         with open(output_path, 'wb') as fp:
-            json.dump(cost_json, fp)
+            json.dump(cost_json_coarse, fp)

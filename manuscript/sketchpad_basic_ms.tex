@@ -74,7 +74,7 @@ Graphical representation was transformative because it provided a means for peop
 
 Communicative drawing poses a key challenge for understanding how
 
-Successful visual communication by drawing inherently combines the activity of three such core systems: \textit{visual perception} --- the set of computations that transform raw visual inputs into semantically meaningful internal representations; \textit{social reasoning} 
+Successful visual communication by drawing inherently combines the activity of three such core systems: \textit{visual perception} --- the set of computations that transform raw visual inputs into semantically meaningful internal representations; \textit{social reasoning}
 
 
 --- our robust capacity to evaluate other people's beliefs, intentions, and knowledge; determine action selection.
@@ -245,7 +245,7 @@ While these models excel at (and were indeed optimized for) categorization of ob
 
 We explore adapting features from three different layers of VGG-19: the first max pooling layer (vgg-early), the tenth convolutional layer (vgg-mid), and the first fully connected layer (vgg-high), respectively representing low, medium, and high level visual abstraction. As such, we design three different encoder models, intentionally keeping them lightweight and comparable in number of parameters (Table~\ref{table:parameters}). We respectively refer to these as \textit{adaptor-early}, \textit{adaptor-mid}, and \textit{adaptor-high}. Below, we detail the architecture and hyperparameter choices:
 
-Adaptor-high is composed of a linear layer from 8192 to 512, followed by a swish nonlinearity \cite[]{ramachandran2018searching} and dropout, then a linear layer from 512 to 1. Each vgg-high feature has 4096 dimensions. A photo and sketch feature is first concatenated to form a vector of size 8192, then passed to adaptor-high. Empirically, we find the ability of the model to fit the data robust to the choice of nonlinearity and hidden dimensionality. 
+Adaptor-high is composed of a linear layer from 8192 to 512, followed by a swish nonlinearity \cite[]{ramachandran2018searching} and dropout, then a linear layer from 512 to 1. Each vgg-high feature has 4096 dimensions. A photo and sketch feature is first concatenated to form a vector of size 8192, then passed to adaptor-high. Empirically, we find the ability of the model to fit the data robust to the choice of nonlinearity and hidden dimensionality.
 
 \begin{table}
 \centering
@@ -253,10 +253,10 @@ Adaptor-high is composed of a linear layer from 8192 to 512, followed by a swish
 \hline
 Model & Parameters \\
 \hline
-\hline 
-adaptor-early & 4195329 \\ 
 \hline
-adaptor-mid & 526881 \\  
+adaptor-early & 4195329 \\
+\hline
+adaptor-mid & 526881 \\
 \hline
 adaptor-high & 33409 \\
 \hline
@@ -267,7 +267,7 @@ adaptor-high & 33409 \\
 
 Similarly, adaptor-mid consists of a linear layer of 1024 to 512, swish, dropout, then a linear layer from 512 to 1. Since vgg-mid features are three dimensional (512 by 28 by 28), we first flatten the input into a one dimensional vector of size 512 using a weighted linear combination $\sum_{i=1}^{28}\sum_{j=1}^{28} w_{ij} * x_{ij}$, where $x_{ij}$ represents a cross-section from vgg-mid. The parameters $\{w_{ij}|1\leq i,j \leq 28\}$ are learned along with the parameters of adaptor-mid. Intuitively, this is akin to attention over the spatial features of vgg-mid. We separately attend over photo and sketch spatial features, creating two vectors of size 512, then concatenate prior to adaptor-mid.
 
-Finally, adaptor-low is almost identical to adaptor-mid, except each feature is of size 64 by 112 by 112. Explicitly, this network starts with a linear layer of 4096 to 64, swish, dropout, then a linear layer form 512 to 1. Due to the input size, each attention module has 12,544 learnable weights. 
+Finally, adaptor-low is almost identical to adaptor-mid, except each feature is of size 64 by 112 by 112. Explicitly, this network starts with a linear layer of 4096 to 64, swish, dropout, then a linear layer form 512 to 1. Due to the input size, each attention module has 12,544 learnable weights.
 
 %% adaptor training procedure
 We now describe the training procedure for each visual encoder. The sketch dataset is split into training, validation, and test sets in a 80\%, 10\%, and 10\% ratio. This division is performed based on context, which is defined as the set of the target and distractor images (each trial consists of 3 distractor images and 1 target). Doing so, the contexts of training examples will not overlap with the contexts of either validation or test examples. Given a photo and a sketch, the adaptor network outputs a single real number, which we use as a similarity measure. We construct of similarity vector of size 32 between a sketch and each photo in the domain (32 total), and apply a softmax on top to induce a probability distribution over photos. To fit network parameters, we optimize via stochastic gradient descent on a cross entropy loss between the induced distribution and a distribution of average human choices (\mwu{@judy add more details about how we get labels}). Specifically we use Adam \cite[]{kingma2014adam} with a learning rate of 1e-4 with a minibatch size of 10 for 100 epochs. As a property of the input domain, the gradients with respect to adaptor parameters are by default, very small. While increasing the learning rate may lead to unstable optimization, we find that multiplying the loss by a large constant $C$ is necessary to sufficiently optimize the objective for good test performance. In practice, $C = 10000$. Post-training, we use the model with the best loss on a held-out validation set. For each photo and sketch pair in the test set, we calculate the similarity score as input to a social reasoning module.
@@ -285,14 +285,14 @@ The utility function of our pragmatic sketcher, $U_{S_1}$,  trades off the exten
 \begin{equation} \label{sketcher_utility}
 U_{S_1}(s, o) = w_p \ln \mathcal{V}(o|s) - w_c C(s)
 \end{equation}
-where $w_p$ and $w_c$ are latent parameters weighting the influences of the sketch's perceptual properties and cost, respectively. 
+where $w_p$ and $w_c$ are latent parameters weighting the influences of the sketch's perceptual properties and cost, respectively.
 
 The viewer ($\mathcal{V}$) is assumed to choose among potential objects in context proportional to their perceptual similarity vis-a-vis the drawing.
 
 \begin{equation} \label{literal_viewer_score}
 \mathcal{V}(o|s) \propto \exp\{\alpha \cdot \textrm{sim(s, o)}\}
 \end{equation}
-where $\alpha$ is a scaling parameter determining the assumed optimality of the listener's decision policy: as $\alpha \rightarrow \infty$, the listener increasingly chooses the object with maximum perceptual similarity to the sketch. 
+where $\alpha$ is a scaling parameter determining the assumed optimality of the listener's decision policy: as $\alpha \rightarrow \infty$, the listener increasingly chooses the object with maximum perceptual similarity to the sketch.
 
 We also consider a literal sketcher $S_0$ who does not reason about a viewer in context, but tries to directly maximize the perceptual similarity of their sketch to the target, thus we use $\textrm{sim}(s, o)$ instead of informativity to $\mathcal{V}(o|s)$ in their perceptual term. To infer the effect of pragmatics, we infer the mixture of these speakers that best fits the data. We introduce an additional parameter $w_{prag}$ that interpolates between their utilities: $$f(s,o) = w_{prag}\ln \mathcal{V}(o | s) + (1-w_{prag}) \textrm{sim}(s,o)$$ After algebraically simplifying, the full utility is :
 
