@@ -318,10 +318,19 @@ if __name__ == "__main__":
         target_dict = dict(zip(D['sketch_label'],D['target']))
         cond_dict = dict(zip(D['sketch_label'],D['condition']))
 
+        ## make a condition lookup table in order to coarse grain the names of the keys in the similarities dictionary
+        cond_json = {}
+        sketchID_list = np.unique(D['sketch_label'].values)
+        for i,d in enumerate(sketchID_list):
+            cond = D[D['sketch_label']==d]['condition'].values[0]
+            obj = D[D['sketch_label']==d]['target'].values[0]
+            cond_json[d] = '{}_{}'.format(cond,obj)
+
         ## initialize the avg_sim dictionary, where you store the sketch condition/object mean similarity
         ## initialize normed_sims dictionary, where you store the similarities following z-scoring and sigmoid nonlinearity
         avg_sims = {}
         normed_sims = {}
+        normed_sims_coarse = {}
         obj_list = sims.keys()
 
         print 'Now getting mean similarity values for each object/condition, then normalizing...'
@@ -367,9 +376,16 @@ if __name__ == "__main__":
             normed = sigmoid(normalize(preds))
             normed_sims[obj] = dict(zip(sketches,normed))
 
+            coarse_sketch_label = []
+            coarse_sim = []
+            for key,value in normed_sims['knob'].iteritems():
+                coarse_sketch_label.append(cond_json[key])
+                coarse_sim.append(value)
+            normed_sims_coarse[obj] = dict(zip(coarse_sketch_label,coarse_sim))
+
         out_path = '../models/refModule/json/{}/similarity-{}-{}-avg.json'.format(args.split_type,args.split_type,args.adaptor_type)
         with open(out_path, 'wb') as fp:
-            json.dump(normed_sims, fp)
+            json.dump(normed_sims_coarse, fp)
 
 
     # #### load in sketch data and filter to generate sketchData CSVs
