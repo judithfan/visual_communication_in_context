@@ -4,12 +4,12 @@ var babyparse = require('babyparse');
 // var JSONStream = require('JSONStream');
 // var es = require('event-stream');
 
-var getSimilarities = function(splitType,splitNum) {
+var getSimilarities = function(splitType) {
   return {
-      'human': require('./json/' + splitType + '/similarity-human-avg.json'),      
-      'multimodal_pool1': require('./json/' + splitType + '/similarity-balancedavg' + splitNum + '-multimodal_pool1-avg.json'),
-      'multimodal_conv42': require('./json/' + splitType + '/similarity-balancedavg' + splitNum + '-multimodal_conv42-avg.json'),
-      'multimodal_fc6': require('./json/' + splitType + '/similarity-balancedavg' + splitNum + '-multimodal_fc6-avg.json')
+      'human': require('./json/' + splitType + '/similarity-human-avg.json'),
+      'multimodal_pool1': require('./json/' + splitType + '/similarity-' + splitType + '-multimodal_pool1-avg.json'),
+      'multimodal_conv42': require('./json/' + splitType + '/similarity-' + splitType + '-multimodal_conv42-avg.json'),
+      'multimodal_fc6': require('./json/' + splitType + '/similarity-' + splitType + '-multimodal_fc6-avg.json')
   };
 };
 
