@@ -17,8 +17,13 @@ var getCosts = function(name, splitType) {
   return require('./json/' + splitType + '/costs-' + name + '.json');
 };
 
-var getPossibleSketches = function(data) {
-  return _.map(data, 'sketchLabel');
+// If aggregate true, we only loop over coarse-grained sketch labels
+var getPossibleSketches = function(data, config) {
+  if(!config.aggregate) {
+    return _.map(data, 'sketchLabel');
+  } else {
+    return _.uniq(_.map(data, function(d) {return config.conditionLookup[d.sketchLabel]}));
+  }
 };
 
 var getConditionLookup = function(splitType) {
