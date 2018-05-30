@@ -328,6 +328,26 @@ if __name__ == "__main__":
             image_sims = sims[obj]
             test_sketches = image_sims.keys()
             raw_sims = np.array(image_sims.values()) ## array of raw similarity values
+
+            ## 5/30/18: filter out sims that aren't in the list of valid_gameids
+            vg = pd.read_csv('valid_gameids_pilot2.csv')
+            valid_gameids = list(vg['valid_gameids'].values)
+            trunc_gameids = [i.split('-')[-1] for i in valid_gameids]
+
+            ## get indices of invalid sketches from the similarities dictionary
+            sketch_list = sims[obj].keys()
+            trunc_sketch_list = [i.split('_')[0] for i in sketch_list]
+            invalid_inds = []
+            for i,s in enumerate(trunc_sketch_list):
+                if s not in trunc:
+                    print s
+                    invalid_inds.append(i)
+            ## now carefully remove those indices from test_sketches and raw_sims
+            test_sketches, raw_sims = map(np.array,[test_sketches,raw_sims])
+            test_sketches = np.delete(test_sketches,invalid_inds)
+            raw_sims = np.delete(raw_sims,invalid_inds)
+            test_sketches, raw_sims = map(list[test_sketches,raw_sims])
+
             coarse_list = np.array(['{}_{}'.format(target_dict[i], cond_dict[i]) for i in test_sketches]) ## coarse grained categories
             unique_coarse = np.unique(coarse_list)
             assert len(unique_coarse)==64
