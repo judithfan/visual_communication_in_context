@@ -66,6 +66,7 @@ def generate_bdaInput_csv(D,filtration_level,train_test_split=True,
     else:
         adaptor = 'human'
     test_examples = pd.read_json('{}_{}_{}_test_examples.json'.format(args.iterationName,adaptor,args.split_type),orient='records')
+    print '{}_{}_{}_test_examples.json'.format(args.iterationName,adaptor,args.split_type)
     test_examples = list(test_examples[0].values)
     test_examples = [i.split('.')[0] + '.png' for i in test_examples]
 
@@ -491,6 +492,8 @@ if __name__ == "__main__":
 
     ## output json in the same format as the other cost json
     output_path = '../models/bdaInput/{}/condition-lookup.json'.format(args.split_type)
+    if not os.path.exists('../models/bdaInput/{}'.format(args.split_type)):
+        os.makedirs('../models/bdaInput/{}'.format(args.split_type))
     with open(output_path, 'wb') as fp:
         json.dump(cond_json, fp)
 

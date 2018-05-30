@@ -8,11 +8,11 @@ if __name__ == "__main__":
     splits = map(str,np.arange(1,6))
 
     ## for the adapted encoder
-    for layer in layers:
-        for split_num in splits:
-            cmd_string = "python generate_bdainput.py --adaptor_type multimodal_{} --split_type {}{}".format(layer,split_type,split_num)
-            print '{}'.format(cmd_string)
-            os.system(cmd_string)
+#    for layer in layers:
+#        for split_num in splits:
+#            cmd_string = "python generate_bdainput.py --adaptor_type multimodal_{} --split_type {}{}".format(layer,split_type,split_num)
+#            print '{}'.format(cmd_string)
+#            os.system(cmd_string)
 
     ## also for humans
     for split_num in splits:
