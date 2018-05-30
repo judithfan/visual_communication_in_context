@@ -4,25 +4,25 @@ var babyparse = require('babyparse');
 // var JSONStream = require('JSONStream');
 // var es = require('event-stream');
 
-var getSimilarities = function(name) {
+var getSimilarities = function(splitType,splitNum) {
   return {
-      'human': require('./json/similarity-human-avg.json'),
-      // 'multimodal_pool1': require('./json/similarity-splitbyobject-multimodal_pool1-avg.json'),
-      // 'multimodal_conv42': require('./json/similarity-splitbyobject-multimodal_conv42-avg.json'),
-      'multimodal_fc6': require('./json/similarity-balancedavg-multimodal_fc6-avg.json')
+      'human': require('./json/' + splitType + '/similarity-human' + splitNum + '-avg.json'),
+      'multimodal_pool1': require('./json/' + splitType + '/similarity-balancedavg' + splitNum + 'multimodal_pool1-avg.json'),
+      'multimodal_conv42': require('./json/' + splitType + '/similarity-balancedavg' + splitNum + 'multimodal_conv42-avg.json'),
+      'multimodal_fc6': require('./json/' + splitType + '/similarity-balancedavg' + splitNum + '-multimodal_fc6-avg.json')
   };
 };
 
-var getCosts = function(name) {
-  return require('./json/costs-' + name + '.json');
+var getCosts = function(name, splitType) {
+  return require('./json/' + splitType + '/costs-' + name + '.json');
 };
 
 var getPossibleSketches = function(data) {
   return _.map(data, 'sketchLabel');
 };
 
-var getConditionLookup = function() {
-  return require('../bdaInput/condition-lookup.json');
+var getConditionLookup = function(splitType) {
+  return require('../bdaInput/' + splitType + '/condition-lookup.json');
 };
 
 function _logsumexp(a) {

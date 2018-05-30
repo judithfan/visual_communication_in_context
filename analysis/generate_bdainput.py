@@ -255,7 +255,7 @@ if __name__ == "__main__":
                     out_json[this_render][this_sketch] = prob[i]
 
             ## output json in the same format as the other similarity jsons
-            output_path = '../models/refModule/json/similarity-{}.json'.format(args.adaptor_type)
+            output_path = '../models/refModule/json/{}/similarity-{}.json'.format(args.split_type,args.adaptor_type)
             with open(output_path, 'wb') as fp:
                 json.dump(out_json, fp)
 
@@ -281,13 +281,13 @@ if __name__ == "__main__":
                         out_json[this_render][this_sketch] = confusion[obj_ind,i,1][0]
 
             ## output json in the same format as the other similarity jsons
-            output_path = '../models/refModule/json/similarity-{}-avg.json'.format(args.adaptor_type)
+            output_path = '../models/refModule/json/{}/similarity-{}-avg.json'.format(args.split_type,args.adaptor_type)
             with open(output_path, 'wb') as fp:
                 json.dump(out_json, fp)
 
     if ('human' not in args.adaptor_type):
         #### preprocess non-human similarities so that they fall btw 0,1
-        path = '../models/refModule/json/similarity-{}-{}-raw.json'.format(args.split_type,args.adaptor_type)
+        path = '../models/refModule/json/{}/similarity-{}-{}-raw.json'.format(args.split_type,args.split_type,args.adaptor_type)
         with open(path) as f:
             sims = json.load(f)
 
@@ -300,12 +300,12 @@ if __name__ == "__main__":
             normed = sigmoid(normalize(preds))
             normed_sims[obj] = dict(zip(sketches,normed))
 
-        out_path = '../models/refModule/json/similarity-{}-{}.json'.format(args.split_type,args.adaptor_type)
+        out_path = '../models/refModule/json/{}/similarity-{}-{}.json'.format(args.split_type,args.split_type,args.adaptor_type)
         with open(out_path, 'wb') as fp:
             json.dump(normed_sims, fp)
 
         ### now also do the same and output coarse-grained similarities
-        path = '../models/refModule/json/similarity-{}-{}-raw.json'.format(args.split_type,args.adaptor_type)
+        path = '../models/refModule/json/{}/similarity-{}-{}-raw.json'.format(args.split_type,args.split_type,args.adaptor_type)
         with open(path) as f:
             sims = json.load(f)
 
@@ -346,7 +346,7 @@ if __name__ == "__main__":
             normed = sigmoid(normalize(preds))
             normed_sims[obj] = dict(zip(sketches,normed))
 
-        out_path = '../models/refModule/json/similarity-{}-{}-avg.json'.format(args.split_type,args.adaptor_type)
+        out_path = '../models/refModule/json/{}/similarity-{}-{}-avg.json'.format(args.split_type,args.split_type,args.adaptor_type)
         with open(out_path, 'wb') as fp:
             json.dump(normed_sims, fp)
 
@@ -490,7 +490,7 @@ if __name__ == "__main__":
         cond_json[d] = '{}_{}'.format(cond,obj)
 
     ## output json in the same format as the other cost json
-    output_path = '../models/bdaInput/condition-lookup.json'
+    output_path = '../models/bdaInput/{}/condition-lookup.json'.format(args.split_type)
     with open(output_path, 'wb') as fp:
         json.dump(cond_json, fp)
 
@@ -523,7 +523,7 @@ if __name__ == "__main__":
             cost_json[d] = D2[D2['sketch_label']==d]['rescaled_{}'.format(metric)].values[0]
 
         ## output json in the same format as the other cost json
-        output_path = '../models/refModule/json/costs-fixedPose96-{}.json'.format(metric)
+        output_path = '../models/refModule/json/{}/costs-fixedPose96-{}.json'.format(args.split_type,metric)
         with open(output_path, 'wb') as fp:
             json.dump(cost_json, fp)
 
@@ -563,6 +563,6 @@ if __name__ == "__main__":
             cost_json[this_sketch] = agg_cost
 
         ## output json in the same format as the other cost json
-        output_path = '../models/refModule/json/costs-fixedPose96-{}-average.json'.format(metric)
+        output_path = '../models/refModule/json/{}/costs-fixedPose96-{}-average.json'.format(args.split_type,metric)
         with open(output_path, 'wb') as fp:
             json.dump(cost_json, fp)
