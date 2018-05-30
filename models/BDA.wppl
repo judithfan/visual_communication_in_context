@@ -1,11 +1,15 @@
 // run using:
 
-// webppl BDA.wppl --require ./refModule/ -- --perception multimodal_fc6 --pragmatics combined --production cost --splitType balancedavg3
+// webppl BDA.wppl --require ./refModule/ -- --perception human --pragmatics combined --production cost --splitType balancedavg3
 
 // Load in experimental data to condition on
-var experimentVersion = 'fixedPose96'; // 'fixedPose', 'varyingPose', etc
+var experimentVersion = 'fixedPose96';
+var aggregate = true;
 var splitType = argv.splitType; //balancedavg1
-var data = refModule.readCSV('./bdaInput/' + argv.splitType + '/sketchData_fixedPose_' + splitType + '_' + argv.perception + '_pilot2_costOutliersRemoved.csv');
+var dataFilename = ['sketchData', 'fixedPose', splitType,
+		    argv.perception, 'pilot2', 'costOutliersRemoved.csv'].join("_");
+var dataPath = ['.', 'bdaInput', splitType, dataFilename].join("/");
+var data = refModule.readCSV(dataPath);
 
 console.log("Loading expt data complete..." + data.length + " data points");
 
@@ -14,16 +18,16 @@ console.log("Loading expt data complete..." + data.length + " data points");
 var splitNum = splitType.slice(-1);
 var similarities = refModule.getSimilarities(splitType); // pass which split number you're using, so which similarities to use
 var costs = refModule.getCosts(experimentVersion + '-cost_duration-average',splitType);
-var possibleSketches = refModule.getPossibleSketches(data);
 var conditionLookup = refModule.getConditionLookup(splitType);
+var possibleSketches = refModule.getPossibleSketches(data, {aggregate,conditionLookup});
+console.log(possibleSketches);
 console.log("Loading model data complete..."
 	    + possibleSketches.length + " sketches of " +
 	    + _.keys(similarities['multimodal_fc6']).length + " objects." );
 
 // Package into config
 var globalConfig = {
-  similarities, possibleSketches, costs, conditionLookup,
-  aggregate: true,
+  similarities, possibleSketches, costs, conditionLookup, aggregate,
   outputFileName : argv.perception + '_' + argv.pragmatics + '_' + argv.production + '_' + splitType
 };
 

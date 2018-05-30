@@ -4,7 +4,6 @@ from __future__ import division
 import os
 import pymongo as pm
 import numpy as np
-import scipy.stats as stats
 import pandas as pd
 import json
 import shutil
@@ -103,6 +102,8 @@ def generate_bdaInput_csv(D,filtration_level,train_test_split=True,
     D2 = D2.transpose()
     D2.columns = ['condition','sketchLabel','Target','Distractor1','Distractor2','Distractor3','coarseGrainedSketchInfo']
     print '{} datapoints x {} columns'.format(D2.shape[0],D2.shape[1])
+    if not os.path.exists('../models/bdaInput/{}'.format(split_type)):
+        os.makedirs('../models/bdaInput/{}'.format(split_type))
 
     if (train_test_split==True) and (split_type != 'alldata'):
         print 'saving CSV with only test data'
@@ -340,12 +341,12 @@ if __name__ == "__main__":
             invalid_inds = []
             for i,s in enumerate(trunc_sketch_list):
                 if s not in trunc_gameids: ## if sketch gameid is NOT in list of valid gameids, do NOT include
-                    print s
+                    # print s
                     invalid_inds.append(i)
             ## 5/30/18: now carefully remove those indices from test_sketches and raw_sims
             test_sketches, raw_sims = map(np.array,[test_sketches,raw_sims])
             test_sketches = np.delete(test_sketches,invalid_inds)
-            raw_sims = np.delete(raw_sims,invalid_inds)                        
+            raw_sims = np.delete(raw_sims,invalid_inds)
 
             coarse_list = np.array(['{}_{}'.format(target_dict[i], cond_dict[i]) for i in test_sketches]) ## coarse grained categories
             unique_coarse = np.unique(coarse_list)

@@ -19,6 +19,8 @@ if __name__ == "__main__":
     ## destination directories
     path_to_test_examples = './'
     path_to_dest_similarities = '../models/refModule/json/'
+    if not os.path.exists(path_to_dest_similarities):
+        os.makedirs(path_to_dest_similarities)
 
     ## get list of layers
     contents = clean_dirlist(os.listdir(args.path_to_src_similarities))
@@ -31,6 +33,8 @@ if __name__ == "__main__":
         for split_num in splits:
             fname ='similarity-{}{}-multimodal_{}-raw.json'.format(args.split_type,split_num,layer)
             out_path = os.path.join(path_to_dest_similarities,'{}{}'.format(args.split_type,split_num),fname)
+            if not os.path.exists(os.path.join(path_to_dest_similarities,'{}{}'.format(args.split_type,split_num))):
+                os.makedirs(os.path.join(path_to_dest_similarities,'{}{}'.format(args.split_type,split_num)))
             in_path = os.path.join(args.path_to_src_similarities,layer,split_num,'dump.json')
             print 'Copying {} to {}'.format(in_path, out_path)
             shutil.copy(in_path,out_path)
