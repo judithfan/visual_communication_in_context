@@ -644,3 +644,37 @@ fixedPose %>% group_by(gameid, context) %>% summarize(trialNum = first(trialNum)
 
 fixedPose %>% group_by(Target, Distractor1, Distractor2, Distractor3) %>% tally() %>% group_by(n) %>% tally()
 ```
+
+# Marginalize over posterior predictive
+
+```{r}
+meta <- read_csv('../models/bdaOutput/multimodal_full25k_combined_cost_splitbyobjectParams.csv', col_types = cols())
+dir <- "../models/bdaOutput/predictives/"
+makedf <- function(x) {
+  print(x)
+  return (read_csv(paste0(c(dir, x), collapse='/'), col_types = cols()) %>%
+    select(-Target, -Distractor1, -Distractor2, -Distractor3) %>%
+    mutate(sampleNum = strsplit(x, 'Predictives.csv')[[1]])) %>%
+    spread(coarseGrainedPossibleSketch, modelProb)
+}
+
+df <- list.files(dir) %>%
+  map(makedf) %>%
+  reduce(rbind)
+
+df.long <- df %>% 
+  left_join(meta %>% 
+              mutate(sampleNum = as.character(id)) %>% 
+              select(sampleNum, posteriorProb)) %>%
+  gather(possibleSketch, modelProb, closer_basset : further_woven)
+
+out <- df.long %>%
+  group_by(trueSketch, possibleSketch, coarseGrainedTrueSketch) %>%
+  mutate(weighted = posteriorProb + modelProb) %>%
+  summarize(weighted = reduce(weighted, sumlogprob)) 
+
+out %>%  
+  spread(possibleSketch, weighted) %>%
+  separate(coarseGrainedTrueSketch, into = c('trueCondition', 'trueClass')) %>%
+  write_csv('~/Downloads/out.csv')
+```
