@@ -4,12 +4,24 @@ var babyparse = require('babyparse');
 // var JSONStream = require('JSONStream');
 // var es = require('event-stream');
 
+var OBJECT_TO_CATEGORY = {
+    'basset': 'dog', 'beetle': 'car', 'bloodhound': 'dog', 'bluejay': 'bird',
+    'bluesedan': 'car', 'bluesport': 'car', 'brown': 'car', 'bullmastiff': 'dog',
+    'chihuahua': 'dog', 'crow': 'bird', 'cuckoo': 'bird', 'doberman': 'dog',
+    'goldenretriever': 'dog', 'hatchback': 'car', 'inlay': 'chair', 'knob': 'chair',
+    'leather': 'chair', 'nightingale': 'bird', 'pigeon': 'bird', 'pug': 'dog',
+    'redantique': 'car', 'redsport': 'car', 'robin': 'bird', 'sling': 'chair',
+    'sparrow': 'bird', 'squat': 'chair', 'straight': 'chair', 'tomtit': 'bird',
+    'waiting': 'chair', 'weimaraner': 'dog', 'white': 'car', 'woven': 'chair',
+}
+
+
 var getSimilarities = function(name) {
   return {
-      'human': require('./json/similarity-human-average.json'),
-      'multimodal_pool1': require('./json/similarity-splitbyobject-multimodal_pool1-avg.json'),
-      'multimodal_conv42': require('./json/similarity-splitbyobject-multimodal_conv42-avg.json'),
-      'multimodal_fc6': require('./json/similarity-splitbyobject-multimodal_fc6-avg.json')
+    'human': require('./json/similarity-human-average.json'),
+      // 'multimodal_pool1': require('./json/similarity-splitbyobject-multimodal_pool1-avg.json'),
+    //'multimodal_conv42': require('./json/similarity-splitbyobject-multimodal_conv42-avg.json'),
+    'multimodal_fc6': require('./json/similarity-splitbyobject-multimodal_fc6-avg.json')
   };
 };
 
@@ -34,25 +46,30 @@ function _logsumexp(a) {
   return m + Math.log(sum);
 }
 
+var similarity = function(similarities, sketch, object, params) {
+  return similarities[object][sketch];
+};
+
 // P(target | sketch) = e^{scale * sim(t, s)} / (\sum_{i} e^{scale * sim(t, s)})
 // => log(p) = scale * sim(target, sketch) - log(\sum_{i} e^{scale * sim(t, s)})
 var getL0score = function(target, sketch, context, params, config) {
   var similarities = config.similarities[params.perception];
   var scores = [];
   for(var i=0; i<context.length; i++){
-    var similarity = (similarities[context[i]][sketch]); // transform to range from 0 to 1
-    scores.push(params.simScaling * similarity);
+    var category = OBJECT_TO_CATEGORY[context[i]];
+    var scaling = params.simAdjustment[category];
+    scores.push(scaling * similarity(similarities, sketch, context[i], params));
   }
-  var similarity = (similarities[target][sketch]);
-  return params.simScaling * similarity - _logsumexp(scores);
+  var targetCategory = OBJECT_TO_CATEGORY[target];
+  var targetScaling = params.simAdjustment[targetCategory];
+  return targetScaling * similarity(similarities, sketch, target, params) - _logsumexp(scores);
 };
 
 // Interpolates between the 'informativity' term of S0 and S1 based on pragWeight param
 // Try remapping these to [0,1]...
 var informativity = function(targetObj, sketch, context, params, config) {
   var sim = config.similarities[params.perception];
-  var S0inf = (sim[targetObj][sketch]);// + 1.001) / 2;
-   // console.log(S0inf);
+  var S0inf = Math.log(similarity(sim, sketch, targetObj, params) + 1e-6);// + 1.001) / 2;
   var S1inf = getL0score(targetObj, sketch, context, params, config); //Math.exp()
   // console.log(targetObj);
   // console.log(sketch);
