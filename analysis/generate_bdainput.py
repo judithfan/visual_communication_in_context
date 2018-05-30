@@ -56,8 +56,8 @@ def add_extra_label_columns(D):
     return D
 
 def generate_bdaInput_csv(D,filtration_level,train_test_split=True,
-                          adaptor_type='multimodal_conv42',
-                          split_type='splitbyobject'):
+                          adaptor_type='multimodal_fc6',
+                          split_type='balancedavg1'):
 
     ### filter out training examples
     print 'adaptor: {} split: {} train_test_split: {}'.format(adaptor_type, split_type, train_test_split)
@@ -65,7 +65,7 @@ def generate_bdaInput_csv(D,filtration_level,train_test_split=True,
         adaptor = 'multimodal'
     else:
         adaptor = 'human'
-    test_examples = pd.read_json('{}_{}_test_examples.json'.format(args.iterationName,adaptor),orient='records')
+    test_examples = pd.read_json('{}_{}_{}_test_examples.json'.format(args.iterationName,adaptor,args.split_type),orient='records')
     test_examples = list(test_examples[0].values)
     test_examples = [i.split('.')[0] + '.png' for i in test_examples]
 
@@ -206,8 +206,10 @@ if __name__ == "__main__":
                         default='True')
     parser.add_argument('--gen_centroid', type=str2bool, help='in specific case when using human similarities, do you want to use object/condition-level similarities or image-level ones?',
                         default='False')
-    parser.add_argument('--split_type', type=str, help='train/test split dimension', default='splitbyobject')
+    parser.add_argument('--split_type', type=str, help='train/test split dimension, appended by split number', default='balancedavg')
     args = parser.parse_args()
+
+    ### python generate_bdainput.py --adaptor_type multimodal_fc6 --split_type balancedavg1
 
     if ('human' in args.adaptor_type) & (args.gen_similarity):
         ##### if we are dealing with a human encoder, then need to generate similarity json firststyle
@@ -527,8 +529,9 @@ if __name__ == "__main__":
 
     print 'Generating object/condition aggregate cost dictionaries ...'
     ## read in both expanded (w2) and simplified bdaInput dataframe (w2)
-    w = pd.read_csv('../models/bdaInput/sketchData_fixedPose_{}_human_pilot2_costOutliersRemoved.csv'.format(args.split_type))
-    w2 = pd.read_csv('../models/bdaInput/sketchData_fixedPose_{}_human_pilot2_costOutliersRemoved_full.csv'.format(args.split_type))
+
+    w = pd.read_csv('../models/bdaInput/sketchData_fixedPose_{}_{}_pilot2_costOutliersRemoved.csv'.format(args.split_type,args.adaptor_type))
+    w2 = pd.read_csv('../models/bdaInput/sketchData_fixedPose_{}_{}_pilot2_costOutliersRemoved_full.csv'.format(args.split_type,args.adaptor_type))
 
     ## add cost metrics to this simplified dataframe
     cost_duration = []
