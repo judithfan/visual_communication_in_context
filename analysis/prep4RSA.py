@@ -16,6 +16,6 @@ if __name__ == "__main__":
 
     ## also for humans
     for split_num in splits:
-        cmd_string = "python generate_bdainput.py --adaptor_type human --split_type {}{} --gen_similarity False".format(split_type,split_num)
+        cmd_string = "python generate_bdainput.py --adaptor_type human --split_type {}{} --gen_similarity True --gen_centroid True".format(split_type,split_num)
         print '{}'.format(cmd_string)
         os.system(cmd_string)
