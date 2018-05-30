@@ -1,6 +1,6 @@
 // run using:
 
-// webppl BDA.wppl --require ./refModule/ -- --perception multimodal_fc6 --pragmatics combined --production cost --splitType balancedavg3
+// webppl BDA.wppl --require ./refModule/ -- --perception human --pragmatics combined --production cost --splitType balancedavg3
 
 // Load in experimental data to condition on
 var experimentVersion = 'fixedPose96'; // 'fixedPose', 'varyingPose', etc
