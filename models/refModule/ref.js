@@ -52,7 +52,6 @@ var getL0score = function(target, sketch, context, params, config) {
 var informativity = function(targetObj, sketch, context, params, config) {
   var sim = config.similarities[params.perception];
   var S0inf = (sim[targetObj][sketch]);// + 1.001) / 2;
-   // console.log(S0inf);
   var S1inf = getL0score(targetObj, sketch, context, params, config); //Math.exp()
   // console.log(targetObj);
   // console.log(sketch);
