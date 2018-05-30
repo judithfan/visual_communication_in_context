@@ -281,7 +281,7 @@ if __name__ == "__main__":
                         out_json[this_render][this_sketch] = confusion[obj_ind,i,1][0]
 
             ## output json in the same format as the other similarity jsons
-            output_path = '../models/refModule/json/similarity-{}-average.json'.format(args.adaptor_type)
+            output_path = '../models/refModule/json/similarity-{}-avg.json'.format(args.adaptor_type)
             with open(output_path, 'wb') as fp:
                 json.dump(out_json, fp)
 
