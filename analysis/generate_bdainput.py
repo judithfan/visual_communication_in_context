@@ -282,10 +282,33 @@ if __name__ == "__main__":
                     elif cond=='further':
                         out_json[this_render][this_sketch] = confusion[obj_ind,i,1][0]
 
+            ## when outputting coarse grained similarity json, use coarse-grained sketch labels
+            analysis_dir = os.getcwd()
+            D = pd.read_csv(os.path.join(analysis_dir,'sketchpad_basic_pilot2_group_data.csv'))
+            D = add_extra_label_columns(D)
+            ## make a condition lookup table in order to coarse grain the names of the keys in the similarities dictionary
+            cond_json = {}
+            sketchID_list = np.unique(D['sketch_label'].values)
+            for i,d in enumerate(sketchID_list):
+                cond = D[D['sketch_label']==d]['condition'].values[0]
+                obj = D[D['sketch_label']==d]['target'].values[0]
+                cond_json[d] = '{}_{}'.format(cond,obj)
+
+            ## get coarse sketch list and similarities and assign to normed_sims_coarse dictionary
+            normed_sims_coarse = {}
+            for i, obj in enumerate(render_list):
+                coarse_sketch_label = []
+                coarse_sim = []
+                for key,value in out_json[obj].iteritems():
+                    coarse_sketch_label.append(cond_json[key])
+                    coarse_sim.append(value)
+                normed_sims_coarse[obj] = dict(zip(coarse_sketch_label,coarse_sim))
+
+
             ## output json in the same format as the other similarity jsons
             output_path = '../models/refModule/json/{}/similarity-{}-avg.json'.format(args.split_type,args.adaptor_type)
             with open(output_path, 'wb') as fp:
-                json.dump(out_json, fp)
+                json.dump(normed_sims_coarse, fp)
 
     if ('human' not in args.adaptor_type):
         #### preprocess non-human similarities so that they fall btw 0,1
