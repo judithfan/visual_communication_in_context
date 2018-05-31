@@ -24,8 +24,9 @@ if __name__ == "__main__":
 
     ## get list of layers
     contents = clean_dirlist(os.listdir(args.path_to_src_similarities))
-    layers = ['pool1','conv42','fc6']
     split_dir = 'train_test_split'
+    layers = [i for i in contents if i != split_dir]
+    # layers = ['pool1','conv42','fc6']
 
     ## copy similarities over to the models/refModule/json location, appending the split number to the split_type tag, e.g., "balancedavg1"
     for i,layer in enumerate(layers):

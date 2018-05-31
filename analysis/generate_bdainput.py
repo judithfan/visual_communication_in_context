@@ -304,7 +304,6 @@ if __name__ == "__main__":
                     coarse_sim.append(value)
                 normed_sims_coarse[obj] = dict(zip(coarse_sketch_label,coarse_sim))
 
-
             ## output json in the same format as the other similarity jsons
             output_path = '../models/refModule/json/{}/similarity-{}-avg.json'.format(args.split_type,args.adaptor_type)
             with open(output_path, 'wb') as fp:

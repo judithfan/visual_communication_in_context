@@ -3,7 +3,7 @@ import os
 import thread
 import numpy as np
 
-### python RSA.py --wppl BDA --perception multimodal_pool1 multimodal_conv42 multimodal_fc6 human --pragmatics combined S1 S0 --production cost nocost --split_type balancedavg3
+### python RSA.py --wppl BDA --perception multimodal_pool1 multimodal_conv42 multimodal_fc6 human --pragmatics combined S1 S0 --production cost nocost --split_type balancedavg1
 ### python RSA.py --wppl BDA --perception multimodal_fc6 human --pragmatics combined S1 S0 --production cost nocost --split_type balancedavg2
 ### balancedavg3 balancedavg4 balancedavg5
 
