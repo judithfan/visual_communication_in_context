@@ -4,7 +4,7 @@ import thread
 import numpy as np
 
 ### python RSA.py --wppl BDA --perception multimodal_pool1 multimodal_conv42 multimodal_fc6 human --pragmatics combined S1 S0 --production cost nocost --split_type balancedavg1
-### python RSA.py --wppl BDA --perception multimodal_fc6 human --pragmatics combined S1 S0 --production cost nocost --split_type balancedavg2
+### python RSA.py --wppl BDA --perception multimodal_fc6 --pragmatics combined --production cost nocost --split_type balancedavg16 balancedavg32 balancedavg64 balancedavg128 balancedavg256 balancedavg512
 ### balancedavg3 balancedavg4 balancedavg5
 
 def run_bda(perception, pragmatics, production, split_type):
@@ -35,7 +35,7 @@ if __name__ == "__main__":
     parser.add_argument('--production', nargs='+', type=str, \
                         help='option: cost | nocost',\
                         default = 'cost')
-    parser.add_argument('--split_type', type=str, \
+    parser.add_argument('--split_type', nargs='+', type=str, \
                         help='option: splitbyobject | alldata | balancedavg',\
                         default = 'splitbyobject')
 
