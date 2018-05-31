@@ -6,7 +6,7 @@ models/refModule/json/*.json
 *.png
 .Rhistory
 *placeholder.csv
-
+analysis/*.json
 # ignore checkpoints
 *.ipynb_checkpoints
 
