@@ -23,8 +23,6 @@ var speakerModel = function(targetObj, context, params, config) {
   // to their informativity (because factor adds to log space)
   var informativity = function(sketch) {
     var S1_inf = refModule.getL0score(targetObj, sketch, context, params, config);
-    console.log(sketch,targetObj);
-    console.log(similarity(sketch, targetObj));
     var S0_inf = Math.log(similarity(sketch, targetObj)+1e-6);
     return params.pragWeight * S1_inf  + (1 - params.pragWeight) * S0_inf;
   };
@@ -39,7 +37,7 @@ var speakerModel = function(targetObj, context, params, config) {
       var infw = params.infWeight;
       var utility = infw * inf - costw * sketchCost(sketch); // independent informativity weight parameter
       factor(utility);
-      return globalConfig.aggregate ? config.conditionLookup[sketch] : sketch;
+      return sketch;
     }});
   };
 

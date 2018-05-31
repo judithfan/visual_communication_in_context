@@ -32,7 +32,7 @@ var globalConfig = {
 };
 
 var paramPrior = function() {
-	var perception = argv.perception; // human, fc6, sketch_average
+  var perception = argv.perception; // human, fc6, sketch_average
   var pragmatics = argv.pragmatics; // S0, S1, combined
   var production = argv.production; // cost, nocost
 
