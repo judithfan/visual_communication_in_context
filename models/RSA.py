@@ -37,7 +37,7 @@ if __name__ == "__main__":
                         default = 'cost')
     parser.add_argument('--split_type', nargs='+', type=str, \
                         help='option: splitbyobject | alldata | balancedavg',\
-                        default = 'splitbyobject')
+                        default = 'balancedavg')
 
     args = parser.parse_args()
 
@@ -54,7 +54,8 @@ if __name__ == "__main__":
         for perc in perception:
             for prag in pragmatics:
                 for prod in production:
-                        run_bda(perc,prag,prod,split_type)
+                    for split in split_type:
+                        run_bda(perc,prag,prod,split)
 
     ## first run BDA-enumerate.wppl
     if args.wppl=='BDA-enumerate':
