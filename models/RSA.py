@@ -48,8 +48,10 @@ if __name__ == "__main__":
 
     assert args.wppl in ['BDA','evaluate', 'BDA-enumerate']
 
+    print args.wppl=='evaluate'
+    
     ## first run BDA.wppl
-    if args.wppl is 'BDA':
+    if args.wppl == 'BDA':
         for perc in perception:
             for prag in pragmatics:
                 for prod in production:
@@ -57,14 +59,14 @@ if __name__ == "__main__":
                         run_bda(perc,prag,prod,split)
 
     ## first run BDA-enumerate.wppl
-    if args.wppl is 'BDA-enumerate':
+    if args.wppl == 'BDA-enumerate':
         for perc in perception:
             for prag in pragmatics:
                 for prod in production:
                     for split in split_type:
                         run_bda_enumerate(perc,prag,prod)
 
-    elif args.wppl is 'evaluate':
+    elif args.wppl == 'evaluate':
         ## then on output, run evaluate.wppl
         for perc in perception:
             print perc
