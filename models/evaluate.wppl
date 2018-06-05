@@ -1,7 +1,7 @@
 // run using:
 // webppl evaluate.wppl --require ./refModule/ -- --paramSetting human_combined_cost --adaptorType human --splitType balancedavg
 // webppl evaluate.wppl --require ./refModule/ -- --paramSetting human_combined_cost --adaptorType human --splitType alldata
-// webppl evaluate.wppl --require ./refModule/ -- --paramSetting multimodal_fc6_combined_cost --adaptorType multimodal_fc6 --splitType balancedavg
+// webppl evaluate.wppl --require ./refModule/ -- --paramSetting multimodal_fc6_combined_cost --adaptorType multimodal_fc6 --splitType balancedavg1
 
 // Load in experimental data to condition on
 var experimentVersion = 'fixedPose96'; // 'fixedPose', 'varyingPose', etc
