@@ -5,6 +5,7 @@
 
 // Load in experimental data to condition on
 var experimentVersion = 'fixedPose96'; // 'fixedPose', 'varyingPose', etc
+var aggregate = true;
 var splitType = argv.splitType;
 var adaptorType = argv.adaptorType;
 var data = refModule.readCSV('./bdaInput/' + argv.splitType + '/sketchData_fixedPose_' + splitType + '_' + adaptorType + '_pilot2_costOutliersRemoved.csv');
