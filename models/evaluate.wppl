@@ -7,7 +7,7 @@
 var experimentVersion = 'fixedPose96'; // 'fixedPose', 'varyingPose', etc
 var splitType = argv.splitType;
 var adaptorType = argv.adaptorType;
-var data = refModule.readCSV('./bdaInput/sketchData_fixedPose_' + splitType + '_' + adaptorType + '_pilot2_costOutliersRemoved.csv');
+var data = refModule.readCSV('./bdaInput/' + argv.splitType + '/sketchData_fixedPose_' + splitType + '_' + adaptorType + '_pilot2_costOutliersRemoved.csv');
 console.log("Loading expt data complete..." + data.length + " data points");
 
 var params = refModule.readCSV('./bdaOutput/' + argv.adaptorType + "_" + argv.splitType + "/flattened/" + argv.paramSetting + '_' + splitType + 'ParamsFlattened.csv');
