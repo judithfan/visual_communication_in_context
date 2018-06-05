@@ -153,8 +153,6 @@ We hypothesized that the context manipulation in the communication experiment sy
 In other words, we predicted that the decreased effort expended by participants on Far trials reduced the absolute perceptual similarity between sketches and the target. The goal of this experiment was to validate this assumption and to provide independent training data to train a shallow adaptor network to merge photorealistic images and sketches into a common latent space, from which perceptual similarity can be easily read out.
 
 
-
-
 \begin{figure*}[htbp]
 \centering
 \includegraphics[width=0.95\textwidth]{figures/3_behavioral_performance.pdf}
@@ -189,7 +187,16 @@ We begin with production and pragmatics. Lesioning the production component simp
 %% report RSA modeling results, where we apply the same 2 pragmatics (prag vs. no prag) x 2 production (cost vs. no cost) x 4 perception (pool1, conv42, fc6, human) comparison categories
 Next, to test the influence of perceptual representations, we compared our empirically measured similarity values with three alternative similarity functions lightly adapted from different layers of a convolutional neural network (see \emph{Materials and Methods}, Eq. 1). Critically, because these are \emph{encoding} models that take raw visual input, they can generalize to entirely novel sketches. One of the most striking aspects of visual communication is the human ability to recognize an object from a handful of strokes, even though the respective images have little to no overlap in low-level visual features. Motivated by prior work \cite{fan2015common}, we hypothesized that performance in visual communication would improve as we ascend the layers of a visual encoding model.  We augmented a high-performing deep convolutional neural network architecture with a smaller \emph{adaptor} network that was trained on the data from our matching task and learned a common feature representation for drawings and photos. We conducted another Bayesian Data Analysis comparing feature vectors adapted from \emph{pool1}, \emph{conv42}, and \emph{fc6}, respectively, as our raw similarity function. We found that the sketcher adapted from the later layer of \emph{fc6} performed better than the mid-layer of \emph{conv42} ($BF= XX$, which in turn performed better than \emph{pool1} ($BF = XX$; see Fig. \ref{fig:model_results}B).
 
+\begin{figure*}[htbp]
+\centering
+\includegraphics[width=0.95\textwidth]{figures/4_model_schematic.pdf}
+\caption{(A) Architecture of visual encoder model for sketches and object renderings. Consists of pre-trained deep convolutional neural network (VGG-19) and shallow nonlinear ``adaptor'' neural network to evaluate sketch-object similarity. Takes a sketch and object image as input, and outputs a similarity score reflecting how well the sketch resembles the object. Adaptor was trained on a subset of our dataset, and evaluated on held-out sketches. (B) Sketch-object similarity computed for each object in context and each sketch in the test set. To determine the relative informativity of each sketch, the similarity scores between this sketch and all four objects were softmax normalized. The cost of each sketch was assumed to vary with the amount of time taken to produce it.}
+\label{task_performance}
+\end{figure*}
+
+
 %% report generalization performance of visual adaptor on the appropriate splits?
+
 \subsection*{Evaluating model performance}
 Having established the need for all three components, we proceed to
 
