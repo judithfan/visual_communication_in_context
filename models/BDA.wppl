@@ -20,7 +20,6 @@ var similarities = refModule.getSimilarities(splitType); // pass which split num
 var costs = refModule.getCosts(experimentVersion + '-cost_duration-average',splitType);
 var conditionLookup = refModule.getConditionLookup(splitType);
 var possibleSketches = refModule.getPossibleSketches(data, {aggregate,conditionLookup});
-console.log(possibleSketches);
 console.log("Loading model data complete..."
 	    + possibleSketches.length + " sketches of " +
 	    + _.keys(similarities['multimodal_fc6']).length + " objects." );
@@ -80,6 +79,6 @@ var modelAnalysis = function() {
 };
 
 globalStore.iterationNum = 0;
-var outputERP = Infer({method: 'MCMC', samples: 1000, burn: 500, lag: 0, model: modelAnalysis, onlyMAP: false});
+var outputERP = Infer({method: 'MCMC', samples: 1000, burn: 1000, lag: 0, model: modelAnalysis, onlyMAP: false});
 
 refModule.bayesianErpWriter(outputERP, "./bdaOutput/" + argv.perception + "_" + argv.splitType + "/raw/" + globalConfig.outputFileName);
