@@ -14,11 +14,11 @@ var params = refModule.readCSV('./bdaOutput/' + argv.adaptorType + "_" + argv.sp
 console.log("Loading params complete..." + params.length + " param settings");
 
 // Cache some properties of model
-var similarities = refModule.getSimilarities();
-var costs = refModule.getCosts(experimentVersion + '-cost_duration-average');
-var possibleSketches = refModule.getPossibleSketches(data);
-var conditionLookup = refModule.getConditionLookup();
-
+var splitNum = splitType.slice(-1);
+var similarities = refModule.getSimilarities(splitType); // pass which split number you're using, so which similarities to use
+var costs = refModule.getCosts(experimentVersion + '-cost_duration-average',splitType);
+var conditionLookup = refModule.getConditionLookup(splitType);
+var possibleSketches = refModule.getPossibleSketches(data, {aggregate,conditionLookup});
 // Package into config
 var globalConfig = {
   similarities, possibleSketches, costs, conditionLookup,
