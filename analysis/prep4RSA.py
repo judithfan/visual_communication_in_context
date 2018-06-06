@@ -8,7 +8,8 @@ if __name__ == "__main__":
     split_type = 'balancedavg'
     # splits = ['16','32','64','128','256','512']
     splits = map(str,np.arange(1,6))
-
+    
+    
     ## for the adapted encoder
     for layer in layers:
         for split_num in splits:
@@ -24,7 +25,7 @@ if __name__ == "__main__":
 
     ## also for humans
     for split_num in splits:
-        cmd_string = "python generate_bdainput.py --adaptor_type human --split_type {}{} --gen_similarity True --gen_centroid True".format(split_type,split_num)
+        cmd_string = "python generate_bdainput.py --adaptor_type human --split_type {}{} --gen_similarity False --gen_centroid True".format(split_type,split_num)
         print '{}'.format(cmd_string)
         os.system(cmd_string)
 
