@@ -29,7 +29,7 @@ var globalConfig = {
 var predictives = foreach(params, function(paramVal) {
   console.log('now on param: ');
   console.log(paramVal);
-  var outPath = ['.', 'evaluateOutput', argv.paramSetting, paramVal.id].join('/');
+  var outPath = ['.', 'evaluateOutput', argv.paramSetting + '_' + argv.splitType, paramVal.id].join('/');
   console.log(outPath);
   var output = map(function(c) {
     var conditionType = c.condition;

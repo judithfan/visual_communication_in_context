@@ -6,9 +6,9 @@ var babyparse = require('babyparse');
 
 var getSimilarities = function(splitType) {
   return {
-//      'human': require('./json/' + splitType + '/similarity-human-avg.json'),
-//      'multimodal_pool1': require('./json/' + splitType + '/similarity-' + splitType + '-multimodal_pool1-avg.json'),
-//      'multimodal_conv42': require('./json/' + splitType + '/similarity-' + splitType + '-multimodal_conv42-avg.json'),
+      'human': require('./json/' + splitType + '/similarity-human-avg.json'),
+      'multimodal_pool1': require('./json/' + splitType + '/similarity-' + splitType + '-multimodal_pool1-avg.json'),
+      'multimodal_conv42': require('./json/' + splitType + '/similarity-' + splitType + '-multimodal_conv42-avg.json'),
       'multimodal_fc6': require('./json/' + splitType + '/similarity-' + splitType + '-multimodal_fc6-avg.json')
   };
 };
@@ -119,9 +119,9 @@ var predictiveSupportWriter = function(s, filePrefix) {
       fs.mkdirSync(dir);
   }
   var predictiveFile = fs.openSync(filePrefix + "Predictives.csv", 'w');
-  fs.writeSync(predictiveFile, ['index','game', "condition", 'trueSketch', "Target",
+    fs.writeSync(predictiveFile, [ "condition", 'game', "Target",
 				"Distractor1", "Distractor2", "Distractor3",
-				"coarseGrainedTrueSketch", "coarseGrainedPossibleSketch",
+				"TrueSketch", "PossibleSketch",
 				"modelProb"] + '\n');
 
   var l = s.length;
