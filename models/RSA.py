@@ -3,8 +3,8 @@ import os
 import thread
 import numpy as np
 
-### python RSA.py --wppl BDA --perception multimodal_pool1 multimodal_conv42 multimodal_fc6 human --pragmatics combined S1 S0 --production cost nocost --split_type balancedavg1
-### python RSA.py --wppl enumerate --perception multimodal_fc6 human --pragmatics combined S1 S0 --production cost nocost --split_type balancedavg1
+### python RSA.py --wppl BDA --perception human --pragmatics combined S1 S0 --production cost nocost --split_type balancedavg1 balancedavg2 balancedavg3 balancedavg4 balancedavg5
+### python RSA.py --wppl evaluate --perception multimodal_fc6 --pragmatics combined --production cost --split_type balancedavg1
 ### balancedavg3 balancedavg4 balancedavg5
 
 def run_bda(perception, pragmatics, production, split_type):
@@ -48,10 +48,8 @@ if __name__ == "__main__":
 
     assert args.wppl in ['BDA','evaluate', 'BDA-enumerate']
 
-    print args.wppl=='evaluate'
-    
     ## first run BDA.wppl
-    if args.wppl == 'BDA':
+    if args.wppl is 'BDA':
         for perc in perception:
             for prag in pragmatics:
                 for prod in production:
@@ -59,14 +57,14 @@ if __name__ == "__main__":
                         run_bda(perc,prag,prod,split)
 
     ## first run BDA-enumerate.wppl
-    if args.wppl == 'BDA-enumerate':
+    if args.wppl is 'BDA-enumerate':
         for perc in perception:
             for prag in pragmatics:
                 for prod in production:
                     for split in split_type:
                         run_bda_enumerate(perc,prag,prod)
 
-    elif args.wppl == 'evaluate':
+    elif args.wppl is 'evaluate':
         ## then on output, run evaluate.wppl
         for perc in perception:
             print perc

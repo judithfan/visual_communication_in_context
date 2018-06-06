@@ -1,6 +1,6 @@
 // run using:
 
-// webppl BDA.wppl --require ./refModule/ -- --perception human --pragmatics combined --production cost --splitType balancedavg3
+// webppl BDA.wppl --require ./refModule/ -- --perception human --pragmatics combined --production cost --splitType balancedavg1
 
 // Load in experimental data to condition on
 var experimentVersion = 'fixedPose96';
@@ -68,8 +68,8 @@ var modelAnalysis = function() {
   if (globalStore.iterationNum % 25 == 0) {
      console.log(params);
      console.log(score);
-  } 
-  
+  }
+
   factor(score);
 
   var paramsKey = _.values(params).join(',');
