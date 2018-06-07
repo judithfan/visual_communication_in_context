@@ -251,7 +251,7 @@ While these models excel at (and were indeed optimized for) categorization of ob
 
 We explore adapting features from three different layers of VGG-19: the first max pooling layer (vgg-early), the tenth convolutional layer (vgg-mid), and the first fully connected layer (vgg-high), respectively representing low, medium, and high level visual abstraction. As such, we design three different encoder models, intentionally keeping them lightweight and comparable in number of parameters (Table~\ref{table:parameters}). We respectively refer to these as \textit{adaptor-early}, \textit{adaptor-mid}, and \textit{adaptor-high}. Below, we detail the architecture and hyperparameter choices:
 
-Adaptor-high is composed of a linear layer from 8192 to 512, followed by a swish nonlinearity \cite[]{ramachandran2018searching} and dropout, then a linear layer from 512 to 1. Each vgg-high feature has 4096 dimensions. A photo and sketch feature is first concatenated to form a vector of size 8192, then passed to adaptor-high. Empirically, we find the ability of the model to fit the data robust to the choice of nonlinearity and hidden dimensionality.
+Adaptor-high is composed of a linear layer from 8192 to 128, followed by a swish nonlinearity \cite[]{ramachandran2018searching} and dropout, then a linear layer from 128 to 1. Each vgg-high feature has 4096 dimensions. A photo and sketch feature is first concatenated to form a vector of size 8192, then passed to adaptor-high. Empirically, we find the ability of the model to fit the data robust to the choice of nonlinearity and hidden dimensionality \mwu{@judy, here is a good place to show that figure saying hidden layer size isn't terribly important}.
 
 \begin{table}
 \centering
@@ -260,20 +260,20 @@ Adaptor-high is composed of a linear layer from 8192 to 512, followed by a swish
 Model & Parameters \\
 \hline
 \hline
-adaptor-early & 4195329 \\
+adaptor-early & 1048839 \\
 \hline
-adaptor-mid & 526881 \\
+adaptor-mid & 1049115 \\
 \hline
-adaptor-high & 33409 \\
+adaptor-high & 1048833 \\
 \hline
 \end{tabular}
 \caption{Number of parameters in the visual encoder modules.}
 \label{table:parameters}
 \end{table}
 
-Similarly, adaptor-mid consists of a linear layer of 1024 to 512, swish, dropout, then a linear layer from 512 to 1. Since vgg-mid features are three dimensional (512 by 28 by 28), we first flatten the input into a one dimensional vector of size 512 using a weighted linear combination $\sum_{i=1}^{28}\sum_{j=1}^{28} w_{ij} * x_{ij}$, where $x_{ij}$ represents a cross-section from vgg-mid. The parameters $\{w_{ij}|1\leq i,j \leq 28\}$ are learned along with the parameters of adaptor-mid. Intuitively, this is akin to attention over the spatial features of vgg-mid. We separately attend over photo and sketch spatial features, creating two vectors of size 512, then concatenate prior to adaptor-mid.
+Similarly, adaptor-mid consists of a linear layer of 1024 to 1021, swish, dropout, then a linear layer from 1021 to 1. The width of the layers are chosen to match the number of trainable parameters as in adaptor-high. Since vgg-mid features are three dimensional (512 by 28 by 28), we first flatten the input into a one dimensional vector of size 512 using a weighted linear combination $\sum_{i=1}^{28}\sum_{j=1}^{28} w_{ij} * x_{ij}$, where $x_{ij}$ represents a cross-section from vgg-mid. The parameters $\{w_{ij}|1\leq i,j \leq 28\}$ are learned along with the parameters of adaptor-mid. Intuitively, this is akin to attention over the spatial features of vgg-mid. We separately attend over photo and sketch spatial features, creating two vectors of size 512, then concatenate prior to adaptor-mid.
 
-Finally, adaptor-low is almost identical to adaptor-mid, except each feature is of size 64 by 112 by 112. Explicitly, this network starts with a linear layer of 4096 to 64, swish, dropout, then a linear layer form 512 to 1. Due to the input size, each attention module has 12,544 learnable weights.
+Finally, adaptor-low is almost identical to adaptor-mid, except each feature is of size 64 by 112 by 112. Explicitly, this network starts with a linear layer of 4096 to 7875, swish, dropout, then a linear layer form 7875 to 1. Due to the input size, each attention module has 12,544 learnable weights.
 
 %% adaptor training procedure
 We now describe the training procedure for each visual encoder. The sketch dataset is split into training, validation, and test sets in a 80\%, 10\%, and 10\% ratio. This division is performed based on context, which is defined as the set of the target and distractor images (each trial consists of 3 distractor images and 1 target). Doing so, the contexts of training examples will not overlap with the contexts of either validation or test examples. Given a photo and a sketch, the adaptor network outputs a single real number, which we use as a similarity measure. We construct of similarity vector of size 32 between a sketch and each photo in the domain (32 total), and apply a softmax on top to induce a probability distribution over photos. To fit network parameters, we optimize via stochastic gradient descent on a cross entropy loss between the induced distribution and a distribution of average human choices (\mwu{@judy add more details about how we get labels}). Specifically we use Adam \cite[]{kingma2014adam} with a learning rate of 1e-4 with a minibatch size of 10 for 100 epochs. As a property of the input domain, the gradients with respect to adaptor parameters are by default, very small. While increasing the learning rate may lead to unstable optimization, we find that multiplying the loss by a large constant $C$ is necessary to sufficiently optimize the objective for good test performance. In practice, $C = 10000$. Post-training, we use the model with the best loss on a held-out validation set. For each photo and sketch pair in the test set, we calculate the similarity score as input to a social reasoning module.
