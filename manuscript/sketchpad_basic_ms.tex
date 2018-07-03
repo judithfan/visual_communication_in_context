@@ -37,7 +37,7 @@
 % Please give the surname of the lead author for the running footer
 \leadauthor{Fan}
 
-\significancestatement{}
+\significancestatement{Drawing thus provides a natural domain to interrogate how visually-guided actions are constrained by high-level goals, including social communication, and likewise, how communicative behavior is constrained by our perceptual system.}
 
 % Please include corresponding author, author contribution and author declaration information
 \authorcontributions{Please provide details of author contributions here.}
@@ -56,6 +56,7 @@ Visual modes of communication are ubiquitous in modern life --- from maps to dat
 \doi{\url{www.pnas.org/cgi/doi/10.1073/pnas.XXXXXXXXXX}}
 
 
+
 \begin{document}
 
 % Optional adjustment to line up main text (after abstract) of first page with line numbers, when using both lineno and twocolumn options.
@@ -66,39 +67,54 @@ Visual modes of communication are ubiquitous in modern life --- from maps to dat
 \thispagestyle{firststyle}
 \ifthenelse{\boolean{shortarticle}}{\ifthenelse{\boolean{singlecolumn}}{\abscontentformatted}{\abscontent}}{}
 
-Communication is central to the success of our species: it allows us to learn from each other, coordinate our actions, and express otherwise hidden thoughts. People communicate in many ways, including spoken language and gesture. Critically, human communication goes beyond vocal production and manual signing: A watershed moment in the history of human communication was the invention of graphical representation, independently in Europe and Asia, about 30-60 thousand years ago \cite{hoffmann2018u,Aubert:2014jy}.
+%%%%% In another version of the intro, you recap the visual production stuff on its own, and then point out that drawing is not one task, but several, and could depend a lot of the goals and context, and in this paper, we extend previous models to handle this. 
 
-Graphical representation was transformative because it provided a means for people to encode their thoughts in a durable and shareable format. From ancient etchings on cave walls to modern digital displays, using graphical representations to communicate lies at the heart of key human innovations (e.g., mapmaking, data visualization), and forms the foundation for the cultural transmission of knowledge and higher-level reasoning. Drawing is a particularly important case study for understanding human visual communication. Drawn images predate symbolic writing systems \cite{clottes2008cave} are pervasive in many cultures \cite{gombrich1989story}, and are produced prolifically by children from an early age \cite{kellogg1969analyzing}.
+A watershed moment in the history of human communication was the invention of graphical representation, independently in Europe and Asia, about 30-60 thousand years ago \cite{hoffmann2018u,Aubert:2014jy}.
 
-%%%%%%%%%%%%%%%%%%%%
+%% The point is that communication is generally important, and that visual communication is an important subtype of communication. 
+Communication is central to the success of our species: it allows us to learn from each other, coordinate our actions, and express otherwise hidden thoughts. People communicate in many ways, including spoken language and gesture. Critically, human communication goes beyond vocal production and manual signing: 
 
-Communicative drawing poses a key challenge for understanding how
+%% Visual communication is generally important, and drawing is an important subtype of visual communication.
+Graphical representation was transformative because it provided a means for people to encode their thoughts in a durable and shareable format. From ancient etchings on cave walls to modern digital displays, using graphical representations for visual communication lies at the heart of key human innovations (e.g., mapmaking, data visualization), and forms the foundation for the cultural transmission of knowledge and higher-level reasoning. Drawing is a particularly important case study for understanding human visual communication. Drawn images predate symbolic writing systems \cite{clottes2008cave} are pervasive in many cultures \cite{gombrich1989story}, and are produced prolifically by children from an early age \cite{kellogg1969analyzing}.
 
-Successful visual communication by drawing inherently combines the activity of three such core systems: \textit{visual perception} --- the set of computations that transform raw visual inputs into semantically meaningful internal representations; \textit{social reasoning}
+In particular, a fundamental question
 
---- our robust capacity to evaluate other people's beliefs, intentions, and knowledge; determine action selection.
+concerns how visual perception and socially learned 
 
-Drawing thus provides a natural domain to interrogate how visually-guided actions are constrained by high-level goals, including social communication, and likewise, how communicative behavior is constrained by our perceptual system.
+general-purpose visual representations and socially- for explaining how drawings derive their meaning.
 
-A long-standing debate concerns the relative contribution of these systems for explaining how drawings derive their referential meaning. On the one hand, there is strong evidence that the perceptual system is sufficient to explain how people are able to perceive the correspondence between drawings and real-world objects, suggesting that this ability can arise from the same general-purpose neural architecture evolved to handle natural visual inputs
-\cite{fan2015common, yamins2014performance}. On the other hand, several influential theorists have argued that socially-mediated experience with pictorial representations is always necessary to be able to extract semantic content from drawings \cite{goodman1976languages,gombrich1989story}.
+On the one hand, there are diverse sources of evidence suggesting that the perceptual system may be sufficient to explain how people are able to perceive their semantic content, in the absence of socially-mediated experience in how to interpret drawings. Recently, it has been shown that features learned by deep convolutional neural network models (DCNNs) trained only to recognize objects in photos and had never seen a line drawing succeed in recognizing simple sketches \cite{fan2015common,yamins2014performance}, suggesting that the ability to perceive the correspondence between drawings and real-world objects can arise from the same general-purpose neural architecture evolved to handle natural visual inputs \cite{Sayim:2011bz,gibson2014ecological}. These findings are consistent with evidence from other domains, including developmental, cross-cultural, and comparative studies of drawing perception. For example, human infants \cite{hochberg1962pictorial}, people living in remote regions without pictorial art traditions and without substantial contact with Western visual media \cite{kennedy1975outline}, and higher non-human primates \cite{tanaka2007recognition} are able to recognize line drawings of familiar objects, even without prior experience with drawings.
+
+On the other hand, several influential theorists have argued that socially-mediated experience with visual artifacts is necessary to be able to interpret pictorial representations, and thus that pictorial competence relies heavily on social cognition. 
+
+On this view, generic visual computations are insufficient to drive perceptual correspondences between drawings and objects --- rather, drawings denote objects through purely culturally-specific conventions much the same way that verbal labels denote objects \citep{goodman1976languages,gombrich1969art}. Indeed, many drawings that people use to communicate are quite sparse, emphasizing information that is most relevant in the current context, and omitting irrelevant details. In the appropriate context, even a few strokes can express the identity of a face \citep{bergmann2013impact}, a suggested route \citep{agrawala2001rendering}, or an intention to act \citep{Galantucci:2005uh}. However, in the absence of contextual cues, such sparse representations may be insufficient to communicate specific meanings \citep{Healey:2007vq}. 
+
+Over time, communicative drawings can even transform into abstract symbols that no longer strongly resemble their original real-world referents, as the evolution of the Chinese writing system illustrates \citep{boltz1994origin}. 
+
+That is, repeated communication between members of the same community lead to profound transformations in how constrained the meanings of communicative drawings are by their purely perceptual properties \citep{Garrod:2007wk,fay2010interactive}.
+
+Prior work has been equivocal about the relative contribution of these systems for explaining how drawings derive their referential meaning. 
 
 How can these two opposing perspectives on the basis for fluency with graphical representations be reconciled? And how does such variation in visual communication behavior, ranging from the depictive to the symbolic, arise from the same cognitive architecture? Here we propose a unified theoretical framework for understanding how such variation naturally arises from variation in context, affecting how perception and social inference are combined to generate communicative actions.
 
 
-Here we propose an integrated computational model of visual communication that combines high-performing models of sensory representation from deep learning with insights from Bayesian cognitive models of social reasoning in language.
 
-This  into the core computations that connect perception, action, and social cognition to support visual communication.
+%% Our perspective is to embrace drawing as a complex behavior that combines different systems to support complex, natural behaviors.
 
-%%%%%%%%%%%%%%%%%%%%
+Communicative drawing provides a critical case study for understanding how core cognitive systems are coordinated to support complex, natural behaviors.
 
-The goal of this paper is to evaluate the hypothesis that contextual flexibility in human visual communication can be captured by combining constraints from perception and pragmatic reasoning.
+This paper explores the hypothesis that successful visual communication by drawing inherently combines the activity of two core systems: \textit{visual perception} --- the set of computations that transform raw visual inputs into semantically meaningful internal representations --- and \textit{social reasoning} --- our robust capacity to evaluate other people's beliefs, intentions, and knowledge. Drawing thus provides a natural domain to interrogate how visually-guided actions are constrained by high-level goals, including social communication, and likewise, how communicative behavior is constrained by our perceptual system. 
 
 Specifically, are \emph{pragmatic visual communicators} who proactively account for their viewer's expectations and take advantage of shared knowledge to be informative
 \cite{wilson1986relevance,goodman2016pragmatic}
 while also being parsimonious \cite{zipf1936psycho}.
 
 
+Here we propose an integrated computational model of visual communication that combines high-performing models of sensory representation from deep learning with insights from Bayesian cognitive models of social reasoning in language.
+
+%%%%%%%%%%%%%%%%%%%%
+
+This paper presents a rich behavioral dataset and computational model that explains contextual flexibility in human visual communication by combining constraints from perception and pragmatic reasoning.
 
 
 \section*{Results}
