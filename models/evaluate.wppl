@@ -3,7 +3,7 @@
 // webppl evaluate.wppl --require ./refModule/ -- --paramSetting human_combined_cost --adaptorType human --splitType alldata
 // webppl evaluate.wppl --require ./refModule/ -- --paramSetting multimodal_pool1_combined_cost --adaptorType multimodal_pool1 --splitType balancedavg1
 // webppl evaluate.wppl --require ./refModule/ -- --paramSetting multimodal_conv42_combined_cost --adaptorType multimodal_pool1 --splitType balancedavg1
-// webppl evaluate.wppl --require ./refModule/ -- --paramSetting multimodal_fc6_S0_cost --adaptorType multimodal_fc6 --splitType balancedavg1
+// webppl evaluate.wppl --require ./refModule/ -- --paramSetting multimodal_fc6_S0_cost --adaptorType multimodal_fc6 --splitType balancedavg5
 // webppl evaluate.wppl --require ./refModule/ -- --paramSetting multimodal_fc6_combined_nocost --adaptorType multimodal_fc6 --splitType balancedavg1
 
 // Load in experimental data to condition on

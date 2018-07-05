@@ -75,7 +75,9 @@ Remarkably, we perceive drawings of objects as resembling physical objects in sp
 
 However, such an explanation is clearly incomplete. Even drawings of the same object can be highly variable \cite{quickdraw2017}, illustrating the importance of other factors that may influence how a drawing conveys meaning. For example, extended visual communication within a community may lead to the formation of culturally-specific graphical conventions over the course of several generations \cite{toku2001cross,boltz1994origin}. Recent laboratory studies of visual communication have also provided experimental evidence that pairs of interacting participants can, over the course of minutes, learn to produce drawings that are referentially meaningful to their partner in context, even when these drawings do not strongly resemble any particular real-world referent out of context \cite{Garrod:2007wk,fay2010interactive,Galantucci:2005uh,Healey:2007vq}. Together, findings in this literature suggest the importance of social (and over longer timescales, cultural) context in determining how communicative drawings convey meaning. 
 
-Building on this prior work, the current study is guided by the overarching hypothesis that successful visual communication by drawing recruits pragmatic reasoning \cite{goodman2016pragmatic,clark1996using,wilson1986relevance,grice1975syntax} --- the ability to determine which information is not only \textit{valid} to include in a drawing, but also \textit{relevant} --- in combination with visual perception --- the set of computations that transform raw visual inputs into semantically meaningful internal representations. 
+Building on this prior work, the current study is guided by the overarching hypothesis that successful visual communication by drawing recruits pragmatic reasoning \cite{goodman2016pragmatic,clark1996using,wilson1986relevance,grice1975syntax} --- the ability to determine which information is not only \textit{valid} to include in a drawing, but also \textit{relevant} in context --- in combination with visual perception --- the set of computations that transform raw visual inputs into semantically meaningful internal representations. 
+
+To investigate visual communication in a naturalistic yet controlled setting, here we employ sketching-based reference games. These reference games involve two players: a \textit{sketcher} who aims to help a \textit{viewer} pick out a target object from an array of alternative, distractor objects by representing it in a sketch. This basic arrangement can be traced back to the language games explored by \citep{wittgenstein1953philosophical} and \citep{Lewis69_Convention}. Such games have proven to be a valuable tool for eliciting pragmatic inferences about \textit{language} use in context, and to make quantitative measurements of the behavioral consequences of these inferences \cite{goodman2016pragmatic,kao2014formalizing,goodman2013knowledge,frank2012predicting}. Here we generalize this methodology to understand how sketchers account for information in common ground with their viewer in order to produce sketches that are both informative \cite{grice1975syntax,wilson1986relevance} yet parsimonious \cite{zipf1936psycho}.  
 
 Previously, a barrier to progress in studying visual communication has been the lack of principled quantitative measures of semantic information in drawings. As such, previous studies employing drawing tasks to study visual communication have typically relied on qualitative assessments of drawings based on provisional criteria specific to each study \cite{Healey:2007vq}, or quantitative measures of lower-level visual features \cite{Garrod:2007wk}, limiting their ability to make detailed predictions that quantitatively link contextual variables to visual communication behavior. 
 
@@ -83,9 +85,7 @@ The goal of this paper is to provide a computational framework for systematicall
 
 \section*{Results}
 
-\subsection*{Behavioral task performance}
-
-To investigate visual communication in a naturalistic yet controlled setting, here we employ drawing-based reference games. These reference games involve two players: a \textit{sketcher} who aims to help a \textit{viewer} pick out a target object from an array of alternative, distractor objects by representing it in a sketch. This basic arrangement can be traced back to the language games explored by \citep{wittgenstein1953philosophical} and \citep{Lewis69_Convention}. Such games have proven to be a valuable tool for eliciting pragmatic inferences about \textit{language} use in context, and to make quantitative measurements of the behavioral consequences of these inferences \cite{goodman2016pragmatic,kao2014formalizing,goodman2013knowledge,frank2012predicting}. Here we generalize this methodology to understand how sketchers account for information in common ground with their viewer in order to produce sketches that are both informative \cite{grice1975syntax,wilson1986relevance} yet parsimonious \cite{zipf1936psycho}.  
+\subsection*{Communication task performance}
 
 %%%%% List of results figures
 %% Figure 1: Task Display & Design & example drawings [first draft ready]
@@ -104,14 +104,11 @@ To investigate visual communication in a naturalistic yet controlled setting, he
 \label{task_display}
 \end{figure*}
 
+Participants (N=192) were paired in an online environment to play a drawing-based reference game. On each trial, both participants were shown the same four real-world objects, but in different locations. Objects were photorealistic images of 3D objects and rendered in the same three-quarter pose, under matched illumatination on a gray background, so participants could not use pose, illumination, or background information to distinguish them.
 
-We hypothesized that sketchers aim to be informative yet parsimonious in communicating about the target object in context.
+The \textit{sketcher's} goal was to draw one of these objects --- the target --- so that the \textit{viewer} could pick it out from a set of distractor objects. There were two types of trials: \textit{close}, where objects belonged to the same category, and \textit{far}, where objects belonged to different categories.
 
-We evaluated several predictions that this hypothesis makes:
-
-first, that sketchers are generally successful at conveying the identity of the target to viewers in both close and far contexts.
-
-second, that sketchers will modulate the level of detail in their drawings according to the similarity of the alternatives under consideration by the viewer.
+We hypothesized that sketchers aim to be informative yet parsimonious in communicating about the target object in context. We evaluated two predictions that this hypothesis makes: first, that sketchers are generally successful at conveying the identity of the target to viewers in both close and far contexts; and second, that sketchers will modulate the level of detail in their drawings according to the similarity of the alternatives under consideration by the viewer.
 
 If sketchers aim to make their sketches informative without being too costly to produce, they will modulate the level of detail in their drawings according to the set of alternatives under consideration by the viewer.
 
@@ -122,8 +119,7 @@ If sketchers aim to make their sketches informative without being too costly to 
 \label{sketch_gallery}
 \end{figure*}
 
-
-For instance, in the \textit{close} condition where the target and distractors belong to the same basic-level category, sketchers should make detailed drawings to highlight fine-grained distinctions, even though this requires including additional detail. By contrast, in the \textit{far} condition where the target and distractors belong to different basic-level categories, the sketcher can afford to produce simpler drawings by omitting excess detail.
+Specifically, in the \textit{close} condition where the target and distractors belong to the same basic-level category, sketchers should make detailed drawings to highlight fine-grained distinctions, even though this requires including additional detail. By contrast, in the \textit{far} condition where the target and distractors belong to different basic-level categories, the sketcher can afford to produce simpler drawings by omitting excess detail.
 
 Consistent with this prediction, we found that sketchers applied fewer strokes (close = 8.03, far = 13.5, \textit{p} $<$ 0.001), used less ink (measured by proportion of the canvas marked: close = 0.054, far = 0.042, \textit{p} $<$ 0.001) and spent less time (close = 30.3s, far = 13.7s, \textit{p} $<$ 0.001) to make their drawings in the far condition than in the close condition.
 
@@ -133,14 +129,12 @@ We hypothesized that the context manipulation in the communication experiment sy
 
 In other words, we predicted that the decreased effort expended by participants on Far trials reduced the absolute perceptual similarity between sketches and the target. The goal of this experiment was to validate this assumption and to provide independent training data to train a shallow adaptor network to merge photorealistic images and sketches into a common latent space, from which perceptual similarity can be easily read out.
 
-
 \begin{figure*}[htbp]
 \centering
 \includegraphics[width=0.95\textwidth]{figures/3_behavioral_performance.pdf}
 \caption{(A-C) Sketchers used fewer strokes, less ink, and spent less time producing sketches in the far condition, relative to the close condition. (D-E) Viewers were at ceiling accuracy in identifying the target in the far condition, and were highly accurate in the close condition. (F) Naive matcher participants were more accurate for close sketches than far sketches.}
 \label{task_performance}
 \end{figure*}
-
 
 %%% recognition experiments
 %% report close vs. far Accuracy
@@ -158,23 +152,22 @@ We measured this by comparing the within-category confusion rate to the overall 
 \subsection*{Modeling pragmatics and cost}
 
 %% describe the full sketcher model
-To make fine-grained quantitative predictions and conduct a rigorous comparison, we formalized our hypotheses as a series of computational models. Our full sketching model integrates three key components: \emph{production}, \emph{pragmatics}, and \emph{perception} (see \emph{Materials and Methods}; Eq. 2-4 and Fig. \ref{fig:modelSchematic}). \emph{Production} determines whether or not the agent accounts for the relative cost of producing drawings with more strokes. \emph{Pragmatics} captures the sketcher's reasoning about how a viewer will make decisions in context. \emph{Perception} determines the encoding model used by the agent to determine the literal similarity between a drawing and object. Intuitively, putting these components together has the effect of biasing the model to depict properties of the target object that perceptually distinguish it from the distractors, while also preferring sketches that are less costly to produce, i.e., requiring fewer strokes or less ink. We conduct a set of comparisons against lesioned variants to test the role played by each component.
+To make fine-grained quantitative predictions and conduct a rigorous comparison, we formalized our hypotheses as a series of computational models. Our full sketching model integrates three key components: \emph{production}, \emph{pragmatics}, and \emph{perception} (see \emph{Materials and Methods}; Eq. 2-4 and Fig. \ref{model_schematic}). \emph{Production} determines whether or not the agent accounts for the relative cost of producing drawings with more strokes. \emph{Pragmatics} captures the sketcher's reasoning about how a viewer will make decisions in context. \emph{Perception} determines the encoding model used by the agent to determine the literal similarity between a drawing and object. Intuitively, putting these components together has the effect of biasing the model to depict properties of the target object that perceptually distinguish it from the distractors, while also preferring sketches that are less costly to produce, i.e., requiring fewer strokes or less ink. We conduct a set of comparisons against lesioned variants to test the role played by each component.
 
 %% report RSA modeling results using human perceptual measurements directly to compute informativity
 %% prag with cost, prag no cost, no prag cost, no prag no cost
-We begin with production and pragmatics. Lesioning the production component simply requires setting the parameter weighting the \emph{cost} term of our speaker's utility to zero, such that all sketches are equally easy to produce. For the pragmatic component, we compare a \emph{social sketcher}, which takes context into account, against an \emph{asocial sketcher} that simply aims to make a sketch with high absolute perceptual similarity to the target, ignoring context. To define our social sketcher, we generalize the Rational Speech Act (RSA) framework from the linguistic domain, where it has captured language use as a process of recursive social reasoning \cite{stuff}. By reasoning about a viewer who normalizes perceptual similarity across objects in context, a social sketcher is able to choose sketches that are \emph{informative}, or that apply to the target relatively better than distractors. For example, in a context only containing birds, a generic outline of a bird would not be very informative, even if it has high absolute similarity to the target, because it also resembles the distractors. Because both absolute and relative similarity may influence a sketcher's decision, we introduced a parameter $w_p \in [0,1]$ that interpolates between the two values. We conducted a Bayesian Data Analysis, plugging in the similarity function directly estimated from empirical human ratings in the matching task. We found that the social speaker was strongly preferred over the asocial speaker ($BF = XX; w_p = YY$, 95\% credible interval $= [X, Y]$) and the model including a cost term was strongly preferred over a cost-free variant ($BF = XX; w_c = YY$, 95\% credible interval $=[X, Y]$; see Fig. \ref{fig:model_results}A).
+We begin with production and pragmatics. Lesioning the production component simply requires setting the parameter weighting the \emph{cost} term of our speaker's utility to zero, such that all sketches are equally easy to produce. For the pragmatic component, we compare a \emph{social sketcher}, which takes context into account, against an \emph{asocial sketcher} that simply aims to make a sketch with high absolute perceptual similarity to the target, ignoring context. To define our social sketcher, we generalize the Rational Speech Act (RSA) framework from the linguistic domain, where it has captured language use as a process of recursive social reasoning \cite{goodman2016pragmatic,kao2014formalizing,goodman2013knowledge}. By reasoning about a viewer who normalizes perceptual similarity across objects in context, a social sketcher is able to choose sketches that are \emph{informative}, or that apply to the target relatively better than distractors. For example, in a context only containing birds, a generic outline of a bird would not be very informative, even if it has high absolute similarity to the target, because it also resembles the distractors. Because both absolute and relative similarity may influence a sketcher's decision, we introduced a parameter $w_p \in [0,1]$ that interpolates between the two values. We conducted a Bayesian Data Analysis, plugging in the similarity function directly estimated from empirical human ratings in the matching task. We found that the social speaker was strongly preferred o,ver the asocial speaker ($BF = XX; w_p = YY$, 95\% credible interval $= [X, Y]$) and the model including a cost term was strongly preferred over a cost-free variant ($BF = XX; w_c = YY$, 95\% credible interval $=[X, Y]$; see Fig. \ref{fig:model_results}A).
 
 \subsection*{Modeling perception}
 %% report RSA modeling results, where we apply the same 2 pragmatics (prag vs. no prag) x 2 production (cost vs. no cost) x 4 perception (pool1, conv42, fc6, human) comparison categories
-Next, to test the influence of perceptual representations, we compared our empirically measured similarity values with three alternative similarity functions lightly adapted from different layers of a convolutional neural network (see \emph{Materials and Methods}, Eq. 1). Critically, because these are \emph{encoding} models that take raw visual input, they can generalize to entirely novel sketches. One of the most striking aspects of visual communication is the human ability to recognize an object from a handful of strokes, even though the respective images have little to no overlap in low-level visual features. Motivated by prior work \cite{fan2015common}, we hypothesized that performance in visual communication would improve as we ascend the layers of a visual encoding model.  We augmented a high-performing deep convolutional neural network architecture with a smaller \emph{adaptor} network that was trained on the data from our matching task and learned a common feature representation for drawings and photos. We conducted another Bayesian Data Analysis comparing feature vectors adapted from \emph{pool1}, \emph{conv42}, and \emph{fc6}, respectively, as our raw similarity function. We found that the sketcher adapted from the later layer of \emph{fc6} performed better than the mid-layer of \emph{conv42} ($BF= XX$, which in turn performed better than \emph{pool1} ($BF = XX$; see Fig. \ref{fig:model_results}B).
+Next, to test the influence of perceptual representations, we compared our empirically measured similarity values with three alternative similarity functions lightly adapted from different layers of a convolutional neural network (see \emph{Materials and Methods}, Eq. 1). Critically, because these are \emph{encoding} models that take raw visual input, they can generalize to entirely novel sketches. One of the most striking aspects of visual communication is the human ability to recognize an object from a handful of strokes, even though the respective images have little to no overlap in low-level visual features. Motivated by prior work \cite{fan2015common}, we hypothesized that performance in visual communication would improve as we ascend the layers of a visual encoding model.  We augmented a high-performing deep convolutional neural network architecture with a smaller \emph{adaptor} network that was trained on the data from our matching task and learned a common feature representation for drawings and photos. We conducted another Bayesian Data Analysis comparing feature vectors adapted from \emph{pool1}, \emph{conv42}, and \emph{fc6}, respectively, as our raw similarity function. We found that the sketcher adapted from the later layer of \emph{fc6} performed better than the mid-layer of \emph{conv42} ($BF= XX$, which in turn performed better than \emph{pool1} ($BF = XX$; see Fig. \ref{model_results}B).
 
 \begin{figure*}[htbp]
 \centering
 \includegraphics[width=0.95\textwidth]{figures/4_model_schematic.pdf}
 \caption{(A) Architecture of visual encoder model for sketches and object renderings. Consists of pre-trained deep convolutional neural network (VGG-19) and shallow nonlinear ``adaptor'' neural network to evaluate sketch-object similarity. Takes a sketch and object image as input, and outputs a similarity score reflecting how well the sketch resembles the object. Adaptor was trained on a subset of our dataset, and evaluated on held-out sketches. (B) Sketch-object similarity computed for each object in context and each sketch in the test set. To determine the relative informativity of each sketch, the similarity scores between this sketch and all four objects were softmax normalized. The cost of each sketch was assumed to vary with the amount of time taken to produce it.}
-\label{task_performance}
+\label{model_schematic}
 \end{figure*}
-
 
 %% report generalization performance of visual adaptor on the appropriate splits?
 
@@ -182,10 +175,18 @@ Next, to test the influence of perceptual representations, we compared our empir
 Having established the need for all three components, we proceed to
 
 
-\subsubsection*{Code availability} The code for the analyses presented in this article is publicly available in a Github repository at: XX.
+\section*{Discussion}
+
+In this study, we explored how communicative context influences real-time natural visual communication behavior. 
+
+We collected a rich behavioral dataset and developed an integrated computational model that explains contextual flexibility in human visual communication by combining constraints from perception and pragmatic reasoning.
+
+Together, this work provides the first unified computational theory of how perception and social cognition support contextual flexibility in real-time visual communication.
+
+\subsubsection*{Code availability} The code for the analyses presented in this article is publicly available in a Github repository at: \url{https://github.com/judithfan/visual_communication_in_context}.
 
 \subsubsection*{Data availability} The data presented in this article are publicly available at this URL: XX.
-ras
+
 \subsection*{Supporting Information (SI)}
 
 % The main text of the paper must stand on its own without the SI. Refer to SI in the manuscript at an appropriate point in the text. Number supporting figures and tables starting with S1, S2, etc. Authors are limited to no more than 10 SI files, not including movie files. Authors who place detailed materials and methods in SI must provide sufficient detail in the main text methods to enable a reader to follow the logic of the procedures and results and also must reference the online methods. If a paper is fundamentally a study of a new method or technique, then the methods must be described completely in the main text. Because PNAS edits SI and composes it into a single PDF, authors must provide the following file formats only.

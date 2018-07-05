@@ -78,6 +78,6 @@ var modelAnalysis = function() {
 };
 
 globalStore.iterationNum = 0;
-var outputERP = Infer({method: 'MCMC', samples: 1000, burn: 1000, lag: 0, model: modelAnalysis, onlyMAP: false});
+var outputERP = Infer({method: 'MCMC', samples: 1000, burn: 2000, lag: 0, model: modelAnalysis, onlyMAP: false});
 
 refModule.bayesianErpWriter(outputERP, "./bdaOutput/" + argv.perception + "_" + argv.splitType + "/raw/" + globalConfig.outputFileName);
