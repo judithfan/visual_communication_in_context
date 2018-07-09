@@ -4,6 +4,7 @@
 
 // Load in experimental data to condition on
 var experimentVersion = 'fixedPose96'; // 'fixedPose', 'varyingPose', etc
+var aggregate = true;
 var splitType = argv.splitType; //balancedavg1
 var simScaling = argv.simScaling;
 
@@ -17,14 +18,13 @@ console.log("Loading expt data complete..." + data.length + " data points");
 // Cache some properties of model
 // Note: when moving to model comparison, can precache for all models...
 var similarities = refModule.getSimilarities(splitType);
-var costs = refModule.getCosts(experimentVersion + '-drawDuration');
-var possibleSketches = refModule.getPossibleSketches(data);
-var conditionLookup = refModule.getConditionLookup();
+var costs = refModule.getCosts(experimentVersion + '-cost_duration-average', splitType);
+var conditionLookup = refModule.getConditionLookup(splitType);
+var possibleSketches = refModule.getPossibleSketches(data, {aggregate,conditionLookup});
 
 // Package into config
 var globalConfig = {
-  similarities, possibleSketches, costs, conditionLookup,
-  aggregate: true,
+  similarities, possibleSketches, costs, conditionLookup, aggregate,
   outputFileName : [splitType, 'sim ' + simScaling, 'enumerate'].join('_')
 };
 
