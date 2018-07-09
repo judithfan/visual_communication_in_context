@@ -1,48 +1,46 @@
 // run using:
 
-// webppl BDA-enumerate.wppl --require ./refModule/ -- --perception multimodal_full25k --pragmatics combined --production cost
+// webppl BDA-enumerate.wppl --require ./refModule/ -- --splitType <balancedavg1> --simScaling 2
 
 // Load in experimental data to condition on
 var experimentVersion = 'fixedPose96'; // 'fixedPose', 'varyingPose', etc
-var splitType = 'splitbyobject';
-var data = refModule.readCSV('./bdaInput/sketchData_fixedPose_' + splitType + '_' + argv.perception + '_pilot2_costOutliersRemoved.csv');
+var splitType = argv.splitType; //balancedavg1
+var simScaling = argv.simScaling;
 
+// Note that 'pool1' is just in the file name, but isn't specific to that perceptual model
+var dataFilename = ['sketchData', 'fixedPose', splitType,
+		    'multimodal_pool1', 'pilot2', 'costOutliersRemoved.csv'].join("_");
+var dataPath = ['.', 'bdaInput', splitType, dataFilename].join("/");
+var data = refModule.readCSV(dataPath);
 console.log("Loading expt data complete..." + data.length + " data points");
 
 // Cache some properties of model
 // Note: when moving to model comparison, can precache for all models...
-var similarities = refModule.getSimilarities();
+var similarities = refModule.getSimilarities(splitType);
 var costs = refModule.getCosts(experimentVersion + '-drawDuration');
 var possibleSketches = refModule.getPossibleSketches(data);
 var conditionLookup = refModule.getConditionLookup();
-console.log("Loading model data complete..."
-	    + possibleSketches.length + " sketches of " +
-	    + _.keys(similarities['sketch_avg_full25k']).length + " objects." );
 
 // Package into config
 var globalConfig = {
   similarities, possibleSketches, costs, conditionLookup,
   aggregate: true,
-  outputFileName : argv.perception + '_' + argv.pragmatics + '_' + argv.production + '_enumerate' 
+  outputFileName : [splitType, 'sim ' + simScaling, 'enumerate'].join('_')
 };
 
 var paramPrior = function() {
-  var perception = argv.perception; // human, fc6, sketch_average_full25k
-  var pragmatics = argv.pragmatics; // S0, S1, combined
-  var production = argv.production; // cost, nocost
-  var infWeight  = uniformDraw(_.range(0,8,.5));//uniformDrift({a:0,b:10,width:0.1}) 
+  var perception = uniformDraw(['human', 'multimodal_fc6', 'multimodal_conv42', 'multimodal_pool1']);
+  console.log('perception: ' + perception);
+  var infWeight  = uniformDraw(_.range(0,8,.5)).toFixed(1);//uniformDrift({a:0,b:10,width:0.1}) 
   console.log('inf: ' + infWeight); 
-  var simScaling = uniformDraw(_.range(0,20,.5));//{a:0,b:30,width:1})),
-  console.log('sim: ' + simScaling);
-  var pragWeight = uniformDraw(_.range(0,1.01,0.05));//uniformDrift({a:0,b:1,width:0.1})),
+  var pragWeight = uniformDraw(_.range(0,1.01,0.05)).toFixed(3);//uniformDrift({a:0,b:1,width:0.1})),
   console.log('prag: ' + pragWeight);
   return {
-    pragmatics, production,
-    perception : uniformDraw(['multimodal_full25k', 'human_full25k']),
+    perception : perception,
     infWeight: infWeight,
     simScaling : simScaling,
     pragWeight: pragWeight,
-    costWeight : uniformDraw(_.range(0,8.01,0.5))//{a:0,b:10,width:0.1})),
+    costWeight : uniformDraw(_.range(0,8.01,0.5)).toFixed(2)//{a:0,b:10,width:0.1})),
   };
 };
 
@@ -61,7 +59,7 @@ var modelAnalysis = function() {
 
   factor(score);
 
-  var paramsKey = _.values(_.omit(params, ['pragmatics', 'production'])).join(',');
+  var paramsKey = _.values(params).join(',');
   return {
     params : _.zipObject([paramsKey], [score.toFixed(2)])
   };
