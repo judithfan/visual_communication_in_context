@@ -174,6 +174,7 @@ var locParse = function(filename) {
 
 module.exports = {
   getSimilarities, getPossibleSketches, getCosts, getSubset, getConditionLookup,
+  writeRow, appendRow,
   predictiveSupportWriter,
   getL0score, getSpeakerScore,
   bayesianErpWriter, writeCSV, readCSV, locParse
