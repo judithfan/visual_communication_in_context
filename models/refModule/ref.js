@@ -107,6 +107,13 @@ function appendCSV(jsonCSV, filename){
   fs.appendFileSync(filename, babyparse.unparse(jsonCSV) + '\n');
 }
 
+function writeRow(row, filename){
+  fs.writeFileSync(filename, row + '\n');
+}
+function appendRow(row, filename){
+  fs.appendFileSync(filename, row + '\n');
+}
+
 var paramSupportWriter = function(i, s, p, handle) {
   var sLst = _.toPairs(s);
   var l = sLst.length;
