@@ -28,41 +28,39 @@ var globalConfig = {
   outputFileName : [splitType, 'sim ' + simScaling, 'enumerate'].join('_')
 };
 
-var paramPrior = function() {
-  var perception = uniformDraw(['multimodal_conv42', 'multimodal_pool1', 'human', 'multimodal_fc6']);
-  console.log('perception: ' + perception);
-  var infWeight  = uniformDraw(_.range(0,8,.5)).toFixed(1);//uniformDrift({a:0,b:10,width:0.1}) 
-  console.log('inf: ' + infWeight); 
-  var pragWeight = uniformDraw(_.range(0,1.01,0.05)).toFixed(3);//uniformDrift({a:0,b:1,width:0.1})),
-  console.log('prag: ' + pragWeight);
-  return {
-    perception : perception,
-    infWeight: infWeight,
-    simScaling : simScaling,
-    pragWeight: pragWeight,
-    costWeight : uniformDraw(_.range(0,8.01,0.5)).toFixed(2)//{a:0,b:10,width:0.1})),
-  };
-};
+var perceptionLevels = ['multimodal_conv42', 'multimodal_pool1', 'human', 'multimodal_fc6'];
+var infWeightLevels = _.range(0,8,.5).toFixed(1);
+var pragWeightLevels = _.range(0,1.01,0.05).toFixed(2);
+var costWeightLevels = _.range(0,8.01,0.5).toFixed(2);
 
-var modelAnalysis = function() {
-  var params = paramPrior();
-  var score = reduce(function(c, memo) {
-    // Extract condition information
-    var conditionType = c.condition;
-    var context = [c.Target, c.Distractor1, c.Distractor2, c.Distractor3];
-    var modelOutput = speakerModel(c.Target, context, params, globalConfig);
-    var sketchInfo = globalConfig.aggregate ? c.coarseGrainedSketchInfo : c.sketchLabel;
-    return memo + modelOutput.score(sketchInfo);
-  }, 0, data);
+// write header at beginning
+var filename = './enumerateOutput/' + globalConfig.outputFileName;
+refModule.writeRow(filename, 'perception,infWeight,simScaling,pragWeight,costWeight,loglikelihood');
 
-  factor(score);
+// Kind of silly way to write out every sample...
+foreach(perceptionLevels, function(perception) {
+  foreach(infWeightLevels, function(infWeight) {
+    foreach(pragWeightLevels, function(pragWeight) {
+      foreach(costWeightLevels, function(costWeight) {
+	var params = {
+	  perception : perception,
+	  infWeight: infWeight,
+	  simScaling : simScaling,
+	  pragWeight: pragWeight,
+	  costWeight : costWeight
+	};	
 
-  var paramsKey = _.values(params).join(',');
-  return {
-    params : _.zipObject([paramsKey], [score.toFixed(2)])
-  };
-};
+	var score = reduce(function(c, memo) {
+	  // Extract condition information
+	  var conditionType = c.condition;
+	  var context = [c.Target, c.Distractor1, c.Distractor2, c.Distractor3];
+	  var modelOutput = speakerModel(c.Target, context, params, globalConfig);
+	  var sketchInfo = globalConfig.aggregate ? c.coarseGrainedSketchInfo : c.sketchLabel;
+	  return memo + modelOutput.score(sketchInfo);
+	}, 0, data);	
 
-// var outputERP = Infer({method: 'MCMC', samples: 1000, burn: 250, lag: 0, model: modelAnalysis, onlyMAP: false});
-var outputERP = Infer({method: 'enumerate', model: modelAnalysis});
-refModule.bayesianErpWriter(outputERP, "./bdaOutput/" + globalConfig.outputFileName);
+	refModule.appendRow(filename, _.values(params).concat(score).join(','));
+      });
+    });
+  });
+});
