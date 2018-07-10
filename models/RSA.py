@@ -14,21 +14,21 @@ import numpy as np
 
 def run_bda(perception, pragmatics, production, split_type):
     if not os.path.exists('./bdaOutput'):
-        os.makeidirs('./bdaOutput')    
+        os.makedirs('./bdaOutput')    
     cmd_string = 'webppl BDA.wppl --require ./refModule/ -- --perception {} --pragmatics {} --production {} --splitType {}'.format(perception, pragmatics, production, split_type)
     print 'Running: {}'.format(cmd_string)
     thread.start_new_thread(os.system,(cmd_string,))
 
 def run_bda_enumerate(simScaling, split_type):
     if not os.path.exists('./enumerateOutput'):
-        os.makeidirs('./enumerateOutput')
+        os.makedirs('./enumerateOutput')
     cmd_string = 'webppl BDA-enumerate.wppl --require ./refModule/ -- --simScaling {} --splitType {}'.format(simScaling, split_type)
     print 'Running: {}'.format(cmd_string)
     thread.start_new_thread(os.system,(cmd_string,))
 
 def run_evaluate(perception, pragmatics, production, split_type):
     if not os.path.exists('./evaluateOutput'):
-        os.makeidirs('./evaluateOutput')     
+        os.makedirs('./evaluateOutput')     
     cmd_string = 'webppl evaluate.wppl --require ./refModule/ -- --paramSetting {}_{}_{} --adaptorType {} --splitType {}'.format(perception, pragmatics, production, perception, split_type)
     print 'Running: {}'.format(cmd_string)
     thread.start_new_thread(os.system,(cmd_string,))
