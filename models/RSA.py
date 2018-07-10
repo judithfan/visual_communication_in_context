@@ -10,6 +10,7 @@ import numpy as np
 ### python RSA.py --wppl evaluate --perception multimodal_conv42 --pragmatics combined --production cost --split_type balancedavg1 balancedavg2 balancedavg3 balancedavg4 balancedavg5
 ### python RSA.py --wppl evaluate --perception multimodal_fc6 --pragmatics S0 --production cost --split_type balancedavg1 balancedavg2 balancedavg3 balancedavg4 balancedavg5
 ### python RSA.py --wppl evaluate --perception multimodal_fc6 --pragmatics combined --production nocost --split_type balancedavg1 balancedavg2 balancedavg3 balancedavg4 balancedavg5
+### python RSA.py --wppl BDA-enumerate --sim_scaling_lb 1 --sim_scaling_ub 200 --step_size 2 --split_type balancedavg1
 
 def run_bda(perception, pragmatics, production, split_type):
     cmd_string = 'webppl BDA.wppl --require ./refModule/ -- --perception {} --pragmatics {} --production {} --splitType {}'.format(perception, pragmatics, production, split_type)
@@ -42,9 +43,13 @@ if __name__ == "__main__":
     parser.add_argument('--split_type', nargs='+', type=str, \
                         help='option: splitbyobject | alldata | balancedavg',\
                         default = 'balancedavg')
-    parser.add_argument('--sim_scaling', type=float, \
-                        help='for BDA-enumerate only: this is the upper bound for the simScaling param. \
-                              We will sweep through values from (1, sim_scaling) in step size of 2',\
+    parser.add_argument('--sim_scaling_lb', type=float, \
+                        help='for BDA-enumerate only: this is the LOWER bound for the simScaling param. \
+                              We will sweep through values from (sim_scaling_lb, sim_scaling_ub) in step_size sized steps',\
+                        default = 1.0) 
+    parser.add_argument('--sim_scaling_ub', type=float, \
+                        help='for BDA-enumerate only: this is the UPPER bound for the simScaling param. \
+                              We will sweep through values from (sim_scaling_lb, sim_scaling_ub) in step_size sized steps',\
                         default = 200.0) 
     parser.add_argument('--step_size', type=float, \
                         help='for BDA-enumerate only: this is the step size we will use to march through \
@@ -57,14 +62,15 @@ if __name__ == "__main__":
     production = args.production
     pragmatics = args.pragmatics
     split_type = args.split_type
-    sim_scaling = args.sim_scaling
+    lb = args.sim_scaling_lb
+    ub = args.sim_scaling_ub
     step_size = args.step_size
 
     assert args.wppl in ['BDA','evaluate', 'BDA-enumerate']
 
     ## first run BDA-enumerate.wppl
     if 'BDA-enumerate' in args.wppl:
-        ss_range = np.arange(1,sim_scaling,step_size)
+        ss_range = np.arange(lb,ub,step_size)
         for i,ss in enumerate(ss_range):        
             for split in split_type:
                 run_bda_enumerate(ss,split)
