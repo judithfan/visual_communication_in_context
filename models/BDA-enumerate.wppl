@@ -25,7 +25,7 @@ var possibleSketches = refModule.getPossibleSketches(data, {aggregate,conditionL
 // Package into config
 var globalConfig = {
   similarities, possibleSketches, costs, conditionLookup, aggregate,
-  outputFileName : [splitType, 'sim_' + simScaling, 'enumerate'].join('_')
+  outputFileName : [splitType, 'sim_' + simScaling, 'enumerate'].join('_')+'.csv'
 };
 
 var perceptionLevels = ['multimodal_conv42', 'multimodal_pool1', 'human', 'multimodal_fc6'];

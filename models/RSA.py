@@ -16,8 +16,8 @@ def run_bda(perception, pragmatics, production, split_type):
     print 'Running: {}'.format(cmd_string)
     thread.start_new_thread(os.system,(cmd_string,))
 
-def run_bda_enumerate(simScaling, splitType):
-    cmd_string = 'webppl BDA-enumerate.wppl --require ./refModule/ -- --simScaling {} --splitType {}'.format(simScaling, splitType)
+def run_bda_enumerate(simScaling, split_type):
+    cmd_string = 'webppl BDA-enumerate.wppl --require ./refModule/ -- --simScaling {} --splitType {}'.format(simScaling, split_type)
     print 'Running: {}'.format(cmd_string)
     thread.start_new_thread(os.system,(cmd_string,))
 
