@@ -25,29 +25,32 @@ var possibleSketches = refModule.getPossibleSketches(data, {aggregate,conditionL
 // Package into config
 var globalConfig = {
   similarities, possibleSketches, costs, conditionLookup, aggregate,
-  outputFileName : [splitType, 'sim ' + simScaling, 'enumerate'].join('_')
+  outputFileName : [splitType, 'sim_' + simScaling, 'enumerate'].join('_')+'.csv'
 };
 
 var perceptionLevels = ['multimodal_conv42', 'multimodal_pool1', 'human', 'multimodal_fc6'];
-var infWeightLevels = _.range(0,8,.5).toFixed(1);
-var pragWeightLevels = _.range(0,1.01,0.05).toFixed(2);
-var costWeightLevels = _.range(0,8.01,0.5).toFixed(2);
+var infWeightLevels = _.range(0,50,1);
+var pragWeightLevels = _.range(0,1.01,0.05);
+var costWeightLevels = _.range(0,12.01,0.5);
 
 // write header at beginning
 var filename = './enumerateOutput/' + globalConfig.outputFileName;
-refModule.writeRow(filename, 'perception,infWeight,simScaling,pragWeight,costWeight,loglikelihood');
+refModule.writeRow('perception,infWeight,simScaling,pragWeight,costWeight,loglikelihood', filename);
 
 // Kind of silly way to write out every sample...
 foreach(perceptionLevels, function(perception) {
+  console.log('perception level: ' + perception);
   foreach(infWeightLevels, function(infWeight) {
+    console.log('inf level: ' + infWeight);
     foreach(pragWeightLevels, function(pragWeight) {
+      console.log('prag level: ' + pragWeight);
       foreach(costWeightLevels, function(costWeight) {
 	var params = {
 	  perception : perception,
-	  infWeight: infWeight,
-	  simScaling : simScaling,
-	  pragWeight: pragWeight,
-	  costWeight : costWeight
+	  infWeight: infWeight.toFixed(2),
+	  simScaling : simScaling.toFixed(2),
+	  pragWeight: pragWeight.toFixed(2),
+	  costWeight : costWeight.toFixed(2)
 	};	
 
 	var score = reduce(function(c, memo) {
@@ -59,7 +62,7 @@ foreach(perceptionLevels, function(perception) {
 	  return memo + modelOutput.score(sketchInfo);
 	}, 0, data);	
 
-	refModule.appendRow(filename, _.values(params).concat(score).join(','));
+	refModule.appendRow(_.values(params).concat(score.toFixed(2)).join(','), filename);
       });
     });
   });

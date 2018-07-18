@@ -5,7 +5,8 @@
   "main": "index.js",
   "dependencies": {
     "babyparse": "^0.4.6",
-    "lodash": "^4.17.5"
+    "lodash": "^4.17.5",
+    "webppl": "^0.9.12"
   },
   "devDependencies": {},
   "scripts": {
