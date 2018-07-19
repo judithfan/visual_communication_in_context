@@ -53,14 +53,14 @@ humanPosterior %>%
   filter(pragWeight == 0) %>%
   summarize(posterior = reduce(logPosteriorProb, sumlogprob),
             prior = reduce(logPriorProb, sumlogprob)) %>% 
-  mutate(BF = exp(posterior - prior))
+  mutate(BF = 1/exp(posterior - prior))
 
 ## Next, consider nested 'no cost' model and integrate over nuisance params to get Bayes Factor=
 humanPosterior %>%
   filter(costWeight == 0) %>%
   summarize(posterior = reduce(logPosteriorProb, sumlogprob),
             prior = reduce(logPriorProb, sumlogprob)) %>% 
-  mutate(BF = exp(posterior - prior))
+  mutate(BF = 1/exp(posterior - prior))
 ```
 
 * Inside 3 vision models, compare vision models
@@ -92,14 +92,14 @@ fc6Posterior %>%
   filter(pragWeight == 0) %>%
   summarize(posterior = reduce(logPosteriorProb, sumlogprob),
             prior = reduce(logPriorProb, sumlogprob)) %>% 
-  mutate(BF = exp(posterior - prior))
+  mutate(BF = 1/exp(posterior - prior))
 
 ## Next, consider nested 'no cost' model and integrate over nuisance params to get Bayes Factor=
 fc6Posterior %>%
   filter(costWeight == 0) %>%
   summarize(posterior = reduce(logPosteriorProb, sumlogprob),
             prior = reduce(logPriorProb, sumlogprob)) %>% 
-  mutate(BF = exp(posterior - prior))
+  mutate(BF = 1/exp(posterior - prior))
 
 ```
 
@@ -120,7 +120,6 @@ HPDlo<- function(s){
   m <- HPDinterval(mcmc(s))
   return(m["var1","lower"])
 }
-options("scipen"=10) 
 ```
 
 ```{r}
