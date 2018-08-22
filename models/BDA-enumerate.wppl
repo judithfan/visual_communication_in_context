@@ -34,7 +34,7 @@ var pragWeightLevels = _.range(0,1.01,0.05);
 var costWeightLevels = _.range(0,12.01,0.5);
 
 // write header at beginning
-var filename = './enumerateOutput/' + globalConfig.outputFileName;
+var filename = './enumerateOutput/' + splitType + '/' + globalConfig.outputFileName;
 refModule.writeRow('perception,infWeight,simScaling,pragWeight,costWeight,loglikelihood', filename);
 
 // Kind of silly way to write out every sample...
