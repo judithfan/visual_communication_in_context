@@ -10,7 +10,7 @@ import numpy as np
 ### python RSA.py --wppl evaluate --perception multimodal_conv42 --pragmatics combined --production cost --split_type balancedavg1 balancedavg2 balancedavg3 balancedavg4 balancedavg5
 ### python RSA.py --wppl evaluate --perception multimodal_fc6 --pragmatics S0 --production cost --split_type balancedavg1 balancedavg2 balancedavg3 balancedavg4 balancedavg5
 ### python RSA.py --wppl evaluate --perception multimodal_fc6 --pragmatics combined --production nocost --split_type balancedavg1 balancedavg2 balancedavg3 balancedavg4 balancedavg5
-### python RSA.py --wppl BDA-enumerate --sim_scaling_lb 167 --sim_scaling_ub 200 --step_size 2 --split_type balancedavg1
+### python RSA.py --wppl BDA-enumerate --sim_scaling_lb 165 --sim_scaling_ub 167 --step_size 2 --split_type balancedavg1
 
 def run_bda(perception, pragmatics, production, split_type):
     if not os.path.exists('./bdaOutput'):
@@ -22,6 +22,8 @@ def run_bda(perception, pragmatics, production, split_type):
 def run_bda_enumerate(simScaling, split_type):
     if not os.path.exists('./enumerateOutput'):
         os.makedirs('./enumerateOutput')
+    if not os.path.exists(os.path.join('./enumerateOutput',split_type)):
+        os.makedirs(os.path.join('./enumerateOutput',split_type))
     cmd_string = 'webppl BDA-enumerate.wppl --require ./refModule/ -- --simScaling {} --splitType {}'.format(simScaling, split_type)
     print 'Running: {}'.format(cmd_string)
     thread.start_new_thread(os.system,(cmd_string,))
