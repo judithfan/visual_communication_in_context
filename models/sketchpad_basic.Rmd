@@ -14,12 +14,7 @@ library(ggthemes)
 # # Note: to install langcog, 
 # library(langcog)
 library(jsonlite)
-```
 
-# Explore predictives
-
-```{r}
-# helpers
 sumlogprob <- function(a, b) {
   if(a>b) {
     return(a+log1p(exp(b-a)))
@@ -27,6 +22,145 @@ sumlogprob <- function(a, b) {
     return(b+log1p(exp(a-b)))
   }
 }
+```
+
+# Explore priors
+
+```{r}
+## Noticed that for some reason, some files duplicated param levels so we use `distinct` to remove duplicates
+posterior = read_csv('./enumerateOutput.csv') %>%
+  distinct() %>% 
+  mutate(logPriorProb = -log(length(loglikelihood))) %>%
+  mutate(normalizingConstant = reduce(loglikelihood, sumlogprob)) %>%
+  mutate(logPosteriorProb = loglikelihood - normalizingConstant) 
+
+str(posterior)
+```
+
+Examine difference in perception model, collapsing over params
+
+* Within human, test informativity & cost
+
+```{r}
+## First, restrict to human and normalize everything to sum to 1
+humanPosterior <- posterior %>%
+  filter(perception == 'human') %>%
+  mutate(logPosteriorProb = logPosteriorProb - reduce(logPosteriorProb, sumlogprob),
+         logPriorProb = -log(length(logPriorProb))) #%>% summarize(a = reduce(logPriorProb, sumlogprob), b = reduce(logPosteriorProb, sumlogprob))
+
+## Next, consider nested 'no pragmatics' model and integrate over nuisance params to get Bayes Factor
+humanPosterior %>%
+  filter(pragWeight == 0) %>%
+  summarize(posterior = reduce(logPosteriorProb, sumlogprob),
+            prior = reduce(logPriorProb, sumlogprob)) %>% 
+  mutate(BF = 1/exp(posterior - prior))
+
+## Next, consider nested 'no cost' model and integrate over nuisance params to get Bayes Factor=
+humanPosterior %>%
+  filter(costWeight == 0) %>%
+  summarize(posterior = reduce(logPosteriorProb, sumlogprob),
+            prior = reduce(logPriorProb, sumlogprob)) %>% 
+  mutate(BF = 1/exp(posterior - prior))
+```
+
+* Inside 3 vision models, compare vision models
+
+```{r}
+modelPosterior <- posterior %>%
+  filter(perception != 'human') %>%
+  mutate(logPosteriorProb = logPosteriorProb - reduce(logPosteriorProb, sumlogprob),
+         logPriorProb = -log(length(logPriorProb))) #%>% summarize(a = reduce(logPriorProb, sumlogprob), b = reduce(logPosteriorProb, sumlogprob))
+
+modelPosterior %>%
+  group_by(perception) %>%
+  summarize(posterior = reduce(logPosteriorProb, sumlogprob)) %>% 
+  spread(perception, posterior) %>%
+  summarize(BF_fc6_conv42 = exp(multimodal_fc6 - multimodal_conv42),
+            BF_fc6_pool1  = exp(multimodal_fc6 - multimodal_pool1))
+
+```
+
+* Within best vision model, test informativity & cost...
+
+```{r}
+fc6Posterior <- posterior %>%
+  filter(perception == 'multimodal_fc6') %>%
+  mutate(logPosteriorProb = loglikelihood - reduce(loglikelihood, sumlogprob),
+         logPriorProb = -log(length(logPriorProb))) #%>% summarize(a = reduce(logPriorProb, sumlogprob), b = reduce(logPosteriorProb, sumlogprob))
+
+fc6Posterior %>%
+  filter(pragWeight == 0) %>%
+  summarize(posterior = reduce(logPosteriorProb, sumlogprob),
+            prior = reduce(logPriorProb, sumlogprob)) %>% 
+  mutate(BF = 1/exp(posterior - prior))
+
+## Next, consider nested 'no cost' model and integrate over nuisance params to get Bayes Factor=
+fc6Posterior %>%
+  filter(costWeight == 0) %>%
+  summarize(posterior = reduce(logPosteriorProb, sumlogprob),
+            prior = reduce(logPriorProb, sumlogprob)) %>% 
+  mutate(BF = 1/exp(posterior - prior))
+
+```
+
+Visualize marginals w/ facet plot
+
+```{r}
+library(coda)
+
+estimate_mode <- function(s) {
+  d <- density(s)
+  return(d$x[which.max(d$y)])
+}
+HPDhi<- function(s){
+  m <- HPDinterval(mcmc(s))
+  return(m["var1","upper"])
+}
+HPDlo<- function(s){
+  m <- HPDinterval(mcmc(s))
+  return(m["var1","lower"])
+}
+```
+
+```{r}
+samples = humanPosterior %>%
+    mutate(posterior = exp(logPosteriorProb)) %>%
+    filter(posterior > 0.0001) %>%
+    mutate(n = floor(posterior*10000)) %>%
+    do(data.frame(.[rep(1:nrow(.), .$n),])) %>%
+    select(-perception, -n, -posterior, -loglikelihood, -logPosteriorProb, -logPriorProb, -normalizingConstant) %>%
+    gather(parameter, value) #%>%
+    #mutate(value = as.numeric(as.character( value)))
+
+samples %>%
+  group_by(parameter) %>%
+  summarize(mode = estimate_mode(value),
+            md_lo = round(HPDlo(value), 3),
+            md_hi = round(HPDhi(value), 3))
+
+ggplot(samples, aes(x = value))+
+  geom_density(aes(y=..density..), adjust = 0.05) +
+    # geom_histogram(aes(y=..density..), 
+    #              data =subset(samples, parameter == "alpha" ), 
+    #              binwidth = .25, colour="black", fill="white") +
+    # geom_histogram(aes(y=..density..), 
+    #              data=subset(samples, parameter == "beta"), 
+    #              binwidth = .05, colour="black", fill="white") +
+    # geom_density(aes(y=..density..),
+    #              data =subset(samples, parameter == "alpha" ), 
+    #              adjust = 2, alpha=.2, fill="#FF6666")+
+    # geom_density(aes(y=..density..),
+    #              data=subset(samples, parameter == "beta"), 
+    #              adjust = 5, alpha=.2, fill="#FF6666")+
+    facet_wrap(~ parameter, scales = 'free') +
+    theme_few(10)
+```
+
+# Explore predictives
+
+```{r}
+# helpers
+
 
 dogs <- c('weimaraner', 'chihuahua', 'basset', 'doberman', 'bloodhound', 'bullmastiff', 'goldenretriever', 'pug')
 chairs = c('leather', 'straight', 'squat', 'sling', 'woven', 'waiting', 'inlay','knob')
