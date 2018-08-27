@@ -18,6 +18,8 @@ model_space = ['human_combined_cost','multimodal_fc6_combined_cost','multimodal_
 
 if __name__ == "__main__":
     import argparse
+    parser = argparse.ArgumentParser()
+    
     parser.add_argument('--model', type=str, 
                                    help='which model? human_combined_cost | \
                                                       multimodal_fc6_combined_cost | \
