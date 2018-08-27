@@ -19,7 +19,7 @@ model_space = ['human_combined_cost','multimodal_fc6_combined_cost','multimodal_
 if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser()
-    
+
     parser.add_argument('--model', type=str, 
                                    help='which model? human_combined_cost | \
                                                       multimodal_fc6_combined_cost | \
@@ -88,7 +88,6 @@ if __name__ == "__main__":
         ## read in predictions from this sample        
         sample_preds = pd.read_csv(this_sample)
         sample_ind = int(this_sample.split('/')[-1].split('Predictives.csv')[0]) ## index of MCMC sample
-        clear_output(wait=True)        
 
         ## get params that generated these predictions
     #     simScaling = params.iloc[sample_ind]['simScaling']
