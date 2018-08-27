@@ -3,6 +3,13 @@ import numpy as np
 import os
 import analysis_helpers as h
 
+'''
+See the script get_all_model_predictions.py, which is a wrapper around 
+this script, generate_model_predictions.py to generate csv files that 
+summarize key statistics of interest (e.g., target rank, cost)
+from model predictions, for each model and data split.
+'''
+
 split_types = ['balancedavg1','balancedavg2','balancedavg3','balancedavg4','balancedavg5']
 
 model_space = ['human_combined_cost','multimodal_fc6_combined_cost','multimodal_conv42_combined_cost',
