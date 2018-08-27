@@ -204,6 +204,11 @@ def plot_gallery(category):
     
 ###### MODEL COMPARISON HELPERS ######
 
+def load_json(path):
+    with open(path) as f:
+        J = json.load(f)   
+    return J
+
 def sumlogprob(a,b):
     if (a > b):
         return a + np.log1p(np.exp(b-a))
@@ -258,7 +263,6 @@ def make_category_by_obj_palette():
     for j in sns.color_palette("hls", 4):
         col.append([i for i in itertools.repeat(j, 8)])
     return flatten(col)
-
 
 def model_comparison_bars(model_prefixes,adaptor_type='human',split_type='balancedavg'):
     '''
@@ -481,4 +485,13 @@ def get_sense_for_param_range_across_splits():
             maxInf = np.max(params.infWeight.values)
 
             print 'model {} split {}'.format(model,split_type)
-            print 'max | sim: {} prag: {} cost: {} inf: {}'.format(maxSim,maxPrag,maxCost,maxInf)            
+            print 'max | sim: {} prag: {} cost: {} inf: {}'.format(maxSim,maxPrag,maxCost,maxInf) 
+            
+def weight_cost_by_modelProb(x):
+    '''
+    in order to determine the average sketch cost predicted by the model for this trial,
+    take mean cost across all sketch categories weighted by the probability assigned to that sketch category
+    
+    note: modelProb is in log space, so you need to exponentiate before multiplying by cost
+    '''
+    return np.exp(x['modelProb']) * x['cost']            
