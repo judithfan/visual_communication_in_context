@@ -23,10 +23,16 @@ if __name__ == "__main__":
 	## which split?
 	which_split = os.listdir(results_dir)[0].split('_')[0]
 
-	## go through and run RSA.py for earliest to latest in list of still to run
-	lb = still_to_run[0]
-	ub = still_to_run[-1]
-	print 'Lower bound: {} Upper bound: {}'.format(lb, ub)
-	cmd_string = 'python RSA.py --wppl BDA-enumerate --sim_scaling_lb {} --sim_scaling_ub {} --step_size 2 --split_type {}'.format(lb, ub, which_split)
-	print 'Running: {}'.format(cmd_string)
-	os.system(cmd_string)
+	if len(still_to_run)>0:
+
+		## go through and run RSA.py for earliest to latest in list of still to run
+		lb = still_to_run[0]
+		ub = still_to_run[-1]
+		print 'Lower bound: {} Upper bound: {}'.format(lb, ub)
+		cmd_string = 'python RSA.py --wppl BDA-enumerate --sim_scaling_lb {} --sim_scaling_ub {} --step_size 2 --split_type {}'.format(lb, ub, which_split)
+		print 'Running: {}'.format(cmd_string)
+		os.system(cmd_string)
+
+	else:
+
+		print 'No more left to run, you should be all set.'
