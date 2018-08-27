@@ -81,8 +81,7 @@ if __name__ == "__main__":
 
     ## loop through MCMC samples
     for i,this_sample in enumerate(pred_files):
-        print 'Currently evaluating {} {}'.format(model,split_type)
-        print'{} | sample ID: {} '.format(i,int(this_sample.split('/')[-1].split('Predictives.csv')[0]))
+        print 'Currently evaluating {} {} {} | sample ID: {}'.format(model, split_type, i, int(this_sample.split('/')[-1].split('Predictives.csv')[0]))
 
         ## read in predictions from this sample        
         sample_preds = pd.read_csv(this_sample)
