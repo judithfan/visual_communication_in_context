@@ -72,6 +72,8 @@ if __name__ == "__main__":
     split_type = args.split_type
     lb = args.sim_scaling_lb
     ub = args.sim_scaling_ub
+    if lb==ub: ## to get last value in range, make sure that np.arange has an interval of non-zero length to work with
+        ub = ub + 2
     step_size = args.step_size
 
     assert args.wppl in ['BDA','evaluate', 'BDA-enumerate']
