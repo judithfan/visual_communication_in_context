@@ -1,3 +1,4 @@
+from __future__ import division
 import os
 import json
 import numpy as np
@@ -520,17 +521,23 @@ def load_model_predictions(model='human_combined_cost',
     
 def load_all_model_preds(split_types = ['balancedavg1','balancedavg2','balancedavg3','balancedavg4','balancedavg5'],
                          model_space = ['human_combined_cost','multimodal_fc6_combined_cost','multimodal_conv42_combined_cost',\
-                                        'multimodal_fc6_S0_cost','multimodal_fc6_combined_nocost']):      
+                                        'multimodal_fc6_S0_cost','multimodal_fc6_combined_nocost'],
+                         verbosity=2):      
     
     '''
-    P is a nested dictionary containing all predictions dataframes for all five primary models of interest and five splits.
+    Load all model predictions from all five splits into a dictionary called P.
+    P is a nested dictionary containing all predictions dataframes for all five primary models of interest and five splits.    
+    P.keys() = ['multimodal_conv42_combined_cost', 'human_combined_cost', 'multimodal_fc6_combined_cost', 'multimodal_fc6_S0_cost', 'multimodal_fc6_combined_nocost']
+    Nested inside each model are dataframes containing model predictions from each split.    
     '''
     P = {}
     for model in model_space:
-        print 'Loading model preds from: {}'.format(model)
+        if verbosity>=1:
+            print 'Loading model preds from: {}'.format(model)
         P[model] = {}    
         for split_type in split_types:
-            print 'Loading split {}'.format(split_type)
+            if verbosity >=2:
+                print 'Loading split {}'.format(split_type)
             model_preds = load_model_predictions(model=model, 
                                                  split_type=split_type)
 
@@ -652,3 +659,49 @@ def plot_avg_rank_all_models(P,split_type='balancedavg1'):
     l = ax.set_xticklabels(xticklabels, rotation = 90, ha="left")
     plt.tight_layout()
     
+    
+def get_prop_congruent(X):
+    '''
+    make another data frame that computes, for each MCMC sample, the proportion of trials 
+    on which model assigns better rank to congruent sketch than sketch from opposite context category ('foil')
+    '''
+    XM = pd.DataFrame(X.groupby('sample_ind')['sign_diff_rank'].apply(lambda x: sum(x)/len(x))).reset_index()
+    adaptor = np.unique(X['adaptor'].values)[0]
+    adaptor = list(np.tile(adaptor,len(XM)))
+    XM = XM.assign(adaptor=pd.Series(adaptor).values)  
+    return XM
+
+def get_prop_congruent_all_models(P, split_type='balancedavg1'):
+    '''
+    Apply get_prog_congruent to all models
+    '''
+    H,M,M0,M1,M2 = get_convenient_handles_on_model_preds(P,split_type=split_type)
+    HU = get_prop_congruent(H)
+    MU = get_prop_congruent(M)
+    M0U = get_prop_congruent(M0)
+    M1U = get_prop_congruent(M1)    
+    M2U = get_prop_congruent(M2)
+    return HU,MU,M0U,M1U,M2U
+
+def plot_prop_congruent_all_models(P,split_type='balancedavg1'):
+    '''
+    Generate bar plot of proportion of trials for which context-congruent sketch preferred over incongruent sketch.
+    Wrapper around get_prop_congruent_all_models, which itself wraps around get_prop_congruent.
+    '''
+    HU,MU,M0U,M1U,M2U = get_prop_congruent_all_models(P,split_type=split_type)
+    sns.set_context('talk')
+    fig = plt.figure(figsize=(4,8))
+    ax = fig.add_subplot(111)     
+    D = pd.concat([HU,MU,M0U,M1U,M2U],axis=0)    
+    sns.barplot(data=D,
+                x='adaptor',
+                y='sign_diff_rank',ci='sd')
+    plt.axhline(y=0.5,linestyle='dashed',color='k')
+    plt.ylim([0,1])
+    plt.ylabel('proportion context-congruent sketch preferred')
+
+    xticklabels=['Context Cost Human','Context Cost HighAdaptor',
+                 'NoContext Cost HighAdaptor','Context NoCost HighAdaptor',
+                 'Context Cost MidAdaptor']
+    plt.xlabel('')
+    l = ax.set_xticklabels(xticklabels, rotation = 90, ha="left")
