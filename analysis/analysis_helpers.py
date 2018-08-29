@@ -1,3 +1,4 @@
+from __future__ import division
 import os
 import json
 import numpy as np
@@ -494,4 +495,313 @@ def weight_cost_by_modelProb(x):
     
     note: modelProb is in log space, so you need to exponentiate before multiplying by cost
     '''
-    return np.exp(x['modelProb']) * x['cost']            
+    return np.exp(x['modelProb']) * x['cost']    
+
+
+def convert_numeric(X):
+    ## make numeric types for aggregation
+    X['target_rank'] = pd.to_numeric(X['target_rank'])
+    X['foil_rank'] = pd.to_numeric(X['foil_rank'])
+    X['logprob'] = pd.to_numeric(X['logprob'])
+    return X
+
+def add_diff_rank(X):
+    X['diff_rank'] = X['target_rank'] - X['foil_rank']
+    X['sign_diff_rank'] = X['diff_rank']<0
+    return X
+
+def load_model_predictions(model='human_combined_cost',
+                           split_type='balancedavg1'):
+    model_preds = pd.read_csv('./csv/{}_{}_predictions.csv'.format(model,split_type))
+    model_preds = add_diff_rank(convert_numeric(model_preds))
+    if 'Unnamed: 0' in model_preds.columns:
+        model_preds.drop(columns=['Unnamed: 0'],inplace=True)    
+    
+    return model_preds
+    
+def load_all_model_preds(split_types = ['balancedavg1','balancedavg2','balancedavg3','balancedavg4','balancedavg5'],
+                         model_space = ['human_combined_cost','multimodal_fc6_combined_cost','multimodal_conv42_combined_cost',\
+                                        'multimodal_fc6_S0_cost','multimodal_fc6_combined_nocost'],
+                         verbosity=2):      
+    
+    '''
+    Load all model predictions from all five splits into a dictionary called P.
+    P is a nested dictionary containing all predictions dataframes for all five primary models of interest and five splits.    
+    P.keys() = ['multimodal_conv42_combined_cost', 'human_combined_cost', 'multimodal_fc6_combined_cost', 'multimodal_fc6_S0_cost', 'multimodal_fc6_combined_nocost']
+    Nested inside each model are dataframes containing model predictions from each split.    
+    '''
+    P = {}
+    for model in model_space:
+        if verbosity>=1:
+            print 'Loading model preds from: {}'.format(model)
+        P[model] = {}    
+        for split_type in split_types:
+            if verbosity >=2:
+                print 'Loading split {}'.format(split_type)
+            model_preds = load_model_predictions(model=model, 
+                                                 split_type=split_type)
+
+            preds = load_model_predictions(model=model,
+                                       split_type=split_type)
+
+            P[model][split_type] = preds 
+            
+    return P
+
+def get_convenient_handles_on_model_preds(P,split_type='balancedavg1'):
+    H = P['human_combined_cost'][split_type]
+    M = P['multimodal_fc6_combined_cost'][split_type]
+    M0 = P['multimodal_conv42_combined_cost'][split_type]
+    M1 = P['multimodal_fc6_S0_cost'][split_type]
+    M2 = P['multimodal_fc6_combined_nocost'][split_type]    
+    return H,M,M0,M1,M2
+
+def plot_target_vs_foil_rank_by_object(P,split_type='balancedavg1'):
+    '''
+    What is the rank of the correct sketch category (correct object + correct context) 
+    vs. wrong sketch category (correct object + wrong context)?
+    '''     
+    
+    H,M,M0,M1,M2 = get_convenient_handles_on_model_preds(P,split_type=split_type)
+
+    fig = plt.figure(figsize=(20,14))
+    plt.subplot(231)
+    targ = pd.DataFrame(H.groupby(['object'])['target_rank'].mean())['target_rank'].values
+    foil = pd.DataFrame(H.groupby(['object'])['foil_rank'].mean())['foil_rank'].values
+    h = plt.scatter(targ,foil,s=24)
+    plt.plot([1,14],[1,14],color='k',linestyle='dashed')
+    plt.xlim([1,14])
+    plt.ylim([1,14])
+    plt.xlabel('target rank')
+    plt.ylabel('foil rank')
+    plt.title('human')
+    plt.subplot(232)
+    targ = pd.DataFrame(M.groupby(['object'])['target_rank'].mean())['target_rank'].values
+    foil = pd.DataFrame(M.groupby(['object'])['foil_rank'].mean())['foil_rank'].values
+    h = plt.scatter(targ,foil,s=24)
+    plt.plot([1,14],[1,14],color='k',linestyle='dashed')
+    plt.xlim([1,14])
+    plt.ylim([1,14])
+    plt.xlabel('target rank')
+    plt.ylabel('foil rank')
+    plt.title('model')
+    plt.subplot(233)
+    targ = pd.DataFrame(M0.groupby(['object'])['target_rank'].mean())['target_rank'].values
+    foil = pd.DataFrame(M0.groupby(['object'])['foil_rank'].mean())['foil_rank'].values
+    h = plt.scatter(targ,foil,s=24)
+    plt.plot([1,14],[1,14],color='k',linestyle='dashed')
+    plt.xlim([1,14])
+    plt.ylim([1,14])
+    plt.xlabel('target rank')
+    plt.ylabel('foil rank')
+    plt.title('model conv42')
+    plt.subplot(234)
+    targ = pd.DataFrame(M1.groupby(['object'])['target_rank'].mean())['target_rank'].values
+    foil = pd.DataFrame(M1.groupby(['object'])['foil_rank'].mean())['foil_rank'].values
+    h = plt.scatter(targ,foil,s=24)
+    plt.plot([1,14],[1,14],color='k',linestyle='dashed')
+    plt.xlim([1,14])
+    plt.ylim([1,14])
+    plt.xlabel('target rank')
+    plt.ylabel('foil rank')
+    plt.title('model S0')
+    plt.subplot(235)
+    targ = pd.DataFrame(M2.groupby(['object'])['target_rank'].mean())['target_rank'].values
+    foil = pd.DataFrame(M2.groupby(['object'])['foil_rank'].mean())['foil_rank'].values
+    h = plt.scatter(targ,foil,s=24)
+    plt.plot([1,14],[1,14],color='k',linestyle='dashed')
+    plt.xlim([1,14])
+    plt.ylim([1,14])
+    plt.xlabel('target rank')
+    plt.ylabel('foil rank')
+    plt.title('model nocost')
+    plt.tight_layout()
+    
+def get_avg_rank_across_samples(X):
+    '''
+    Input: X is a summary dataframe of model predictions, e.g., ones named H,M,M0,M1,M2 in notebook
+           And loaded using function: P = h.load_all_model_preds()
+    make another dataframe which computes, for each MCMC sample, the average rank of the target
+    (congruent context category)
+    '''
+    XM = pd.DataFrame(X.groupby('sample_ind')['target_rank'].mean()).reset_index()
+    adaptor = np.unique(X['adaptor'].values)[0]
+    adaptor = list(np.tile(adaptor,len(XM)))
+    XM = XM.assign(adaptor=pd.Series(adaptor).values)    
+    return XM  
+
+def get_avg_rank_all_models(P,split_type='balancedavg1'):
+    H,M,M0,M1,M2 = get_convenient_handles_on_model_preds(P,split_type=split_type)
+    HU,MU,M0U,M1U,M2U = map(get_avg_rank_across_samples,[H,M,M0,M1,M2])
+    return HU,MU,M0U,M1U,M2U
+
+def plot_avg_rank_all_models(P,split_type='balancedavg1'):
+    '''
+    Generate bar plot of average rank (out of 64) of correct sketch category, by model, for a particular split.
+    Wrapper around get_avg_rank_all_models, which itself wraps around get_avg_rank_across_samples.
+    '''
+    HU,MU,M0U,M1U,M2U = get_avg_rank_all_models(P,split_type=split_type)
+    sns.set_context('talk')
+    fig = plt.figure(figsize=(4,8))
+    ax = fig.add_subplot(111)
+    U = pd.concat([HU,MU,M0U,M1U,M2U],axis=0)
+    sns.barplot(data=U,
+                x='adaptor',
+                y='target_rank',
+                ci='sd',
+                order=['human_combined_cost','multimodal_fc6_combined_cost',
+                       'multimodal_fc6_S0_cost','multimodal_fc6_combined_nocost','multimodal_conv42_combined_cost'])
+    plt.ylabel('mean rank of congruent sketch')
+    plt.ylim([1,8])
+    xticklabels=['Context Cost Human','Context Cost HighAdaptor',
+                 'NoContext Cost HighAdaptor','Context NoCost HighAdaptor', 'Context Cost MidAdaptor']
+    plt.xlabel('')
+    l = ax.set_xticklabels(xticklabels, rotation = 90, ha="left")
+    plt.tight_layout()
+    
+    
+def get_prop_congruent(X):
+    '''
+    make another data frame that computes, for each MCMC sample, the proportion of trials 
+    on which model assigns better rank to congruent sketch than sketch from opposite context category ('foil')
+    '''
+    XM = pd.DataFrame(X.groupby('sample_ind')['sign_diff_rank'].apply(lambda x: sum(x)/len(x))).reset_index()
+    adaptor = np.unique(X['adaptor'].values)[0]
+    adaptor = list(np.tile(adaptor,len(XM)))
+    XM = XM.assign(adaptor=pd.Series(adaptor).values)  
+    return XM
+
+def get_prop_congruent_all_models(P, split_type='balancedavg1'):
+    '''
+    Apply get_prog_congruent to all models
+    '''
+    H,M,M0,M1,M2 = get_convenient_handles_on_model_preds(P,split_type=split_type)
+    HU,MU,M0U,M1U,M2U = map(get_prop_congruent,[H,M,M0,M1,M2])
+    return HU,MU,M0U,M1U,M2U
+
+def plot_prop_congruent_all_models(P,split_type='balancedavg1'):
+    '''
+    Generate bar plot of proportion of trials for which context-congruent sketch preferred over incongruent sketch.
+    Wrapper around get_prop_congruent_all_models, which itself wraps around get_prop_congruent.
+    '''
+    HU,MU,M0U,M1U,M2U = get_prop_congruent_all_models(P,split_type=split_type)
+    sns.set_context('talk')
+    fig = plt.figure(figsize=(4,8))
+    ax = fig.add_subplot(111)     
+    D = pd.concat([HU,MU,M0U,M1U,M2U],axis=0)    
+    sns.barplot(data=D,
+                x='adaptor',
+                y='sign_diff_rank',ci='sd')
+    plt.axhline(y=0.5,linestyle='dashed',color='k')
+    plt.ylim([0,1])
+    plt.ylabel('proportion context-congruent sketch preferred')
+
+    xticklabels=['Context Cost Human','Context Cost HighAdaptor',
+                 'NoContext Cost HighAdaptor','Context NoCost HighAdaptor',
+                 'Context Cost MidAdaptor']
+    plt.xlabel('')
+    l = ax.set_xticklabels(xticklabels, rotation = 90, ha="left")
+    
+    
+
+def get_top_k_predictions(P, split_type='balancedavg1',verbosity=1):
+    '''
+    Save out CSV files containing, for various levels of k, the proportion of trials for which
+    the target rank was less than or equal to k. 
+    '''
+
+    model_space = P.keys()
+
+    for j,model in enumerate(model_space):
+        if verbosity>=1:
+            print 'Currently extracting topk predictions for model: {}'.format(model)
+        D = P[model][split_type]   
+
+        sample_inds = np.unique(D.sample_ind.values)
+        prop = []
+        sid = []
+        K = []
+        for i,sample_ind in enumerate(sample_inds):
+            if (i%250==0) & (verbosity>=2):                
+                print 'evaluating {}'.format(i)                  
+            these_rows = D[D['sample_ind']==sample_ind]
+            num_trials = these_rows.shape[0]
+            for k in np.arange(1,65):
+                prop.append(sum(these_rows['target_rank']<=k)/num_trials)
+                sid.append(sample_ind)
+                K.append(k)
+
+        ## make dataframe and save out
+        sid = map(int,sid)
+        K = map(int,K)
+        adaptor = list(np.tile(model,len(sid)))
+        Q = pd.DataFrame([prop,sid,K,adaptor])
+        Q = Q.transpose()
+        Q.columns = ['prop','ind','k','adaptor']
+        print 'Saving out topk prediction file for: {} {}'.format(model, split_type)
+        Q.to_csv('./csv/{}_{}_topk.csv'.format(model,split_type),index=False)  
+    if verbosity>=1:
+        print 'Finished saving out all topk prediction files.'
+        
+def load_all_topk_predictions():
+    try:
+        QH = pd.read_csv('./csv/human_combined_cost_balancedavg1_topk.csv')
+        QM = pd.read_csv('./csv/multimodal_fc6_combined_cost_balancedavg1_topk.csv')
+        QM0 = pd.read_csv('./csv/multimodal_conv42_combined_cost_balancedavg1_topk.csv')
+        QM1 = pd.read_csv('./csv/multimodal_fc6_S0_cost_balancedavg1_topk.csv')
+        QM2 = pd.read_csv('./csv/multimodal_fc6_combined_nocost_balancedavg1_topk.csv')
+        Q = pd.concat([QH,QM0,QM1,QM2,QM],axis=0)
+    except Exception as e: 
+        print 'Make sure that you have already run get_top_k_predictions.'
+        print(e)
+
+    return Q
+
+def plot_topk_all_models():
+    '''
+    Generate line plot that visualizes, for various values of k, the proportion of trials
+    for which the model assigned the correct sketch category a rank of <= k.
+    '''
+    Q = load_all_topk_predictions()
+    krange = 64 ## how many values of k to plot
+    sns.set_context('poster')
+    fig = plt.figure(figsize=(8,8))
+    colors = [(0.2,0.2,0.2),(0.8,0.3,0.3),(0.3,0.3,0.8),(0.5,0.5,0.5),(0.6,0.2,0.6)]
+    sns.pointplot(x='k',
+                  y='prop',
+                  hue='adaptor',
+                  data=Q,
+                  palette=colors,
+                  markers = '.',
+                  ci='sd',              
+                  join=True)
+    plt.ylabel('proportion',fontsize=24)
+    plt.xlabel('k',fontsize=24)
+    plt.title('% correct within top k')
+    plt.ylim([0,1.1])
+    # plt.xlim([-0.1,krange])
+    plt.xlim([0,18])
+    # locs, labels = plt.xticks(np.linspace(0,krange-1,9),map(int,np.linspace(0,krange-1,9)+1),fontsize=16)
+    plt.tight_layout()
+    plt.legend(bbox_to_anchor=(1.0, 0.9))
+    
+def get_avg_cost_across_samples(X):
+    '''
+    make another dataframe which computes, for each MCMC sample, the average sketch cost produced
+    '''
+    XM = pd.DataFrame(X.groupby(['sample_ind','condition'])['cost'].mean()).reset_index()
+    adaptor = np.unique(X['adaptor'].values)[0]
+    adaptor = list(np.tile(adaptor,len(XM)))
+    XM = XM.assign(adaptor=pd.Series(adaptor).values)    
+    return XM
+        
+def get_avg_cost_all_models(P, split_type='balancedavg1'):
+    '''
+    Apply get_avg_cost_across_samples to all models
+    '''
+    H,M,M0,M1,M2 = get_convenient_handles_on_model_preds(P,split_type=split_type)
+    HU,MU,M0U,M1U,M2U = map(get_avg_cost_across_samples,[H,M,M0,M1,M2])
+    return HU,MU,M0U,M1U,M2U
+
+
+    
