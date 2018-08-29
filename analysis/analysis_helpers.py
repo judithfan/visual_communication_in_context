@@ -676,11 +676,7 @@ def get_prop_congruent_all_models(P, split_type='balancedavg1'):
     Apply get_prog_congruent to all models
     '''
     H,M,M0,M1,M2 = get_convenient_handles_on_model_preds(P,split_type=split_type)
-    HU = get_prop_congruent(H)
-    MU = get_prop_congruent(M)
-    M0U = get_prop_congruent(M0)
-    M1U = get_prop_congruent(M1)    
-    M2U = get_prop_congruent(M2)
+    HU,MU,M0U,M1U,M2U = map(get_prop_congruent,[H,M,M0,M1,M2])
     return HU,MU,M0U,M1U,M2U
 
 def plot_prop_congruent_all_models(P,split_type='balancedavg1'):
@@ -705,3 +701,107 @@ def plot_prop_congruent_all_models(P,split_type='balancedavg1'):
                  'Context Cost MidAdaptor']
     plt.xlabel('')
     l = ax.set_xticklabels(xticklabels, rotation = 90, ha="left")
+    
+    
+
+def get_top_k_predictions(P, split_type='balancedavg1',verbosity=1):
+    '''
+    Save out CSV files containing, for various levels of k, the proportion of trials for which
+    the target rank was less than or equal to k. 
+    '''
+
+    model_space = P.keys()
+
+    for j,model in enumerate(model_space):
+        if verbosity>=1:
+            print 'Currently extracting topk predictions for model: {}'.format(model)
+        D = P[model][split_type]   
+
+        sample_inds = np.unique(D.sample_ind.values)
+        prop = []
+        sid = []
+        K = []
+        for i,sample_ind in enumerate(sample_inds):
+            if (i%250==0) & (verbosity>=2):                
+                print 'evaluating {}'.format(i)                  
+            these_rows = D[D['sample_ind']==sample_ind]
+            num_trials = these_rows.shape[0]
+            for k in np.arange(1,65):
+                prop.append(sum(these_rows['target_rank']<=k)/num_trials)
+                sid.append(sample_ind)
+                K.append(k)
+
+        ## make dataframe and save out
+        sid = map(int,sid)
+        K = map(int,K)
+        adaptor = list(np.tile(model,len(sid)))
+        Q = pd.DataFrame([prop,sid,K,adaptor])
+        Q = Q.transpose()
+        Q.columns = ['prop','ind','k','adaptor']
+        print 'Saving out topk prediction file for: {} {}'.format(model, split_type)
+        Q.to_csv('./csv/{}_{}_topk.csv'.format(model,split_type),index=False)  
+    if verbosity>=1:
+        print 'Finished saving out all topk prediction files.'
+        
+def load_all_topk_predictions():
+    try:
+        QH = pd.read_csv('./csv/human_combined_cost_balancedavg1_topk.csv')
+        QM = pd.read_csv('./csv/multimodal_fc6_combined_cost_balancedavg1_topk.csv')
+        QM0 = pd.read_csv('./csv/multimodal_conv42_combined_cost_balancedavg1_topk.csv')
+        QM1 = pd.read_csv('./csv/multimodal_fc6_S0_cost_balancedavg1_topk.csv')
+        QM2 = pd.read_csv('./csv/multimodal_fc6_combined_nocost_balancedavg1_topk.csv')
+        Q = pd.concat([QH,QM0,QM1,QM2,QM],axis=0)
+    except Exception as e: 
+        print 'Make sure that you have already run get_top_k_predictions.'
+        print(e)
+
+    return Q
+
+def plot_topk_all_models():
+    '''
+    Generate line plot that visualizes, for various values of k, the proportion of trials
+    for which the model assigned the correct sketch category a rank of <= k.
+    '''
+    Q = load_all_topk_predictions()
+    krange = 64 ## how many values of k to plot
+    sns.set_context('poster')
+    fig = plt.figure(figsize=(8,8))
+    colors = [(0.2,0.2,0.2),(0.8,0.3,0.3),(0.3,0.3,0.8),(0.5,0.5,0.5),(0.6,0.2,0.6)]
+    sns.pointplot(x='k',
+                  y='prop',
+                  hue='adaptor',
+                  data=Q,
+                  palette=colors,
+                  markers = '.',
+                  ci='sd',              
+                  join=True)
+    plt.ylabel('proportion',fontsize=24)
+    plt.xlabel('k',fontsize=24)
+    plt.title('% correct within top k')
+    plt.ylim([0,1.1])
+    # plt.xlim([-0.1,krange])
+    plt.xlim([0,18])
+    # locs, labels = plt.xticks(np.linspace(0,krange-1,9),map(int,np.linspace(0,krange-1,9)+1),fontsize=16)
+    plt.tight_layout()
+    plt.legend(bbox_to_anchor=(1.0, 0.9))
+    
+def get_avg_cost_across_samples(X):
+    '''
+    make another dataframe which computes, for each MCMC sample, the average sketch cost produced
+    '''
+    XM = pd.DataFrame(X.groupby(['sample_ind','condition'])['cost'].mean()).reset_index()
+    adaptor = np.unique(X['adaptor'].values)[0]
+    adaptor = list(np.tile(adaptor,len(XM)))
+    XM = XM.assign(adaptor=pd.Series(adaptor).values)    
+    return XM
+        
+def get_avg_cost_all_models(P, split_type='balancedavg1'):
+    '''
+    Apply get_avg_cost_across_samples to all models
+    '''
+    H,M,M0,M1,M2 = get_convenient_handles_on_model_preds(P,split_type=split_type)
+    HU,MU,M0U,M1U,M2U = map(get_avg_cost_across_samples,[H,M,M0,M1,M2])
+    return HU,MU,M0U,M1U,M2U
+
+
+    
