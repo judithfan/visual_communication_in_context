@@ -68,7 +68,7 @@ if __name__ == "__main__":
 	B = B.sort_values(by=['sample_ind','trial']) ## make sure that B is sorted properly
 	
 	## subset by condition iff args.condition is either closer or further
-	if args.condition is in ['closer','further']:
+	if args.condition in ['closer','further']:
 		B = B[B['condition']==args.condition]
 	else:
 		B = B
