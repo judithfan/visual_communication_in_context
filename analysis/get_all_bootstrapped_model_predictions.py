@@ -21,15 +21,15 @@ standard error estimate when combining across splits.
 
 if __name__ == "__main__":
 
-    import argparse
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--nIter', type=int, help='how many bootstrap iterations?', default=1000)
+	import argparse
+	parser = argparse.ArgumentParser()
+	parser.add_argument('--nIter', type=int, help='how many bootstrap iterations?', default=1000)
 	args = parser.parse_args()
 
 	split_types = ['balancedavg1','balancedavg2','balancedavg3','balancedavg4','balancedavg5']
 
 	model_space = ['human_combined_cost','multimodal_fc6_combined_cost','multimodal_conv42_combined_cost',
-	              'multimodal_fc6_S0_cost','multimodal_fc6_combined_nocost']
+					'multimodal_fc6_S0_cost','multimodal_fc6_combined_nocost']
 
 	conditions = ['all','closer','further']
 
@@ -38,17 +38,17 @@ if __name__ == "__main__":
 	nIter = args.nIter
 
 	print 'Now running ...'
-    for split_type in split_types:	 
+	for split_type in split_types:	 
 		for model in model_space:
 			for condition in conditions:
-		    	for var_of_interest in vois:
-			    	cmd_string = 'python bootstrap_model_predictions.py --split_type {} \
-			    														--model {} \
-			    														--condition {} \
-			    														--nIter {} \
-			    														--var_of_interest {}\
-			    														'.format(split_type,model,\
-			    																 condition,nIter,\
-			    																 var_of_interest)
-			    	print cmd_string
-			    	thread.start_new_thread(os.system,(cmd_string,))   
+				for var_of_interest in vois:
+					cmd_string = 'python bootstrap_model_predictions.py --split_type {} \
+																		--model {} \
+																		--condition {} \
+																		--nIter {} \
+																		--var_of_interest {}\
+																		'.format(split_type,model,\
+																				 condition,nIter,\
+																				 var_of_interest)
+					print cmd_string
+					thread.start_new_thread(os.system,(cmd_string,))   
