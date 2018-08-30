@@ -538,9 +538,6 @@ def load_all_model_preds(split_types = ['balancedavg1','balancedavg2','balanceda
         for split_type in split_types:
             if verbosity >=2:
                 print 'Loading split {}'.format(split_type)
-            model_preds = load_model_predictions(model=model, 
-                                                 split_type=split_type)
-
             preds = load_model_predictions(model=model,
                                        split_type=split_type)
 
