@@ -54,53 +54,53 @@ if __name__ == "__main__":
     								 default='./bootstrap_results')
 
 
-	args = parser.parse_args()
+    args = parser.parse_args()
 
     ## get name of model and split type to get predictions for, variable of interest, number of iterations
     model = args.model
     split_type = args.split_type
-	var_of_interest = args.var_of_interest
-	nIter = args.nIter    
+    var_of_interest = args.var_of_interest
+    nIter = args.nIter    
 
     ## load in model preds
     B = h.load_model_predictions(model=model,split_type=split_type)	
-	B = B.sort_values(by=['sample_ind','trial']) ## make sure that B is sorted properly
-	
-	## subset by condition iff args.condition is either closer or further
-	if args.condition is in ['closer','further']:
-		B = B[B['condition']==args.condition]
-	else:
-		B = B
+    B = B.sort_values(by=['sample_ind','trial']) ## make sure that B is sorted properly
+    
+    ## subset by condition iff args.condition is either closer or further
+    if args.condition in ['closer','further']:
+	B = B[B['condition']==args.condition]
+    else:
+	B = B
 
-	## run the bootstrap
-	trial_list = np.unique(B.trial.values)
-	num_trials = len(trial_list)
-	num_samples = len(np.unique(B.sample_ind.values))
+    ## run the bootstrap
+    trial_list = np.unique(B.trial.values)
+    num_trials = len(trial_list)
+    num_samples = len(np.unique(B.sample_ind.values))
+    
+    print 'Running bootstrap with {} trials, for variable {} for {} iterations...'.format(num_trials,var_of_interest,nIter)
 
-	print 'Running bootstrap with {} trials, for variable {} for {} iterations...'.format(num_trials,var_of_interest,nIter)
-
-	boot_vec = []
-	for boot_iter in np.arange(nIter):
-	    if boot_iter%10==0:
-	        print 'Now on boot iteration {}'.format(boot_iter)
-	    boot_ind = np.random.RandomState(boot_iter).choice(np.arange(num_trials),size=num_trials,replace=True)    
-	    grouped = B.groupby('sample_ind')
-	    _boot_vec = []
-	    for name, group in grouped:
-	        ## append subsetted boot_vec to temp _boot_vec vector that is built up across groups
-	        _boot_vec = np.hstack((_boot_vec,group[var_of_interest].values[boot_ind])) 
+    boot_vec = []
+    for boot_iter in np.arange(nIter):
+	if boot_iter%10==0:
+	    print 'Now on boot iteration {}'.format(boot_iter)
+        boot_ind = np.random.RandomState(boot_iter).choice(np.arange(num_trials),size=num_trials,replace=True)    
+	grouped = B.groupby('sample_ind')
+	_boot_vec = []
+	for name, group in grouped:
+	    ## append subsetted boot_vec to temp _boot_vec vector that is built up across groups
+	    _boot_vec = np.hstack((_boot_vec,group[var_of_interest].values[boot_ind])) 
 	    ## compute boot sample mean, marginalizing over MCMC sample variability
-	    boot_vec.append(np.mean(_boot_vec))     
+	boot_vec.append(np.mean(_boot_vec))     
 
 
-	## now save out boot_vec
-	if not os.path.exists(args.out_dir):
-		os.makedirs(args.outdir)
+    ## now save out boot_vec
+    if not os.path.exists(args.out_dir):
+	os.makedirs(args.outdir)
 
-	boot_vec = np.array(boot_vec)
-	out_path = os.path.join(args.out_dir, 'bootvec_{}_{}_{}_{}_{}.npy'.format(model,split_type,var_of_interest,condition,nIter))
-	print 'Now saving out boot_vec at path: {}'.format(out_path)
-	np.save(out_path,boot_vec)
+    boot_vec = np.array(boot_vec)
+    out_path = os.path.join(args.out_dir, 'bootvec_{}_{}_{}_{}_{}.npy'.format(model,split_type,var_of_interest,condition,nIter))
+    print 'Now saving out boot_vec at path: {}'.format(out_path)
+    np.save(out_path,boot_vec)
 
 
 
