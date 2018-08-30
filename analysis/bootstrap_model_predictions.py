@@ -54,7 +54,8 @@ if __name__ == "__main__":
 									 default='./bootstrap_results')
 
 
-	args = parser.parse_args()
+    args = parser.parse_args()
+
 
 	## get name of model and split type to get predictions for, variable of interest, number of iterations
 	model = args.model
@@ -89,10 +90,13 @@ if __name__ == "__main__":
 		for name, group in grouped:
 			## append subsetted boot_vec to temp _boot_vec vector that is built up across groups
 			_boot_vec = np.hstack((_boot_vec,group[var_of_interest].values[boot_ind])) 
-		##compute boot sample mean, marginalizing over MCMC sample variability
+		
+		## add summary statistic to bootstrap vector
 		if var_of_interest != 'sign_diff_rank':
+			## compute boot sample mean, marginalizing over MCMC sample variability
 			boot_vec.append(np.mean(_boot_vec))
 		else:
+			## if computing prop_congruent, get proportion congruent!
 			prop_congruent = np.sum(_boot_vec)/len(_boot_vec)
 			boot_vec.append(prop_congruent)
 
@@ -101,10 +105,10 @@ if __name__ == "__main__":
 	if not os.path.exists(args.out_dir):
 		os.makedirs(args.out_dir)
 
-	boot_vec = np.array(boot_vec)
-	out_path = os.path.join(args.out_dir, 'bootvec_{}_{}_{}_{}_{}.npy'.format(model,split_type,var_of_interest,condition,nIter))
-	print 'Now saving out boot_vec at path: {}'.format(out_path)
-	np.save(out_path,boot_vec)
+    boot_vec = np.array(boot_vec)
+    out_path = os.path.join(args.out_dir, 'bootvec_{}_{}_{}_{}_{}.npy'.format(model,split_type,var_of_interest,condition,nIter))
+    print 'Now saving out boot_vec at path: {}'.format(out_path)
+    np.save(out_path,boot_vec)
 
 
 
