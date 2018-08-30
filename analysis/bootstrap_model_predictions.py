@@ -61,7 +61,8 @@ if __name__ == "__main__":
 	model = args.model
 	split_type = args.split_type
 	var_of_interest = args.var_of_interest
-	nIter = args.nIter    
+	nIter = args.nIter   
+	condition = args.condition 
 
 	## load in model preds
 	B = h.load_model_predictions(model=model,split_type=split_type)	
