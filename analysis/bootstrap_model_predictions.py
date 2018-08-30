@@ -78,7 +78,7 @@ if __name__ == "__main__":
 	num_trials = len(trial_list)
 	num_samples = len(np.unique(B.sample_ind.values))
 
-	print 'Running bootstrap with {} trials, for variable {} for {} iterations...'.format(num_trials,var_of_interest,nIter)
+	print 'Running bootstrap with {} trials, for variable "{}" for {} iterations...'.format(num_trials,var_of_interest,nIter)
 
 	boot_vec = []
 	for boot_iter in np.arange(nIter):
