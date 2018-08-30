@@ -54,7 +54,7 @@ if __name__ == "__main__":
 									 default='./bootstrap_results')
 
 
-    args = parser.parse_args()
+	args = parser.parse_args()
 
 
 	## get name of model and split type to get predictions for, variable of interest, number of iterations
@@ -63,7 +63,7 @@ if __name__ == "__main__":
 	var_of_interest = args.var_of_interest
 	nIter = args.nIter    
 
-    ## load in model preds
+	## load in model preds
 	B = h.load_model_predictions(model=model,split_type=split_type)	
 	B = B.sort_values(by=['sample_ind','trial']) ## make sure that B is sorted properly
 	
@@ -105,10 +105,10 @@ if __name__ == "__main__":
 	if not os.path.exists(args.out_dir):
 		os.makedirs(args.out_dir)
 
-    boot_vec = np.array(boot_vec)
-    out_path = os.path.join(args.out_dir, 'bootvec_{}_{}_{}_{}_{}.npy'.format(model,split_type,var_of_interest,condition,nIter))
-    print 'Now saving out boot_vec at path: {}'.format(out_path)
-    np.save(out_path,boot_vec)
+	boot_vec = np.array(boot_vec)
+	out_path = os.path.join(args.out_dir, 'bootvec_{}_{}_{}_{}_{}.npy'.format(model,split_type,var_of_interest,condition,nIter))
+	print 'Now saving out boot_vec at path: {}'.format(out_path)
+	np.save(out_path,boot_vec)
 
 
 
