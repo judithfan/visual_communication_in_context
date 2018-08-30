@@ -64,7 +64,7 @@ def generate_bdaInput_csv(D,filtration_level,train_test_split=True,
         adaptor = 'multimodal'
     else:
         adaptor = 'human'
-    test_examples = pd.read_json('{}_{}_{}_test_examples.json'.format(args.iterationName,adaptor,args.split_type),orient='records')
+    test_examples = pd.read_json('./test_examples/{}_{}_{}_test_examples.json'.format(args.iterationName,adaptor,args.split_type),orient='records')
     print '{}_{}_{}_test_examples.json'.format(args.iterationName,adaptor,args.split_type)
     test_examples = list(test_examples[0].values)
     test_examples = [i.split('.')[0] + '.png' for i in test_examples]

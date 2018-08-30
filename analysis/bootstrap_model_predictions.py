@@ -98,7 +98,7 @@ if __name__ == "__main__":
 		os.makedirs(args.outdir)
 
 	boot_vec = np.array(boot_vec)
-	out_path = os.path.join(args.out_dir, 'bootvec_{}_{}_{}_{}_{}'.format(model,split_type,var_of_interest,condition,nIter))
+	out_path = os.path.join(args.out_dir, 'bootvec_{}_{}_{}_{}_{}.npy'.format(model,split_type,var_of_interest,condition,nIter))
 	print 'Now saving out boot_vec at path: {}'.format(out_path)
 	np.save(out_path,boot_vec)
 
