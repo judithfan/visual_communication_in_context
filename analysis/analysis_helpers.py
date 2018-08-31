@@ -553,6 +553,87 @@ def get_convenient_handles_on_model_preds(P,split_type='balancedavg1'):
     M2 = P['multimodal_fc6_combined_nocost'][split_type]    
     return H,M,M0,M1,M2
 
+
+
+
+def load_and_check_bootstrapped_model_preds(results_dir = './bootstrap_results'):
+    ## get how many boot files there are
+    path_to_bootstrap_results = results_dir
+    boot_files = os.listdir(path_to_bootstrap_results)
+    print 'There are {} files in the bootstrap_results directory.'.format(len(boot_files))
+
+    ## ground truth list of how many bootvec file we *should* have
+    split_types = ['balancedavg1','balancedavg2','balancedavg3','balancedavg4','balancedavg5']
+    model_space = ['human_combined_cost','multimodal_fc6_combined_cost','multimodal_conv42_combined_cost',
+                    'multimodal_fc6_S0_cost','multimodal_fc6_combined_nocost']
+    conditions = ['all','closer','further']
+    vois = ['target_rank','foil_rank','sign_diff_rank','cost']
+    nIter = 1000
+
+    full_path_list = []
+    for split_type in split_types:
+        for model in model_space:
+            for condition in conditions:
+                for var_of_interest in vois:
+                    out_path = 'bootvec_{}_{}_{}_{}_{}.npy'.format(model,split_type,var_of_interest,condition,nIter)
+                    full_path_list.append(out_path)
+
+    ## check to make sure that there are no boot filenames that *should* be in the list but are not
+    if len([i for i in full_path_list if i not in boot_files])>0:
+        print 'Not all of the bootstrap results are available. Please try running: python get_all_bootstrapped_model_predictions.py again.'
+        print 'These are the missing files: '
+        for i in full_path_list:
+            if i not in boot_files:
+                print i
+                   
+    return boot_files    
+
+
+def generate_bootstrap_model_preds_dataframe(boot_files, out_dir='./bootstrap_results'):
+    '''
+    Input: list of boot_file paths containing .npy with bootstrapped sampling distributions of each variable of interest.
+    Output: dataframe collecting these bootstrapped data with associated metadata, including: 
+            model names, split number, condition, variable of interest, bootstrap filename, 
+            and the bootstrapped distribution itself.
+    '''
+    model_list = []
+    split_type_list = []
+    condition_list = []
+    var_of_interest_list = []
+    fname_list = []
+    bootvec_list = []
+    for i,bf in enumerate(boot_files):
+        if bf.split('_')[1]=='human':
+            divider_ind = 4
+        else:
+            divider_ind = 5
+        ## divider_ind distinguishes between human/multimodal vision encoder names, which differ in length
+        model = '_'.join(bf.split('_')[1:divider_ind])
+        split_type = bf.split('_')[divider_ind]
+        remainder = bf.split('_')[divider_ind+1:]
+
+        condition = remainder[-2]
+        var_of_interest = '_'.join(remainder[:len(remainder)-2]) 
+        bootvec = np.load(os.path.join(out_dir,bf))
+
+        model_list.append(model)
+        split_type_list.append(split_type)
+        condition_list.append(condition)
+        var_of_interest_list.append(var_of_interest)
+        fname_list.append(os.path.join(out_dir,bf))
+        bootvec_list.append(bootvec)
+
+    ## construct dataframe containing all bootvecs and associated metadata    
+    X = pd.DataFrame([model_list,split_type_list,condition_list,var_of_interest_list,fname_list,bootvec_list])
+    X = X.transpose()
+    X.columns = ['model','split_type','condition','var_of_interest','fname','bootvec']
+    assert len(np.unique(X.condition.values))==3 
+    return X
+
+
+
+
+
 def plot_target_vs_foil_rank_by_object(P,split_type='balancedavg1'):
     '''
     What is the rank of the correct sketch category (correct object + correct context) 
@@ -800,5 +881,52 @@ def get_avg_cost_all_models(P, split_type='balancedavg1'):
     HU,MU,M0U,M1U,M2U = map(get_avg_cost_across_samples,[H,M,M0,M1,M2])
     return HU,MU,M0U,M1U,M2U
 
-
+def generate_aggregated_estimate_dataframe(B, 
+                                           model_space = ['human_combined_cost','multimodal_fc6_combined_cost',\
+                                                          'multimodal_conv42_combined_cost',\
+                                                          'multimodal_fc6_S0_cost','multimodal_fc6_combined_nocost'],
+                                           split_types = ['balancedavg1','balancedavg2',\
+                                                          'balancedavg3','balancedavg4','balancedavg5'],
+                                           var_of_interest='target_rank',
+                                           condition='all'):    
     
+    TR = B[(B['var_of_interest'] == var_of_interest) & (B['condition']==condition)]
+
+    joint_mu = []
+    joint_var = []
+    joint_sd = []
+    for this_model in model_space:
+        TRM = TR[TR['model']==this_model] 
+        ## initialize agg_mu and agg_var
+        agg_mu = []
+        agg_var = []
+        for this_split in split_types:
+            TRMS = TRM[TRM['split_type']==this_split]
+            this_boot = TRMS.bootvec.values[0]
+            split_mu = np.mean(this_boot)
+            split_sd = np.std(this_boot)
+            split_var = np.var(this_boot)
+            agg_mu.append(split_mu)
+            agg_var.append(split_var)
+
+        ## apply inverse-weighting of variance to get combined mean, se (which is joint_sd)
+        ## https://en.wikipedia.org/wiki/Inverse-variance_weighting
+        w = [1/v for v in agg_var] ## weights
+        wX = np.sum([i*j for (i,j) in zip(w,agg_mu)]) ## numerator of weighted mean
+        W = np.sum(w) ## denom of weighted mean
+        joint_mu.append(wX/W) ## weighted average
+
+        ## get cobined estimate of variance
+        inv_var = [1/v for v in agg_var]
+        sum_inv_var = np.sum(inv_var)
+        joint_var.append(1/sum_inv_var)
+        joint_sd.append(np.sqrt(1/sum_inv_var))
+
+    ## bundle into dataframe    
+    sort_inds = [0,1,4,3,2]
+    R = pd.DataFrame([joint_mu,joint_sd,model_space,sort_inds])
+    R = R.transpose()
+    R.columns=['mu','sd','model','sort_inds']
+    R.sort_values(by=['sort_inds'],inplace=True)    
+    
+    return R
