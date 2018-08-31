@@ -882,6 +882,7 @@ def get_avg_cost_all_models(P, split_type='balancedavg1'):
     return HU,MU,M0U,M1U,M2U
 
 def generate_aggregated_estimate_dataframe(B, 
+                                           condition_list = ['all'],
                                            model_space = ['human_combined_cost','multimodal_fc6_combined_cost',\
                                                           'multimodal_conv42_combined_cost',\
                                                           'multimodal_fc6_S0_cost','multimodal_fc6_combined_nocost'],
@@ -890,43 +891,186 @@ def generate_aggregated_estimate_dataframe(B,
                                            var_of_interest='target_rank',
                                            condition='all'):    
     
-    TR = B[(B['var_of_interest'] == var_of_interest) & (B['condition']==condition)]
+    TR = B[(B['var_of_interest'] == var_of_interest) & (B['condition'].isin(condition_list))]
 
     joint_mu = []
     joint_var = []
     joint_sd = []
+    joint_model_list = []
+    joint_condition_list = []
+    joint_split_list = []
     for this_model in model_space:
         TRM = TR[TR['model']==this_model] 
         ## initialize agg_mu and agg_var
         agg_mu = []
         agg_var = []
-        for this_split in split_types:
-            TRMS = TRM[TRM['split_type']==this_split]
-            this_boot = TRMS.bootvec.values[0]
-            split_mu = np.mean(this_boot)
-            split_sd = np.std(this_boot)
-            split_var = np.var(this_boot)
-            agg_mu.append(split_mu)
-            agg_var.append(split_var)
+        for this_condition in condition_list:
+            for this_split in split_types:
+                TRMS = TRM[(TRM['split_type']==this_split) & (TRM['condition']==this_condition)]
+                this_boot = TRMS.bootvec.values[0]
+                split_mu = np.mean(this_boot)
+                split_sd = np.std(this_boot)
+                split_var = np.var(this_boot)
+                agg_mu.append(split_mu)
+                agg_var.append(split_var)
 
-        ## apply inverse-weighting of variance to get combined mean, se (which is joint_sd)
-        ## https://en.wikipedia.org/wiki/Inverse-variance_weighting
-        w = [1/v for v in agg_var] ## weights
-        wX = np.sum([i*j for (i,j) in zip(w,agg_mu)]) ## numerator of weighted mean
-        W = np.sum(w) ## denom of weighted mean
-        joint_mu.append(wX/W) ## weighted average
+            ## apply inverse-weighting of variance to get combined mean, se (which is joint_sd)
+            ## https://en.wikipedia.org/wiki/Inverse-variance_weighting
+            w = [1/v for v in agg_var] ## weights
+            wX = np.sum([i*j for (i,j) in zip(w,agg_mu)]) ## numerator of weighted mean
+            W = np.sum(w) ## denom of weighted mean
+            joint_mu.append(wX/W) ## weighted average
 
-        ## get cobined estimate of variance
-        inv_var = [1/v for v in agg_var]
-        sum_inv_var = np.sum(inv_var)
-        joint_var.append(1/sum_inv_var)
-        joint_sd.append(np.sqrt(1/sum_inv_var))
+            ## get combined estimate of variance
+            inv_var = [1/v for v in agg_var]
+            sum_inv_var = np.sum(inv_var)
+            joint_var.append(1/sum_inv_var)
+            joint_sd.append(np.sqrt(1/sum_inv_var))
+
+            ## metadata
+            joint_model_list.append(this_model)
+            joint_condition_list.append(this_condition)
 
     ## bundle into dataframe    
-    sort_inds = [0,1,4,3,2]
-    R = pd.DataFrame([joint_mu,joint_sd,model_space,sort_inds])
+    sort_inds = list(np.repeat([0,1,4,3,2],len(condition_list))) ## to plot models in a nice order
+    R = pd.DataFrame([joint_mu,joint_sd,joint_model_list,joint_condition_list,sort_inds])
     R = R.transpose()
-    R.columns=['mu','sd','model','sort_inds']
-    R.sort_values(by=['sort_inds'],inplace=True)    
-    
+    R.columns=['mu','sd','model','condition','sort_inds']
+    R.sort_values(by=['sort_inds','condition'],inplace=True)     
+
     return R
+
+def plot_average_target_rank_across_splits(R,
+                                             var_of_interest='target_rank',
+                                             condition_list = ['all'],
+                                             model_space = ['human_combined_cost','multimodal_fc6_combined_cost',\
+                                                           'multimodal_conv42_combined_cost',\
+                                                           'multimodal_fc6_S0_cost','multimodal_fc6_combined_nocost'],
+                                             split_types = ['balancedavg1','balancedavg2',\
+                                                            'balancedavg3','balancedavg4','balancedavg5'],
+                                             condition='all',
+                                             sns_context='talk',
+                                             figsize=(6,6),
+                                             errbar_multiplier=1,
+                                             ylabel='avg sketch cost'):
+
+    '''
+    bar plot of average target_rank, aggregating across splits
+    '''    
+    sns.set_context(sns_context)
+    fig = plt.figure(figsize=figsize)
+    ax = fig.add_subplot(111)  
+    sns.barplot(x='model',
+                y='mu',
+                ci=None,
+                data=R)
+
+    ## plot custom error bars
+    x = np.arange(len(R['mu'].values))
+    y = R['mu']
+    plt.errorbar(x,
+                 y,
+                 yerr=R['sd']*errbar_multiplier,
+                 ecolor='black',
+                 linestyle='',
+                 linewidth=4,
+                 capsize=0)
+
+    plt.ylabel(ylabel)
+    xticklabels=['Context Cost Human','Context Cost HighAdaptor',
+                 'Context NoCost HighAdaptor','NoContext Cost HighAdaptor',
+                 'Context Cost MidAdaptor']
+    plt.xlabel('')
+    l = ax.set_xticklabels(xticklabels, rotation = 90, ha="left")
+    
+def plot_prop_congruent_across_splits(R,
+                                      var_of_interest='sign_diff_rank',
+                                      condition_list = ['all'],
+                                      model_space = ['human_combined_cost','multimodal_fc6_combined_cost',\
+                                                       'multimodal_conv42_combined_cost',\
+                                                       'multimodal_fc6_S0_cost','multimodal_fc6_combined_nocost'],
+                                      split_types = ['balancedavg1','balancedavg2',\
+                                                        'balancedavg3','balancedavg4','balancedavg5'],
+                                      condition='all',
+                                      sns_context='talk',
+                                      figsize=(6,6),
+                                      errbar_multiplier=1.,
+                                      ylabel='avg sketch cost'):
+
+    sns.set_context(sns_context)
+    fig = plt.figure(figsize=figsize)
+    ax = fig.add_subplot(111)  
+    sns.barplot(x='model',
+                y='mu',
+                ci=None,
+                data=R)
+
+    ## plot custom error bars
+    x = np.arange(len(R['mu'].values))
+    y = R['mu']
+    plt.errorbar(x,
+                 y,
+                 yerr=R['sd']*errbar_multiplier,
+                 ecolor='black',
+                 linestyle='',
+                 linewidth=4,
+                 capsize=0)
+
+    plt.ylabel(ylabel)
+    plt.axhline(y=0.5,linestyle='dashed',color='k')
+    plt.ylim(0,0.8)
+
+    xticklabels=['Context Cost Human','Context Cost HighAdaptor',
+                 'Context NoCost HighAdaptor','NoContext Cost HighAdaptor',
+                 'Context Cost MidAdaptor']
+    plt.xlabel('')
+
+    l = ax.set_xticklabels(xticklabels, rotation = 90, ha="left")    
+    
+def plot_cost_by_condition_across_splits(R,
+                                      var_of_interest='cost',
+                                      condition_list = ['closer','further'],
+                                      model_space = ['human_combined_cost','multimodal_fc6_combined_cost',\
+                                                       'multimodal_conv42_combined_cost',\
+                                                       'multimodal_fc6_S0_cost','multimodal_fc6_combined_nocost'],
+                                      split_types = ['balancedavg1','balancedavg2',\
+                                                        'balancedavg3','balancedavg4','balancedavg5'],
+                                      condition='all',
+                                      sns_context='talk',
+                                      figsize=(6,6),
+                                      errbar_multiplier=1.,
+                                      ylabel='avg sketch cost'):
+
+    sns.set_context(sns_context)
+    fig = plt.figure(figsize=figsize)
+    ax = fig.add_subplot(111)  
+    sns.barplot(x='model',
+                y='mu',
+                hue='condition',
+                ci=None,
+                data=R)
+
+    ## plot custom error bars
+    x_inds = []
+    offset=1/5
+    for i in np.arange(5):    
+        x_inds.append(i-offset)
+        x_inds.append(i+offset)
+    x = x_inds
+    y = R['mu']
+    plt.errorbar(x,
+                 y,
+                 yerr=R['sd']*errbar_multiplier,
+                 ecolor='black',
+                 linestyle='',
+                 linewidth=4,
+                 capsize=0)
+
+    plt.ylabel(ylabel)
+    plt.ylim(0,0.3)
+
+    xticklabels=['Context Cost Human','Context Cost HighAdaptor',
+                 'Context NoCost HighAdaptor','NoContext Cost HighAdaptor',
+                 'Context Cost MidAdaptor']
+    plt.xlabel('')
+    l = ax.set_xticklabels(xticklabels, rotation = 90, ha="left")    
