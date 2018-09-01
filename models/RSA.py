@@ -11,6 +11,7 @@ import numpy as np
 ### python RSA.py --wppl evaluate --perception multimodal_fc6 --pragmatics S0 --production cost --split_type balancedavg1 balancedavg2 balancedavg3 balancedavg4 balancedavg5
 ### python RSA.py --wppl evaluate --perception multimodal_fc6 --pragmatics combined --production nocost --split_type balancedavg1 balancedavg2 balancedavg3 balancedavg4 balancedavg5
 ### python RSA.py --wppl BDA-enumerate --sim_scaling_lb 1 --sim_scaling_ub 200 --step_size 2 --split_type balancedavg5
+### python RSA.py --wppl AIS --perception multimodal_fc6 --production cost --pragmatics combined --num_ais_samples 2 --split_type balancedavg1
 
 def run_bda(perception, pragmatics, production, split_type):
     if not os.path.exists('./bdaOutput'):
@@ -35,10 +36,17 @@ def run_evaluate(perception, pragmatics, production, split_type):
     print 'Running: {}'.format(cmd_string)
     thread.start_new_thread(os.system,(cmd_string,))
 
+def run_ais(perception, pragmatics, production, split_type, num_samp):
+    if not os.path.exists('./aisOutput'):
+        os.makedirs('./aisOutput')
+    cmd_string = 'webppl BF.wppl --require ./refModule/ -- --perception {} --pragmatics {} --production {} --splitType {}'.format(perception, pragmatics, production, split_type)
+    print '{} | Running: {}'.format(num_samp,cmd_string)
+    thread.start_new_thread(os.system,(cmd_string,))    
+
 if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser()
-    parser.add_argument('--wppl', type=str, help='options: BDA | BDA-enumerate | evaluate', default='BDA')
+    parser.add_argument('--wppl', type=str, help='options: BDA | BDA-enumerate | evaluate | AIS', default='BDA')
     parser.add_argument('--perception', nargs='+', type=str, \
                         help='option: options: human| multimodal_conv42 | multimodal_pool1 | multimodal_fc6',\
                         default = 'multimodal_conv42')
@@ -63,9 +71,12 @@ if __name__ == "__main__":
                         help='for BDA-enumerate only: this is the step size we will use to march through \
                               the simScaling range',\
                         default = 2.0)   
+    parser.add_argument('--num_ais_samples', type=int, \
+                        help='how many AIS samples do you want to take in parallel?',
+                        default = 1)
 
     args = parser.parse_args()
-
+    print args.split_type
     perception = args.perception
     production = args.production
     pragmatics = args.pragmatics
@@ -76,7 +87,7 @@ if __name__ == "__main__":
         ub = ub + 2
     step_size = args.step_size
 
-    assert args.wppl in ['BDA','evaluate', 'BDA-enumerate']
+    assert args.wppl in ['BDA','evaluate', 'BDA-enumerate', 'AIS']
 
     ## first run BDA-enumerate.wppl
     if 'BDA-enumerate' in args.wppl:
@@ -101,6 +112,14 @@ if __name__ == "__main__":
                 for prod in production:
                     for split in split_type:
                         run_evaluate(perc,prag,prod,split)
+
+    elif 'AIS' in args.wppl:
+        for perc in perception:
+            for prag in pragmatics:
+                for prod in production:
+                    for split in split_type:
+                        for num_samp in np.arange(args.num_ais_samples):                            
+                            run_ais(perc,prag,prod,split,num_samp)        
 
     else:
         print '{} wppl command not recognized'.format(args.wppl)
