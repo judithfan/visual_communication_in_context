@@ -212,8 +212,18 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     ### python generate_bdainput.py --adaptor_type multimodal_fc6 --split_type balancedavg1
+    ### python generate_bdainput.py --adaptor_type human --split_type balancedavg1
 
-    if ('human' in args.adaptor_type) & (args.gen_similarity):
+    ### make sure to gen_similarity for humans if it does not already exist, thereby overriding the command-line argument 
+    human_similarity_avg_path = '../models/refModule/json/{}/similarity-{}.json'.format(args.split_type,args.adaptor_type)
+    if not os.path.exists(human_similarity_avg_path):
+        gen_human_similarity_anyway=True    
+        print 'similarity-human-avg.json does not yet exist, generate human similarity regardless of what is passed in to --gen_similarity'
+    else:
+        gen_human_similarity_anyway=False
+
+
+    if (('human' in args.adaptor_type) & (args.gen_similarity)) | gen_human_similarity_anyway == True:
         ##### if we are dealing with a human encoder, then need to generate similarity json firststyle
         X = pd.read_csv(os.path.join(args.analysis_dir,'sketchpad_basic_recog_group_data_2_augmented.csv'))
         print 'Shape of augmented sketch annotation csv: {}'.format(X.shape)
