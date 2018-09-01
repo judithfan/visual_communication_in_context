@@ -1,0 +1,83 @@
+// run using:
+
+// webppl BF.wppl --require ./refModule/ -- --perception human --pragmatics combined --production cost --splitType balancedavg1
+
+// Load in experimental data to condition on
+var experimentVersion = 'fixedPose96';
+var aggregate = true;
+var splitType = argv.splitType; //balancedavg1
+var dataFilename = ['sketchData', 'fixedPose', splitType,
+        argv.perception, 'pilot2', 'costOutliersRemoved.csv'].join("_");
+var dataPath = ['.', 'bdaInput', splitType, dataFilename].join("/");
+var data = refModule.readCSV(dataPath);
+
+console.log("Loading expt data complete..." + data.length + " data points");
+
+// Cache some properties of model
+// Note: when moving to model comparison, can precache for all models...
+var splitNum = splitType.slice(-1);
+var similarities = refModule.getSimilarities(splitType); // pass which split number you're using, so which similarities to use
+var costs = refModule.getCosts(experimentVersion + '-cost_duration-average',splitType);
+var conditionLookup = refModule.getConditionLookup(splitType);
+var possibleSketches = refModule.getPossibleSketches(data, {aggregate,conditionLookup});
+console.log("Loading model data complete..."
+      + possibleSketches.length + " sketches of " +
+      + _.keys(similarities['multimodal_fc6']).length + " objects." );
+
+// Package into config
+var globalConfig = {
+  similarities, possibleSketches, costs, conditionLookup, aggregate,
+  outputFileName : argv.perception + '_' + argv.pragmatics + '_' + argv.production + '_' + splitType
+};
+
+var paramPrior = function() {
+  var perception = argv.perception; // human, fc6, sketch_average
+  var pragmatics = argv.pragmatics; // S0, S1, combined
+  var production = argv.production; // cost, nocost
+
+  return {
+    perception, pragmatics, production,
+    simScaling : (pragmatics === 'S0' ? 1 :
+     uniform({a:0,b:500})),
+    pragWeight: (pragmatics == 'S0' ? 0 :
+     pragmatics == 'S1' ? 1 :
+     uniform({a:0,b:1})),
+    costWeight : (production === 'nocost' ? 0 :
+     uniform({a:0,b:500})),
+    infWeight : uniform({a:0,b:500})
+};
+};
+
+var modelAnalysis = function() {
+  var params = paramPrior();
+  map(function(c) {
+    // Extract condition information
+    var conditionType = c.condition;
+    var context = [c.Target, c.Distractor1, c.Distractor2, c.Distractor3];
+    var modelOutput = speakerModel(c.Target, context, params, globalConfig);
+    //console.log(modelOutput)
+    var sketchInfo = globalConfig.aggregate ? c.coarseGrainedSketchInfo : c.sketchLabel;
+    // console.log('sketch' + sketchInfo)  
+    // console.log('score ' + modelOutput.score(sketchInfo))
+    var score = modelOutput.score(sketchInfo)
+    factor(_.isFinite(score) ? score : -10000);
+  }, data);
+
+  globalStore.iterationNum = globalStore.iterationNum + 1;
+  if (globalStore.iterationNum % 25 == 0) {
+     console.log(params);
+     console.log(score);
+  }
+
+  //  factor(score);
+
+  // return {
+  //   params : _.zipObject([paramsKey], [score])
+  // };
+};
+
+globalStore.iterationNum = 0;
+AIS(modelAnalysis, {samples: 1, steps: 50});
+
+//var outputERP = Infer({method: 'MCMC', samples: 1000, burn: 2000, lag: 0, model: modelAnalysis, onlyMAP: false});
+//refModule.bayesianErpWriter(outputERP, "./bdaOutput/" + argv.perception + "_" + argv.splitType + "/raw/" + globalConfig.outputFileName);
