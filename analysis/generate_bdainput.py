@@ -268,6 +268,9 @@ if __name__ == "__main__":
 
             ## output json in the same format as the other similarity jsons
             output_path = '../models/refModule/json/{}/similarity-{}.json'.format(args.split_type,args.adaptor_type)
+            output_dir = '../models/refModule/json/{}'.format(args.split_type)
+            if not os.path.exists(output_dir):
+                os.makedirs(output_dir)
             with open(output_path, 'wb') as fp:
                 json.dump(out_json, fp)
 
