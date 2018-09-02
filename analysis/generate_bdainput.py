@@ -207,7 +207,7 @@ if __name__ == "__main__":
     parser.add_argument('--gen_similarity', type=str2bool, help='even if you are generating for human, do not generate similarity json to save time',
                         default='True')
     parser.add_argument('--gen_centroid', type=str2bool, help='in specific case when using human similarities, do you want to use object/condition-level similarities or image-level ones?',
-                        default='False')
+                        default='True')
     parser.add_argument('--split_type', type=str, help='train/test split dimension, appended by split number', default='balancedavg')
     args = parser.parse_args()
 
