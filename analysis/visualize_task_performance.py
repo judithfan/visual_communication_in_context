@@ -30,13 +30,13 @@ dataframe containing experimental data.
 '''
 
 if __name__ == "__main__":
-    import argparse
+	import argparse
 
-    parser.add_argument('--data_fname', type=str, \
-    								  help='filepath to retrieve data from', 
-    								  default='sketchpad_basic_pilot2_group_data.csv')
+	parser.add_argument('--data_fname', type=str, \
+									  help='filepath to retrieve data from', 
+									  default='sketchpad_basic_pilot2_group_data.csv')
 
-    args = parser.parse_args()
+	args = parser.parse_args()
 
 	## directory & file hierarchy
 	iterationName = 'pilot2'
@@ -64,17 +64,17 @@ if __name__ == "__main__":
 	further_viewerRT = []
 
 	for game in all_games:    
-	    further_strokes.append(D[(D['gameID']== game) & (D['condition'] == 'further')]['numStrokes'].mean())
-	    closer_strokes.append(D[(D['gameID']== game) & (D['condition'] == 'closer')]['numStrokes'].mean())   
-	    further_drawDuration.append(D[(D['gameID']== game) & (D['condition'] == 'further')]['drawDuration'].mean())
-	    closer_drawDuration.append(D[(D['gameID']== game) & (D['condition'] == 'closer')]['drawDuration'].mean())
-	    further_accuracy.append(D[(D['gameID']== game) & (D['condition'] == 'further')]['outcome'].mean())
-	    closer_accuracy.append(D[(D['gameID']== game) & (D['condition'] == 'closer')]['outcome'].mean())
-	    closer_meanintensity.append(D[(D['gameID']== game) & (D['condition'] == 'closer')]['mean_intensity'].mean())    
-	    further_meanintensity.append(D[(D['gameID']== game) & (D['condition'] == 'further')]['mean_intensity'].mean())        
-	    closer_viewerRT.append(D[(D['gameID']== game) & (D['condition'] == 'closer')]['viewerRT'].mean())    
-	    further_viewerRT.append(D[(D['gameID']== game) & (D['condition'] == 'further')]['viewerRT'].mean())     
-	    
+		further_strokes.append(D[(D['gameID']== game) & (D['condition'] == 'further')]['numStrokes'].mean())
+		closer_strokes.append(D[(D['gameID']== game) & (D['condition'] == 'closer')]['numStrokes'].mean())   
+		further_drawDuration.append(D[(D['gameID']== game) & (D['condition'] == 'further')]['drawDuration'].mean())
+		closer_drawDuration.append(D[(D['gameID']== game) & (D['condition'] == 'closer')]['drawDuration'].mean())
+		further_accuracy.append(D[(D['gameID']== game) & (D['condition'] == 'further')]['outcome'].mean())
+		closer_accuracy.append(D[(D['gameID']== game) & (D['condition'] == 'closer')]['outcome'].mean())
+		closer_meanintensity.append(D[(D['gameID']== game) & (D['condition'] == 'closer')]['mean_intensity'].mean())    
+		further_meanintensity.append(D[(D['gameID']== game) & (D['condition'] == 'further')]['mean_intensity'].mean())        
+		closer_viewerRT.append(D[(D['gameID']== game) & (D['condition'] == 'closer')]['viewerRT'].mean())    
+		further_viewerRT.append(D[(D['gameID']== game) & (D['condition'] == 'further')]['viewerRT'].mean())     
+
 	further_strokes, closer_strokes, \
 	further_drawDuration, closer_drawDuration, further_accuracy, closer_accuracy, \
 	closer_meanintensity,further_meanintensity, closer_viewerRT, further_viewerRT = map(np.array, \
@@ -108,7 +108,7 @@ if __name__ == "__main__":
 	plt.ylim(0,10)
 	plt.tight_layout()
 	if not os.path.exists('./plots'):
-	    os.makedirs('./plots')
+		os.makedirs('./plots')
 	plt.savefig('./plots/sketchpad_basic_pilot2_taskperformance.pdf')
 	plt.savefig('../manuscript/figures/raw/sketchpad_basic_taskperformance.pdf')	
 
