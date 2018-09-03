@@ -1,3 +1,5 @@
+from __future__ import division
+
 import os
 import urllib, cStringIO
 
@@ -12,14 +14,15 @@ sns.set_context('poster')
 sns.set_style('white')
 
 import numpy as np
-from __future__ import division
-import scipy.stats as stats
 import pandas as pd
 import json
 import re
 
 from PIL import Image
 import base64
+
+import warnings
+warnings.filterwarnings("ignore")
 
 import analysis_helpers as h
 reload(h)
@@ -31,6 +34,7 @@ dataframe containing experimental data.
 
 if __name__ == "__main__":
 	import argparse
+	parser = argparse.ArgumentParser()
 
 	parser.add_argument('--data_fname', type=str, \
 									  help='filepath to retrieve data from', 
@@ -50,38 +54,12 @@ if __name__ == "__main__":
 	## read group data csv in as D
 	D = pd.read_csv(os.path.join(analysis_dir,args.data_fname))
 
-	# extract some basic descriptive statistics and assign them to variables
-	all_games = np.unique(D['gameID'])
-	further_strokes = []
-	closer_strokes = []
-	further_drawDuration = []
-	closer_drawDuration = []
-	further_accuracy = []
-	closer_accuracy = []
-	closer_meanintensity = []
-	further_meanintensity = []
-	closer_viewerRT = []
-	further_viewerRT = []
-
-	for game in all_games:    
-		further_strokes.append(D[(D['gameID']== game) & (D['condition'] == 'further')]['numStrokes'].mean())
-		closer_strokes.append(D[(D['gameID']== game) & (D['condition'] == 'closer')]['numStrokes'].mean())   
-		further_drawDuration.append(D[(D['gameID']== game) & (D['condition'] == 'further')]['drawDuration'].mean())
-		closer_drawDuration.append(D[(D['gameID']== game) & (D['condition'] == 'closer')]['drawDuration'].mean())
-		further_accuracy.append(D[(D['gameID']== game) & (D['condition'] == 'further')]['outcome'].mean())
-		closer_accuracy.append(D[(D['gameID']== game) & (D['condition'] == 'closer')]['outcome'].mean())
-		closer_meanintensity.append(D[(D['gameID']== game) & (D['condition'] == 'closer')]['mean_intensity'].mean())    
-		further_meanintensity.append(D[(D['gameID']== game) & (D['condition'] == 'further')]['mean_intensity'].mean())        
-		closer_viewerRT.append(D[(D['gameID']== game) & (D['condition'] == 'closer')]['viewerRT'].mean())    
-		further_viewerRT.append(D[(D['gameID']== game) & (D['condition'] == 'further')]['viewerRT'].mean())     
-
-	further_strokes, closer_strokes, \
-	further_drawDuration, closer_drawDuration, further_accuracy, closer_accuracy, \
-	closer_meanintensity,further_meanintensity, closer_viewerRT, further_viewerRT = map(np.array, \
-	[further_strokes, closer_strokes, \
-	further_drawDuration, closer_drawDuration, further_accuracy, closer_accuracy, \
-	closer_meanintensity, further_meanintensity, closer_viewerRT, further_viewerRT])
-
+	## compute mean accuracy and cost by game and condition
+	further_strokes, closer_strokes = h.get_mean_by_condition_and_game(D, var='numStrokes')
+	further_drawDuration, closer_drawDuration = h.get_mean_by_condition_and_game(D, var='drawDuration')
+	further_meanintensity, closer_meanintensity = h.get_mean_by_condition_and_game(D, var='mean_intensity')
+	further_accuracy, closer_accuracy = h.get_mean_by_condition_and_game(D, var='outcome')
+	further_viewerRT, closer_viewerRT = h.get_mean_by_condition_and_game(D, var='viewerRT')
 
 	## make communication task performance plot 
 	sns.set_context('talk')
@@ -120,18 +98,25 @@ if __name__ == "__main__":
 	print 'Overall accuracy (collapsing across conditions) = {}'.format(np.round(overall_accuracy,3))
 
 	accuracy_by_game = D.groupby('gameID')['outcome'].mean()
-	boot, p, lb, ub = bootstrap(accuracy_by_game)
+	boot, p, lb, ub = h.bootstrap(accuracy_by_game)
 	print '95% CI for accuracy across games: ({}, {}), p = {}'.format(np.round(lb,3),np.round(ub,3),p)	
 	
-	boot, p, lb, ub = bootstrap(further_strokes - closer_strokes)
+	ACG = D.groupby(['gameID','condition'])['outcome'].mean().reset_index()
+	grouped = ACG.groupby('condition')['outcome']
+	for name,group in grouped:
+	    boot, p, lb, ub = h.bootstrap(group)
+	    print '95% CI for accuracy for {} condition: [{}, {}], p = {}'.format(name,np.round(lb,3),np.round(ub,3),p)
+	
+	## cost	
+	boot, p, lb, ub = h.bootstrap(further_strokes - closer_strokes)
 	print '95% CI for closer vs. further strokes: [{}, {}], p = {}'.format(np.round(lb,3),np.round(ub,3),p)
 
-	boot, p, lb, ub = bootstrap(further_meanintensity - closer_meanintensity)
+	boot, p, lb, ub = h.bootstrap(further_meanintensity - closer_meanintensity)
 	print '95% CI for closer vs. further mean intensity: [{}, {}], p = {}'.format(np.round(lb,3),np.round(ub,3),p)
 
-	boot, p, lb, ub = bootstrap(further_drawDuration - closer_drawDuration)
+	boot, p, lb, ub = h.bootstrap(further_drawDuration - closer_drawDuration)
 	print '95% CI for closer vs. further draw duration: [{}, {}], p = {}'.format(np.round(lb,3),np.round(ub,3),p)
 
-	boot, p, lb, ub = bootstrap(further_viewerRT - closer_viewerRT)
+	boot, p, lb, ub = h.bootstrap(further_viewerRT - closer_viewerRT)
 	print '95% CI for closer vs. further viewer RT: [{}, {}], p = {}'.format(np.round(lb,3),np.round(ub,3),p)
 
