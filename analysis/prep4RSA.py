@@ -1,6 +1,11 @@
 import os
 import numpy as np
 
+'''
+wrapper around generate_bdainput.py
+'''
+
+
 if __name__ == "__main__":
 
     layers = ['pool1','conv42','fc6']

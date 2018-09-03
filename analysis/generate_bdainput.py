@@ -212,7 +212,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     ### python generate_bdainput.py --adaptor_type multimodal_fc6 --split_type balancedavg1
-    ### python generate_bdainput.py --adaptor_type human --split_type balancedavg1
+    ### python generate_bdainput.py --adaptor_type human --split_type balancedavg1 --gen_similarity True --gen_centroid True 
 
     ### make sure to gen_similarity for humans if it does not already exist, thereby overriding the command-line argument 
     human_similarity_avg_path = '../models/refModule/json/{}/similarity-{}.json'.format(args.split_type,args.adaptor_type)

@@ -203,6 +203,31 @@ def plot_gallery(category):
     plt.tight_layout()
 
     
+def softmax(x):
+    denom = np.sum(map(np.exp,x))
+    return [i/denom for i in x]
+        
+def get_superblock_bounds(M_shape,block_size):
+    bounds = np.linspace(0,M_shape,M_shape/block_size+1)
+    bound_tuples = []
+    for i,j in enumerate(bounds[:len(bounds)-1]):
+        bound_tuples.append(tuple((int(bounds[i]), np.int(bounds[i+1]))))
+    return bound_tuples
+
+    
+def get_superblocks(M,num_cats):
+    '''
+    accepts: 
+        square similarity matrix M of dim (m,m)
+        num_cats: number of categories (dim of superblock is m/num_cats)
+    '''
+    M_shape = M.shape[0]
+    block_size = M_shape/num_cats
+    bound_tuples = get_superblock_bounds(M_shape,block_size)
+    _M = []
+    for block in bound_tuples:
+        _M.append(M[block[0]:block[1]])    
+    
 ###### MODEL COMPARISON HELPERS ######
 
 def load_json(path):
@@ -239,24 +264,25 @@ def flatten_mcmc_to_samples(raw_params,num_samples=1000):
 def flatten(x):
     return [item for sublist in x for item in sublist]
 
-def bootstrapCI(x,nIter=1000):
-    '''
-    input: x is an array
-    '''
-    u = []
-    for i in np.arange(nIter):
-        inds = np.random.RandomState(i).choice(len(x),len(x))
-        boot = x[inds]
-        u.append(np.mean(boot))
+def trim_outliers(x):
+    mu = np.mean(x)
+    sd = np.std(x)
+    thresh = mu + sd*3
+    y = [i for i in x if i<thresh]
+    return y
 
-    u = np.array(u)
-    p1 = sum(u<0)/len(u) * 2
-    p2 = sum(u>0)/len(u) * 2
-    p = np.min([p1,p2])
-    U = np.mean(u)
-    lb = np.percentile(u,2.5)
-    ub = np.percentile(u,97.5)
-    return U,lb,ub,p
+def bootstrap(w,nIter=10000):
+    boot = []
+    for i in np.arange(nIter):
+        boot.append(np.mean(np.random.RandomState(i).choice(w,len(w),replace=True)))
+    boot = np.array(boot) 
+    p1 = sum(boot<0)/len(boot) * 2
+    p2 = sum(boot>0)/len(boot) * 2
+    p = np.min([p1,p2])        
+    lb = np.percentile(boot,2.5)
+    ub = np.percentile(boot,97.5)
+    print 'p = ' + str(sum(boot>0)/len(boot)*2)
+    return boot, p, lb, ub
 
 def make_category_by_obj_palette():
     import itertools
