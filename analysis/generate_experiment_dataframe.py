@@ -31,6 +31,8 @@ dataframe containing experimental data.
 
 if __name__ == "__main__":
 	import argparse
+	parser = argparse.ArgumentParser()
+
 
 	parser.add_argument('--out_path', type=str, \
 									  help='filepath to write dataframe to', 

@@ -49,61 +49,18 @@ objcat = dict({'basset':'dog',
                'woven':'chair'
               })
 
-def get_summary_stats(_D, all_games, correct_only=True):
-    '''
-    Get summary stats for sketchpad_basic experiment. 
-    If correct_only is True, then filter to only include correct trials... except when calculating accuracy, which considers all trials.
-    '''
-    further_strokes = []
-    closer_strokes = []
-    further_svgLength = []
-    closer_svgLength = []
-    further_svgStd = []
-    closer_svgStd = []
-    further_svgLengthPS = []
-    closer_svgLengthPS = []
-    further_drawDuration = []
-    closer_drawDuration = []
-    further_accuracy = []
-    closer_accuracy = []
-    further_pixelintensity = []
-    closer_pixelintensity = []
-    for game in all_games:    
-        if correct_only:
-            D = _D[_D['outcome']==1]
-        else:
-            D = _D
-        thresh = np.mean(D['numStrokes'].values) + 3*np.std(D['numStrokes'].values)
-        tmp = D[(D['gameID']== game) & (D['condition'] == 'further') & (D['numStrokes'] < thresh)]['numStrokes']            
-        further_strokes.append(tmp.mean())        
-        tmp = D[(D['gameID']== game) & (D['condition'] == 'closer') & (D['numStrokes'] < thresh)]['numStrokes']
-        closer_strokes.append(tmp.mean())
-        further_svgLength.append(D[(D['gameID']== game) & (D['condition'] == 'further')]['svgStringLength'].mean())
-        closer_svgLength.append(D[(D['gameID']== game) & (D['condition'] == 'closer')]['svgStringLength'].mean())
-        further_svgStd.append(D[(D['gameID']== game) & (D['condition'] == 'further')]['svgStringStd'].mean())
-        closer_svgStd.append(D[(D['gameID']== game) & (D['condition'] == 'closer')]['svgStringStd'].mean())    
-        further_svgLengthPS.append(D[(D['gameID']== game) & (D['condition'] == 'further')]['svgStringLengthPerStroke'].mean())
-        closer_svgLengthPS.append(D[(D['gameID']== game) & (D['condition'] == 'closer')]['svgStringLengthPerStroke'].mean())
-        further_drawDuration.append(D[(D['gameID']== game) & (D['condition'] == 'further')]['drawDuration'].mean())
-        closer_drawDuration.append(D[(D['gameID']== game) & (D['condition'] == 'closer')]['drawDuration'].mean())
-        further_accuracy.append(_D[(_D['gameID']== game) & (_D['condition'] == 'further')]['outcome'].mean())
-        closer_accuracy.append(_D[(_D['gameID']== game) & (_D['condition'] == 'closer')]['outcome'].mean())
-        further_pixelintensity.append(D[(D['gameID']== game) & (D['condition'] == 'further')]['mean_intensity'].mean())
-        closer_pixelintensity.append(D[(D['gameID']== game) & (D['condition'] == 'closer')]['mean_intensity'].mean())
 
-    further_strokes, closer_strokes, further_svgLength, closer_svgLength, \
-    further_svgStd, closer_svgStd, further_svgLengthPS, closer_svgLengthPS, \
-    further_drawDuration, closer_drawDuration, further_accuracy, closer_accuracy, \
-    further_pixelintensity, closer_pixelintensity = map(np.array, \
-    [further_strokes, closer_strokes, further_svgLength, closer_svgLength,\
-     further_svgStd, closer_svgStd, further_svgLengthPS, closer_svgLengthPS, \
-    further_drawDuration, closer_drawDuration, further_accuracy, closer_accuracy, \
-    further_pixelintensity, closer_pixelintensity])
-    
-    return further_strokes, closer_strokes, further_svgLength, closer_svgLength,\
-     further_svgStd, closer_svgStd, further_svgLengthPS, closer_svgLengthPS, \
-    further_drawDuration, closer_drawDuration, further_accuracy, closer_accuracy, \
-    further_pixelintensity, closer_pixelintensity
+def get_mean_by_condition_and_game(D,var='numStrokes'):
+    '''
+    Input: dataframe D and name of variable of interest (which is a column of D)
+    Output: two vectors, one for close and one for far condition,
+            with mean for each game
+    '''
+
+    d = D.groupby(['gameID','condition'])[var].mean().reset_index()
+    far_d = d[d['condition']=='further'][var].values
+    close_d = d[d['condition']=='closer'][var].values
+    return far_d, close_d
 
     
 def atoi(text):
@@ -281,7 +238,6 @@ def bootstrap(w,nIter=10000):
     p = np.min([p1,p2])        
     lb = np.percentile(boot,2.5)
     ub = np.percentile(boot,97.5)
-    print 'p = ' + str(sum(boot>0)/len(boot)*2)
     return boot, p, lb, ub
 
 def make_category_by_obj_palette():
