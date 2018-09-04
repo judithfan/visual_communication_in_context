@@ -49,7 +49,7 @@ if __name__ == "__main__":
 	args = parser.parse_args()	
 	
 	## load in CSV
-	X = pd.read_csv('./sketchpad_basic_recog_group_data_2.csv')
+	X = pd.read_csv(args.data_fname)
 
 	## make plots dir if does not already exist
 	if not os.path.exists('./plots'):
