@@ -23,6 +23,9 @@ from PIL import Image
 import base64
 import json
 
+import warnings
+warnings.filterwarnings("ignore")
+
 import analysis_helpers as h
 reload(h)
 
@@ -97,7 +100,7 @@ if __name__ == "__main__":
 	sns.set_context('poster')
 	fig = plt.figure(figsize=(4,4))
 	redgld=[(0.8, 0.2, 0.2),(0.9, 0.7, 0.3)]
-	sns.factorplot(y='correct',
+	sns.catplot(y='correct',
 					x='target_category',
 					hue='condition',
 					hue_order=['closer','further'],
@@ -114,7 +117,7 @@ if __name__ == "__main__":
 	plt.figure(figsize=(2,4))
 	# sns.set_context('poster')
 	redgld=[(0.8, 0.2, 0.2),(0.9, 0.7, 0.3)]
-	sns.factorplot(y='correct',
+	sns.catplot(y='correct',
 					x='condition',
 					# hue='condition',
 					order=['further','closer'],
@@ -134,7 +137,7 @@ if __name__ == "__main__":
 	# fig = plt.figure(figsize=(8,8))
 	fig = plt.figure(figsize=(4,4))
 	redgld=[(0.8, 0.2, 0.2),(0.9, 0.7, 0.3)]
-	sns.factorplot(y='rt',
+	sns.catplot(y='rt',
 					x='target_category',
 					hue='condition',
 					data=X,kind='bar',palette=redgld)
