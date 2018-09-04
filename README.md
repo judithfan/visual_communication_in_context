@@ -20,7 +20,7 @@ Drawing is a versatile tool for communication, spanning detailed life drawings a
     - Input: human confusion matrix from recognition experiment
     - Output: five sets of adaptor weights (for each crossvalidation fold) out of three layers (pool1, conv42, fc6); for each test set, the compatibility score between each sketch and every object (ranging from 0 to 1), and list of test set examples for each crossval fold
 - Infer social reasoning module parameters 
-  - run `prep4RSA.py` which applies necessary preprocessing before performing Bayesian data analysis
+  - run `/analysis/prep4RSA.py` which applies necessary preprocessing before performing Bayesian data analysis
   - model comparison (`/models/RSA.py`)
     - Run `BDA-enumerate.wppl` over large grid to get exact likelihood for every set of parameters within grid
     - Use the output from above to compute Bayes Factors for various model comparisons of interest: effect of context sensitivity, effect of cost sensitivity, effect of "visual abstraction" (fc6 adaptor vs. conv42/pool1)
@@ -28,5 +28,5 @@ Drawing is a versatile tool for communication, spanning detailed life drawings a
     - Run `BDA.wppl` which uses MCMC to infer parameter posterior for each of several models of interest, for each split.
     - Run `evaluate.wppl` to get model predictions for each trial in test set (i.e., probability of each sketch category given the current context)
     - Estimate confidence intervals for various statistics of interest, e.g., probability of congruent context condition ("close sparrow" vs. "far sparrow" on a close trial where sparrow is target), cost of sketches produced in close vs. far contexts
- - Write paper
+- Write paper
   - `/manuscript/`
