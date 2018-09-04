@@ -49,7 +49,9 @@ if __name__ == "__main__":
 	args = parser.parse_args()	
 	
 	## load in CSV
+	print 'Reading in dataframe at path: {}'.format(args.data_fname)
 	X = pd.read_csv(args.data_fname)
+	print 'This dataframe has shape: {}'.format(X.shape)
 
 	## make plots dir if does not already exist
 	if not os.path.exists('./plots'):
