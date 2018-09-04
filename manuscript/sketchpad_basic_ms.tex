@@ -49,7 +49,7 @@
 
 \begin{abstract}
 
-Visual modes of communication are ubiquitous in modern life --- from maps to data plots to political cartoons. Here we investigate drawing, the most basic form of visual communication. Communicative drawing poses a core challenge for theories of how vision and social cognition interact, requiring a detailed understanding of how sensory information and social context jointly determine what information is relevant to communicate. Participants (N=192) were paired in an online environment to play a drawing-based reference game. On each trial, both participants were shown the same four objects, but in different locations. The \textit{sketcher's} goal was to draw one of these objects --- the target --- so that the \textit{viewer} could pick it out from a set of distractor objects. There were two types of trials: \textit{close}, where objects belonged to the same category, and \textit{far}, where objects belonged to different categories. We found that people exploited information in common ground with their partner to efficiently communicate about the target: on far trials, sketchers achieved 99.7\% recognition accuracy while applying fewer strokes, using less ink, and spending less time (\textit{p}s$<$0.001) on their drawings than on close trials. We hypothesized that humans excel at this task by recruiting two core competencies: (1) \textbf{visual abstraction}, the capacity to perceive the correspondence between an object and a drawing of it; and (2) \textbf{social reasoning}, the ability to infer what information would help a viewer distinguish the target from distractors. We instantiated these competencies in a computational model that combines a multimodal convnet visual encoder with a Bayesian model of recursive social reasoning, and found that it fit the data well and outperformed lesioned variants of the model. Together, this work provides the first unified computational theory of how perception and social cognition support contextual flexibility in real-time visual communication.
+Visual modes of communication are ubiquitous in modern life --- from maps to data plots to political cartoons. Here we investigate drawing, the most basic form of visual communication. Communicative drawing poses a core challenge for theories of how vision and social cognition interact, requiring a detailed understanding of how sensory information and social context jointly determine what information is relevant to communicate. Participants (N=192) were paired in an online environment to play a drawing-based reference game. On each trial, both participants were shown the same four objects, but in different locations. The \textit{sketcher's} goal was to draw one of these objects --- the target --- so that the \textit{viewer} could pick it out from a set of distractor objects. There were two types of trials: \textit{$close$}, where objects belonged to the same category, and \textit{$far$}, where objects belonged to different categories. We found that people exploited information in common ground with their partner to efficiently communicate about the target: on $far$ trials, sketchers achieved 99.7\% recognition accuracy while applying fewer strokes, using less ink, and spending less time (\textit{p}s$<$0.001) on their drawings than on $close$ trials. We hypothesized that humans excel at this task by recruiting two core competencies: (1) \textbf{visual abstraction}, the capacity to perceive the correspondence between an object and a drawing of it; and (2) \textbf{social reasoning}, the ability to infer what information would help a viewer distinguish the target from distractors. We instantiated these competencies in a computational model that combines a multimodal convnet visual encoder with a Bayesian model of recursive social reasoning, and found that it fit the data well and outperformed lesioned variants of the model. Together, this work provides the first unified computational theory of how perception and social cognition support contextual flexibility in real-time visual communication.
 \end{abstract}
 
 \dates{This manuscript was compiled on \today}
@@ -85,10 +85,10 @@ The goal of this paper is to provide a computational framework for systematicall
 
 \section*{Results}
 
-\subsection*{Communication task performance}
+\subsection*{Effect of context manipulation on communication task performance}
 
 %%%%% List of results figures
-%% Figure 1: Task Display & Design & example drawings [first draft ready]
+%% Figure 1: Task Display & Design & example drawings 
 %% Figure 2: Sketch Gallery
 %% Figure 3: Communication Game Task Performance & Recognition Task Performance
 %% Figure 4: Model schematic
@@ -105,55 +105,47 @@ The goal of this paper is to provide a computational framework for systematicall
 \label{task_display}
 \end{figure*}
 
-Participants (N=192) were paired in an online environment to play a drawing-based reference game. On each trial, both participants were shown the same four real-world objects, but in different locations. Objects were photorealistic images of 3D objects and rendered in the same three-quarter pose, under identical illumatination, and on a gray background, so participants could not use pose, illumination, or background information to distinguish them.
+Participants (N=192) were paired in an online environment to play a drawing-based reference game. On each trial, both participants were shown the same four real-world objects, but in different locations. Objects were photorealistic images of 3D objects and rendered in the same three-quarter pose, under identical illumatination, and on a gray background, so participants could not use pose, illumination, or background information to distinguish them. The \textit{sketcher's} goal was to draw one of these objects --- the target --- so that the \textit{viewer} could pick it out from a set of distractor objects. There were two types of trials that were interleaved throughout each session: \textit{$close$}, where all objects in context belonged to the same category, and \textit{$far$}, where objects belonged to different categories.
 
-The \textit{sketcher's} goal was to draw one of these objects --- the target --- so that the \textit{viewer} could pick it out from a set of distractor objects. There were two types of trials that were interleaved throughout each session: \textit{close}, where all objects in context belonged to the same category, and \textit{far}, where objects belonged to different categories.
-
-We hypothesized that sketchers aim to be informative yet parsimonious in communicating about the target object in context. We evaluated two predictions that this hypothesis makes: first, that sketchers are generally successful at conveying the identity of the target to viewers across different contexts; and second, that sketchers will modulate the level of detail in their drawings of the target according to the similarity between the target and distractors. Specifically, in the \textit{close} condition where the target and distractors belong to the same basic-level category, sketchers should make detailed drawings to highlight fine-grained distinctions, even though this requires including additional detail. By contrast, in the \textit{far} condition where the target and distractors belong to different basic-level categories, the sketcher can afford to produce simpler drawings by omitting excess detail.
+We hypothesized that sketchers aim to be informative yet parsimonious in communicating about the target object in context. We evaluated two predictions that this hypothesis makes: first, that sketchers are generally successful at conveying the identity of the target to viewers across different contexts; and second, that sketchers will modulate the level of detail in their drawings of the target according to the similarity between the target and distractors. Specifically, in the \textit{$close$} condition where the target and distractors belong to the same basic-level category, sketchers should make detailed drawings to highlight fine-grained distinctions, even though this requires including additional detail. By contrast, in the \textit{$far$} condition where the target and distractors belong to different basic-level categories, the sketcher can afford to produce simpler drawings by omitting excess detail.
 
 \begin{figure*}[htbp]
 \centering
 \includegraphics[width=0.95\textwidth]{figures/2_sketch_gallery.pdf}
-\caption{(A) Object stimuli. (B) Example sketches produced in close condition. (C) Example skeches produced in far condition.}
+\caption{(A) Object stimuli. (B) Example sketches produced in $close$ condition. (C) Example skeches produced in $far$ condition.}
 \label{sketch_gallery}
 \end{figure*}
 
-Consistent with the first prediction, we found that viewers were highly accurate overall at identifying the target from drawings provided by sketchers (proportion correct: 93.8\%, 95\% CI: [0.927, 0.948]).
+Consistent with the first prediction, we found that viewers were highly accurate overall at identifying the target from drawings provided by sketchers (proportion correct: 93.8\%, 95\% CI: [92.7\%, 94.8]\%). Consistent with the second prediction, we found that sketchers applied fewer strokes ($close$: 8.03 vs. $far$: 13.5, 95\% CI: [-7.90, -3.75], \textit{p}$<$0.001), used less ink (measured by proportion of canvas pixels marked; $close$: 0.054, $far$: 0.042, 95\% CI: [0.01, 0.014], \textit{p}$<$0.001) and spent less time ($close$: 30.3 sec, $far$: 13.7 sec, \textit{p}$<$0.001) to make their drawings in the $far$ condition than in the $close$ condition. In spite of how sparse drawings were in the $far$ condition, viewers were $close$ to ceiling at identifying the target on these trials ($far$: 99.7\%, 95\% CI: [0.993, 0.999]; $close$: 87.9\%, 95\% CI: [0.858, 0.899]), and took less time to make these decisions than on $close$ trials ($far$: 6.32 sec vs. $close$: 8.32 sec, 95\% CI: [-2.748, -1.251]).
 
-Consistent with the second prediction, we found that sketchers applied fewer strokes (close = 8.03, far = 13.5, \textit{p} $<$ 0.001), used less ink (measured by proportion of the canvas marked: close = 0.054, far = 0.042, \textit{p} $<$ 0.001) and spent less time (close = 30.3s, far = 13.7s, \textit{p} $<$ 0.001) to make their drawings in the far condition than in the close condition.
+\subsection*{Effect of context manipulation on sketch recognizability}
 
-Despite the relative sparsity of drawings produced on far trials, viewers were close to ceiling on inferring the target (99.7\%). Performance was also high on close trials (87.7\%), even though this required that people discriminate the correspondence between a sketch and its referent in the context of highly similar distractors.
-
-\subsection*{Sketch recognizability}
-
-We hypothesized that the context manipulation in the communication experiment systematically affected the high-level perceptual content in participants' sketches, resulting in Far sketches that were highly informative about the target \textit{in context} yet less recognizable (i.e., worse match to the target object) than Close sketches \textit{out of context}.
-
-In other words, we predicted that the decreased effort expended by participants on Far trials reduced the absolute perceptual similarity between sketches and the target. The goal of this experiment was to validate this assumption and to provide independent training data to train a shallow adaptor network to merge photorealistic images and sketches into a common latent space, from which perceptual similarity can be easily read out.
+We further hypothesized that manipulating the similarity between the target and distractors would systematically affect the recognizability of sketches, resulting in $far$ sketches that were a worse match to the target object than $close$ sketches \textit{out of context}, even though they were still highly informative about the target \textit{in context}, as well as less costly to produce. To evaluate this hypothesis, we recruited another group of naive participants to attempt to identify the matching object for each sketch. In this recognition experiment, the alternative set contained all 32 objects, and each sketch was annotated approximately 10 times each. Consistent with our prediction, we found that $close$ sketches were matched with their corresponding object rendering much more frequently than $far$ sketches were ($close$: 54.2\%; $far$: 37.5\%; $Z$=14.1, $p$<0.001), although both were successfully matched at rates greatly exceeding chance ($p$s < 0.001).
 
 \begin{figure*}[htbp]
 \centering
 \includegraphics[width=0.95\textwidth]{figures/3_behavioral_performance.pdf}
-\caption{(A-C) Sketchers used fewer strokes, less ink, and spent less time producing sketches in the far condition, relative to the close condition. (D-E) Viewers were at ceiling accuracy in identifying the target in the far condition, and were highly accurate in the close condition. (F) Naive matcher participants were more accurate for close sketches than far sketches.}
+\caption{(A-C) Sketchers used fewer strokes, less ink, and spent less time producing sketches in the $far$ condition, relative to the $close$ condition. (D-E) Viewers were at ceiling accuracy in identifying the target in the $far$ condition, and were highly accurate in the $close$ condition. (F) Naive matcher participants were more accurate for $close$ sketches than $far$ sketches.}
 \label{task_performance}
 \end{figure*}
 
 %%% recognition experiments
-%% report close vs. far Accuracy
-
-Consistent with our prediction, we found that Close sketches were matched with their corresponding object rendering much more frequently than Far sketches were (Close: 54.2\%; Far: 37.5\%; $Z$=14.1, $p$<0.001), although both were successfully matched at rates far exceeding chance ($p$s < 0.001).
+%% report $close$ vs. $far$ Accuracy
 
 %% report variation in different categories
 
 %% report confusion matrix results: diagonal vs. off-diagonal block vs. rest of the matrix results.
 
-We further hypothesized that the particular way in which Far sketches would differ perceptually from Close sketches was that Far sketches would be more confusable with other objects from the same basic-level category, while still being highly recognizable as a representation of the corresponding basic-level category.
+We further hypothesized that the particular way in which $far$ sketches would differ perceptually from $Close$ sketches was that $far$ sketches would be more confusable with other objects from the same basic-level category, while still being highly recognizable as a representation of the corresponding basic-level category.
 
-We measured this by comparing the within-category confusion rate to the overall confusion rate for Close and Far sketches, and found that XXX.
+We measured this by comparing the within-category confusion rate to the overall confusion rate for $Close$ and $far$ sketches, and found that XXX.
 
 \subsection*{Computational model}
 
 What cognitive competencies explain strong performance in the communication task? We hypothesized that 
 
+
+% to provide independent training data to train a shallow adaptor network to merge photorealistic images and sketches into a common latent space, from which perceptual similarity can be easily read out.
 
 (1) \textbf{visual abstraction}, the capacity to perceive the correspondence between an object and a drawing of it; and (2) \textbf{social reasoning}, the ability to infer what information would help a viewer distinguish the target from distractors. We instantiated these competencies in a computational model that combines a multimodal convnet visual encoder with a Bayesian model of recursive social reasoning, and found that it fit the data well and outperformed lesioned variants of the model.
 
@@ -240,7 +232,7 @@ Drawings were collected in the context of an online, sketching-based reference g
 
 Sketchers drew using black ink on digital canvas (pen width = 5 pixels; 300 x 300 pixels) embedded in a web browser window using Paper.js (http://paperjs.org/). Participants drew using the mouse cursor, and were not able to delete previous strokes. Each stroke of which was rendered on the viewer's screen immediately upon the completion of each stroke. There were no restrictions on how long participants could take to make their drawings. After clicking a submit button, the viewer guessed the identity of the drawn object by clicking one of the four objects in the array. Otherwise, the viewer had no other means of communicating with the sketcher. Both participants received immediate task-related feedback: the sketcher learned which object the viewer had clicked, and the viewer learned the identity of the target. Both participants earned bonus points for each correct response.
 
-For each pair, objects were grouped into eight quartets: Four of these quartets contained objects from the same category (``close''); the other four of these quartets contained objects from different categories (``far'' condition). Each quartet was presented four times, such that each object in the quartet served as the target exactly once. The assignment of objects to quartet and condition was randomized across pairs.
+For each pair, objects were grouped into eight quartets: Four of these quartets contained objects from the same category (``$close$''); the other four of these quartets contained objects from different categories (``$far$'' condition). Each quartet was presented four times, such that each object in the quartet served as the target exactly once. The assignment of objects to quartet and condition was randomized across pairs.
 
 \subsection*{Recognition experiment: Measuring perceptual similarity between sketches and objects}
 
