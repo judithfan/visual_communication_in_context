@@ -18,9 +18,10 @@
 \usepackage{textcomp}
 \usepackage{multirow}
 \usepackage{subfig}
+\usepackage{todonotes}
+\usepackage{hyperref}
 
 \newcommand{\mwu}[1]{{\color{green}{[mwu: #1]}}}
-
 
 \title{Contextual flexibility in visual communication}
 
@@ -120,7 +121,7 @@ Consistent with the first prediction, we found that viewers were highly accurate
 
 \subsection*{Effect of context manipulation on sketch recognizability}
 
-We further hypothesized that manipulating the similarity between the target and distractors would systematically affect the recognizability of sketches, resulting in $far$ sketches that were a worse match to the target object than $close$ sketches \textit{out of context}, even though they were still highly informative about the target \textit{in context}, as well as less costly to produce. To evaluate this hypothesis, we recruited another group of naive participants to attempt to identify the matching object for each sketch. In this recognition experiment, the alternative set contained all 32 objects, and each sketch was annotated approximately 10 times each. Consistent with our prediction, we found that $close$ sketches were matched with their corresponding object rendering much more frequently than $far$ sketches were ($close$: 54.2\%; $far$: 37.5\%; $Z$=14.1, $p$<0.001), although both were successfully matched at rates greatly exceeding chance ($p$s < 0.001).
+We further hypothesized that manipulating the similarity between the target and distractors would systematically affect the recognizability of sketches, resulting in $far$ sketches that were a worse match to the target object than $close$ sketches \textit{out of context}, even though they were still highly informative about the target \textit{in context}, as well as less costly to produce. To evaluate this hypothesis, we recruited another group of naive participants to attempt to identify the matching object for each sketch. In this recognition experiment, the alternative set contained all 32 objects, and each sketch was annotated approximately 10 times each. Consistent with our prediction, we found that $close$ sketches were matched with their corresponding object rendering more consistently than $far$ sketches were ($close$: 54.2\%; $far$: 37.5\%; $Z$=14.1, $p$<0.001), although both were successfully matched at rates greatly exceeding chance ($p$s < 0.001). 
 
 \begin{figure*}[htbp]
 \centering
@@ -135,7 +136,7 @@ We further hypothesized that manipulating the similarity between the target and 
 
 %% report confusion matrix results: diagonal vs. off-diagonal block vs. rest of the matrix results.
 
-% We further hypothesized that the particular way in which $far$ sketches would differ perceptually from $Close$ sketches was that $far$ sketches would be more confusable with other objects from the same basic-level category, while still being highly recognizable as a representation of the corresponding basic-level category.
+% There was clear structure in the pattern of confusions for both $close$ and $far$ sketches. We further hypothesized that the particular way in which $far$ sketches would differ perceptually from $Close$ sketches was that $far$ sketches would be more confusable with other objects from the same basic-level category, while still being highly recognizable as a representation of the corresponding basic-level category.
 
 % We measured this by comparing the within-category confusion rate to the overall confusion rate for $Close$ and $far$ sketches, and found that XXX.
 
@@ -151,7 +152,6 @@ What explains the pattern of behavior observed in the communication task? We hyp
 
 \subsubsection*{Modeling social reasoning}
 
- 
 %% report RSA modeling results using human perceptual measurements directly to compute informativity
 %% prag with cost, prag no cost, no prag cost, no prag no cost
 We begin with production and pragmatics. Lesioning the production component simply requires setting the parameter weighting the \emph{cost} term of our speaker's utility to zero, such that all sketches are equally easy to produce. For the pragmatic component, we compare a \emph{social sketcher}, which takes context into account, against an \emph{asocial sketcher} that simply aims to make a sketch with high absolute perceptual similarity to the target, ignoring context. To define our social sketcher, we generalize the Rational Speech Act (RSA) framework from the linguistic domain, where it has captured language use as a process of recursive social reasoning \cite{goodman2016pragmatic,kao2014formalizing,goodman2013knowledge}. By reasoning about a viewer who normalizes perceptual similarity across objects in context, a social sketcher is able to choose sketches that are \emph{informative}, or that apply to the target relatively better than distractors. For example, in a context only containing birds, a generic outline of a bird would not be very informative, even if it has high absolute similarity to the target, because it also resembles the distractors. Because both absolute and relative similarity may influence a sketcher's decision, we introduced a parameter $w_p \in [0,1]$ that interpolates between the two values. We conducted a Bayesian Data Analysis, plugging in the similarity function directly estimated from empirical human ratings in the matching task. We found that the social speaker was strongly preferred over the asocial speaker ($BF = XX; w_p = YY$, 95\% credible interval $= [X, Y]$) and the model including a cost term was strongly preferred over a cost-free variant ($BF = XX; w_c = YY$, 95\% credible interval $=[X, Y]$; see Fig. \ref{fig:model_results}A).
@@ -241,19 +241,31 @@ On each trial, participants were presented with a randomly selected sketch colle
 
 \subsubsection*{Data preprocessing}
 
+Experimental data were preprocessed in various ways before being 
+
+%% So all modeling is done on estimates of similarity and cost that are aggregated at the context-object level.
+
 %% describe how cost outliers were removed, z-score normalized within a game, then aggregated within sketch category
 
 %% describe how human similarities were aggregated across sketches within category to form 64 sketch categories [these used to train the visual encoder modules below]
 
+% This human response distribution 
+
+% Aggregating across sketches within in a context-object category produced more precise estimates
+
 \subsubsection*{Visual encoder module}
 
-Features were extracted using VGG-19 \cite{simonyan2014very}, a high-performing deep convolutional neural network model architecture that had been pretrained to categorize objects on the Imagenet database, which contains millions of photographs from hundreds of object categories \cite{deng2009imagenet}. Despite the fact that drawings are highly abstracted away from natural visual inputs, prior work has shown a striking isomorphism in the similarity structure \cite{kriegeskorte2008matching} of object categories in drawings and photos at higher layers in these models \cite{FanCommon2018}, without any additional training.
+Features were extracted using VGG-19 \cite{simonyan2014very}, a high-performing deep convolutional neural network model architecture that had been pretrained to categorize objects on the Imagenet database, which contains millions of photographs from hundreds of object categories \cite{deng2009imagenet}. Despite the fact that drawings are highly abstracted away from natural visual inputs, prior work has shown a striking isomorphism in the similarity structure \cite{kriegeskorte2008matching} of object categories in sketches and photos at higher layers in these models \cite{FanCommon2018}, without any additional training.
 
-While these models excel at (and were indeed optimized for) categorization of objects, two additional competencies are required to succeed at the visual communication task described above. First, an observer must be able to represent fine-grained relationships between different images of objects from the same category; second, this observer must also be able to discern image-level correspondences between drawings and photos of the same object. In order to better approximate the granularity with which human observers can distinguish different images, we augment VGG19 with a smaller \textit{adaptor} network that learns a common feature representation for drawings and photos. This approach has been successfully used in prior work to better predict human semantic categorization judgments \cite[]{peterson2016adapting}, and to improve sketch-based image retrieval \cite[]{sangkloy2016sketchy}.
+While these models excel at (and were indeed optimized for) categorization of objects, two additional competencies are required to succeed at the visual communication task described above. First, an observer must be able to represent fine-grained relationships between different images of objects from the same category; second, this observer must also be able to discern image-level correspondences between sketches and photos of the same object. In order to better approximate the granularity with which human observers can distinguish different images, we augment VGG-19 with a smaller fully-connected \textit{adaptor} network that learns to predict the perceptual correspondence between sketches and objects. This approach has been successfully used in prior work to better predict human semantic categorization judgments \cite[]{peterson2016adapting}, and to improve sketch-based photo retrieval \cite[]{sangkloy2016sketchy}.
 
-We explore adapting features from three different layers of VGG-19: the first max pooling layer (vgg-early), the tenth convolutional layer (vgg-mid), and the first fully connected layer (vgg-high), respectively representing low, medium, and high level visual abstraction. As such, we design three different encoder models, intentionally keeping them lightweight and comparable in number of parameters (Table~\ref{table:parameters}). We respectively refer to these as \textit{adaptor-early}, \textit{adaptor-mid}, and \textit{adaptor-high}. Below, we detail the architecture and hyperparameter choices:
+To evaluate the degree to which the \textit{visual abstraction} afforded by the complex transformations applied by successive layers of VGG-19 are required to capture human behavior during visual communication, we construct three adaptor networks that intercept VGG-19 image representations at different layers: the first max pooling layer (early), the tenth convolutional layer (intermediate), and the first fully connected layer (high). 
 
-Adaptor-high is composed of a linear layer from 8192 to 128, followed by a swish nonlinearity \cite[]{ramachandran2018searching} and dropout, then a linear layer from 128 to 1. Each vgg-high feature has 4096 dimensions. A photo and sketch feature is first concatenated to form a vector of size 8192, then passed to adaptor-high. Empirically, we find the ability of the model to fit the data robust to the choice of nonlinearity and hidden dimensionality \mwu{@judy, here is a good place to show that figure saying hidden layer size isn't terribly important}.
+To facilitate comparison between adaptor networks, we ensured that they contained a comparable number of trainable parameters (Table~\ref{table:parameters}), and were trained under matched conditions. 
+
+To help discriminate which layer provides the best starting features basis for predicting sketch-object correspondence, these adaptor networks were also deliberately constrained to be shallow relative to the depth of VGG-19 \todo{(i.e., consisting of two layers including nonlinearities? what is best way to say this?)}.
+
+In the following, we provide a detailed description of the architecture and hyperparameter choices for each adaptor. We refer to each adaptor network as: \textit{adaptor-early}, \textit{adaptor-mid}, and \textit{adaptor-high}. 
 
 \begin{table}
 \centering
@@ -273,14 +285,20 @@ adaptor-high & 1048833 \\
 \label{table:parameters}
 \end{table}
 
+Adaptor-high is composed of a linear layer from 8192 to 128, followed by a swish nonlinearity \cite[]{ramachandran2018searching} \todo{brief intuition for what swish does goes here} and dropout, then a linear layer from 128 to 1. Each vgg-high feature has 4096 dimensions. A photo and sketch feature is first concatenated to form a vector of size 8192, then passed to adaptor-high. In practice, we find the ability of the model to fit the data is robust to the choice of nonlinearity \todo{alternative nonlinearities were X, Y, Z} and size of hidden layer, within the range $(2^{7},2^{9})$. 
+
+\todo{Has the adaptor-mid architecture changed since this writing?}
+% https://github.com/judithfan/pix2svg/blob/master/generative/tests/compare_test/model.py
+
 Similarly, adaptor-mid consists of a linear layer of 1024 to 1021, swish, dropout, then a linear layer from 1021 to 1. The width of the layers are chosen to match the number of trainable parameters as in adaptor-high. Since vgg-mid features are three dimensional (512 by 28 by 28), we first flatten the input into a one dimensional vector of size 512 using a weighted linear combination $\sum_{i=1}^{28}\sum_{j=1}^{28} w_{ij} * x_{ij}$, where $x_{ij}$ represents a cross-section from vgg-mid. The parameters $\{w_{ij}|1\leq i,j \leq 28\}$ are learned along with the parameters of adaptor-mid. Intuitively, this is akin to attention over the spatial features of vgg-mid. We separately attend over photo and sketch spatial features, creating two vectors of size 512, then concatenate prior to adaptor-mid.
 
-Finally, adaptor-low is almost identical to adaptor-mid, except each feature is of size 64 by 112 by 112. Explicitly, this network starts with a linear layer of 4096 to 7875, swish, dropout, then a linear layer form 7875 to 1. Due to the input size, each attention module has 12,544 learnable weights.
+%% Is this the line where the adaptor arch. is defined? https://github.com/judithfan/pix2svg/blob/master/generative/tests/compare_test/model.py#L81
+Finally, adaptor-low is almost identical to adaptor-mid, except each feature is of size 64 by 112 by 112. Explicitly, this network starts with a linear layer of 4096 to 7875 \todo{Trying to understand why 4096->7875? Does it not start with a pooling layer, followed by channel-wise attention? Is this the same as the mid-adaptor?}, swish, dropout \todo{how much dropout?}, then a linear layer form 7875 to 1. Due to the input size, each attention module has 12,544 learnable weights. 
 
 %% adaptor training procedure
-We now describe the training procedure for each visual encoder. The sketch dataset is split into training, validation, and test sets in a 80\%, 10\%, and 10\% ratio, and this split was performed in a 5-fold cross-validated manner. This division is performed based on context, which is defined as the set of the target and distractor images (each trial consists of 3 distractor images and 1 target). Doing so, the contexts of training examples will not overlap with the contexts of either validation or test examples. Given a photo and a sketch, the adaptor network outputs a single real number, which we use as a similarity measure. We construct of similarity vector of size 32 between a sketch and each photo in the domain (32 total), and apply a softmax on top to induce a probability distribution over photos. To fit network parameters, we optimize via stochastic gradient descent on a cross entropy loss between the induced distribution and a distribution of average human choices (\mwu{@judy add more details about how we get labels}). Specifically we use Adam \cite[]{kingma2014adam} with a learning rate of 1e-4 with a minibatch size of 10 for 100 epochs. As a property of the input domain, the gradients with respect to adaptor parameters are by default, very small. While increasing the learning rate may lead to unstable optimization, we find that multiplying the loss by a large constant $C$ is necessary to sufficiently optimize the objective for good test performance. In practice, $C = 10000$. Post-training, we use the model with the best loss on a held-out validation set. For each photo and sketch pair in the test set, we calculate the similarity score as input to a social reasoning module.
+We now describe the training procedure for each visual encoder. The sketch dataset is split into training, validation, and test sets in a 80\%, 10\%, and 10\% ratio, and this split was performed in a 5-fold cross-validated manner. This division is performed based on context, which is defined as the set of the target and distractor images (each trial consists of 3 distractor images and 1 target). Doing so, the contexts of training examples will not overlap with the contexts of either validation or test examples. \todo{I recall these were also balanced by close/far, were there any other balancing dimensions?} Given a photo and a sketch, the adaptor network outputs a single real number, which we use as a similarity measure. We construct a similarity vector of size 32 between a sketch and each object rendering in the domain (32 total), and apply a softmax on top to induce a probability distribution over objects. To fit network parameters, we optimize via stochastic gradient descent on the cross entropy loss between the induced distribution and a distribution of average human recognition responses. \todo{write out cross entropy loss fn explicitly} The human response distribution was derived by computing the proportion of trials from the recognition experiment on which a sketch from the same context-object category (e.g., all sparrow sketches produced on close trials) was matched with each object. As a consequence, this human response distribution not only provides an estimate of the strength of the match between a sketch and its corresponding object, but also the pattern of confusions that human observers exhibit, thus providing a more detailed profile of recognition behavior for each adaptor to emulate. We use the Adam optimization algorithm \cite[]{kingma2014adam} with a learning rate of 1e-4 and minibatch size of 10 for 100 epochs. As a property of the input domain, the gradients with respect to adaptor parameters are very small \todo{how small? in the range Xe-X to Xe-X}. We find that increasing the learning rate alone led to unstable optimization, but that multiplying the loss by a large constant $C$ leads to optimize the objective for good test performance. In practice, $C = 1e4$. After training each adaptor for 100 epochs, we use the model with the best performance on the validation set and freeze its weights for evaluation. For each photo and sketch pair in the test set, we evaluate the perceptual correspondence and provide this as input to the social reasoning module, described below.
 
-\subsubsection*{Social reasoning and decision-making module}
+\subsubsection*{Social reasoning and decision module}
 
 We formalize a sketcher, $\mathcal{S}$ as a decision-theoretic agent who produces sketches, $s$, by (soft)-maximizing their utility function, $U$, given a particular object referent, $o$:
 
@@ -295,31 +313,34 @@ U_{S_1}(s, o) = w_p \ln \mathcal{V}(o|s) - w_c C(s)
 \end{equation}
 where $w_p$ and $w_c$ are latent parameters weighting the influences of the sketch's perceptual properties and cost, respectively.
 
-The viewer ($\mathcal{V}$) is assumed to choose among potential objects in context proportional to their perceptual similarity vis-a-vis the drawing.
+The viewer ($\mathcal{V}$) is assumed to choose among potential objects in context proportional to the perceptual correspondence between each object and the current sketch.
 
 \begin{equation} \label{literal_viewer_score}
 \mathcal{V}(o|s) \propto \exp\{\alpha \cdot \textrm{sim(s, o)}\}
 \end{equation}
-where $\alpha$ is a scaling parameter determining the assumed optimality of the listener's decision policy: as $\alpha \rightarrow \infty$, the listener increasingly chooses the object with maximum perceptual similarity to the sketch.
+where $\alpha$ is a scaling parameter determining the assumed optimality of the listener's decision policy: as $\alpha \rightarrow \infty$, the listener is more likely to choose the object with highest perceptual correspondence to the sketch.
 
-We also consider a literal sketcher $S_0$ who does not reason about a viewer in context, but tries to directly maximize the perceptual similarity of their sketch to the target, thus we use $\textrm{sim}(s, o)$ instead of informativity to $\mathcal{V}(o|s)$ in their perceptual term. To infer the effect of pragmatics, we infer the mixture of these speakers that best fits the data. We introduce an additional parameter $w_{prag}$ that interpolates between their utilities: $$f(s,o) = w_{prag}\ln \mathcal{V}(o | s) + (1-w_{prag}) \textrm{sim}(s,o)$$ After algebraically simplifying, the full utility is :
+We also consider a literal sketcher $S_0$ who does not reason about a viewer in context, but aims to maximize the perceptual similarity of their sketch to the target, thus we use $\textrm{sim}(s, o)$ instead of informativity to $\mathcal{V}(o|s)$ in their perceptual term. To infer the effect of pragmatics, we infer the mixture of these speakers that best fits the data. We introduce an additional parameter $w_{prag}$ that interpolates between their utilities: $$f(s,o) = w_{prag}\ln \mathcal{V}(o | s) + (1-w_{prag}) \textrm{sim}(s,o)$$ After algebraically simplifying, the full utility is :
 
 \begin{equation}
 U(s,o) =  w_p \cdot  f(s,o) - w_c \cdot C(s)
 \end{equation}
 
-To compute perceptual similarity, we extract a feature vector representation from each of the target and distractor objects using the selected fixed visual encoder, and compute the (logged) distances between each of these vectors and the potential sketches.
+% To compute perceptual similarity between any given sketch and object, we pass images of both into VGG and 
+% images of each of the target and distractor objects into the selected fixed visual encoder, 
+% and compute the distances between each of these vectors and the potential sketches.
 
-\subsubsection*{Bayesian data analysis}
+\subsubsection*{Model comparison}
 
+% All model comparison was done in a crossvalidated manner on data from the test set of each crossvalidation split.
 
-\subsubsection*{Evaluating }
+\subsubsection*{Evaluating model predictions}
 
 }
 
 \showmatmethods % Display the Materials and Methods section
 
-\acknow{Thanks to XX, XX, XX for helpful comments and discussion.}
+\acknow{Thanks to Dan Yamins and the Stanford CoCo Lab for helpful comments and discussion.}
 
 \showacknow{} % Display the acknowledgments section
 
