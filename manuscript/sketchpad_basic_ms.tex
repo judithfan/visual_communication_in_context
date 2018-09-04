@@ -130,33 +130,24 @@ We further hypothesized that manipulating the similarity between the target and 
 \end{figure*}
 
 %%% recognition experiments
-%% report $close$ vs. $far$ Accuracy
 
 %% report variation in different categories
 
 %% report confusion matrix results: diagonal vs. off-diagonal block vs. rest of the matrix results.
 
-We further hypothesized that the particular way in which $far$ sketches would differ perceptually from $Close$ sketches was that $far$ sketches would be more confusable with other objects from the same basic-level category, while still being highly recognizable as a representation of the corresponding basic-level category.
+% We further hypothesized that the particular way in which $far$ sketches would differ perceptually from $Close$ sketches was that $far$ sketches would be more confusable with other objects from the same basic-level category, while still being highly recognizable as a representation of the corresponding basic-level category.
 
-We measured this by comparing the within-category confusion rate to the overall confusion rate for $Close$ and $far$ sketches, and found that XXX.
+% We measured this by comparing the within-category confusion rate to the overall confusion rate for $Close$ and $far$ sketches, and found that XXX.
 
 \subsection*{Computational model}
 
-What cognitive competencies explain strong performance in the communication task? We hypothesized that 
-
+What explains the pattern of behavior observed in the communication task? We hypothesized that two core cognitive competencies play a crucial role: (1) \textbf{visual abstraction}, the capacity to perceive the correspondence between an object and a drawing of it; and (2) \textbf{social reasoning}, the ability to infer what information would help a viewer distinguish the target from distractors. In order to evaluate this hypothesis, we instantiated these competencies in a computational model that combines a multimodal convnet visual encoder with a Bayesian model of recursive social reasoning. Here we describe the architecture of our model, evaluate its generalization performance on unseen sketches, and conduct a set of comparisons against lesioned variants to test the role played by each of these components. 
 
 % to provide independent training data to train a shallow adaptor network to merge photorealistic images and sketches into a common latent space, from which perceptual similarity can be easily read out.
 
-(1) \textbf{visual abstraction}, the capacity to perceive the correspondence between an object and a drawing of it; and (2) \textbf{social reasoning}, the ability to infer what information would help a viewer distinguish the target from distractors. We instantiated these competencies in a computational model that combines a multimodal convnet visual encoder with a Bayesian model of recursive social reasoning, and found that it fit the data well and outperformed lesioned variants of the model.
-
-
 %% describe the full sketcher model
-To make fine-grained quantitative predictions and conduct a rigorous comparison, we formalized our hypotheses as a series of computational models. 
 
-Our full sketching model integrates three key components: \emph{production}, \emph{pragmatics}, and \emph{perception} (see \emph{Materials and Methods}; Eq. 2-4 and Fig. \ref{model_schematic}). 
-
-
-\emph{Production} determines whether or not the agent accounts for the relative cost of producing drawings with more strokes. \emph{Pragmatics} captures the sketcher's reasoning about how a viewer will make decisions in context. \emph{Perception} determines the encoding model used by the agent to determine the literal similarity between a drawing and object. Intuitively, putting these components together has the effect of biasing the model to depict properties of the target object that perceptually distinguish it from the distractors, while also preferring sketches that are less costly to produce, i.e., requiring fewer strokes or less ink. We conduct a set of comparisons against lesioned variants to test the role played by each component.
+% Our full sketching model integrates three key components: \emph{production}, \emph{pragmatics}, and \emph{perception} (see \emph{Materials and Methods}; Eq. 2-4 and Fig. \ref{model_schematic}). \emph{Production} determines whether or not the agent accounts for the relative cost of producing drawings with more strokes. \emph{Pragmatics} captures the sketcher's reasoning about how a viewer will make decisions in context. \emph{Perception} determines the encoding model used by the agent to determine the literal similarity between a drawing and object. Intuitively, putting these components together has the effect of biasing the model to depict properties of the target object that perceptually distinguish it from the distractors, while also preferring sketches that are less costly to produce, i.e., requiring fewer strokes or less ink. We conduct a set of comparisons against lesioned variants to test the role played by each component.
 
 \subsubsection*{Modeling social reasoning}
 
