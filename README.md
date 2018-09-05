@@ -3,7 +3,7 @@ Drawing is a versatile tool for communication, spanning detailed life drawings a
 
 ## workflow
 
-- **Run human experiments**
+- **Run human experiments** (see also: https://github.com/hawkrobe/reference_games)
   - communication task (`/experiments/draw`)
     - Input: 3D objects in context
     - Output: sketches & viewer decisions in context
@@ -15,7 +15,7 @@ Drawing is a versatile tool for communication, spanning detailed life drawings a
     - Wrapper around four scripts located at `/analysis/`: `generate_refgame_dataframe.py`,`analyze_refgame_data.py`, `generate_recog_dataframe.py`, `analyze_recog_data.py`
     - Input: raw mongo database records
     - Output: tidy formatted dataframes for communication and recognition experiments, plots, statistics
-- **Train visual adaptor module networks**
+- **Train visual adaptor module networks** (see also: https://github.com/mhw32/visual-modules-for-sketch-communication.git)
   - `/models/adaptor`
     - Input: human confusion matrix from recognition experiment
     - Output: five sets of adaptor weights (for each crossvalidation fold) out of three layers (pool1, conv42, fc6); for each test set, the compatibility score between each sketch and every object (ranging from 0 to 1), and list of test set examples for each crossval fold
