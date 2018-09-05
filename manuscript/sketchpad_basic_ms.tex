@@ -142,7 +142,7 @@ We further hypothesized that manipulating the similarity between the target and 
 
 \subsection*{Computational model}
 
-What explains the pattern of behavior observed in the communication task? We hypothesized that two core cognitive competencies play a crucial role: (1) \textbf{visual abstraction}, the capacity to perceive the correspondence between an object and a drawing of it; and (2) \textbf{social reasoning}, the ability to infer what information would help a viewer distinguish the target from distractors. In order to evaluate this hypothesis, we instantiated these competencies in a computational model that combines a multimodal convnet visual encoder with a Bayesian model of recursive social reasoning. Here we describe the architecture of our model, evaluate its generalization performance on unseen sketches, and conduct a set of comparisons against lesioned variants to test the role played by each of these components.
+What explains the pattern of behavior observed in the communication task? We hypothesized that two core cognitive competencies play a crucial role: (1) visual abstraction, the capacity to perceive the correspondence between an object and a drawing of it; and (2) social reasoning, the ability to infer what information would help a viewer distinguish the target from distractors. In order to evaluate this hypothesis, we instantiated these competencies in a computational model that combines a multimodal convnet visual encoder with a Bayesian model of recursive social reasoning. Here we describe the architecture of our model, evaluate its generalization performance on unseen sketches, and conduct a set of comparisons against lesioned variants to test the role played by each of these components.
 
 % to provide independent training data to train a shallow adaptor network to merge photorealistic images and sketches into a common latent space, from which perceptual similarity can be easily read out.
 
@@ -244,22 +244,6 @@ We hypothesized that two core cognitive competencies are necessary and sufficien
 Our goals in developing a computational model of sketch production in this visual communication task are to: (a) formalize our hypothesis in a manner that can produce quantitative predictions for unseen sketches and contexts; and (b) rigorously evaluate the contribution of the hypothesized components to explaining the observed pattern of human behavior.  
 
 Towards the first goal, we propose a framework for instantiating visual abstraction and social reasoning by combining a deep convolutional neural network visual encoder with a probabilistic model of recursive social reasoning. Towards the second goal, we formally compare how well the full model predicts human behavior relative to a targeted set of lesioned variants, and examine how each component influences the observed pattern of behavior.  
-
-
-% \subsubsection*{Dataset preprocessing}
-
-% Experimental data were preprocessed in various ways before being used for model training and evaluation.
-
-%% describe how cost outliers were removed, z-score normalized within a game, then aggregated within sketch category
-
-%% So all modeling is done on estimates of similarity and cost that are aggregated at the context-object level.
-
-%% describe how human similarities were aggregated across sketches within category to form 64 sketch categories [these used to train the visual encoder modules below]
-
-% Aggregating across sketches within in a context-object category produced more precise estimates
-
-%% describe outlier removal in one go: invalid sketches were those defined as containing words. outlier sketches had a cost beyond 5sd of the mean on any cost measure.
-
 
 \subsubsection*{Visual abstraction module}
 
@@ -368,7 +352,7 @@ Model-based perceptual correspondence scores are defined to the same level of gr
 
 To compute this score for a particular visual encoder module and object, each test-set sketch from a given object-context category is passed in with this object to the visual encoder module, yielding a single image-level correspondence score lying in the range $[0,1]$. These image-level correspondence scores are then averaged across all sketches belonging to the same object-context category, yielding 32 objects x 32 sketches x 2 contexts  = 2048 model-based perceptual correspondence scores for each visual encoder module.
 
-We measured the cost of each sketch empirically as the amount of time taken by the participant to produce it during the communication task. We reasoned that drawing time would be both a natural and straightforward way of measuring the cost of sketching for workers on Amazon Mechanical Turk, who increase their total compensation by completing tasks in a timely manner. However, as there were no absolute constraints on the amount of time that could be spent on each trial, there was considerable variability across different participants in terms of how much time they spent producing their sketches. To control for this variability across participants, we z-score normalized drawing times across all trials within a participant, then averaged these normalized across sketches within the same object-context category as above, yielding 32 objects x 2 contexts = 64 empirical cost estimates in total.
+We measured the cost of each sketch empirically as the amount of time taken by the participant to produce it during the communication task. We reasoned that drawing time would be both a natural and straightforward way of measuring the cost of sketching for workers on Amazon Mechanical Turk, who increase their total compensation by completing tasks in a timely manner. However, as there were no absolute constraints on the amount of time that could be spent on each trial, there was considerable variability across different participants in terms of how much time they spent producing their sketches. To control for this variability across participants and to ensure robust estimates, we first removed outliers (draw times exceeding 5 s.d. from the mean), then z-score normalized drawing times across all remaining trials within a participant, and finally averaged these normalized draw times across sketches within the same object-context category as above, yielding 32 objects x 2 contexts = 64 empirical cost estimates in total.
 
 \subsubsection*{Model comparison}
 
@@ -383,7 +367,7 @@ and continuous parameters
 $$w_p, w_c, w_{prag}, \alpha \sim \textrm{Unif}(0, 50)$$
 as described in the previous section. To compute the likelihood function $P(D | M, \theta)$ for a speaker model $M$ under parameters $\theta$, we perform exact inference for our sketcher model using (nested) enumeration and sum over our data set (a test split of held-out sketches).
 
-There are several possible methods to approximate Bayes Factors when exact evaluation of the integral is intractable. We compare two independent methods to check robustness of our estimate: annealed importance sampling and exact enumeration over a discretized grid of parameters. Annealed importance sampling (AIS; \cite{neal2001}) is a Monte Carlo algorithm that is commonly used to estimate the partition function, or marginalized likelihood, of probabilistic models. Because the integral is dominanted by a typical set near the region of high likelihood, AIS uses an MCMC chain to construct a sequence of intermediate distributions interpolating between a tractable initial distribution (in our case, the prior) and intractable target distribution: we set the number of steps to 2000 and take the expectation over 48 independent samples from this procedure for every model of interest, using the implementation provided in the probabilistic programming language WebPPL. We can then obtain Bayes Factors to compare models by taking ratios of these estimates.
+There are several possible methods to approximate Bayes Factors when exact evaluation of the integral is intractable. We compare two independent methods to check robustness of our estimate: annealed importance sampling and exact enumeration over a discretized grid of parameters. Annealed importance sampling (AIS; \cite{neal2001}) is a Monte Carlo algorithm that is commonly used to estimate the partition function, or marginalized likelihood, of probabilistic models. Because the integral is dominated by a typical set near the region of high likelihood, AIS uses an MCMC chain to construct a sequence of intermediate distributions interpolating between a tractable initial distribution (in our case, the prior) and intractable target distribution: we set the number of steps to 2000 and take the expectation over 48 independent samples from this procedure for every model of interest, using the implementation provided in the probabilistic programming language WebPPL. We can then obtain Bayes Factors to compare models by taking ratios of these estimates.
 
 We compare our results from AIS to a more exact but brute-force approach: computing the exact likelihood at every point on a discrete grid of parameters.
 This is of particular interest for nested model comparisons, e.g. comparing our full model to a no-cost variant.
