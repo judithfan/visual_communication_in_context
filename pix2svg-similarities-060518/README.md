@@ -1,0 +1,1 @@
+This directory contains similarities trained on the human_confusion.npy derived from approx. 7K annotations in recognition task, data can be found at: `/analysis/sketchpad_basic_recog_group_data.csv`
