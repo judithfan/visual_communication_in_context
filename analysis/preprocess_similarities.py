@@ -6,12 +6,12 @@ def str2bool(v):
     return v.lower() in ("yes", "true", "t", "1")
 
 def clean_dirlist(x):
-    return [i for i in x if i != '.DS_Store']
+    return [i for i in x if i not in ['.DS_Store','README.md']]
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--path_to_src_similarities', type=str, help='path to dir containing similarities, \
-                        multiple crossval splits expected', default='../pix2svg-similarities-060518')
+                        multiple crossval splits expected', default='../pix2svg-similarities-090418')
     parser.add_argument('--split_type', type=str, help='type of split and learning objective during adaptor training', default='balancedavg')
 
     args = parser.parse_args()
@@ -43,14 +43,14 @@ if __name__ == "__main__":
     ## copy test_examples to this analysis dir
     splits = clean_dirlist(os.listdir(os.path.join(args.path_to_src_similarities,split_dir)))
     for split_num in splits:
-        fname = 'pilot2_multimodal_{}{}_test_examples.json'.format(args.split_type,split_num)
+        fname = './test_examples/pilot2_multimodal_{}{}_test_examples.json'.format(args.split_type,split_num)
         out_path = os.path.join('./',fname)
         in_path = os.path.join(args.path_to_src_similarities,split_dir,split_num,'test_split.json')
         print 'Copying {} to {}'.format(in_path, out_path)
         shutil.copy(in_path,out_path)
 
         ## save another copy for humans
-        fname = 'pilot2_human_{}{}_test_examples.json'.format(args.split_type,split_num)
+        fname = './test_examples/pilot2_human_{}{}_test_examples.json'.format(args.split_type,split_num)
         out_path = os.path.join('./',fname)
         print 'Copying {} to {}'.format(in_path, out_path)
         shutil.copy(in_path,out_path)
