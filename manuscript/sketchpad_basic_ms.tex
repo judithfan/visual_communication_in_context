@@ -245,7 +245,7 @@ Our goals in developing a computational model of sketch production in this visua
 
 Towards the first goal, we propose a framework for instantiating visual abstraction and social reasoning by combining a deep convolutional neural network visual encoder with a probabilistic model of recursive social reasoning. Towards the second goal, we formally compare how well the full model predicts human behavior relative to a targeted set of lesioned variants, and examine how each component influences the observed pattern of behavior.  
 
-\subsubsection*{Visual abstraction module}
+\subsubsection*{Visual encoder module}
 
 The visual abstraction module accepts a pair of images, a sketch and an object rendering (both 3x224x224), as input and returns a scalar value in the range $[0,1]$, reflecting the degree of perceptual correspondence between the sketch and object. This module consists of two components: a base visual encoder and an adaptor network. 
 
@@ -254,8 +254,6 @@ We employ VGG-19 \cite{simonyan2014very} as our base visual encoder, a high-perf
 In order to better approximate the granularity with which human observers can distinguish different images, we augment VGG-19 with a shallow fully-connected \textit{adaptor} network that is trained to predict the perceptual correspondence between individual sketches and objects. This approach has been successfully used in prior work to better predict human semantic categorization judgments \cite[]{peterson2016adapting}, and to improve sketch-based photo retrieval \cite[]{sangkloy2016sketchy}.
 
 To explore the degree to which the \textit{visual abstraction} afforded by the complex transformations applied by successive layers of VGG-19 are required to capture human behavior during visual communication, we construct three adaptor networks that intercept VGG-19 image representations at different layers: the first max pooling layer (early), the tenth convolutional layer (mid), and the first fully connected layer (high). To facilitate comparison between adaptor networks, we ensured that each of the three contain a comparable number of trainable parameters (Table~\ref{table:parameters}) with similar hyperparameters. To discriminate which layer provides the best starting feature basis for predicting sketch-object correspondence, these adaptor networks were also deliberately constrained to be shallow i.e. consisting only of two linear layers with nonlinearities.
-
-To evaluate the degree to which the \textit{visual abstraction} afforded by the complex transformations applied by successive layers of VGG-19 are required to capture human behavior during visual communication, we construct three adaptor networks that intercept VGG-19 image representations at different layers: the first max pooling layer (early), the tenth convolutional layer (mid), and the first fully connected layer (high). To facilitate comparison between adaptor networks, we ensured that each of the three contain a comparable number of trainable parameters (Table~\ref{table:parameters}) with similar hyperparameters. To discriminate which layer provides the best starting feature basis for predicting sketch-object correspondence, these adaptor networks were also deliberately constrained to be shallow i.e. consisting only of two linear layers with nonlinearities.
 
 In the following, we provide a detailed description of the architecture and hyperparameter choices for each adaptor. We refer to the respective adaptor network as: \textit{early-adaptor}, \textit{mid-adaptor}, and \textit{high-adaptor}.
 
