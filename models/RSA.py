@@ -28,7 +28,7 @@ def run_bda(perception, pragmatics, production, split_type):
         #sample: models/bdaOutput/human_balancedavg1/raw/human_combined_cost_balancedavg1Params.csv
         cmd_string = 'webppl BDA.wppl --require ./refModule/ -- --perception {} --pragmatics {} --production {} --splitType {}'.format(perception, pragmatics, production, split_type)
         print 'Running: {}'.format(cmd_string)
-        subprocess.call,(cmd_string,shell=True)
+        subprocess.call(cmd_string,shell=True)
         # thread.start_new_thread(subprocess.call,(cmd_string,shell=True))
 
 def run_bda_enumerate(simScaling, split_type):
@@ -38,7 +38,7 @@ def run_bda_enumerate(simScaling, split_type):
         os.makedirs(os.path.join('./enumerateOutput',split_type))
     cmd_string = 'webppl BDA-enumerate.wppl --require ./refModule/ -- --simScaling {} --splitType {}'.format(simScaling, split_type)
     print 'Running: {}'.format(cmd_string)
-    subprocess.call,(cmd_string,shell=True)
+    subprocess.call(cmd_string,shell=True)
     
 
 def run_evaluate(perception, pragmatics, production, split_type):
@@ -51,14 +51,14 @@ def run_evaluate(perception, pragmatics, production, split_type):
 
         cmd_string = 'webppl evaluate.wppl --require ./refModule/ -- --paramSetting {}_{}_{} --adaptorType {} --splitType {}'.format(perception, pragmatics, production, perception, split_type)
         print 'Running: {}'.format(cmd_string)
-        subprocess.call,(cmd_string,shell=True)
+        subprocess.call(cmd_string,shell=True)
 
 def run_ais(perception, pragmatics, production, split_type, num_samp):
     if not os.path.exists('./aisOutput'):
         os.makedirs('./aisOutput')
     cmd_string = 'webppl BF.wppl --require ./refModule/ -- --perception {} --pragmatics {} --production {} --splitType {}'.format(perception, pragmatics, production, split_type)
     print '{} | Running: {}'.format(num_samp,cmd_string)
-    subprocess.call,(cmd_string,shell=True)
+    subprocess.call(cmd_string,shell=True)
 
 if __name__ == "__main__":
     import argparse
