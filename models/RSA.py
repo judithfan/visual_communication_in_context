@@ -18,6 +18,9 @@ import numpy as np
 def run_bda(perception, pragmatics, production, split_type):
     if not os.path.exists('./bdaOutput'):
         os.makedirs('./bdaOutput')  
+    if not os.path.exists('./bdaOutput/{}_{}'.format(perception,split_type)):
+        os.makedirs('./bdaOutput/{}_{}'.format(perception,split_type))
+        os.makedirs('./bdaOutput/{}_{}/raw'.format(perception,split_type))
     # check to make sure we do not already have output
     if not os.path.exists('./bdaOutput/{}_{}/raw/{}_{}_{}_{}Params.csv'.format(perception,\
                                                                                 split_type,\

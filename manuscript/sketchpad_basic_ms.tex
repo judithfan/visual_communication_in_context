@@ -255,7 +255,6 @@ In order to better approximate the granularity with which human observers can di
 
 To explore the degree to which the \textit{visual abstraction} afforded by the complex transformations applied by successive layers of VGG-19 are required to capture human behavior during visual communication, we train three adaptor networks that intercept VGG-19 image representations at different layers: the first max pooling layer (early), the tenth convolutional layer (mid), and the first fully connected layer (high). To facilitate comparison between adaptor networks, we ensured that each of the three contain a comparable number of trainable parameters (Table~\ref{table:parameters}) with similar hyperparameters. To discriminate which layer provides the best starting feature basis for predicting sketch-object correspondence, these adaptor networks were also deliberately constrained to be shallow i.e. consisting only of two linear layers with an intervening point-wise nonlinearity. 
 
-
 In the following, we provide a detailed description of the architecture and hyperparameter choices for each adaptor. We refer to the respective adaptor network as: \textit{early-adaptor}, \textit{mid-adaptor}, and \textit{high-adaptor}.
 
 \begin{table}
@@ -277,14 +276,7 @@ high-adaptor & 1048833 \\
 \end{table}
 
 
-The high-adaptor network intercepts VGG-19  
-Each feature from the first fully connected layer in VGG has 4096 dimensions. 
-
-A photo and sketch feature is first concatenated to form a vector of size 8192, then passed to high-adaptor.
-
-is the 4096-dimensional feature vector 
-
-The high-adaptor architecture is composed of a linear layer from 8192 to 128, followed by a swish nonlinearity\footnote{Swish is a recent nonlinearity found via reinforcement learning-based search shown to work better than ReLU for deep models on a suite of tasks.} \cite[]{ramachandran2018searching} and dropout, then another linear layer from 128 to 1. 
+Two 4096-dimensional feature vectors are extracted for the sketch and object from the first fully-connected layer ($fc6$) of VGG-19. These two vectors are then concatenated to form a single 8192-dimensional vector, to be passed into the high-adaptor network. The high-adaptor architecture is composed of a linear layer from 8192 to 128, followed by a swish nonlinearity\footnote{Swish is a recent nonlinearity found via reinforcement learning-based search shown to work better than ReLU for deep models on a suite of tasks.} \cite[]{ramachandran2018searching} and dropout, then another linear layer from 128 to 1. 
 
  In practice, we find the ability of the model to fit the data is robust to the choice of nonlinearity (alternative nonlinearities were TanH and ReLU) and size of hidden layer, within the range $(2^{7},2^{9})$).
 
