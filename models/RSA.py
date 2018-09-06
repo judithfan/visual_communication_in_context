@@ -29,6 +29,8 @@ def run_bda(perception, pragmatics, production, split_type):
         cmd_string = 'webppl BDA.wppl --require ./refModule/ -- --perception {} --pragmatics {} --production {} --splitType {}'.format(perception, pragmatics, production, split_type)
         print 'Running: {}'.format(cmd_string)
         thread.start_new_thread(os.system,(cmd_string,))
+    else:
+        print 'Already have BDA output for model {} {} {} {}. Not proceeding unless files moved/renamed.'.format(perception,pragmatics,production,split_type)
 
 def run_bda_enumerate(simScaling, split_type):
     if not os.path.exists('./enumerateOutput'):
@@ -50,6 +52,8 @@ def run_evaluate(perception, pragmatics, production, split_type):
         cmd_string = 'webppl evaluate.wppl --require ./refModule/ -- --paramSetting {}_{}_{} --adaptorType {} --splitType {}'.format(perception, pragmatics, production, perception, split_type)
         print 'Running: {}'.format(cmd_string)
         thread.start_new_thread(os.system,(cmd_string,))
+    else:
+        print 'Already have evaluation output for model {} {} {} {}. Not proceeding unless files moved/renamed.'.format(perception,pragmatics,production,split_type)
 
 def run_ais(perception, pragmatics, production, split_type, num_samp):
     if not os.path.exists('./aisOutput'):
