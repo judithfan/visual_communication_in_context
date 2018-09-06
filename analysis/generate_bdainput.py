@@ -580,8 +580,16 @@ if __name__ == "__main__":
     D2 = add_rescaled_metric(D2,'normed_cost_duration',transform='minmaxnorm_sqrt')
     D2 = add_rescaled_metric(D2,'normed_cost_ink',transform='minmaxnorm_sqrt')
 
-    ## save out version with the rescaled cost metrics
-    D2.to_csv('../models/bdaInput/{}/sketchData_fixedPose_{}_{}_pilot2_costOutliersRemoved_full.csv'.format(split_type,split,adaptor_type),index=False)
+    ## save out version with the rescaled cost metrics (if it does not exist)
+    full_out_path = '../models/bdaInput/sketchData_fixedPose_pilot2_costOutliersRemoved_full.csv'
+    if not os.path.exists(full_out_path):
+        D2.to_csv('../models/bdaInput/sketchData_fixedPose_pilot2_costOutliersRemoved_full.csv',index=False)    
+    else:
+        __D2 = pd.read_csv(full_out_path)
+        if not D2.equals(__D2):
+            print 'sketchData_fixedPose_pilot2_costOutliersRemoved_full.csv does not \
+                    match currently full dataframe, so saving out (and overwriting).'
+            D2.to_csv('../models/bdaInput/sketchData_fixedPose_pilot2_costOutliersRemoved_full.csv',index=False)                
 
     ## now actually generate cost dictionaries
     print 'Generating image-level cost dictionaries ...'
@@ -605,7 +613,7 @@ if __name__ == "__main__":
     ## read in both expanded (w2) and simplified bdaInput dataframe (w2)
 
     w = pd.read_csv('../models/bdaInput/{}/sketchData_fixedPose_{}_{}_pilot2_costOutliersRemoved.csv'.format(split_type,args.split_type,args.adaptor_type))
-    w2 = pd.read_csv('../models/bdaInput/{}/sketchData_fixedPose_{}_{}_pilot2_costOutliersRemoved_full.csv'.format(split_type,args.split_type,args.adaptor_type))
+    w2 = pd.read_csv('../models/bdaInput/sketchData_fixedPose_pilot2_costOutliersRemoved_full.csv')
 
     ## add cost metrics to this simplified dataframe
     cost_duration = []
