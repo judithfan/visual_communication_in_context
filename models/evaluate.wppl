@@ -23,6 +23,7 @@ var similarities = refModule.getSimilarities(splitType); // pass which split num
 var costs = refModule.getCosts(experimentVersion + '-cost_duration-average',splitType);
 var conditionLookup = refModule.getConditionLookup(splitType);
 var possibleSketches = refModule.getPossibleSketches(data, {aggregate,conditionLookup});
+
 // Package into config
 var globalConfig = {
   similarities, possibleSketches, costs, conditionLookup,
