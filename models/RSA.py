@@ -3,11 +3,12 @@ import os
 import thread
 import subprocess
 import numpy as np
+import analysis_helpers as h
 
 ### python RSA.py --wppl BDA --perception human multimodal_fc6 multimodal_conv42 multimodal_pool1 --pragmatics combined S0 --production cost nocost --split_type balancedavg1 balancedavg2 balancedavg3 balancedavg4 balancedavg5
 ### python RSA.py --wppl BDA --perception human multimodal_fc6 multimodal_conv42 multimodal_pool1 --pragmatics combined S0 --production cost nocost --split_type balancedavg1 
 ### python RSA.py --wppl BDA --perception multimodal_conv42 --pragmatics S0 --production nocost --split_type balancedavg1 balancedavg2 balancedavg3 balancedavg4 balancedavg5
-### python RSA.py --wppl evaluate --perception human --pragmatics combined --production cost --split_type balancedavg5
+### python RSA.py --wppl evaluate --perception human --pragmatics combined --production cost --split_type balancedavg1
 ### python RSA.py --wppl evaluate --perception multimodal_fc6 --pragmatics combined --production cost --split_type balancedavg3
 ### python RSA.py --wppl evaluate --perception multimodal_conv42 --pragmatics combined --production cost --split_type balancedavg1 balancedavg2 balancedavg3 balancedavg4 balancedavg5
 ### python RSA.py --wppl evaluate --perception multimodal_fc6 --pragmatics S0 --production cost --split_type balancedavg1 balancedavg2 balancedavg3 balancedavg4 balancedavg5
@@ -35,6 +36,11 @@ def run_bda(perception, pragmatics, production, split_type):
     else:
         print 'Already have BDA output for model {} {} {} {}. Not proceeding unless files moved/renamed.'.format(perception,pragmatics,production,split_type)
 
+def flatten_bda_output(adaptor_types = ['multimodal_pool1','multimodal_conv42','multimodal_fc6', 'human'],
+                        verbosity=1)
+    h.flatten_param_posterior(adaptor_types = adaptor_types,
+                              verbosity=verbosity)
+
 def run_bda_enumerate(simScaling, split_type):
     if not os.path.exists('./enumerateOutput'):
         os.makedirs('./enumerateOutput')
@@ -47,11 +53,12 @@ def run_bda_enumerate(simScaling, split_type):
 def run_evaluate(perception, pragmatics, production, split_type):
     if not os.path.exists('./evaluateOutput'):
         os.makedirs('./evaluateOutput')  
-    if not os.path.exists('./evaluateOutput/{}_{}_{}_{}'.format(perception,\
-                                                                pragmatics,\
-                                                                production,\
-                                                                split_type)):
-
+    out_dir = './evaluateOutput/{}_{}_{}_{}'.format(perception,\
+                                                    pragmatics,\
+                                                    production,\
+                                                    split_type)
+    if not os.path.exists(out_dir):
+        # os.makedirs(out_dir)
         cmd_string = 'webppl evaluate.wppl --require ./refModule/ -- --paramSetting {}_{}_{} --adaptorType {} --splitType {}'.format(perception, pragmatics, production, perception, split_type)
         print 'Running: {}'.format(cmd_string)
         thread.start_new_thread(os.system,(cmd_string,))
