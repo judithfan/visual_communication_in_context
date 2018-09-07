@@ -3,6 +3,10 @@ import os
 import thread
 import subprocess
 import numpy as np
+import sys
+analysis_path = '../analysis'
+if analysis_path not in sys.path:
+    sys.path.append(analysis_path)
 import analysis_helpers as h
 
 ### python RSA.py --wppl BDA --perception human multimodal_fc6 multimodal_conv42 multimodal_pool1 --pragmatics combined S0 --production cost nocost --split_type balancedavg1 balancedavg2 balancedavg3 balancedavg4 balancedavg5
@@ -37,7 +41,7 @@ def run_bda(perception, pragmatics, production, split_type):
     else:
         print 'Already have BDA output for model {} {} {} {}. Not proceeding unless files moved/renamed.'.format(perception,pragmatics,production,split_type)
 
-def flatten_bda_output(adaptor_types = ['multimodal_pool1','multimodal_conv42','multimodal_fc6', 'human'], verbosity=1)
+def flatten_bda_output(adaptor_types = ['multimodal_pool1','multimodal_conv42','multimodal_fc6', 'human'], verbosity=1):
     h.flatten_param_posterior(adaptor_types = adaptor_types,verbosity=verbosity)
 
 def run_bda_enumerate(simScaling, split_type):
