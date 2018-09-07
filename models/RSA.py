@@ -116,7 +116,7 @@ if __name__ == "__main__":
         ub = ub + 2
     step_size = args.step_size
 
-    assert args.wppl in ['BDA','evaluate', 'BDA-enumerate', 'AIS']
+    assert args.wppl in ['BDA','evaluate', 'BDA-enumerate', 'AIS', 'flatten']
 
     ## first run BDA-enumerate.wppl
     if 'BDA-enumerate' in args.wppl:
@@ -148,7 +148,11 @@ if __name__ == "__main__":
                 for prod in production:
                     for split in split_type:
                         for num_samp in np.arange(args.num_ais_samples):                            
-                            run_ais(perc,prag,prod,split,num_samp)        
+                            run_ais(perc,prag,prod,split,num_samp)   
+
+    elif 'flatten' in args.wppl:
+        flatten_bda_output(adaptor_types = ['multimodal_pool1','multimodal_conv42','multimodal_fc6', 'human'],
+                        verbosity=1)             
 
     else:
         print '{} wppl command not recognized'.format(args.wppl)
