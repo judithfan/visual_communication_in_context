@@ -15,6 +15,7 @@ import analysis_helpers as h
 ### python RSA.py --wppl evaluate --perception multimodal_fc6 --pragmatics combined --production nocost --split_type balancedavg1 balancedavg2 balancedavg3 balancedavg4 balancedavg5
 ### python RSA.py --wppl BDA-enumerate --sim_scaling_lb 1 --sim_scaling_ub 200 --step_size 2 --split_type balancedavg5
 ### python RSA.py --wppl AIS --perception multimodal_fc6 --production cost --pragmatics combined --num_ais_samples 2 --split_type balancedavg1
+### python RSA.py --wppl flatten
 
 def run_bda(perception, pragmatics, production, split_type):
     if not os.path.exists('./bdaOutput'):
@@ -36,10 +37,8 @@ def run_bda(perception, pragmatics, production, split_type):
     else:
         print 'Already have BDA output for model {} {} {} {}. Not proceeding unless files moved/renamed.'.format(perception,pragmatics,production,split_type)
 
-def flatten_bda_output(adaptor_types = ['multimodal_pool1','multimodal_conv42','multimodal_fc6', 'human'],
-                        verbosity=1)
-    h.flatten_param_posterior(adaptor_types = adaptor_types,
-                              verbosity=verbosity)
+def flatten_bda_output(adaptor_types = ['multimodal_pool1','multimodal_conv42','multimodal_fc6', 'human'], verbosity=1)
+    h.flatten_param_posterior(adaptor_types = adaptor_types,verbosity=verbosity)
 
 def run_bda_enumerate(simScaling, split_type):
     if not os.path.exists('./enumerateOutput'):
@@ -151,8 +150,7 @@ if __name__ == "__main__":
                             run_ais(perc,prag,prod,split,num_samp)   
 
     elif 'flatten' in args.wppl:
-        flatten_bda_output(adaptor_types = ['multimodal_pool1','multimodal_conv42','multimodal_fc6', 'human'],
-                        verbosity=1)             
+        flatten_bda_output(adaptor_types = ['multimodal_pool1','multimodal_conv42','multimodal_fc6', 'human'], verbosity=1)             
 
     else:
         print '{} wppl command not recognized'.format(args.wppl)
