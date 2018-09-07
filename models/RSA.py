@@ -3,6 +3,10 @@ import os
 import thread
 import subprocess
 import numpy as np
+import sys
+analysis_path = '../analysis'
+if analysis_path not in sys.path:
+    sys.path.append(analysis_path)
 import analysis_helpers as h
 
 ### python RSA.py --wppl BDA --perception human multimodal_fc6 multimodal_conv42 multimodal_pool1 --pragmatics combined S0 --production cost nocost --split_type balancedavg1 balancedavg2 balancedavg3 balancedavg4 balancedavg5
