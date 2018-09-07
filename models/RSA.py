@@ -37,7 +37,7 @@ def run_bda(perception, pragmatics, production, split_type):
     else:
         print 'Already have BDA output for model {} {} {} {}. Not proceeding unless files moved/renamed.'.format(perception,pragmatics,production,split_type)
 
-def flatten_bda_output(adaptor_types = ['multimodal_pool1','multimodal_conv42','multimodal_fc6', 'human'], verbosity=1)
+def flatten_bda_output(adaptor_types = ['multimodal_pool1','multimodal_conv42','multimodal_fc6', 'human'], verbosity=1):
     h.flatten_param_posterior(adaptor_types = adaptor_types,verbosity=verbosity)
 
 def run_bda_enumerate(simScaling, split_type):
