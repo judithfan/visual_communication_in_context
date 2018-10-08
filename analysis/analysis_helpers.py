@@ -709,11 +709,12 @@ def plot_avg_rank_all_models(P,split_type='balancedavg1'):
                 x='adaptor',
                 y='target_rank',
                 ci='sd',
-                order=['human_combined_cost','multimodal_fc6_combined_cost',
-                       'multimodal_fc6_S0_cost','multimodal_fc6_combined_nocost','multimodal_conv42_combined_cost'])
+                order = ['human_combined_cost','human_S0_cost','human_combined_nocost',\
+                         'multimodal_fc6_combined_cost', 'multimodal_conv42_combined_cost',\
+                         'multimodal_fc6_S0_cost','multimodal_fc6_combined_nocost'])
     plt.ylabel('mean rank of congruent sketch')
     plt.ylim([1,8])
-    xticklabels=['Context Cost Human','Context Cost HighAdaptor',
+    xticklabels=['Context Cost Human','NoContext Cost Human','Context NoCost Human','Context Cost HighAdaptor',
                  'NoContext Cost HighAdaptor','Context NoCost HighAdaptor', 'Context Cost MidAdaptor']
     plt.xlabel('')
     l = ax.set_xticklabels(xticklabels, rotation = 90, ha="left")
@@ -756,9 +757,8 @@ def plot_prop_congruent_all_models(P,split_type='balancedavg1'):
     plt.ylim([0,1])
     plt.ylabel('proportion context-congruent sketch preferred')
 
-    xticklabels=['Context Cost Human','Context Cost HighAdaptor',
-                 'NoContext Cost HighAdaptor','Context NoCost HighAdaptor',
-                 'Context Cost MidAdaptor']
+    xticklabels=['Context Cost Human','NoContext Cost Human','Context NoCost Human','Context Cost HighAdaptor',
+                 'NoContext Cost HighAdaptor','Context NoCost HighAdaptor', 'Context Cost MidAdaptor']
     plt.xlabel('')
     l = ax.set_xticklabels(xticklabels, rotation = 90, ha="left")
     
@@ -959,9 +959,8 @@ def plot_average_target_rank_across_splits(R,
                  capsize=0)
 
     plt.ylabel(ylabel)
-    xticklabels=['Context Cost Human','Context Cost HighAdaptor',
-                 'Context NoCost HighAdaptor','NoContext Cost HighAdaptor',
-                 'Context Cost MidAdaptor']
+    xticklabels=['Context Cost Human','NoContext Cost Human','Context NoCost Human','Context Cost HighAdaptor',
+                 'NoContext Cost HighAdaptor','Context NoCost HighAdaptor', 'Context Cost MidAdaptor']
     plt.xlabel('')
     l = ax.set_xticklabels(xticklabels, rotation = 90, ha="left")
     
@@ -1002,9 +1001,8 @@ def plot_prop_congruent_across_splits(R,
     plt.axhline(y=0.5,linestyle='dashed',color='k')
     plt.ylim(0,0.8)
 
-    xticklabels=['Context Cost Human','Context Cost HighAdaptor',
-                 'Context NoCost HighAdaptor','NoContext Cost HighAdaptor',
-                 'Context Cost MidAdaptor']
+    xticklabels=['Context Cost Human','NoContext Cost Human','Context NoCost Human','Context Cost HighAdaptor',
+                 'NoContext Cost HighAdaptor','Context NoCost HighAdaptor', 'Context Cost MidAdaptor']
     plt.xlabel('')
 
     l = ax.set_xticklabels(xticklabels, rotation = 90, ha="left")    
@@ -1051,8 +1049,7 @@ def plot_cost_by_condition_across_splits(R,
     plt.ylabel(ylabel)
     plt.ylim(0,0.3)
 
-    xticklabels=['Context Cost Human','Context Cost HighAdaptor',
-                 'Context NoCost HighAdaptor','NoContext Cost HighAdaptor',
-                 'Context Cost MidAdaptor']
+    xticklabels=['Context Cost Human','NoContext Cost Human','Context NoCost Human','Context Cost HighAdaptor',
+                 'NoContext Cost HighAdaptor','Context NoCost HighAdaptor', 'Context Cost MidAdaptor']
     plt.xlabel('')
     l = ax.set_xticklabels(xticklabels, rotation = 90, ha="left")    
