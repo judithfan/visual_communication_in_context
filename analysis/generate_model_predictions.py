@@ -12,9 +12,9 @@ from model predictions, for each model and data split.
 
 split_types = ['balancedavg1','balancedavg2','balancedavg3','balancedavg4','balancedavg5']
 
-model_space = ['human_combined_cost','multimodal_fc6_combined_cost','multimodal_conv42_combined_cost',
-              'multimodal_fc6_S0_cost','multimodal_fc6_combined_nocost']
-
+model_space = ['human_combined_cost','human_S0_cost','human_combined_nocost',
+               'multimodal_fc6_combined_cost','multimodal_conv42_combined_cost',
+               'multimodal_fc6_S0_cost','multimodal_fc6_combined_nocost']
 
 if __name__ == "__main__":
     import argparse
@@ -99,7 +99,11 @@ if __name__ == "__main__":
 
         ## get congruent/incongruent context log odds for each sketch
         trials = np.unique(sample_preds['game'].values)
-                           
+
+        ## convert modelProb to numeric type (map float first, to avoid tripping up on -Infinity)
+        modelProb= map(float,sample_preds['modelProb'].values)
+        sample_preds = sample_preds.assign(modelProb=pd.Series(modelProb).values)    
+                
         for this_trial in trials:
             ## subset the rows that correspond to this particular trial
             trial_inds = sample_preds['game']==this_trial
