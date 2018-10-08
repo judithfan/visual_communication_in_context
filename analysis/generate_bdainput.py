@@ -586,7 +586,10 @@ if __name__ == "__main__":
         D2.to_csv('../models/bdaInput/sketchData_fixedPose_pilot2_costOutliersRemoved_full.csv',index=False)    
     else:
         __D2 = pd.read_csv(full_out_path)
-        if not D2['normed_cost_strokes'].equals(__D2['normed_cost_strokes']):
+
+        aa = D2['normed_cost_strokes'].values
+        bb = __D2['normed_cost_strokes'].values
+        if np.sum(aa-bb)>1e-8:
             print 'sketchData_fixedPose_pilot2_costOutliersRemoved_full.csv does not match currently full dataframe, so saving out (and overwriting).'
             D2.to_csv('../models/bdaInput/sketchData_fixedPose_pilot2_costOutliersRemoved_full.csv',index=False)                
 

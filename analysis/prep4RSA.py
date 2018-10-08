@@ -9,9 +9,7 @@ wrapper around generate_bdainput.py
 if __name__ == "__main__":
 
     layers = ['pool1','conv42','fc6']
-    # layers = ['fc6']
     split_type = 'balancedavg'
-    # splits = ['16','32','64','128','256','512']
     splits = map(str,np.arange(1,6))
     
     
