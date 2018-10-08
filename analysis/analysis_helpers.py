@@ -436,9 +436,10 @@ def get_sense_for_param_range_across_splits():
     '''
 
     split_types = ['balancedavg1','balancedavg2','balancedavg3','balancedavg4','balancedavg5']
-
-    model_space = ['human_combined_cost','multimodal_fc6_combined_cost','multimodal_conv42_combined_cost',
-                  'multimodal_fc6_S0_cost','multimodal_fc6_combined_nocost']
+    
+    model_space = ['human_combined_cost','human_S0_cost','human_combined_nocost',\
+                'multimodal_fc6_combined_cost', 'multimodal_conv42_combined_cost',\
+                'multimodal_fc6_S0_cost','multimodal_fc6_combined_nocost'],    
 
     # model_space = ['multimodal_fc6_combined_cost']
 
@@ -502,8 +503,9 @@ def load_model_predictions(model='human_combined_cost',
     return model_preds
     
 def load_all_model_preds(split_types = ['balancedavg1','balancedavg2','balancedavg3','balancedavg4','balancedavg5'],
-                         model_space = ['human_combined_cost','multimodal_fc6_combined_cost','multimodal_conv42_combined_cost',\
-                                        'multimodal_fc6_S0_cost','multimodal_fc6_combined_nocost'],
+                         model_space ['human_combined_cost','human_S0_cost','human_combined_nocost',\
+                                      'multimodal_fc6_combined_cost', 'multimodal_conv42_combined_cost',\
+                                      'multimodal_fc6_S0_cost','multimodal_fc6_combined_nocost'],
                          verbosity=2):      
     
     '''
@@ -535,9 +537,6 @@ def get_convenient_handles_on_model_preds(P,split_type='balancedavg1'):
     M2 = P['multimodal_fc6_combined_nocost'][split_type]    
     return H,M,M0,M1,M2
 
-
-
-
 def load_and_check_bootstrapped_model_preds(results_dir = './bootstrap_results'):
     ## get how many boot files there are
     path_to_bootstrap_results = results_dir
@@ -546,8 +545,9 @@ def load_and_check_bootstrapped_model_preds(results_dir = './bootstrap_results')
 
     ## ground truth list of how many bootvec file we *should* have
     split_types = ['balancedavg1','balancedavg2','balancedavg3','balancedavg4','balancedavg5']
-    model_space = ['human_combined_cost','multimodal_fc6_combined_cost','multimodal_conv42_combined_cost',
-                    'multimodal_fc6_S0_cost','multimodal_fc6_combined_nocost']
+    model_space = ['human_combined_cost','human_S0_cost','human_combined_nocost',\
+                  'multimodal_fc6_combined_cost', 'multimodal_conv42_combined_cost',\
+                  'multimodal_fc6_S0_cost','multimodal_fc6_combined_nocost']
     conditions = ['all','closer','further']
     vois = ['target_rank','foil_rank','sign_diff_rank','cost']
     nIter = 1000
@@ -865,8 +865,8 @@ def get_avg_cost_all_models(P, split_type='balancedavg1'):
 
 def generate_aggregated_estimate_dataframe(B, 
                                            condition_list = ['all'],
-                                           model_space = ['human_combined_cost','multimodal_fc6_combined_cost',\
-                                                          'multimodal_conv42_combined_cost',\
+                                           model_space = ['human_combined_cost','human_S0_cost','human_combined_nocost',\
+                                                          'multimodal_fc6_combined_cost', 'multimodal_conv42_combined_cost',\
                                                           'multimodal_fc6_S0_cost','multimodal_fc6_combined_nocost'],
                                            split_types = ['balancedavg1','balancedavg2',\
                                                           'balancedavg3','balancedavg4','balancedavg5'],
@@ -925,9 +925,9 @@ def generate_aggregated_estimate_dataframe(B,
 def plot_average_target_rank_across_splits(R,
                                              var_of_interest='target_rank',
                                              condition_list = ['all'],
-                                             model_space = ['human_combined_cost','multimodal_fc6_combined_cost',\
-                                                           'multimodal_conv42_combined_cost',\
-                                                           'multimodal_fc6_S0_cost','multimodal_fc6_combined_nocost'],
+                                             model_space = ['human_combined_cost','human_S0_cost','human_combined_nocost',\
+                                                            'multimodal_fc6_combined_cost', 'multimodal_conv42_combined_cost',\
+                                                            'multimodal_fc6_S0_cost','multimodal_fc6_combined_nocost'],
                                              split_types = ['balancedavg1','balancedavg2',\
                                                             'balancedavg3','balancedavg4','balancedavg5'],
                                              condition='all',
@@ -968,9 +968,9 @@ def plot_average_target_rank_across_splits(R,
 def plot_prop_congruent_across_splits(R,
                                       var_of_interest='sign_diff_rank',
                                       condition_list = ['all'],
-                                      model_space = ['human_combined_cost','multimodal_fc6_combined_cost',\
-                                                       'multimodal_conv42_combined_cost',\
-                                                       'multimodal_fc6_S0_cost','multimodal_fc6_combined_nocost'],
+                                      model_space = ['human_combined_cost','human_S0_cost','human_combined_nocost',\
+                                                     'multimodal_fc6_combined_cost', 'multimodal_conv42_combined_cost',\
+                                                     'multimodal_fc6_S0_cost','multimodal_fc6_combined_nocost'],
                                       split_types = ['balancedavg1','balancedavg2',\
                                                         'balancedavg3','balancedavg4','balancedavg5'],
                                       condition='all',
@@ -1012,9 +1012,9 @@ def plot_prop_congruent_across_splits(R,
 def plot_cost_by_condition_across_splits(R,
                                       var_of_interest='cost',
                                       condition_list = ['closer','further'],
-                                      model_space = ['human_combined_cost','multimodal_fc6_combined_cost',\
-                                                       'multimodal_conv42_combined_cost',\
-                                                       'multimodal_fc6_S0_cost','multimodal_fc6_combined_nocost'],
+                                      model_space = ['human_combined_cost','human_S0_cost','human_combined_nocost',\
+                                                     'multimodal_fc6_combined_cost', 'multimodal_conv42_combined_cost',\
+                                                     'multimodal_fc6_S0_cost','multimodal_fc6_combined_nocost'],
                                       split_types = ['balancedavg1','balancedavg2',\
                                                         'balancedavg3','balancedavg4','balancedavg5'],
                                       condition='all',
