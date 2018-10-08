@@ -28,9 +28,10 @@ if __name__ == "__main__":
 	args = parser.parse_args()
 
 	split_types = ['balancedavg1','balancedavg2','balancedavg3','balancedavg4','balancedavg5']      
-	model_space = ['human_combined_cost','multimodal_fc6_combined_cost','multimodal_conv42_combined_cost','multimodal_fc6_S0_cost','multimodal_fc6_combined_nocost']
-        model_space=['multimodal_fc6_combined_nocost']
-        conditions = ['all','closer','further']
+	model_space = ['human_combined_cost','human_S0_cost','human_combined_nocost',
+				   'multimodal_fc6_combined_cost','multimodal_conv42_combined_cost',
+	              'multimodal_fc6_S0_cost','multimodal_fc6_combined_nocost']    
+    conditions = ['all','closer','further']
 	vois = ['target_rank','foil_rank','sign_diff_rank','cost']
 
 	nIter = args.nIter
