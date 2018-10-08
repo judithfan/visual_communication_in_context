@@ -531,11 +531,13 @@ def load_all_model_preds(split_types = ['balancedavg1','balancedavg2','balanceda
 
 def get_convenient_handles_on_model_preds(P,split_type='balancedavg1'):
     H = P['human_combined_cost'][split_type]
+    H0 = P['human_S0_cost'][split_type]
+    H1 = P['human_combined_nocost'][split_type]    
     M = P['multimodal_fc6_combined_cost'][split_type]
     M0 = P['multimodal_conv42_combined_cost'][split_type]
     M1 = P['multimodal_fc6_S0_cost'][split_type]
     M2 = P['multimodal_fc6_combined_nocost'][split_type]    
-    return H,M,M0,M1,M2
+    return H,H0,H1,M,M0,M1,M2
 
 def load_and_check_bootstrapped_model_preds(results_dir = './bootstrap_results'):
     ## get how many boot files there are
@@ -622,10 +624,10 @@ def plot_target_vs_foil_rank_by_object(P,split_type='balancedavg1'):
     vs. wrong sketch category (correct object + wrong context)?
     '''     
     
-    H,M,M0,M1,M2 = get_convenient_handles_on_model_preds(P,split_type=split_type)
+    H,H0,H1,M,M0,M1,M2 = get_convenient_handles_on_model_preds(P,split_type=split_type)
 
     fig = plt.figure(figsize=(20,14))
-    plt.subplot(231)
+    plt.subplot(241)
     targ = pd.DataFrame(H.groupby(['object'])['target_rank'].mean())['target_rank'].values
     foil = pd.DataFrame(H.groupby(['object'])['foil_rank'].mean())['foil_rank'].values
     h = plt.scatter(targ,foil,s=24)
@@ -635,7 +637,27 @@ def plot_target_vs_foil_rank_by_object(P,split_type='balancedavg1'):
     plt.xlabel('target rank')
     plt.ylabel('foil rank')
     plt.title('human')
-    plt.subplot(232)
+    plt.subplot(243)
+    targ = pd.DataFrame(H0.groupby(['object'])['target_rank'].mean())['target_rank'].values
+    foil = pd.DataFrame(H0.groupby(['object'])['foil_rank'].mean())['foil_rank'].values
+    h = plt.scatter(targ,foil,s=24)
+    plt.plot([1,14],[1,14],color='k',linestyle='dashed')
+    plt.xlim([1,14])
+    plt.ylim([1,14])
+    plt.xlabel('target rank')
+    plt.ylabel('foil rank')
+    plt.title('human S0') 
+    plt.subplot(244)
+    targ = pd.DataFrame(H1.groupby(['object'])['target_rank'].mean())['target_rank'].values
+    foil = pd.DataFrame(H1.groupby(['object'])['foil_rank'].mean())['foil_rank'].values
+    h = plt.scatter(targ,foil,s=24)
+    plt.plot([1,14],[1,14],color='k',linestyle='dashed')
+    plt.xlim([1,14])
+    plt.ylim([1,14])
+    plt.xlabel('target rank')
+    plt.ylabel('foil rank')
+    plt.title('human nocost')              
+    plt.subplot(245)
     targ = pd.DataFrame(M.groupby(['object'])['target_rank'].mean())['target_rank'].values
     foil = pd.DataFrame(M.groupby(['object'])['foil_rank'].mean())['foil_rank'].values
     h = plt.scatter(targ,foil,s=24)
@@ -645,7 +667,7 @@ def plot_target_vs_foil_rank_by_object(P,split_type='balancedavg1'):
     plt.xlabel('target rank')
     plt.ylabel('foil rank')
     plt.title('model')
-    plt.subplot(233)
+    plt.subplot(246)
     targ = pd.DataFrame(M0.groupby(['object'])['target_rank'].mean())['target_rank'].values
     foil = pd.DataFrame(M0.groupby(['object'])['foil_rank'].mean())['foil_rank'].values
     h = plt.scatter(targ,foil,s=24)
@@ -655,7 +677,7 @@ def plot_target_vs_foil_rank_by_object(P,split_type='balancedavg1'):
     plt.xlabel('target rank')
     plt.ylabel('foil rank')
     plt.title('model conv42')
-    plt.subplot(234)
+    plt.subplot(247)
     targ = pd.DataFrame(M1.groupby(['object'])['target_rank'].mean())['target_rank'].values
     foil = pd.DataFrame(M1.groupby(['object'])['foil_rank'].mean())['foil_rank'].values
     h = plt.scatter(targ,foil,s=24)
@@ -665,7 +687,7 @@ def plot_target_vs_foil_rank_by_object(P,split_type='balancedavg1'):
     plt.xlabel('target rank')
     plt.ylabel('foil rank')
     plt.title('model S0')
-    plt.subplot(235)
+    plt.subplot(248)
     targ = pd.DataFrame(M2.groupby(['object'])['target_rank'].mean())['target_rank'].values
     foil = pd.DataFrame(M2.groupby(['object'])['foil_rank'].mean())['foil_rank'].values
     h = plt.scatter(targ,foil,s=24)
@@ -691,20 +713,20 @@ def get_avg_rank_across_samples(X):
     return XM  
 
 def get_avg_rank_all_models(P,split_type='balancedavg1'):
-    H,M,M0,M1,M2 = get_convenient_handles_on_model_preds(P,split_type=split_type)
-    HU,MU,M0U,M1U,M2U = map(get_avg_rank_across_samples,[H,M,M0,M1,M2])
-    return HU,MU,M0U,M1U,M2U
+    H,H0,H1,M,M0,M1,M2 = get_convenient_handles_on_model_preds(P,split_type=split_type)
+    HU,H0U,H1U,MU,M0U,M1U,M2U = map(get_avg_rank_across_samples,[H,H0,H1,M,M0,M1,M2])
+    return HU,H0U,H1U,MU,M0U,M1U,M2U
 
 def plot_avg_rank_all_models(P,split_type='balancedavg1'):
     '''
     Generate bar plot of average rank (out of 64) of correct sketch category, by model, for a particular split.
     Wrapper around get_avg_rank_all_models, which itself wraps around get_avg_rank_across_samples.
     '''
-    HU,MU,M0U,M1U,M2U = get_avg_rank_all_models(P,split_type=split_type)
+    HU,H0U,H1U,MU,M0U,M1U,M2U = get_avg_rank_all_models(P,split_type=split_type)
     sns.set_context('talk')
     fig = plt.figure(figsize=(4,8))
     ax = fig.add_subplot(111)
-    U = pd.concat([HU,MU,M0U,M1U,M2U],axis=0)
+    U = pd.concat([HU,H0U,H1U,MU,M0U,M1U,M2U],axis=0)
     sns.barplot(data=U,
                 x='adaptor',
                 y='target_rank',
@@ -736,20 +758,20 @@ def get_prop_congruent_all_models(P, split_type='balancedavg1'):
     '''
     Apply get_prog_congruent to all models
     '''
-    H,M,M0,M1,M2 = get_convenient_handles_on_model_preds(P,split_type=split_type)
-    HU,MU,M0U,M1U,M2U = map(get_prop_congruent,[H,M,M0,M1,M2])
-    return HU,MU,M0U,M1U,M2U
+    H,H0,H1,M,M0,M1,M2 = get_convenient_handles_on_model_preds(P,split_type=split_type)
+    HU,H0U,H1U,MU,M0U,M1U,M2U = map(get_prop_congruent,[H,H0,H1,M,M0,M1,M2])
+    return HU,H0U,H1U,MU,M0U,M1U,M2U
 
 def plot_prop_congruent_all_models(P,split_type='balancedavg1'):
     '''
     Generate bar plot of proportion of trials for which context-congruent sketch preferred over incongruent sketch.
     Wrapper around get_prop_congruent_all_models, which itself wraps around get_prop_congruent.
     '''
-    HU,MU,M0U,M1U,M2U = get_prop_congruent_all_models(P,split_type=split_type)
+    HU,H0U,H1U,MU,M0U,M1U,M2U = get_prop_congruent_all_models(P,split_type=split_type)
     sns.set_context('talk')
     fig = plt.figure(figsize=(4,8))
     ax = fig.add_subplot(111)     
-    D = pd.concat([HU,MU,M0U,M1U,M2U],axis=0)    
+    D = pd.concat([HU,H0U,H1U,MU,M0U,M1U,M2U],axis=0)    
     sns.barplot(data=D,
                 x='adaptor',
                 y='sign_diff_rank',ci='sd')
@@ -806,11 +828,13 @@ def get_top_k_predictions(P, split_type='balancedavg1',verbosity=1):
 def load_all_topk_predictions():
     try:
         QH = pd.read_csv('./csv/human_combined_cost_balancedavg1_topk.csv')
+        QH0 = pd.read_csv('./csv/human_S0_cost_balancedavg1_topk.csv')
+        QH1 = pd.read_csv('./csv/human_combined_nocost_balancedavg1_topk.csv')        
         QM = pd.read_csv('./csv/multimodal_fc6_combined_cost_balancedavg1_topk.csv')
         QM0 = pd.read_csv('./csv/multimodal_conv42_combined_cost_balancedavg1_topk.csv')
         QM1 = pd.read_csv('./csv/multimodal_fc6_S0_cost_balancedavg1_topk.csv')
         QM2 = pd.read_csv('./csv/multimodal_fc6_combined_nocost_balancedavg1_topk.csv')
-        Q = pd.concat([QH,QM0,QM1,QM2,QM],axis=0)
+        Q = pd.concat([QH,QH0,QH1,QM0,QM1,QM2,QM],axis=0)
     except Exception as e: 
         print 'Make sure that you have already run get_top_k_predictions.'
         print(e)
@@ -859,9 +883,9 @@ def get_avg_cost_all_models(P, split_type='balancedavg1'):
     '''
     Apply get_avg_cost_across_samples to all models
     '''
-    H,M,M0,M1,M2 = get_convenient_handles_on_model_preds(P,split_type=split_type)
-    HU,MU,M0U,M1U,M2U = map(get_avg_cost_across_samples,[H,M,M0,M1,M2])
-    return HU,MU,M0U,M1U,M2U
+    H,H0,H1,M,M0,M1,M2 = get_convenient_handles_on_model_preds(P,split_type=split_type)
+    HU,H0U,H1U,MU,M0U,M1U,M2U = map(get_avg_cost_across_samples,[H,H0,H1,M,M0,M1,M2])
+    return HU,H0U,H1U,MU,M0U,M1U,M2U
 
 def generate_aggregated_estimate_dataframe(B, 
                                            condition_list = ['all'],
