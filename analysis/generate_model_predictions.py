@@ -127,10 +127,11 @@ if __name__ == "__main__":
                 foil = 'closer_{}'.format(target.split('_')[1])
             target_rank = sorted_rows.index[sorted_rows['PossibleSketch']==target].tolist()[0]+1
             foil_rank = sorted_rows.index[sorted_rows['PossibleSketch']==foil].tolist()[0]+1
-            target_logprob = sorted_rows.iloc[target_rank]['modelProb']
+            tri = target_rank-1
+            target_logprob = sorted_rows.iloc[tri]['modelProb']
             target_prob = np.exp(target_logprob)
-            obj = sorted_rows.iloc[target_rank]['Target']
-            condition = sorted_rows.iloc[target_rank]['condition']
+            obj = sorted_rows.iloc[tri]['Target']
+            condition = sorted_rows.iloc[tri]['condition']
             
             ## now get average cost of sketch produced for this trial, weighted by probability
             ## of each sketch category                

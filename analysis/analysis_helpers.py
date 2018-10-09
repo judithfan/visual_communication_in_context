@@ -437,9 +437,14 @@ def get_sense_for_param_range_across_splits():
 
     split_types = ['balancedavg1','balancedavg2','balancedavg3','balancedavg4','balancedavg5']
     
-    model_space = ['human_combined_cost','human_S0_cost','human_combined_nocost',\
-                'multimodal_fc6_combined_cost', 'multimodal_conv42_combined_cost',\
-                'multimodal_fc6_S0_cost','multimodal_fc6_combined_nocost'],    
+    model_space = ['human_combined_cost',
+                    'human_S0_cost',
+                    'human_combined_nocost',
+                    'multimodal_fc6_combined_cost',
+                    'multimodal_fc6_S0_cost',
+                    'multimodal_fc6_combined_nocost',
+                    'multimodal_conv42_combined_cost',
+                    'multimodal_pool1_combined_cost']  
 
     # model_space = ['multimodal_fc6_combined_cost']
 
@@ -503,9 +508,14 @@ def load_model_predictions(model='human_combined_cost',
     return model_preds
     
 def load_all_model_preds(split_types = ['balancedavg1','balancedavg2','balancedavg3','balancedavg4','balancedavg5'],
-                         model_space = ['human_combined_cost','human_S0_cost','human_combined_nocost',\
-                                      'multimodal_fc6_combined_cost', 'multimodal_conv42_combined_cost',\
-                                      'multimodal_fc6_S0_cost','multimodal_fc6_combined_nocost'],
+                         model_space = ['human_combined_cost',
+                                        'human_S0_cost',
+                                        'human_combined_nocost',
+                                        'multimodal_fc6_combined_cost',
+                                        'multimodal_fc6_S0_cost',
+                                        'multimodal_fc6_combined_nocost',
+                                        'multimodal_conv42_combined_cost',
+                                        'multimodal_pool1_combined_cost'],
                          verbosity=2):      
     
     '''
@@ -536,8 +546,9 @@ def get_convenient_handles_on_model_preds(P,split_type='balancedavg1'):
     M = P['multimodal_fc6_combined_cost'][split_type]
     M0 = P['multimodal_conv42_combined_cost'][split_type]
     M1 = P['multimodal_fc6_S0_cost'][split_type]
-    M2 = P['multimodal_fc6_combined_nocost'][split_type]    
-    return H,H0,H1,M,M0,M1,M2
+    M2 = P['multimodal_fc6_combined_nocost'][split_type]
+    M3 = P['multimodal_pool1_combined_cost'][split_type]
+    return H,H0,H1,M,M0,M1,M2,M3
 
 def load_and_check_bootstrapped_model_preds(results_dir = './bootstrap_results'):
     ## get how many boot files there are
@@ -548,8 +559,10 @@ def load_and_check_bootstrapped_model_preds(results_dir = './bootstrap_results')
     ## ground truth list of how many bootvec file we *should* have
     split_types = ['balancedavg1','balancedavg2','balancedavg3','balancedavg4','balancedavg5']
     model_space = ['human_combined_cost','human_S0_cost','human_combined_nocost',\
-                  'multimodal_fc6_combined_cost', 'multimodal_conv42_combined_cost',\
-                  'multimodal_fc6_S0_cost','multimodal_fc6_combined_nocost']
+                  'multimodal_fc6_combined_cost', \
+                  'multimodal_fc6_S0_cost','multimodal_fc6_combined_nocost',
+                  'multimodal_conv42_combined_cost',\
+                  'multimodal_pool1_combined_cost']
     conditions = ['all','closer','further']
     vois = ['target_rank','foil_rank','sign_diff_rank','cost']
     nIter = 1000
@@ -624,7 +637,7 @@ def plot_target_vs_foil_rank_by_object(P,split_type='balancedavg1'):
     vs. wrong sketch category (correct object + wrong context)?
     '''     
     
-    H,H0,H1,M,M0,M1,M2 = get_convenient_handles_on_model_preds(P,split_type=split_type)
+    H,H0,H1,M,M0,M1,M2,M3 = get_convenient_handles_on_model_preds(P,split_type=split_type)
 
     fig = plt.figure(figsize=(20,14))
     plt.subplot(241)
@@ -713,31 +726,34 @@ def get_avg_rank_across_samples(X):
     return XM  
 
 def get_avg_rank_all_models(P,split_type='balancedavg1'):
-    H,H0,H1,M,M0,M1,M2 = get_convenient_handles_on_model_preds(P,split_type=split_type)
-    HU,H0U,H1U,MU,M0U,M1U,M2U = map(get_avg_rank_across_samples,[H,H0,H1,M,M0,M1,M2])
-    return HU,H0U,H1U,MU,M0U,M1U,M2U
+    H,H0,H1,M,M0,M1,M2,M3 = get_convenient_handles_on_model_preds(P,split_type=split_type)
+    HU,H0U,H1U,MU,M0U,M1U,M2U,M3U = map(get_avg_rank_across_samples,[H,H0,H1,M,M0,M1,M2,M3])
+    return HU,H0U,H1U,MU,M0U,M1U,M2U,M3U
 
 def plot_avg_rank_all_models(P,split_type='balancedavg1'):
     '''
     Generate bar plot of average rank (out of 64) of correct sketch category, by model, for a particular split.
     Wrapper around get_avg_rank_all_models, which itself wraps around get_avg_rank_across_samples.
     '''
-    HU,H0U,H1U,MU,M0U,M1U,M2U = get_avg_rank_all_models(P,split_type=split_type)
+    HU,H0U,H1U,MU,M0U,M1U,M2U,M3U = get_avg_rank_all_models(P,split_type=split_type)
     sns.set_context('talk')
     fig = plt.figure(figsize=(4,8))
     ax = fig.add_subplot(111)
-    U = pd.concat([HU,H0U,H1U,MU,M0U,M1U,M2U],axis=0)
+    U = pd.concat([HU,H0U,H1U,MU,M0U,M1U,M2U,M3U],axis=0)
     sns.barplot(data=U,
                 x='adaptor',
                 y='target_rank',
                 ci='sd',
                 order = ['human_combined_cost','human_S0_cost','human_combined_nocost',\
-                         'multimodal_fc6_combined_cost', 'multimodal_conv42_combined_cost',\
-                         'multimodal_fc6_S0_cost','multimodal_fc6_combined_nocost'])
+                         'multimodal_fc6_combined_cost', \
+                         'multimodal_fc6_S0_cost','multimodal_fc6_combined_nocost',
+                         'multimodal_conv42_combined_cost',\
+                         'multimodal_pool1_combined_cost'])
     plt.ylabel('mean rank of congruent sketch')
     plt.ylim([1,8])
     xticklabels=['Context Cost Human','NoContext Cost Human','Context NoCost Human','Context Cost HighAdaptor',
-                 'NoContext Cost HighAdaptor','Context NoCost HighAdaptor', 'Context Cost MidAdaptor']
+                 'NoContext Cost HighAdaptor','Context NoCost HighAdaptor', 'Context Cost MidAdaptor',\
+                 'Context Cost LowAdaptor']
     plt.xlabel('')
     l = ax.set_xticklabels(xticklabels, rotation = 90, ha="left")
     plt.tight_layout()
@@ -758,20 +774,20 @@ def get_prop_congruent_all_models(P, split_type='balancedavg1'):
     '''
     Apply get_prog_congruent to all models
     '''
-    H,H0,H1,M,M0,M1,M2 = get_convenient_handles_on_model_preds(P,split_type=split_type)
-    HU,H0U,H1U,MU,M0U,M1U,M2U = map(get_prop_congruent,[H,H0,H1,M,M0,M1,M2])
-    return HU,H0U,H1U,MU,M0U,M1U,M2U
+    H,H0,H1,M,M0,M1,M2,M3 = get_convenient_handles_on_model_preds(P,split_type=split_type)
+    HU,H0U,H1U,MU,M0U,M1U,M2U,M3U = map(get_prop_congruent,[H,H0,H1,M,M0,M1,M2,M3])
+    return HU,H0U,H1U,MU,M0U,M1U,M2U,M3U
 
 def plot_prop_congruent_all_models(P,split_type='balancedavg1'):
     '''
     Generate bar plot of proportion of trials for which context-congruent sketch preferred over incongruent sketch.
     Wrapper around get_prop_congruent_all_models, which itself wraps around get_prop_congruent.
     '''
-    HU,H0U,H1U,MU,M0U,M1U,M2U = get_prop_congruent_all_models(P,split_type=split_type)
+    HU,H0U,H1U,MU,M0U,M1U,M2U,M3U = get_prop_congruent_all_models(P,split_type=split_type)
     sns.set_context('talk')
     fig = plt.figure(figsize=(4,8))
     ax = fig.add_subplot(111)     
-    D = pd.concat([HU,H0U,H1U,MU,M0U,M1U,M2U],axis=0)    
+    D = pd.concat([HU,H0U,H1U,MU,M0U,M1U,M2U,M3U],axis=0)    
     sns.barplot(data=D,
                 x='adaptor',
                 y='sign_diff_rank',ci='sd')
@@ -780,7 +796,8 @@ def plot_prop_congruent_all_models(P,split_type='balancedavg1'):
     plt.ylabel('proportion context-congruent sketch preferred')
 
     xticklabels=['Context Cost Human','NoContext Cost Human','Context NoCost Human','Context Cost HighAdaptor',
-                 'NoContext Cost HighAdaptor','Context NoCost HighAdaptor', 'Context Cost MidAdaptor']
+                 'NoContext Cost HighAdaptor','Context NoCost HighAdaptor', 'Context Cost MidAdaptor',\
+                 'Context Cost LowAdaptor']
     plt.xlabel('')
     l = ax.set_xticklabels(xticklabels, rotation = 90, ha="left")
     
@@ -834,7 +851,8 @@ def load_all_topk_predictions():
         QM0 = pd.read_csv('./csv/multimodal_conv42_combined_cost_balancedavg1_topk.csv')
         QM1 = pd.read_csv('./csv/multimodal_fc6_S0_cost_balancedavg1_topk.csv')
         QM2 = pd.read_csv('./csv/multimodal_fc6_combined_nocost_balancedavg1_topk.csv')
-        Q = pd.concat([QH,QH0,QH1,QM0,QM1,QM2,QM],axis=0)
+        QM3 = pd.read_csv('./csv/multimodal_pool1_combined_nocost_balancedavg1_topk.csv')        
+        Q = pd.concat([QH,QH0,QH1,QM,QM0,QM1,QM2,QM3],axis=0)
     except Exception as e: 
         print 'Make sure that you have already run get_top_k_predictions.'
         print(e)
@@ -883,16 +901,17 @@ def get_avg_cost_all_models(P, split_type='balancedavg1'):
     '''
     Apply get_avg_cost_across_samples to all models
     '''
-    H,H0,H1,M,M0,M1,M2 = get_convenient_handles_on_model_preds(P,split_type=split_type)
-    HU,H0U,H1U,MU,M0U,M1U,M2U = map(get_avg_cost_across_samples,[H,H0,H1,M,M0,M1,M2])
-    return HU,H0U,H1U,MU,M0U,M1U,M2U
+    H,H0,H1,M,M0,M1,M2,M3 = get_convenient_handles_on_model_preds(P,split_type=split_type)
+    HU,H0U,H1U,MU,M0U,M1U,M2U,M3U = map(get_avg_cost_across_samples,[H,H0,H1,M,M0,M1,M2,M3])
+    return HU,H0U,H1U,MU,M0U,M1U,M2U,M3U
 
 def generate_aggregated_estimate_dataframe(B, 
                                            condition_list = ['all'],
                                            model_space = ['human_combined_cost','human_S0_cost','human_combined_nocost',\
                                                           'multimodal_fc6_combined_cost', \
                                                           'multimodal_fc6_S0_cost','multimodal_fc6_combined_nocost',\
-                                                          'multimodal_conv42_combined_cost'],
+                                                          'multimodal_conv42_combined_cost',
+                                                          'multimodal_pool1_combined_cost'],
                                            split_types = ['balancedavg1','balancedavg2',\
                                                           'balancedavg3','balancedavg4','balancedavg5'],
                                            var_of_interest='target_rank',
@@ -951,8 +970,10 @@ def plot_average_target_rank_across_splits(R,
                                            var_of_interest='target_rank',
                                            condition_list = ['all'],
                                            model_space = ['human_combined_cost','human_S0_cost','human_combined_nocost',\
-                                                            'multimodal_fc6_combined_cost', 'multimodal_conv42_combined_cost',\
-                                                            'multimodal_fc6_S0_cost','multimodal_fc6_combined_nocost'],
+                                                          'multimodal_fc6_combined_cost', \
+                                                          'multimodal_fc6_S0_cost','multimodal_fc6_combined_nocost',\
+                                                          'multimodal_conv42_combined_cost',
+                                                          'multimodal_pool1_combined_cost'],
                                            split_types = ['balancedavg1','balancedavg2',\
                                                           'balancedavg3','balancedavg4','balancedavg5'],
                                            condition='all',
@@ -972,7 +993,8 @@ def plot_average_target_rank_across_splits(R,
                 order=['human_combined_cost','human_S0_cost','human_combined_nocost',\
                        'multimodal_fc6_combined_cost',\
                        'multimodal_fc6_S0_cost','multimodal_fc6_combined_nocost',\
-                       'multimodal_conv42_combined_cost'],
+                       'multimodal_conv42_combined_cost',
+                       'multimodal_pool1_combined_cost'],
                 ci=None,
                 data=R)
 
@@ -989,7 +1011,8 @@ def plot_average_target_rank_across_splits(R,
 
     plt.ylabel(ylabel)
     xticklabels=['Context Cost Human','NoContext Cost Human','Context NoCost Human','Context Cost HighAdaptor',
-                 'NoContext Cost HighAdaptor','Context NoCost HighAdaptor', 'Context Cost MidAdaptor']
+                 'NoContext Cost HighAdaptor','Context NoCost HighAdaptor', 'Context Cost MidAdaptor',\
+                 'Context Cost LowAdaptor']
     plt.xlabel('')
     l = ax.set_xticklabels(xticklabels, rotation = 90, ha="left")
     
@@ -997,8 +1020,10 @@ def plot_prop_congruent_across_splits(R,
                                       var_of_interest='sign_diff_rank',
                                       condition_list = ['all'],
                                       model_space = ['human_combined_cost','human_S0_cost','human_combined_nocost',\
-                                                     'multimodal_fc6_combined_cost', 'multimodal_conv42_combined_cost',\
-                                                     'multimodal_fc6_S0_cost','multimodal_fc6_combined_nocost'],
+                                                     'multimodal_fc6_combined_cost', 
+                                                     'multimodal_fc6_S0_cost','multimodal_fc6_combined_nocost',
+                                                     'multimodal_conv42_combined_cost',\
+                                                     'multimodal_pool1_combined_cost'],
                                       split_types = ['balancedavg1','balancedavg2',\
                                                         'balancedavg3','balancedavg4','balancedavg5'],
                                       condition='all',
@@ -1015,7 +1040,8 @@ def plot_prop_congruent_across_splits(R,
                 order = ['human_combined_cost','human_S0_cost','human_combined_nocost',\
                          'multimodal_fc6_combined_cost', \
                          'multimodal_fc6_S0_cost','multimodal_fc6_combined_nocost',\
-                         'multimodal_conv42_combined_cost'],
+                         'multimodal_conv42_combined_cost',
+                         'multimodal_pool1_combined_cost'],
                 ci=None,
                 data=R)
 
@@ -1035,7 +1061,8 @@ def plot_prop_congruent_across_splits(R,
     plt.ylim(0,0.8)
 
     xticklabels=['Context Cost Human','NoContext Cost Human','Context NoCost Human','Context Cost HighAdaptor',
-                 'NoContext Cost HighAdaptor','Context NoCost HighAdaptor', 'Context Cost MidAdaptor']
+                 'NoContext Cost HighAdaptor','Context NoCost HighAdaptor', 'Context Cost MidAdaptor',
+                 'Context Cost LowAdaptor']
     plt.xlabel('')
 
     l = ax.set_xticklabels(xticklabels, rotation = 90, ha="left")    
@@ -1046,7 +1073,8 @@ def plot_cost_by_condition_across_splits(R,
                                       model_space = ['human_combined_cost','human_S0_cost','human_combined_nocost',\
                                                      'multimodal_fc6_combined_cost',\
                                                      'multimodal_fc6_S0_cost','multimodal_fc6_combined_nocost',\
-                                                     'multimodal_conv42_combined_cost'],
+                                                     'multimodal_conv42_combined_cost',
+                                                     'multimodal_pool1_combined_cost'],
                                       split_types = ['balancedavg1','balancedavg2',\
                                                      'balancedavg3','balancedavg4','balancedavg5'],
                                       condition='all',
@@ -1067,7 +1095,7 @@ def plot_cost_by_condition_across_splits(R,
     ## plot custom error bars
     x_inds = []
     offset=1/5
-    for i in np.arange(7):    
+    for i in np.arange(8):    
         x_inds.append(i-offset)
         x_inds.append(i+offset)
     x = x_inds
@@ -1084,6 +1112,7 @@ def plot_cost_by_condition_across_splits(R,
     plt.ylim(0,0.3)
 
     xticklabels=['Context Cost Human','NoContext Cost Human','Context NoCost Human','Context Cost HighAdaptor',
-                 'NoContext Cost HighAdaptor','Context NoCost HighAdaptor', 'Context Cost MidAdaptor']
+                 'NoContext Cost HighAdaptor','Context NoCost HighAdaptor', 'Context Cost MidAdaptor',\
+                 'Context Cost LowAdaptor']
     plt.xlabel('')
     l = ax.set_xticklabels(xticklabels, rotation = 90, ha="left")    
