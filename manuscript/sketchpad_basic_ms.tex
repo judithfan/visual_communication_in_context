@@ -332,41 +332,33 @@ We use the Adam optimization algorithm \cite[]{kingma2014adam} with a learning r
 
 \subsubsection*{Social inference module}
 
-The social inference module must be able to evaluate the degree of perceptual correspondence between each object in context and any sketch it could produce. The set of producible sketches consists of those in the test set, i.e., not used to train the visual encoder. Using this information, it outputs a distribution of scores over all test-set sketches, where the scores reflect each sketch's relative communicative utility. 
+The social inference module must be able to evaluate the degree of perceptual correspondence between each object in context and any sketch it could produce, where the set of producible sketches consists of those in the test set (i.e., not used to train the visual encoder). Using this information, it outputs a distribution of scores over all test-set sketches, where the scores reflect each sketch's relative communicative utility. 
 
-% This module is parameterized by four continuous variables: (1) a scaling factor 
-
-   %  perception, pragmatics, production,
-   %  simScaling : (pragmatics === 'S0' ? 1 :
-		 % uniformDrift({a:0,b:500,width:20})),
-   %  pragWeight: (pragmatics == 'S0' ? 0 :
-		 % pragmatics == 'S1' ? 1 :
-		 % uniformDrift({a:0,b:1,width:0.1})),
-   %  costWeight : (production === 'nocost' ? 0 :
-		 % uniformDrift({a:0,b:500,width:10})),
-   %  infWeight : uniformDrift({a:0,b:500,width:10})
-
-Formally, we define the sketcher, $\mathcal{S}$ to be a decision-theoretic agent that produces sketches, $s$, by soft-maximizing a utility function, $U$, given a particular object referent, $o$:
+Combining the two modules, we can define the sketcher, $\mathcal{S}$ to be a decision-theoretic agent that produces sketches, $s$, by soft-maximizing a utility function, $U$, given a particular object referent, $o$:
 
 \begin{equation}
 \mathcal{S}(s|o) \propto \exp\{{U(s,o)\}}
 \end{equation}
 
-The utility function of our context-sensitive sketcher, $U_{S_1}$,  trades off the extent to which the sketch is informative to the viewer, $\mathcal{V}$, and the cost of producing the sketch, $C(s)$. This notion of informativity is defined by the (natural log) probability that a viewer would select the true object referent given the drawing and current context.
+The utility function of our context-sensitive sketcher, $U_{S_1}$, trades off the extent to which a given sketch is informative to an imagined viewer, $\mathcal{V}$, with the cost of producing that sketch, $C(s)$. This notion of informativity is defined by the (natural log) probability that a viewer would select the true object given the sketch and all objects in context. In our experiments, the cost of a sketch is operationalized as the amount of time taken to produce it, though in principle other metrics could be used (e.g., the number of strokes, proportion of canvas filled).
 
 \begin{equation} \label{sketcher_utility}
 U_{S_1}(s, o) = w_p \ln \mathcal{V}(o|s) - w_c C(s)
 \end{equation}
 where $w_p$ and $w_c$ are latent parameters weighting the influences of the sketch's perceptual properties and cost, respectively.
 
-The viewer ($\mathcal{V}$) is assumed to choose among potential objects in context proportional to the perceptual correspondence between each object and the current sketch.
+The viewer ($\mathcal{V}$) is assumed to decide between objects in context proportional to the perceptual correspondence between each object and the current sketch, $\textrm{sim}(s, o)$.
 
 \begin{equation} \label{literal_viewer_score}
 \mathcal{V}(o|s) \propto \exp\{\alpha \cdot \textrm{sim(s, o)}\}
 \end{equation}
 where $\alpha$ is a scaling parameter determining the assumed optimality of the listener's decision policy: as $\alpha \rightarrow \infty$, the listener is more likely to choose the object with highest perceptual correspondence to the sketch.
 
-We also consider a literal sketcher $S_0$ who does not reason about a viewer in context, but aims to maximize the perceptual similarity of their sketch to the target, thus we use $\textrm{sim}(s, o)$ instead of informativity to $\mathcal{V}(o|s)$ in their perceptual term. To evaluate the effect of context sensitivity, we infer the mixture of these speakers that best fits the data. We introduce an additional parameter $w_{prag}$ that interpolates between their utilities: $$f(s,o) = w_{prag}\ln \mathcal{V}(o | s) + (1-w_{prag}) \textrm{sim}(s,o)$$ After algebraically simplifying, the full utility is :
+We also consider a \textit{context-insensitive} sketcher $S_0$ agent that aims to maximize the absolute perceptual correspondence between their sketch and the target, without taking the  distractors into account. Accordingly, the utility function of this context-insensitive sketcher is defined in terms of $\textrm{sim}(s, o)$ instead of informativity to $\mathcal{V}(o|s)$. 
+
+In our full sketcher model we combine these two agents by inferring a mixture weight parameter, $w_{prag}$, that interpolates between their two utilities: $$f(s,o) = w_{prag}\ln \mathcal{V}(o | s) + (1-w_{prag}) \textrm{sim}(s,o)$$. Combining the utilities in this way captures the intuition that a communicative sketcher seeks to produce a sketch that both resembles the target object and distinguishes the target from the distractors. 
+
+After algebraically simplifying, the full utility is:
 
 \begin{equation}
 U(s,o) =  w_p \cdot  f(s,o) - w_c \cdot C(s)
