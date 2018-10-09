@@ -38,7 +38,7 @@
 % Please give the surname of the lead author for the running footer
 \leadauthor{Fan}
 
-\significancestatement{Drawing is a versatile tool for communication, spanning detailed life drawings and simple whiteboard sketches. Even the same object can be drawn in many ways, depending on the context. How do people decide how to draw in order to be understood? We collected a large number of drawings in different contexts and found that people adapted their drawings accordingly, producing detailed drawings when necessary, but simpler drawings when sufficient. To explain this contextual flexibility, we developed a computational model combining the capacity to perceive the correspondence between an object and drawing with the ability to infer what information is relevant to the viewer in context. Our results suggest drawing may be so versatile because of humans' joint capacity for visual abstraction and social reasoning.}
+\significancestatement{Drawing is a versatile tool for communication, spanning detailed life drawings and simple whiteboard sketches. Even the same object can be drawn in many ways, depending on the context. How do people decide how to draw in order to be understood? We collected a large number of drawings in different contexts and found that people adapted their drawings accordingly, producing detailed drawings when necessary, but simpler drawings when sufficient. To explain this contextual flexibility, we developed a computational model combining the capacity to perceive the correspondence between an object and drawing with the ability to infer what information is relevant to the viewer in context. Our results suggest drawing may be so versatile because of humans' joint capacity for visual abstraction and social inference.}
 
 % Please include corresponding author, author contribution and author declaration information
 \authorcontributions{J.E.F and R.X.D.H. conducted human experiments, J.E.F, R.X.D.H, and M.W. analyzed data and performed computational modeling. J.E.F, R.X.D.H, M.W., and N.D.G. designed experiments, formulated models, interpreted results, and wrote the paper.}
@@ -50,7 +50,7 @@
 
 \begin{abstract}
 
-Visual modes of communication are ubiquitous in modern life --- from maps to data plots to political cartoons. Here we investigate drawing, the most basic form of visual communication. Communicative drawing poses a core challenge for theories of how vision and social cognition interact, requiring a detailed understanding of how sensory information and social context jointly determine what information is relevant to communicate. Participants (N=192) were paired in an online environment to play a drawing-based reference game. On each trial, both participants were shown the same four objects, but in different locations. The \textit{sketcher's} goal was to draw one of these objects --- the target --- so that the \textit{viewer} could pick it out from a set of distractor objects. There were two types of trials: \textit{$close$}, where objects belonged to the same category, and \textit{$far$}, where objects belonged to different categories. We found that people exploited information in common ground with their partner to efficiently communicate about the target: on $far$ trials, sketchers achieved 99.7\% recognition accuracy while applying fewer strokes, using less ink, and spending less time (\textit{p}s$<$0.001) on their drawings than on $close$ trials. We hypothesized that humans excel at this task by recruiting two core competencies: (1) \textbf{visual abstraction}, the capacity to perceive the correspondence between an object and a drawing of it; and (2) \textbf{social reasoning}, the ability to infer what information would help a viewer distinguish the target from distractors. We instantiated these competencies in a computational model that combines a multimodal convnet visual encoder with a Bayesian model of recursive social reasoning, and found that it fit the data well and outperformed lesioned variants of the model. Together, this work provides the first unified computational theory of how perception and social cognition support contextual flexibility in real-time visual communication.
+Visual modes of communication are ubiquitous in modern life --- from maps to data plots to political cartoons. Here we investigate drawing, the most basic form of visual communication. Communicative drawing poses a core challenge for theories of how vision and social cognition interact, requiring a detailed understanding of how sensory information and social context jointly determine what information is relevant to communicate. Participants (N=192) were paired in an online environment to play a drawing-based reference game. On each trial, both participants were shown the same four objects, but in different locations. The \textit{sketcher's} goal was to draw one of these objects --- the target --- so that the \textit{viewer} could pick it out from a set of distractor objects. There were two types of trials: \textit{$close$}, where objects belonged to the same category, and \textit{$far$}, where objects belonged to different categories. We found that people exploited information in common ground with their partner to efficiently communicate about the target: on $far$ trials, sketchers achieved 99.7\% recognition accuracy while applying fewer strokes, using less ink, and spending less time (\textit{p}s$<$0.001) on their drawings than on $close$ trials. We hypothesized that humans excel at this task by recruiting two core competencies: (1) \textbf{visual abstraction}, the capacity to perceive the correspondence between an object and a drawing of it; and (2) \textbf{social inference}, the ability to infer what information would help a viewer distinguish the target from distractors. We instantiated these competencies in a computational model that combines a multimodal convnet visual encoder with a Bayesian model of recursive social reasoning, and found that it fit the data well and outperformed lesioned variants of the model. Together, this work provides the first unified computational theory of how perception and social cognition support contextual flexibility in real-time visual communication.
 \end{abstract}
 
 \dates{This manuscript was compiled on \today}
@@ -330,15 +330,29 @@ The empirical response distribution was derived by computing the proportion of t
 
 We use the Adam optimization algorithm \cite[]{kingma2014adam} with a learning rate of 1e-4 and minibatch size of 10 for 100 epochs, where an epoch is a full pass through the training set. As a property of the input domain, the gradients with respect to adaptor parameters are very small (1.51e-4 $\pm$ 2.61e-4), inevitably resulting in poor learning (we can reproduce this effect from several intializations). We find that naively increasing the learning rate led to unstable optimization, but that multiplying the loss by a large constant $C$ leads to a much smoother learning trajectories and good test generalization\footnote{Increasing the learning rate and multiplying the loss by a constant are not equivalent for second moment gradient methods.}. In practice, $C =$ 1e4. After training each adaptor for 100 epochs, we freeze the model with the best performance on a validation set. For each 3D object and sketch pair in the test set, we evaluate the perceptual correspondence and provide this as input to the social reasoning module, described next.
 
-\subsubsection*{Social reasoning module}
+\subsubsection*{Social inference module}
 
-We formalize a sketcher, $\mathcal{S}$ as a decision-theoretic agent who produces sketches, $s$, by (soft)-maximizing their utility function, $U$, given a particular object referent, $o$:
+The social inference module must be able to evaluate the degree of perceptual correspondence between each object in context and any sketch it could produce. The set of producible sketches consists of those in the test set, i.e., not used to train the visual encoder. Using this information, it outputs a distribution of scores over all test-set sketches, where the scores reflect each sketch's relative communicative utility. 
+
+% This module is parameterized by four continuous variables: (1) a scaling factor 
+
+   %  perception, pragmatics, production,
+   %  simScaling : (pragmatics === 'S0' ? 1 :
+		 % uniformDrift({a:0,b:500,width:20})),
+   %  pragWeight: (pragmatics == 'S0' ? 0 :
+		 % pragmatics == 'S1' ? 1 :
+		 % uniformDrift({a:0,b:1,width:0.1})),
+   %  costWeight : (production === 'nocost' ? 0 :
+		 % uniformDrift({a:0,b:500,width:10})),
+   %  infWeight : uniformDrift({a:0,b:500,width:10})
+
+Formally, we define the sketcher, $\mathcal{S}$ to be a decision-theoretic agent that produces sketches, $s$, by soft-maximizing a utility function, $U$, given a particular object referent, $o$:
 
 \begin{equation}
 \mathcal{S}(s|o) \propto \exp\{{U(s,o)\}}
 \end{equation}
 
-The utility function of our pragmatic sketcher, $U_{S_1}$,  trades off the extent to which the sketch is informative to the viewer, $\mathcal{V}$, and the cost of producing the sketch, $C(s)$. This notion of informativity is defined by the (natural log) probability that a viewer would select the true object referent given the drawing and current context.
+The utility function of our context-sensitive sketcher, $U_{S_1}$,  trades off the extent to which the sketch is informative to the viewer, $\mathcal{V}$, and the cost of producing the sketch, $C(s)$. This notion of informativity is defined by the (natural log) probability that a viewer would select the true object referent given the drawing and current context.
 
 \begin{equation} \label{sketcher_utility}
 U_{S_1}(s, o) = w_p \ln \mathcal{V}(o|s) - w_c C(s)
@@ -352,7 +366,7 @@ The viewer ($\mathcal{V}$) is assumed to choose among potential objects in conte
 \end{equation}
 where $\alpha$ is a scaling parameter determining the assumed optimality of the listener's decision policy: as $\alpha \rightarrow \infty$, the listener is more likely to choose the object with highest perceptual correspondence to the sketch.
 
-We also consider a literal sketcher $S_0$ who does not reason about a viewer in context, but aims to maximize the perceptual similarity of their sketch to the target, thus we use $\textrm{sim}(s, o)$ instead of informativity to $\mathcal{V}(o|s)$ in their perceptual term. To infer the effect of pragmatics, we infer the mixture of these speakers that best fits the data. We introduce an additional parameter $w_{prag}$ that interpolates between their utilities: $$f(s,o) = w_{prag}\ln \mathcal{V}(o | s) + (1-w_{prag}) \textrm{sim}(s,o)$$ After algebraically simplifying, the full utility is :
+We also consider a literal sketcher $S_0$ who does not reason about a viewer in context, but aims to maximize the perceptual similarity of their sketch to the target, thus we use $\textrm{sim}(s, o)$ instead of informativity to $\mathcal{V}(o|s)$ in their perceptual term. To evaluate the effect of context sensitivity, we infer the mixture of these speakers that best fits the data. We introduce an additional parameter $w_{prag}$ that interpolates between their utilities: $$f(s,o) = w_{prag}\ln \mathcal{V}(o | s) + (1-w_{prag}) \textrm{sim}(s,o)$$ After algebraically simplifying, the full utility is :
 
 \begin{equation}
 U(s,o) =  w_p \cdot  f(s,o) - w_c \cdot C(s)
