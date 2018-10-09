@@ -56,8 +56,6 @@ Visual modes of communication are ubiquitous in modern life --- from maps to dat
 \dates{This manuscript was compiled on \today}
 \doi{\url{www.pnas.org/cgi/doi/10.1073/pnas.XXXXXXXXXX}}
 
-
-
 \begin{document}
 
 % Optional adjustment to line up main text (after abstract) of first page with line numbers, when using both lineno and twocolumn options.
@@ -121,7 +119,9 @@ Consistent with the first prediction, we found that viewers were highly accurate
 
 \subsection*{Effect of context manipulation on sketch recognizability}
 
-We further hypothesized that manipulating the similarity between the target and distractors would systematically affect the recognizability of sketches, resulting in $far$ sketches that were a worse match to the target object than $close$ sketches \textit{out of context}, even though they were still highly informative about the target \textit{in context}, as well as less costly to produce. To evaluate this hypothesis, we recruited another group of naive participants to attempt to identify the matching object for each sketch. In this recognition experiment, the alternative set contained all 32 objects, and each sketch was annotated approximately 10 times each. Consistent with our prediction, we found that $close$ sketches were matched with their corresponding object rendering more consistently than $far$ sketches were ($close$: 54.2\%; $far$: 37.5\%; $Z$=14.1, $p$<0.001), although both were successfully matched at rates greatly exceeding chance ($p$s < 0.001).
+We further hypothesized that manipulating the similarity between the target and distractors would systematically affect the recognizability of sketches, resulting in $far$ sketches that were a worse match to the target object than $close$ sketches \textit{out of context}, even though they were still highly informative about the target \textit{in context}, as well as less costly to produce. 
+To evaluate this hypothesis, we recruited another group of naive participants to attempt to identify the matching object for each sketch. 
+In this recognition experiment, the alternative set contained all 32 objects, and each sketch was annotated approximately 10 times each. Consistent with our prediction, we found that $close$ sketches were matched with their corresponding object rendering more consistently than $far$ sketches were ($close$: 54.2\%; $far$: 37.5\%; $Z$=14.1, $p$<0.001), although both were successfully matched at rates greatly exceeding chance ($p$s < 0.001).
 
 \begin{figure*}[htbp]
 \centering
@@ -142,11 +142,20 @@ We further hypothesized that manipulating the similarity between the target and 
 
 \subsection*{Computational model}
 
-What explains the pattern of behavior observed in the communication task? We hypothesized that two core cognitive competencies play a crucial role: (1) visual abstraction, the capacity to perceive the correspondence between an object and a drawing of it; and (2) social reasoning, the ability to infer what information would help a viewer distinguish the target from distractors. In order to evaluate this hypothesis, we instantiated these competencies in a computational model that combines a multimodal convnet visual encoder with a Bayesian model of recursive social reasoning. Here we describe the architecture of our model, evaluate its generalization performance on unseen sketches, and conduct a set of comparisons against lesioned variants to test the role played by each of these components.
+What explains the pattern of sketch production behavior observed in the communication task? 
+In general, the ability to produce sketches that are informative in context can be conceptualized in terms of an \textit{encoder}, which applies the appropriate transformations on raw visual inputs to represent them in a useful format for a \textit{decoder}, which generates decisions about what sketch to produce. 
+To capture the observed behavioral patterns, we hypothesized that the encoder and decoder should satisfy specific functional constraints: first, the encoder should be capable of evaluating the abstract correspondence between an object and a drawing of it (``visual abstraction''), and second, the decoder should be capable of inferring what information would be relevant and sufficient to help a viewer identify the target object in context (``social inference''). 
+Intuitively, these two constraints encourage the model to depict properties of the target object that distinguish it from the distractors, while also preferring sketches that are less costly to produce.
+To test our hypothesis, we developed a computational model following this encoder-decoder framework, consisting of a convnet visual encoder module and a Bayesian social inference module. 
 
-% to provide independent training data to train a shallow adaptor network to merge photorealistic images and sketches into a common latent space, from which perceptual similarity can be easily read out.
+% Here we describe the architecture of our model, evaluate its generalization performance on unseen sketches, and conduct a set of comparisons against lesioned variants to test the role played by each of these components.
 
-%% describe the full sketcher model
+The visual encoder module accepts a pair of images, a sketch and an object rendering, as input and returns a scalar value in the range $[0,1]$, reflecting the degree of perceptual correspondence between the sketch and object. This module consists of two components: a base visual encoder and an adaptor network. We employ VGG-19 \cite{simonyan2014very} as our base visual encoder, a widely used deep convnet architecture that had been pretrained to categorize objects on the ImageNet database \cite{deng2009imagenet}. While prior work has shown that the representation of object categories converges for sketches and natural images at higher layers in these models without any additional training \cite{FanCommon2018}, we augment this pre-trained representation with a shallow \textit{adaptor} network that is trained to predict the abstract correspondence between specific sketch-object pairs. 
+
+The social inference module 
+
+
+% To explore the degree to which the \textit{visual abstraction} afforded by the complex transformations applied by successive layers of VGG-19 are required to capture human behavior during visual communication, we train three adaptor networks that intercept VGG-19 image representations at different layers: the first max pooling layer (early), the tenth convolutional layer (mid), and the first fully connected layer (high). To facilitate comparison between adaptor networks, we ensured that each of the three contain a comparable number of trainable parameters (Table~\ref{table:parameters}) with similar hyperparameters. To discriminate which layer provides the best starting feature basis for predicting sketch-object correspondence, these adaptor networks were also deliberately constrained to be shallow, i.e., consisting only of two linear layers with an intervening point-wise nonlinearity. 
 
 % Our full sketching model integrates three key components: \emph{production}, \emph{pragmatics}, and \emph{perception} (see \emph{Materials and Methods}; Eq. 2-4 and Fig. \ref{model_schematic}). \emph{Production} determines whether or not the agent accounts for the relative cost of producing drawings with more strokes. \emph{Pragmatics} captures the sketcher's reasoning about how a viewer will make decisions in context. \emph{Perception} determines the encoding model used by the agent to determine the literal similarity between a drawing and object. Intuitively, putting these components together has the effect of biasing the model to depict properties of the target object that perceptually distinguish it from the distractors, while also preferring sketches that are less costly to produce, i.e., requiring fewer strokes or less ink. We conduct a set of comparisons against lesioned variants to test the role played by each component.
 
@@ -154,7 +163,8 @@ What explains the pattern of behavior observed in the communication task? We hyp
 
 %% report RSA modeling results using human perceptual measurements directly to compute informativity
 %% prag with cost, prag no cost, no prag cost, no prag no cost
-We begin with production and pragmatics. Lesioning the production component simply requires setting the parameter weighting the \emph{cost} term of our speaker's utility to zero, such that all sketches are equally easy to produce. For the pragmatic component, we compare a \emph{social sketcher}, which takes context into account, against an \emph{asocial sketcher} that simply aims to make a sketch with high absolute perceptual similarity to the target, ignoring context. To define our social sketcher, we generalize the Rational Speech Act (RSA) framework from the linguistic domain, where it has captured language use as a process of recursive social reasoning \cite{goodman2016pragmatic,kao2014formalizing,goodman2013knowledge}. By reasoning about a viewer who normalizes perceptual similarity across objects in context, a social sketcher is able to choose sketches that are \emph{informative}, or that apply to the target relatively better than distractors. For example, in a context only containing birds, a generic outline of a bird would not be very informative, even if it has high absolute similarity to the target, because it also resembles the distractors. Because both absolute and relative similarity may influence a sketcher's decision, we introduced a parameter $w_p \in [0,1]$ that interpolates between the two values. We conducted a Bayesian Data Analysis, plugging in the similarity function directly estimated from empirical human ratings in the matching task. We found that the social speaker was strongly preferred over the asocial speaker ($BF = XX; w_p = YY$, 95\% credible interval $= [X, Y]$) and the model including a cost term was strongly preferred over a cost-free variant ($BF = XX; w_c = YY$, 95\% credible interval $=[X, Y]$; see Fig. \ref{fig:model_results}A).
+First, we evaluate the importance of social reasoning, operationalized as the combination of context awareness and cost sensitivity.  
+Lesioning the production component simply requires setting the parameter weighting the \emph{cost} term of our speaker's utility to zero, such that all sketches are equally easy to produce. For the pragmatic component, we compare a \emph{context-sensitive sketcher}, which takes context into account, against an \emph{context-insensitive sketcher} that simply aims to make a sketch with high absolute perceptual similarity to the target, ignoring context. To define our social sketcher, we generalize the Rational Speech Act (RSA) framework from the linguistic domain, where it has captured language use as a process of recursive social reasoning \cite{goodman2016pragmatic,kao2014formalizing,goodman2013knowledge}. By reasoning about a viewer who normalizes perceptual similarity across objects in context, a social sketcher is able to choose sketches that are \emph{informative}, or that apply to the target relatively better than distractors. For example, in a context only containing birds, a generic outline of a bird would not be very informative, even if it has high absolute similarity to the target, because it also resembles the distractors. Because both absolute and relative similarity may influence a sketcher's decision, we introduced a parameter $w_p \in [0,1]$ that interpolates between the two values. We conducted a Bayesian Data Analysis, plugging in the similarity function directly estimated from empirical human ratings in the matching task. We found that the social speaker was strongly preferred over the asocial speaker ($BF = XX; w_p = YY$, 95\% credible interval $= [X, Y]$) and the model including a cost term was strongly preferred over a cost-free variant ($BF = XX; w_c = YY$, 95\% credible interval $=[X, Y]$; see Fig. \ref{fig:model_results}A).
 
 %% report the human perception results here, e.g.,
 
@@ -187,6 +197,8 @@ We conducted another Bayesian Data Analysis comparing feature vectors adapted fr
 Having established the need for all three components, we proceed to evaluate the model's predictions on unseen sketches.
 
 %% report congruent context preference
+Only models that were sensitive to both context and cost 
+
 
 %% report cost behavior
 
@@ -195,6 +207,16 @@ Having established the need for all three components, we proceed to evaluate the
 In this study, we explored how communicative context influences real-time natural visual communication behavior.
 
 We collected a rich behavioral dataset and developed an integrated computational model that explains contextual flexibility in human visual communication by combining constraints from perception and pragmatic reasoning.
+
+We found that ... 
+
+% literatures that this should connect to: other graphical communication papers
+
+
+% limitations of this work
+
+
+% future directions
 
 Together, this work provides the first unified computational theory of how perception and social cognition support contextual flexibility in real-time visual communication.
 
@@ -250,7 +272,7 @@ Towards the first goal, we propose a framework for instantiating visual abstract
 
 The visual encoder module accepts a pair of images, a sketch and an object rendering (both 3x224x224), as input and returns a scalar value in the range $[0,1]$, reflecting the degree of perceptual correspondence between the sketch and object. This module consists of two components: a base visual encoder and an adaptor network. 
 
-We employ VGG-19 \cite{simonyan2014very} as our base visual encoder, a high-performing and widely used deep convolutional neural network architecture. This network had been pretrained to categorize objects on the ImageNet database, which contains millions of photographs from hundreds of object categories \cite{deng2009imagenet}. Despite the fact that drawings are highly abstracted away from natural visual inputs, prior work has shown a striking isomorphism in the similarity structure \cite{kriegeskorte2008matching} of object categories in sketches and photos at higher layers in these models \cite{FanCommon2018}, without any additional training. While these deep nets excel at (and were indeed optimized for) categorization of objects, two additional competencies are required to succeed at the visual communication task described above. First, an observer must be able to represent fine-grained relationships between different images of objects from the same category; second, this observer must also be able to discern image-level correspondences between sketches and photos of the same object. 
+We employ VGG-19 \cite{simonyan2014very} as our base visual encoder, a high-performing and widely used deep convolutional neural network architecture. This network had been pretrained to categorize objects on the ImageNet database, which contains millions of photographs from hundreds of object categories \cite{deng2009imagenet}. Despite the fact that drawings are highly abstracted away from natural visual inputs, prior work has shown a striking isomorphism in the similarity structure \cite{kriegeskorte2008matching} of object categories in sketches and photos at higher layers in these models \cite{FanCommon2018}, without any additional training. While these deep nets excel at (and were indeed optimized for) categorization of objects, two additional competencies are required to succeed at the visual communication task described above. First, an observer must be able to represent fine-grained differences between different images of objects from the same category; second, this observer must also be able to discern image-level correspondences between sketches and photos of the same object. 
 
 In order to better approximate the granularity with which human observers can distinguish different images, we augment VGG-19 with a shallow fully-connected \textit{adaptor} network that is trained to adapt the generic visual feature representation computed by VGG-19 to predict the perceptual correspondence between individual sketches and objects. Here only the parameters of this adaptor network are trained and we do not finetune the base visual encoder. This approach has been successfully used in prior work to better predict human semantic categorization judgments \cite[]{peterson2016adapting}, and to improve sketch-based photo retrieval \cite[]{sangkloy2016sketchy}.
 
