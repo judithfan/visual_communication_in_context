@@ -890,8 +890,9 @@ def get_avg_cost_all_models(P, split_type='balancedavg1'):
 def generate_aggregated_estimate_dataframe(B, 
                                            condition_list = ['all'],
                                            model_space = ['human_combined_cost','human_S0_cost','human_combined_nocost',\
-                                                          'multimodal_fc6_combined_cost', 'multimodal_conv42_combined_cost',\
-                                                          'multimodal_fc6_S0_cost','multimodal_fc6_combined_nocost'],
+                                                          'multimodal_fc6_combined_cost', \
+                                                          'multimodal_fc6_S0_cost','multimodal_fc6_combined_nocost',\
+                                                          'multimodal_conv42_combined_cost'],
                                            split_types = ['balancedavg1','balancedavg2',\
                                                           'balancedavg3','balancedavg4','balancedavg5'],
                                            var_of_interest='target_rank',
@@ -937,8 +938,8 @@ def generate_aggregated_estimate_dataframe(B,
             joint_model_list.append(this_model)
             joint_condition_list.append(this_condition)
 
-    ## bundle into dataframe    
-    sort_inds = list(np.repeat([0,1,4,3,2],len(condition_list))) ## to plot models in a nice order
+    ## bundle into dataframe        
+    sort_inds = list(np.repeat([0,1,2,3,4,5,6],len(condition_list))) ## to plot models in a nice order    
     R = pd.DataFrame([joint_mu,joint_sd,joint_model_list,joint_condition_list,sort_inds])
     R = R.transpose()
     R.columns=['mu','sd','model','condition','sort_inds']
@@ -947,18 +948,18 @@ def generate_aggregated_estimate_dataframe(B,
     return R
 
 def plot_average_target_rank_across_splits(R,
-                                             var_of_interest='target_rank',
-                                             condition_list = ['all'],
-                                             model_space = ['human_combined_cost','human_S0_cost','human_combined_nocost',\
+                                           var_of_interest='target_rank',
+                                           condition_list = ['all'],
+                                           model_space = ['human_combined_cost','human_S0_cost','human_combined_nocost',\
                                                             'multimodal_fc6_combined_cost', 'multimodal_conv42_combined_cost',\
                                                             'multimodal_fc6_S0_cost','multimodal_fc6_combined_nocost'],
-                                             split_types = ['balancedavg1','balancedavg2',\
-                                                            'balancedavg3','balancedavg4','balancedavg5'],
-                                             condition='all',
-                                             sns_context='talk',
-                                             figsize=(6,6),
-                                             errbar_multiplier=1,
-                                             ylabel='avg sketch cost'):
+                                           split_types = ['balancedavg1','balancedavg2',\
+                                                          'balancedavg3','balancedavg4','balancedavg5'],
+                                           condition='all',
+                                           sns_context='talk',
+                                           figsize=(6,6),
+                                           errbar_multiplier=1,
+                                           ylabel='avg sketch cost'):
 
     '''
     bar plot of average target_rank, aggregating across splits
@@ -968,6 +969,10 @@ def plot_average_target_rank_across_splits(R,
     ax = fig.add_subplot(111)  
     sns.barplot(x='model',
                 y='mu',
+                order=['human_combined_cost','human_S0_cost','human_combined_nocost',\
+                       'multimodal_fc6_combined_cost',\
+                       'multimodal_fc6_S0_cost','multimodal_fc6_combined_nocost',\
+                       'multimodal_conv42_combined_cost'],
                 ci=None,
                 data=R)
 
@@ -1007,6 +1012,10 @@ def plot_prop_congruent_across_splits(R,
     ax = fig.add_subplot(111)  
     sns.barplot(x='model',
                 y='mu',
+                order = ['human_combined_cost','human_S0_cost','human_combined_nocost',\
+                         'multimodal_fc6_combined_cost', \
+                         'multimodal_fc6_S0_cost','multimodal_fc6_combined_nocost',\
+                         'multimodal_conv42_combined_cost'],
                 ci=None,
                 data=R)
 
@@ -1035,10 +1044,11 @@ def plot_cost_by_condition_across_splits(R,
                                       var_of_interest='cost',
                                       condition_list = ['closer','further'],
                                       model_space = ['human_combined_cost','human_S0_cost','human_combined_nocost',\
-                                                     'multimodal_fc6_combined_cost', 'multimodal_conv42_combined_cost',\
-                                                     'multimodal_fc6_S0_cost','multimodal_fc6_combined_nocost'],
+                                                     'multimodal_fc6_combined_cost',\
+                                                     'multimodal_fc6_S0_cost','multimodal_fc6_combined_nocost',\
+                                                     'multimodal_conv42_combined_cost'],
                                       split_types = ['balancedavg1','balancedavg2',\
-                                                        'balancedavg3','balancedavg4','balancedavg5'],
+                                                     'balancedavg3','balancedavg4','balancedavg5'],
                                       condition='all',
                                       sns_context='talk',
                                       figsize=(6,6),
@@ -1057,7 +1067,7 @@ def plot_cost_by_condition_across_splits(R,
     ## plot custom error bars
     x_inds = []
     offset=1/5
-    for i in np.arange(5):    
+    for i in np.arange(7):    
         x_inds.append(i-offset)
         x_inds.append(i+offset)
     x = x_inds
