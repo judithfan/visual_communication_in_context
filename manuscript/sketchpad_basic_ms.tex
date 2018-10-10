@@ -132,9 +132,9 @@ In this recognition experiment, the alternative set contained all 32 objects, an
 
 %%% recognition experiments
 
-%% report variation in different categories
+%% Supplemental: report variation in different categories
 
-%% report confusion matrix results: diagonal vs. off-diagonal block vs. rest of the matrix results.
+%% Supplemental: report confusion matrix results: diagonal vs. off-diagonal block vs. rest of the matrix results. 
 
 % There was clear structure in the pattern of confusions for both $close$ and $far$ sketches. We further hypothesized that the particular way in which $far$ sketches would differ perceptually from $Close$ sketches was that $far$ sketches would be more confusable with other objects from the same basic-level category, while still being highly recognizable as a representation of the corresponding basic-level category.
 
@@ -146,13 +146,15 @@ What explains the pattern of sketch production behavior observed in the communic
 In general, the ability to produce sketches that are informative in context can be conceptualized in terms of an \textit{encoder}, which applies the appropriate transformations on raw visual inputs to represent them in a useful format for a \textit{decoder}, which generates decisions about what sketch to produce. 
 To capture the observed behavioral patterns, we hypothesized that the encoder and decoder should satisfy specific functional constraints: first, the encoder should be capable of evaluating the abstract correspondence between an object and a drawing of it (``visual abstraction''), and second, the decoder should be capable of inferring what information would be relevant and sufficient to help a viewer identify the target object in context (``social inference''). 
 Intuitively, these two constraints encourage the model to depict properties of the target object that distinguish it from the distractors, while also preferring sketches that are less costly to produce.
-To test our hypothesis, we developed a computational model following this encoder-decoder framework, consisting of a convnet visual encoder module and a Bayesian social inference module. 
+To test our hypothesis, we developed a computational model following this encoder-decoder framework, consisting of a convnet visual encoder module and a probabilistic social inference module. 
 
 % Here we describe the architecture of our model, evaluate its generalization performance on unseen sketches, and conduct a set of comparisons against lesioned variants to test the role played by each of these components.
 
-The visual encoder module accepts a pair of images, a sketch and an object rendering, as input and returns a scalar value in the range $[0,1]$, reflecting the degree of perceptual correspondence between the sketch and object. This module consists of two components: a base visual encoder and an adaptor network. We employ VGG-19 \cite{simonyan2014very} as our base visual encoder, a widely used deep convnet architecture that had been pretrained to categorize objects on the ImageNet database \cite{deng2009imagenet}. While prior work has shown that the representation of object categories converges for sketches and natural images at higher layers in these models without any additional training \cite{FanCommon2018}, we augment this pre-trained representation with a shallow \textit{adaptor} network that is trained to predict the abstract correspondence between specific sketch-object pairs. 
+The visual encoder module accepts a pair of images, a sketch and an object rendering, as input and returns a scalar value in the range $[0,1]$, reflecting the degree of perceptual correspondence between the sketch and object. This module consists of two components: a base visual encoder and an adaptor network. We employ VGG-19 \cite{simonyan2014very} as our base visual encoder, a widely used deep convnet architecture that had been pretrained to categorize objects on the ImageNet database \cite{deng2009imagenet}. While prior work has shown that the representation of object categories converges for sketches and natural images at higher layers in these models without any additional training \cite{FanCommon2018}, we augment this pre-trained representation with a shallow \textit{adaptor} network appended to a higher layer of VGG-19 (i.e., `fc6', the first fully-connected layer), which is trained to predict the perceptual correspondence between specific sketch-object pairs. All model evaluations involving a trained adaptor network are performed in a cross-validated manner, with the full dataset split into training, validation, and test sets in a 80\%, 10\%, and 10\% ratio. This division was 
 
-The social inference module 
+and this split was performed in a 5-fold cross-validated manner. This division is performed based on context, which is defined as a set of the target and three distractor images. 
+
+The social inference module depends on the visual encoder module to evaluate the degree of perceptual correspondence between each object in context and any sketch it could produce, where the set of producible sketches consists of those in the test set (i.e., not used to train the visual encoder). Using this information, it outputs a distribution of scores over all test-set sketches, where the scores reflect each sketch's relative communicative utility. 
 
 
 % To explore the degree to which the \textit{visual abstraction} afforded by the complex transformations applied by successive layers of VGG-19 are required to capture human behavior during visual communication, we train three adaptor networks that intercept VGG-19 image representations at different layers: the first max pooling layer (early), the tenth convolutional layer (mid), and the first fully connected layer (high). To facilitate comparison between adaptor networks, we ensured that each of the three contain a comparable number of trainable parameters (Table~\ref{table:parameters}) with similar hyperparameters. To discriminate which layer provides the best starting feature basis for predicting sketch-object correspondence, these adaptor networks were also deliberately constrained to be shallow, i.e., consisting only of two linear layers with an intervening point-wise nonlinearity. 
@@ -198,7 +200,6 @@ Having established the need for all three components, we proceed to evaluate the
 
 %% report congruent context preference
 Only models that were sensitive to both context and cost 
-
 
 %% report cost behavior
 
@@ -309,7 +310,9 @@ Finally, the early-adaptor is almost identical to the mid-adaptor, except each f
 
 \paragraph{Sketch data preprocessing.} We filter the sketch dataset used to train each adaptor network to include only sketches that were correctly identified during the communication task (6.2\% incorrect) and were compliant with task instructions by not including `drawn' text annotations (4.4\% non-compliant).
 
-This filtered sketch dataset was then split into training, validation, and test sets in a 80\%, 10\%, and 10\% ratio, and this split was performed in a 5-fold cross-validated manner. This division is performed based on context, which is defined as a set of the target and three distractor images. In the visual communication dataset, there is a close context and a far context. The former includes 4 objects of the same category (i.e. 3 distractor cars and 1 target car) whereas the latter includes 4 objects of different categories (i.e. a target car and a dog, chair, and bird as distractors). When dividing sketches in different splits, we ensure that (1) the number of instances of each class (i.e. car) in each split is equal and (2) the number of close and far instances in each split is equal. This is done to prevent any biases in accuracy due to imbalances of the training or test set.
+This filtered sketch dataset was then split into training, validation, and test sets in a 80\%, 10\%, and 10\% ratio, and this split was performed in a 5-fold cross-validated manner. Splits were based on context, defined as the set containing a specific target object and three distractor objects, such that no context appeared both in the training and test splits of any cross-validation fold. Specifically, we ensured that: (1) the number of sketches from each category (i.e. car) and \todo{clarification: equating number of `car' instances or number of `bluesport' instances within `car' category?} (2) the number of sketches from close and far trials were equated across splits. This was done to mitigate biases in accuracy due to imbalances in the training or test set.
+
+% In the visual communication dataset, there is a close context and a far context. The former includes 4 objects of the same category (i.e. 3 distractor cars and 1 target car) whereas the latter includes 4 objects of different categories (i.e. a target car and a dog, chair, and bird as distractors). 
 
 \begin{figure}[h!]
 \centering
@@ -363,10 +366,6 @@ After algebraically simplifying, the full utility is:
 \begin{equation}
 U(s,o) =  w_p \cdot  f(s,o) - w_c \cdot C(s)
 \end{equation}
-
-% To compute perceptual similarity between any given sketch and object, we pass images of both into VGG and
-% images of each of the target and distractor objects into the selected fixed visual encoder,
-% and compute the distances between each of these vectors and the potential sketches.
 
 \subsubsection*{Generating model predictions}
 
