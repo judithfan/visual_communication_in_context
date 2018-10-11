@@ -14,18 +14,18 @@ It will spawn several threads to get predictions from all splits and models.
 
 if __name__ == "__main__":
 
-	split_types = ['balancedavg1','balancedavg2','balancedavg3','balancedavg4','balancedavg5']
+	split_types = ['balancedavg1','balancedavg2','balancedavg3','balancedavg4','balancedavg5'] 
+        model_space = ['multimodal_conv42_combined_cost']
+	# model_space = ['human_combined_cost',
+	# 	       'human_S0_cost',
+	# 	       'human_combined_nocost',
+	#                'multimodal_fc6_combined_cost',
+	#                'multimodal_fc6_S0_cost',
+	#                'multimodal_fc6_combined_nocost',
+	#                'multimodal_conv42_combined_cost',
+	#                'multimodal_pool1_combined_cost']
 
-	model_space = ['human_combined_cost',
-				   'human_S0_cost',
-				   'human_combined_nocost',
-	               'multimodal_fc6_combined_cost',
-	               'multimodal_fc6_S0_cost',
-	               'multimodal_fc6_combined_nocost',
-	               'multimodal_conv42_combined_cost',
-	               'multimodal_pool1_combined_cost']
-
-
+        
 	print 'Now running ...'
 	for model in model_space:
 	    for split_type in split_types:	 

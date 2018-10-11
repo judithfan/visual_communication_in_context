@@ -730,13 +730,14 @@ def get_avg_rank_all_models(P,split_type='balancedavg1'):
     HU,H0U,H1U,MU,M0U,M1U,M2U,M3U = map(get_avg_rank_across_samples,[H,H0,H1,M,M0,M1,M2,M3])
     return HU,H0U,H1U,MU,M0U,M1U,M2U,M3U
 
-def plot_avg_rank_all_models(P,split_type='balancedavg1'):
+def plot_avg_rank_all_models(P,split_type='balancedavg1',saveout=True):
     '''
     Generate bar plot of average rank (out of 64) of correct sketch category, by model, for a particular split.
     Wrapper around get_avg_rank_all_models, which itself wraps around get_avg_rank_across_samples.
     '''
     HU,H0U,H1U,MU,M0U,M1U,M2U,M3U = get_avg_rank_all_models(P,split_type=split_type)
     sns.set_context('talk')
+    sns.set_style("ticks")
     fig = plt.figure(figsize=(4,8))
     ax = fig.add_subplot(111)
     U = pd.concat([HU,H0U,H1U,MU,M0U,M1U,M2U,M3U],axis=0)
@@ -750,13 +751,16 @@ def plot_avg_rank_all_models(P,split_type='balancedavg1'):
                          'multimodal_conv42_combined_cost',\
                          'multimodal_pool1_combined_cost'])
     plt.ylabel('mean rank of congruent sketch')
-    plt.ylim([1,8])
+    plt.ylim([1,32])
     xticklabels=['Context Cost Human','NoContext Cost Human','Context NoCost Human','Context Cost HighAdaptor',
                  'NoContext Cost HighAdaptor','Context NoCost HighAdaptor', 'Context Cost MidAdaptor',\
                  'Context Cost LowAdaptor']
     plt.xlabel('')
     l = ax.set_xticklabels(xticklabels, rotation = 90, ha="left")
     plt.tight_layout()
+    if saveout:
+        plt.savefig('./plots/avg_rank_all_models_{}.pdf'.format(split_type))
+
     
     
 def get_prop_congruent(X):
@@ -778,7 +782,7 @@ def get_prop_congruent_all_models(P, split_type='balancedavg1'):
     HU,H0U,H1U,MU,M0U,M1U,M2U,M3U = map(get_prop_congruent,[H,H0,H1,M,M0,M1,M2,M3])
     return HU,H0U,H1U,MU,M0U,M1U,M2U,M3U
 
-def plot_prop_congruent_all_models(P,split_type='balancedavg1'):
+def plot_prop_congruent_all_models(P,split_type='balancedavg1',saveout=True):
     '''
     Generate bar plot of proportion of trials for which context-congruent sketch preferred over incongruent sketch.
     Wrapper around get_prop_congruent_all_models, which itself wraps around get_prop_congruent.
@@ -800,7 +804,10 @@ def plot_prop_congruent_all_models(P,split_type='balancedavg1'):
                  'Context Cost LowAdaptor']
     plt.xlabel('')
     l = ax.set_xticklabels(xticklabels, rotation = 90, ha="left")
-    
+    plt.tight_layout()
+    if saveout:
+        plt.savefig('./plots/prop_congruent_all_models_{}.pdf'.format(split_type))
+        
     
 
 def get_top_k_predictions(P, split_type='balancedavg1',verbosity=1):
@@ -851,11 +858,12 @@ def load_all_topk_predictions():
         QM0 = pd.read_csv('./csv/multimodal_conv42_combined_cost_balancedavg1_topk.csv')
         QM1 = pd.read_csv('./csv/multimodal_fc6_S0_cost_balancedavg1_topk.csv')
         QM2 = pd.read_csv('./csv/multimodal_fc6_combined_nocost_balancedavg1_topk.csv')
-        QM3 = pd.read_csv('./csv/multimodal_pool1_combined_nocost_balancedavg1_topk.csv')        
+        QM3 = pd.read_csv('./csv/multimodal_pool1_combined_cost_balancedavg1_topk.csv')        
         Q = pd.concat([QH,QH0,QH1,QM,QM0,QM1,QM2,QM3],axis=0)
     except Exception as e: 
         print 'Make sure that you have already run get_top_k_predictions.'
         print(e)
+        Q = []
 
     return Q
 
