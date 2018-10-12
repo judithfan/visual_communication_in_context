@@ -1027,6 +1027,7 @@ def plot_average_target_rank_across_splits(R,
                  'Context Cost LowAdaptor']
     plt.xlabel('')
     l = ax.set_xticklabels(xticklabels, rotation = 90, ha="left")
+    plt.tight_layout()
     if saveout:
         plt.savefig('./plots/average_target_rank_across_splits.pdf')
 
@@ -1079,8 +1080,8 @@ def plot_prop_congruent_across_splits(R,
                  'NoContext Cost HighAdaptor','Context NoCost HighAdaptor', 'Context Cost MidAdaptor',
                  'Context Cost LowAdaptor']
     plt.xlabel('')
-
-    l = ax.set_xticklabels(xticklabels, rotation = 90, ha="left")    
+    l = ax.set_xticklabels(xticklabels, rotation = 90, ha="left") 
+    plt.tight_layout()
     if saveout:
         plt.savefig('./plots/prop_congruent_across_splits.pdf')
     
@@ -1137,5 +1138,6 @@ def plot_cost_by_condition_across_splits(R,
     # load average costs in and plot as a baseline
     avg_cost = np.mean(load_json('../models/refModule/json/balancedavg1/costs-fixedPose96-cost_duration-average.json').values())
     plt.axhline(y=avg_cost,linestyle='dashed',color='k')    
+    plt.tight_layout()
     if saveout:
         plt.savefig('./plots/cost_by_condition_across_splits.pdf')
