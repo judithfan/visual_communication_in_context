@@ -988,7 +988,8 @@ def plot_average_target_rank_across_splits(R,
                                            sns_context='talk',
                                            figsize=(6,6),
                                            errbar_multiplier=1,
-                                           ylabel='avg sketch cost'):
+                                           ylabel='avg sketch cost',
+                                           saveout=True):
 
     '''
     bar plot of average target_rank, aggregating across splits
@@ -1023,7 +1024,9 @@ def plot_average_target_rank_across_splits(R,
                  'Context Cost LowAdaptor']
     plt.xlabel('')
     l = ax.set_xticklabels(xticklabels, rotation = 90, ha="left")
-    
+    if saveout:
+        plt.savefig('./plots/average_target_rank_across_splits.pdf')
+
 def plot_prop_congruent_across_splits(R,
                                       var_of_interest='sign_diff_rank',
                                       condition_list = ['all'],
@@ -1038,7 +1041,8 @@ def plot_prop_congruent_across_splits(R,
                                       sns_context='talk',
                                       figsize=(6,6),
                                       errbar_multiplier=1.,
-                                      ylabel='avg sketch cost'):
+                                      ylabel='avg sketch cost',
+                                      saveout=True):
 
     sns.set_context(sns_context)
     fig = plt.figure(figsize=figsize)
@@ -1074,22 +1078,25 @@ def plot_prop_congruent_across_splits(R,
     plt.xlabel('')
 
     l = ax.set_xticklabels(xticklabels, rotation = 90, ha="left")    
+    if saveout:
+        plt.savefig('./plots/prop_congruent_across_splits.pdf')
     
 def plot_cost_by_condition_across_splits(R,
-                                      var_of_interest='cost',
-                                      condition_list = ['closer','further'],
-                                      model_space = ['human_combined_cost','human_S0_cost','human_combined_nocost',\
+                                        var_of_interest='cost',
+                                        condition_list = ['closer','further'],
+                                        model_space = ['human_combined_cost','human_S0_cost','human_combined_nocost',\
                                                      'multimodal_fc6_combined_cost',\
                                                      'multimodal_fc6_S0_cost','multimodal_fc6_combined_nocost',\
                                                      'multimodal_conv42_combined_cost',
                                                      'multimodal_pool1_combined_cost'],
-                                      split_types = ['balancedavg1','balancedavg2',\
+                                        split_types = ['balancedavg1','balancedavg2',\
                                                      'balancedavg3','balancedavg4','balancedavg5'],
-                                      condition='all',
-                                      sns_context='talk',
-                                      figsize=(6,6),
-                                      errbar_multiplier=1.,
-                                      ylabel='avg sketch cost'):
+                                        condition='all',
+                                        sns_context='talk',
+                                        figsize=(6,6),
+                                        errbar_multiplier=1.,
+                                        ylabel='avg sketch cost',
+                                        saveout=True):
 
     sns.set_context(sns_context)
     fig = plt.figure(figsize=figsize)
@@ -1124,3 +1131,6 @@ def plot_cost_by_condition_across_splits(R,
                  'Context Cost LowAdaptor']
     plt.xlabel('')
     l = ax.set_xticklabels(xticklabels, rotation = 90, ha="left")    
+#     ax.legend(bbox_to_anchor=(1.1, 1.05))
+    if saveout:
+        plt.savefig('./plots/cost_by_condition_across_splits.pdf')
