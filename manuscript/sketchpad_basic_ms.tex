@@ -201,23 +201,31 @@ We conducted another Bayesian Data Analysis comparing feature vectors adapted fr
 
 \subsubsection*{Evaluating model predictions}
 
-Having established the need for all three components, we proceed to evaluate the model's predictions on unseen sketches.
+% set up basic evaluation dimensions
+Having established the contributions of visual abstraction, context sensitivity, and cost sensitivity to the ability of the full model generalizez to unseen contexts and sketches, we sought to gain deeper insight into the model's pattern of behavior in the communication task. Here we compare how well the full model, and its lesioned variants, on three task dimensions: (1) sketch retrieval: the ability to assign a high absolute rank to the target sketch category in context, selecting among all objects and context categories; (2) context congruity: the ability to consistently prefer the context-congruent version of the target object (i.e., a close sketch of the target on a close trial); (3) cost modulation: a consistent preference for more costly sketches on close trials and less costly sketches on far trials, mirroring human behavior. 
 
 %% report absolute rank performance
-Models using higher layer features generally succeeded in assigning a high score to the congruent sketch category, as measured by the rank of the target sketch category. 
+How well did each variant of the model perform in assigning a high rank to the target sketch category in context? Supporting our hypothesis that sketch-object perceptual correspondences provide a strong basis for modeling contextual flexibility, we found that directly using empirical measurements of perceptual sketch-object correspondences led to the best overall sketch retrieval performance (Human-Context-Cost: X.XX, Human-NoContext-Cost: X.XX, Human-Context-NoCost: X.XX). Relative to this benchmark, we found that visual encoder modules using more abstract features generally succeeded in assigning a high score to the congruent sketch category, as measured by the rank of the target sketch category (High-Context-Cost: X.XX, Mid-Context-Cost: X.XX), whereas using low-level features adapted from an early layer of the convnet yielded poor performance (Low-Context-Cost: X.XX).
 
 %% report congruent context preference
 Only models using high-level visual features (i.e., empirically estimated or adapted from a higher layer of VGG) and were sensitive to both context and cost succeeded in selecting the congruent sketch category (Empirical-Context-Cost: XX.X\%, 95\% CI: [XX.X\%,XX.X\%]; High-Context-Cost: XX.X\%, 95\% CI: [XX.X\%,XX.X\%]). On the other hand, models that were insensitive to either context or cost failed to select the congruent sketch category (High-NoContext-Cost: XX.X\%, 95\% CI: [XX.X\%,XX.X\%]; High-Context-NoCost: XX.X\%, 95\% CI: [XX.X\%,XX.X\%]; Mid-Context-Cost: XX.X\% 95\% CI: [XX.X\%,XX.X\%]; Low-Context-Cost: XX.X\%, 95\% CI: [XX.X\%,XX.X\%]). 
 
 %% report cost behavior
+Generally, we found that only models that used abstract visual features and were sensitive to both context and cost displayed a consistent preference for more costly sketches on close trials and less costly sketches on far trials, mirroring human behavior. 
+
+\begin{figure*}[htbp]
+\centering
+\includegraphics[width=0.95\textwidth]{figures/5_model_results.pdf}
+\caption{(A) Model comparison. (B) Rank of target sketch category by model. (C) Proportion congruent context category preferred to incongruent context category. (D) Normalized cost of sketches produced by each model.}
+\label{task_performance}
+\end{figure*}
+
 
 \section*{Discussion}
 
-In this study, we explored how communicative context influences real-time natural visual communication behavior.
+In this study, we explored how communicative context influences real-time natural visual communication behavior. We found that ... We collected a rich behavioral dataset and developed an integrated computational model that explains contextual flexibility in human visual communication by combining constraints from perception and pragmatic reasoning.
 
-We collected a rich behavioral dataset and developed an integrated computational model that explains contextual flexibility in human visual communication by combining constraints from perception and pragmatic reasoning.
 
-We found that ... 
 
 % literatures that this should connect to: other graphical communication papers
 
