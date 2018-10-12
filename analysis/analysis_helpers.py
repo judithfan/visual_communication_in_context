@@ -1019,6 +1019,9 @@ def plot_average_target_rank_across_splits(R,
                  capsize=0)
 
     plt.ylabel(ylabel)
+    plt.ylim(0,34)
+    ax.yaxis.set_ticks(np.arange(0, 36, 4))
+    plt.axhline(y=32,linestyle='dashed',color='k')
     xticklabels=['Context Cost Human','NoContext Cost Human','Context NoCost Human','Context Cost HighAdaptor',
                  'NoContext Cost HighAdaptor','Context NoCost HighAdaptor', 'Context Cost MidAdaptor',\
                  'Context Cost LowAdaptor']
@@ -1130,7 +1133,9 @@ def plot_cost_by_condition_across_splits(R,
                  'NoContext Cost HighAdaptor','Context NoCost HighAdaptor', 'Context Cost MidAdaptor',\
                  'Context Cost LowAdaptor']
     plt.xlabel('')
-    l = ax.set_xticklabels(xticklabels, rotation = 90, ha="left")    
-#     ax.legend(bbox_to_anchor=(1.1, 1.05))
+    l = ax.set_xticklabels(xticklabels, rotation = 90, ha="left")
+    # load average costs in and plot as a baseline
+    avg_cost = np.mean(load_json('../models/refModule/json/balancedavg1/costs-fixedPose96-cost_duration-average.json').values())
+    plt.axhline(y=avg_cost,linestyle='dashed',color='k')    
     if saveout:
         plt.savefig('./plots/cost_by_condition_across_splits.pdf')
