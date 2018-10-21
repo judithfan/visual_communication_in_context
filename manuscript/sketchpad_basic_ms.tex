@@ -168,10 +168,20 @@ Consistent with possible explanation above, we found that close sketches were ma
 
 % We measured this by comparing the within-category confusion rate to the overall confusion rate for close and far sketches, and found that XXX.
 
-\subsection*{Computational model}
+\subsection*{Computational model of sketch production in context}
 
 % \mwu{is this a function or a model? what is an encoder? Maybe be useful to give a rigorous definition.},
-What explains the pattern of sketch production behavior observed in the communication task? We formalize the problem of how to produce sketches that are informative in context in terms of a \textit{visual encoder} module, which is a function applied to a sketch and object to estimate how well this sketch corresponds to that object, and a \textit{social inference} module, which should be capable of inferring what information in a sketch would be relevant and sufficient to help a viewer identify the target object in context.
+% What explains the pattern of sketch production behavior observed in the communication task? 
+Taken together, the above findings suggest that human sketchers spontaneously account for information in common ground with their viewer, producing more informative sketches at the cost of additional time and ink in close contexts relative to far contexts. 
+
+% generalization
+% evaluate the necessity and contribution of each factor
+Observing this kind of contextual flexibility in visual communication argues against against the view that there is a unique solution to the problem of pictorial representation that is constrained only by the appearance of the target. Rather, these results suggest that during visual communication, humans are sensitive to the semantic context and to the cost of producing informative depictions, in addition to the target's visual properties. 
+
+To evaluate this explanation directly 
+
+ 
+We formalize the problem of how to produce sketches that are informative in context in terms of a \textit{visual encoder} module, which is a function applied to a sketch and object to estimate how well this sketch corresponds to that object, and a \textit{social inference} module, which should be capable of inferring what information in a sketch would be relevant and sufficient to help a viewer identify the target object in context.
 % which uses these estimates of how informative each sketch is, as well as how costly it is to produce, in order to infer the communicative utility of each sketch in context. 
 To capture the observed behavioral patterns, we hypothesized that the encoder and inference modules should satisfy specific functional constraints: first, the kind of perceptual correspondence between sketch and object required is relatively abstract, rather than relying on low-level, local image statistics (``visual abstraction''); and second, that the communicative utility of each sketch should depend on both the similarity of the distractors to the target, and how costly each sketch is to produce. 
 % Intuitively, these two constraints encourage the model to depict properties of the target object that distinguish it from the distractors, while also preferring sketches that are less costly to produce.
