@@ -183,8 +183,12 @@ We formalized the problem of how to produce sketches that are informative in con
 % Also in line with prior work \cite{goodman2016pragmatic}, we hypothesized that the best-fitting probabilistic social inference module would possess both context and cost sensitivity. 
 
 Formally, the visual encoder is instantiated as a deep convolutional neural network \cite{hornik1991approximation}, a member of the class of universal function approximators. 
-The visual encoder module accepts a pair of images, a sketch and an object rendering, as input and returns a scalar value reflecting the degree of perceptual correspondence between the sketch and object, which lies in the range $[0,1]$, where $0$ reflects no correspondence and $1$ reflects maximal correspondence. 
-This module consists of two components: a base visual encoder and an adaptor network. We employ VGG-19 \cite{simonyan2014very} as our base visual encoder, a widely used deep convnet architecture that had been pretrained to categorize objects on the ImageNet database \cite{deng2009imagenet}. 
+The visual encoder module accepts a pair of images, a sketch, $s$, and an object rendering, $o$, as input and returns a scalar value reflecting the degree of perceptual correspondence between the sketch and object, which lies in the range $[0,1]$, where $0$ reflects no correspondence and $1$ reflects maximal correspondence. This module is composed of two functions: a base visual encoder network, $b$, and an adaptor network, $a$. We employ VGG-19 \cite{simonyan2014very} as our base visual encoder, a widely used deep convnet architecture that had been pretrained to categorize objects on the ImageNet database \cite{deng2009imagenet}. 
+
+\begin{equation}
+\textrm{sim}(s,o) = a(b(s,o))
+\end{equation}
+
 While prior work has shown that the representation of object \textit{categories} converges for sketches and photos at higher layers in these models without any additional training \cite{FanCommon2018}, additional training greatly improves the accuracy of comparisons between single \textit{images} across modalities \cite{sangkloy2016sketchy}. 
 Thus, we augment the pretrained representation with a shallow \textit{adaptor} network appended to a higher layer of VGG-19 (i.e., `fc6', the first fully-connected layer), which is trained to predict the perceptual correspondence between specific sketch-object pairs. 
 To test whether high-level visual features are necessary to achieve good fits, we also train adaptor networks appended to early and intermediate layers of VGG-19 (see Materials and Methods). 
