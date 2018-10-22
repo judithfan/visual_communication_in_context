@@ -173,14 +173,17 @@ Consistent with possible explanation above, we found that close sketches were ma
 % \mwu{is this a function or a model? what is an encoder? Maybe be useful to give a rigorous definition.},
 % What explains the pattern of sketch production behavior observed in the communication task? 
 Taken together, the above findings suggest that human sketchers spontaneously account for information in common ground with their viewer, producing more informative sketches at the cost of additional time and ink in close contexts relative to far contexts. 
-
+Observing such contextual flexibility argues against there being a unique solution to the problem of pictorial representation, whereby sketch production is constrained exclusively by the appearance of the target of depiction. 
+Rather, these results suggest there is an additional crucial role played by semantic context in determining how informative and costly of a sketch people produce during visual communication. 
 % generalization
 % evaluate the necessity and contribution of each factor
-Observing this kind of contextual flexibility in visual communication argues against against the view that there is a unique solution to the problem of pictorial representation that is constrained only by the appearance of the target. Rather, these results suggest that during visual communication, humans are sensitive to the semantic context and to the cost of producing informative depictions, in addition to the target's visual properties. 
+% In the resulting theoretical framework, human sketchers succeed by 
+Combining these insights, we propose that human sketchers may determine what kind of sketch to produce in context by deploying three main faculties: (a) visual abstraction, the ability to judge how well any given sketch will evoke an object; (b) context sensitivity, the tendency to prefer sketches that are discriminative about the target relative to the distractors; and (c) cost sensitivity, the tendency to expend sufficient time and ink to produce a sketch that will be informative in context, but not more than necessary. 
 
-To evaluate this explanation directly 
+In order to test this proposal thoroughly, we developed a computational model of the sketcher that could make generalizable and quantitative predictions. 
 
- 
+% To directly evaluate the contribution and necessity of 
+
 We formalize the problem of how to produce sketches that are informative in context in terms of a \textit{visual encoder} module, which is a function applied to a sketch and object to estimate how well this sketch corresponds to that object, and a \textit{social inference} module, which should be capable of inferring what information in a sketch would be relevant and sufficient to help a viewer identify the target object in context.
 % which uses these estimates of how informative each sketch is, as well as how costly it is to produce, in order to infer the communicative utility of each sketch in context. 
 To capture the observed behavioral patterns, we hypothesized that the encoder and inference modules should satisfy specific functional constraints: first, the kind of perceptual correspondence between sketch and object required is relatively abstract, rather than relying on low-level, local image statistics (``visual abstraction''); and second, that the communicative utility of each sketch should depend on both the similarity of the distractors to the target, and how costly each sketch is to produce. 
