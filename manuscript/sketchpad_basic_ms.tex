@@ -177,28 +177,29 @@ Integrating these insights with prior work \cite{FanCommon2018,goodman2016pragma
 To test this proposal, we developed a computational model of the sketcher that embodied these three faculties. 
 Constructing such a model allowed us to evaluate the independent contribution of each faculty using formal model comparison, and characterize the model's behavior in novel contexts.
 
-We define our full sketcher, $\mathcal{S}$, to be a decision-theoretic agent that evaluates sketches, $s$, of object referent, $o$, proportional to their relative communicative utility, $U$ (Eq. \ref{sketcher_distribution}), where each sketch's absolute communicative utility has been normalized via the softmax function:
+We define our full sketcher, $\mathcal{S}$, to be a decision-theoretic agent that produces sketches, $s$, of target object, $t$, in a context containing distractors, $d$, proportional to their communicative utility, $U$, where each sketch's utility has been normalized via the softmax function (Eq. \ref{sketcher_distribution}):
+
+% \begin{equation} \label{sketcher_distribution}
+% \mathcal{S}(s|o) \propto \exp  \{{U(s,o)\}}
+% \end{equation}
 
 \begin{equation} \label{sketcher_distribution}
-\mathcal{S}(s|o) \propto \exp \{{U(s,o)\}}
+\mathcal{S}(s_i|t, d) \propto \frac {\exp [{U(s_i,t,d)]}} {\sum_{j=1}^{N} {\exp [U(s_j,t,d)]}}
 \end{equation}
 
-The utility function of the full context-sensitive and cost-sensitive sketcher, $U_{S}$, trades off the extent to which a given sketch is informative to an imagined viewer, $\mathcal{V}$, with the cost of producing that sketch, $C(s)$. This notion of informativity is defined by the natural log probability that a viewer would select the true object given the sketch and all objects in context. In our implementation, the cost of a sketch is operationalized as the amount of time taken to produce it, though other metrics could be used (e.g., the number of strokes, proportion of canvas filled).
+The utility function of this sketcher, $U_{S}$, consists of two terms: an informativity and a cost term. A sketch's informativity is defined as the natural log probability that an imagined viewer, $\mathcal{V}$, would select the target object given the sketch and all objects in context, $\ln \mathcal{V}(t|s,d)$. A sketch's cost is defined to be a monotonic function of the amount of time taken to produce it $C(s)$. 
 
 \begin{equation} \label{sketcher_utility}
-U_{S}(s, o) = w_p \ln \mathcal{V}(o|s) - w_c C(s)
+U_{S}(s, o) = w_i \ln \mathcal{V}(o|s) - w_c C(s)
 \end{equation}
-where $w_p$ and $w_c$ are latent parameters weighting the influences of the sketch's perceptual properties and cost, respectively.
+where $w_i$ and $w_c$ are independent scaling parameters that are applied to the informativity and cost terms, respectively, and determine how strongly each term contributes to the overall utility of the sketch. 
 
-The viewer ($\mathcal{V}$) is assumed to decide between objects in context proportional to the perceptual correspondence between each object and the current sketch, $\textrm{sim}(s, o)$.
+The imagined viewer $\mathcal{V}$, in turn, is assumed to select an object in context proportional to the absolute perceptual correspondence between each object and the current sketch, $\textrm{sim}(s, o)$.
 
 \begin{equation} \label{literal_viewer_score}
 \mathcal{V}(o|s) \propto \exp\{\alpha \cdot \textrm{sim(s, o)}\}
 \end{equation}
-where $\alpha$ is a scaling parameter determining the assumed optimality of the listener's decision policy: as $\alpha \rightarrow \infty$, the listener is more likely to choose the object with highest perceptual correspondence to the sketch.
-
-We also consider a \textit{context-insensitive} sketcher $S_0$ agent that aims to maximize the absolute perceptual correspondence between their sketch and the target, without taking the  distractors into account. Accordingly, the utility function of this context-insensitive sketcher is defined in terms of $\textrm{sim}(s, o)$ instead of informativity to $\mathcal{V}(o|s)$.
-
+where $\alpha$ is another scaling parameter determining the assumed optimality of the listener's decision policy: as $\alpha \rightarrow \infty$, the listener is more likely to choose the object with highest perceptual correspondence to the sketch.
 
 
 In our full sketcher model we combine these two agents by inferring a mixture weight parameter, $w_{prag}$, that interpolates between their two utilities: $$f(s,o) = w_{prag}\ln \mathcal{V}(o | s) + (1-w_{prag}) \textrm{sim}(s,o)$$. Combining the utilities in this way captures the intuition that a communicative sketcher seeks to produce a sketch that both resembles the target object and distinguishes the target from the distractors.
@@ -210,6 +211,8 @@ U(s,o) =  w_p \cdot  f(s,o) - w_c \cdot C(s)
 \end{equation}
 
 
+
+We also consider a \textit{context-insensitive} sketcher $S_0$ agent that aims to maximize the absolute perceptual correspondence between their sketch and the target, without taking the distractors into account. Accordingly, the utility function of this context-insensitive sketcher is defined in terms of $\textrm{sim}(s, o)$ instead of informativity to $\mathcal{V}(o|s)$.
 
 
 
