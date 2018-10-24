@@ -183,14 +183,14 @@ We define the sketcher $\mathcal{S}$, to be a decision-theoretic agent that pref
 \mathcal{S}(s_i|t, d) \propto \frac {\exp [{U(s_i,t,d)]}} {\sum_{j=1}^{N} {\exp [U(s_j,t,d)]}}
 \end{equation}
 
-We consider three variants of the sketcher, whose decision-making behavior is determined by their respective utility functions.
+We consider three variants of the sketcher, whose decision-making behavior is determined by their respective utility functions. In each variant, this utility consist of two terms: an informativity term and a cost term. 
 
-First, we define the utility function for the context-sensitive and cost-sensitive sketcher, $S_{2C}$, which consists of two terms: an informativity and a cost term. A sketch's informativity is defined by the natural log probability that an imagined viewer, $\mathcal{V}$, would select the target object given the sketch and all objects in context, $\ln \mathcal{V}(t|s,d)$. A sketch's cost is defined to be a monotonic function of the amount of time taken to produce it $C(s)$. 
+First, we define the utility function for a context-sensitive and cost-sensitive sketcher, $S_{2C}$, which defines a sketch's informativity in terms of its diagnosticity in context. A sketch's diagnosticity is defined by the natural log probability that an imagined viewer, $\mathcal{V}$, would select the target object given the sketch and all objects in context, $\ln \mathcal{V}(t|s,d)$. A sketch's cost is defined to be a monotonic function of the amount of time taken to produce it $C(s)$. 
 
 \begin{equation} \label{sketcher_utility}
 U_{S_{2C}}(s,t,d) = w_i \cdot \ln \mathcal{V}(t|s,d) - w_c \cdot  C(s)
 \end{equation}
-where $w_i$ and $w_c$ are independent scaling parameters that are applied to the informativity and cost terms, respectively, and determine how strongly each term contributes to the overall utility of the sketch. 
+where $w_i$ and $w_c$ are independent scaling parameters that are applied to the diagnosticity and cost terms, respectively, and determine how strongly each term contributes to the overall utility of the sketch. 
 
 The imagined viewer $\mathcal{V}$, in turn, is assumed to select an object in context proportional to the absolute perceptual correspondence between each object and the current sketch, $\textrm{sim}(s, o)$.
 
@@ -199,13 +199,11 @@ The imagined viewer $\mathcal{V}$, in turn, is assumed to select an object in co
 \end{equation}
 where $\alpha$ is another scaling parameter determining the assumed optimality of the listener's decision policy: as $\alpha \rightarrow \infty$, the imagined listener is more likely to choose the object with highest perceptual correspondence to the sketch.
 
-Second, we define the utility function for a \textit{context-insensitive} sketcher, $S_{sim}$, that is still cost-sensitive, which replaces the informativity term (defined in terms of the viewer) with the absolute degree of perceptual correspondence between a sketch and the target, $\textrm{sim}(s, o)$, ignoring the distractors. 
+Second, we define the utility function for a \textit{context-insensitive} sketcher, $S_{sim}$, which replaces the diagnosticity term (defined in terms of the viewer) with a resemblance term reflecting the absolute degree of perceptual correspondence between a sketch and the target, $\textrm{sim}(s, o)$, ignoring the distractors. 
 
-Third, we define the utility function for a \textit{cost-insensitive} sketcher, $S_{nocost}$, that is still context-sensitive, which has the same informativity term as $S_{2C}$ but no cost term, and thus captures the aim to produce sketches that would be informative to an imagined viewer in context without regard for how much time they would take to produce. 
+Third, we define the utility function for a \textit{cost-insensitive} sketcher, $S_{nocost}$, which sets the cost term to zero ($w_c=0$), and thus captures the aim to produce sketches that would be informative to an imagined viewer in context without regard for how much time they would take to produce. 
 
-In our full sketcher model, 
-
-  inferring a mixture weight parameter, $w_{prag}$, that interpolates between their two utilities: $$f(s,o) = w_{prag}\ln \mathcal{V}(o | s) + (1-w_{prag}) \textrm{sim}(s,o)$$. Combining the utilities in this way captures the intuition that a communicative sketcher seeks to produce a sketch that both resembles the target object and distinguishes the target from the distractors.
+In our full model of the sketcher, $\mathcal{S}$, we define the informativity term to be a mixture of the purely diagnosticity-based definition employed by $S_{2C}$ and the purely resemblance-based definition employed by $S_{sim}$. To do this, we infer a mixture weight parameter, $w_{prag}$, that interpolates between these two notions of informativity: $$f(s,o) = w_{prag}\ln \mathcal{V}(o | s) + (1-w_{prag}) \textrm{sim}(s,o)$$. Combining the utilities in this way captures the intuition that a communicative sketcher seeks to produce a sketch that both resembles the target object and distinguishes the target from the distractors.
 
 After algebraically simplifying, the full utility is:
 
