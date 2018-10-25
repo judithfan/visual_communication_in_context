@@ -173,37 +173,42 @@ Consistent with possible explanation above, we found that close sketches were ma
 Taken together, the above findings suggest that human sketchers spontaneously account for information in common ground with their viewer, producing more informative sketches at the cost of additional time and ink in close contexts relative to far contexts. 
 Observing such contextual flexibility argues against there being a unique solution to the problem of pictorial representation, whereby sketch production is constrained exclusively by the appearance of the target of depiction. 
 Rather, these results suggest there is an additional crucial role played by semantic context in determining how informative and costly of a sketch people produce during visual communication.  
-Integrating these insights with prior work \cite{FanCommon2018,goodman2016pragmatic,grice1975syntax} on visual production and pragmatic inference during communication, we propose that human sketchers determine what kind of sketch to produce in context by deploying three main faculties: (a) visual abstraction, the ability to judge how well a simple sketch evokes a real object; (b) context sensitivity, a preference for sketches that are discriminative of the target relative to the distractors; and (c) cost sensitivity, a preference for sketches that are no more discriminative than necessary. 
+Integrating these insights with prior work \cite{FanCommon2018,goodman2016pragmatic,grice1975syntax} on visual production and pragmatic inference during communication, we propose that human sketchers determine what kind of sketch to produce in context by deploying three main faculties: (a) visual abstraction, the ability to judge how well a simple sketch evokes a real object; (b) context sensitivity, a preference for sketches that are diagnostic of the target relative to the distractors; and (c) cost sensitivity, a preference for less costly sketches.
 To test this proposal, we developed a computational model of the sketcher that embodied these three faculties. 
 Constructing such a model allowed us to evaluate the independent contribution of each faculty using formal model comparison, and characterize the model's behavior in novel contexts.
 
-We define the sketcher $\mathcal{S}$, to be a decision-theoretic agent that prefers to produce a sketch, $s_i$, of target object, $t$, in a context containing distractors, $d$, proportional to their communicative utility, $U$, where the utilities of each sketch have been normalized via the softmax function (Eq. \ref{sketcher_distribution}):
+We define the sketcher $\mathcal{S}$, to be a decision-theoretic agent that prefers to produce a sketch, $s_i$, of target object, $t$, in a context containing distractors, $d$, proportional to their communicative utility, $U$, where the utilities of each sketch have been normalized over the space of producible sketches via the softmax function (Eq. \ref{sketcher_distribution}):
 
 \begin{equation} \label{sketcher_distribution}
 \mathcal{S}(s_i|t, d) \propto \frac {\exp [{U(s_i,t,d)]}} {\sum_{j=1}^{N} {\exp [U(s_j,t,d)]}}
 \end{equation}
 
-We consider three variants of the sketcher, whose decision-making behavior is determined by their respective utility functions. In each variant, this utility consist of two terms: an informativity term and a cost term. 
+We introduce three variants of the sketcher, whose decision-making behavior is determined by their respective utility functions. 
+In each variant, this utility consist of two terms: an informativity term and a cost term. 
 
-First, we define the utility function for a context-sensitive and cost-sensitive sketcher, $S_{2C}$, which defines a sketch's informativity in terms of its diagnosticity in context. A sketch's diagnosticity is defined by the natural log probability that an imagined viewer, $\mathcal{V}$, would select the target object given the sketch and all objects in context, $\ln \mathcal{V}(t|s,d)$. A sketch's cost is defined to be a monotonic function of the amount of time taken to produce it $C(s)$. 
+First, we define the utility function for a context-sensitive and cost-sensitive sketcher, $S_{2C}$, which defines a sketch's informativity in terms of its diagnosticity in context. 
+A sketch's diagnosticity is defined by the natural log probability that an imagined viewer, $\mathcal{V}$, would select the target object given the sketch and all objects in context, $\ln \mathcal{V}(t|s,d)$. 
+A sketch's cost is defined to be a monotonic function of the amount of time taken to produce it $C(s)$. 
 
 \begin{equation} \label{sketcher_utility}
 U_{S_{2C}}(s,t,d) = w_i \cdot \ln \mathcal{V}(t|s,d) - w_c \cdot  C(s)
 \end{equation}
 where $w_i$ and $w_c$ are independent scaling parameters that are applied to the diagnosticity and cost terms, respectively, and determine how strongly each term contributes to the overall utility of the sketch. 
 
-The imagined viewer $\mathcal{V}$, in turn, is assumed to select an object in context proportional to the absolute perceptual correspondence between each object and the current sketch, $\textrm{sim}(s, o)$.
+The imagined viewer $\mathcal{V}$, in turn, is assumed to select an object in context proportional to the absolute perceptual correspondence between each object and the current sketch, $\textrm{sim}(s,o)$.
 
 \begin{equation} \label{literal_viewer_score}
 \mathcal{V}(t|s) \propto \exp\{\alpha \cdot \textrm{sim(s, o)}\}
 \end{equation}
 where $\alpha$ is another scaling parameter determining the assumed optimality of the listener's decision policy: as $\alpha \rightarrow \infty$, the imagined listener is more likely to choose the object with highest perceptual correspondence to the sketch.
 
-Second, we define the utility function for a \textit{context-insensitive} sketcher, $S_{sim}$, which replaces the diagnosticity term (defined in terms of the viewer) with a resemblance term reflecting the absolute degree of perceptual correspondence between a sketch and the target, $\textrm{sim}(s, o)$, ignoring the distractors. 
+Second, we define the utility function for a \textit{context-insensitive} sketcher, $S_{sim}$, which replaces the diagnosticity term (defined in terms of the viewer) with a resemblance term reflecting the absolute degree of perceptual correspondence between a sketch and the target, $\textrm{sim}(s,o)$, ignoring the distractors. 
 
 Third, we define the utility function for a \textit{cost-insensitive} sketcher, $S_{nocost}$, which sets the cost term to zero ($w_c=0$), and thus captures the aim to produce sketches that would be informative to an imagined viewer in context without regard for how much time they would take to produce. 
 
-In our full model of the sketcher, $\mathcal{S}$, we define the informativity term to be a mixture of the purely diagnosticity-based definition employed by $S_{2C}$ and the purely resemblance-based definition employed by $S_{sim}$. To do this, we infer a mixture weight parameter, $w_{prag}$, that interpolates between these two notions of informativity: $$f(s,o) = w_{prag}\ln \mathcal{V}(o | s) + (1-w_{prag}) \textrm{sim}(s,o)$$. Combining the utilities in this way captures the intuition that a communicative sketcher seeks to produce a sketch that both resembles the target object and distinguishes the target from the distractors.
+In our full model of the sketcher, $\mathcal{S}$, we define the informativity term to be a mixture of the purely diagnosticity-based definition employed by $S_{2C}$ and the purely resemblance-based definition employed by $S_{sim}$. 
+To do this, we infer a mixture weight parameter, $w_{diag}$, that interpolates between these two notions of informativity: $$f(s,o) = w_{diag}\ln \mathcal{V}(o | s) + (1-w_{diag}) \textrm{sim}(s,o)$$. 
+Combining the utilities in this way captures the intuition that a communicative sketcher seeks to produce a sketch that both resembles the target object and distinguishes the target from the distractors.
 
 After algebraically simplifying, the full utility is:
 
@@ -211,9 +216,14 @@ After algebraically simplifying, the full utility is:
 U(s,o) =  w_p \cdot  f(s,o) - w_c \cdot C(s)
 \end{equation}
 
+In order for this sketcher to generate quantitative predictions, it needs to be able to compute $\textrm{sim}(s,o)$, the perceptual correspondence, for any sketch-object pair. We approached this problem in two ways: by using human responses on the sketch-object matching task as an empirical approximation to $\textrm{sim}(s,o)$ for every sketch in our dataset, and training a visual encoder model to predict $\textrm{sim}(s,o)$ for any sketch-object pair in our dataset, once trained empirical estimates of $\textrm{sim}(s,o)$ on a subset of our data. 
 
-We formalized the problem of how to produce sketches that are informative in context in terms of two components: a \textit{visual encoder} module, which is a function taking a sketch and object rendering as input and returns how well the sketch corresponds to the object, and a \textit{social inference} module, another function that evaluates the degree to which different sketches would inform the viewer about the identity of the target object in context without being too costly to produce, and returns a distribution of scores over possible sketches. 
+First, we $\textrm{sim}(s,o)$ 
 
+
+% The social inference module depends on two sources of information in order to decide which sketch would be most communicatively useful to produce in context: (1) the perceptual correspondence between each object in context and any sketch it could produce, where the set of producible sketches includes all sketches in the test set (i.e., not used to train the visual encoder) and (2) the cost of producing those sketches, operationalized as the amount of time taken to produce it. Using this information, it outputs a distribution of scores over all test-set sketches, where the scores reflect each sketch's relative communicative utility.
+
+% We formalized the problem of how to produce sketches that are informative in context in terms of two components: a \textit{visual encoder} module, which is a function taking a sketch and object rendering as input and returns how well the sketch corresponds to the object, and a \textit{social inference} module, another function that evaluates the degree to which different sketches would inform the viewer about the identity of the target object in context without being too costly to produce, and returns a distribution of scores over possible sketches. 
 
 % Consistent with prior work \cite{FanCommon2018}, we hypothesized that the best-fitting visual encoder module would use the abstract features learned by modern deep convolutional neural networks pre-trained on natural object recognition tasks, rather than lower-level image statistics. 
 % Also in line with prior work \cite{goodman2016pragmatic}, we hypothesized that the best-fitting probabilistic social inference module would possess both context and cost sensitivity. 
@@ -232,7 +242,7 @@ We use this adaptor network because while prior work has shown that the represen
 We also train adaptor networks appended to early and intermediate layers of VGG-19 (see Materials and Methods) in order to test the assumption based on previous work that high-level visual features are necessary to achieve good fits to human perceptual judgments.
 All model evaluations involving the base encoder and trained adaptor network were performed in a fivefold crossvalidated manner, with the full communication task dataset split into training, validation, and test sets in a 80\%, 10\%, and 10\% ratio. 
 
-The social inference module depends on two sources of information in order to decide which sketch would be most communicatively useful to produce in context: (1) the perceptual correspondence between each object in context and any sketch it could produce, where the set of producible sketches includes all sketches in the test set (i.e., not used to train the visual encoder) and (2) the cost of producing those sketches, operationalized as the amount of time taken to produce it. Using this information, it outputs a distribution of scores over all test-set sketches, where the scores reflect each sketch's relative communicative utility.
+
 
 
 
@@ -470,14 +480,14 @@ U_{S_1}(s, o) = w_p \ln \mathcal{V}(o|s) - w_c C(s)
 \end{equation}
 where $w_p$ and $w_c$ are latent parameters weighting the influences of the sketch's perceptual properties and cost, respectively.
 
-The viewer ($\mathcal{V}$) is assumed to decide between objects in context proportional to the perceptual correspondence between each object and the current sketch, $\textrm{sim}(s, o)$.
+The viewer ($\mathcal{V}$) is assumed to decide between objects in context proportional to the perceptual correspondence between each object and the current sketch, $\textrm{sim}(s,o)$.
 
 \begin{equation} \label{literal_viewer_score}
 \mathcal{V}(o|s) \propto \exp\{\alpha \cdot \textrm{sim(s, o)}\}
 \end{equation}
 where $\alpha$ is a scaling parameter determining the assumed optimality of the listener's decision policy: as $\alpha \rightarrow \infty$, the listener is more likely to choose the object with highest perceptual correspondence to the sketch.
 
-We also consider a \textit{context-insensitive} sketcher $S_0$ agent that aims to maximize the absolute perceptual correspondence between their sketch and the target, without taking the  distractors into account. Accordingly, the utility function of this context-insensitive sketcher is defined in terms of $\textrm{sim}(s, o)$ instead of informativity to $\mathcal{V}(o|s)$.
+We also consider a \textit{context-insensitive} sketcher $S_0$ agent that aims to maximize the absolute perceptual correspondence between their sketch and the target, without taking the  distractors into account. Accordingly, the utility function of this context-insensitive sketcher is defined in terms of $\textrm{sim}(s,o)$ instead of informativity to $\mathcal{V}(o|s)$.
 
 In our full sketcher model we combine these two agents by inferring a mixture weight parameter, $w_{prag}$, that interpolates between their two utilities: $$f(s,o) = w_{prag}\ln \mathcal{V}(o | s) + (1-w_{prag}) \textrm{sim}(s,o)$$. Combining the utilities in this way captures the intuition that a communicative sketcher seeks to produce a sketch that both resembles the target object and distinguishes the target from the distractors.
 
