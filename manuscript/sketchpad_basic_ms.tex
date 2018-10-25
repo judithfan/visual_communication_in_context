@@ -222,36 +222,22 @@ Informed by recent advances in computational vision \cite{FanCommon2018,yamins20
 This choice of model class is further motivated by prior work showing that such networks, when trained on challenging natural object recognition tasks \cite{deng2009imagenet}, learn higher-layer feature representations that capture high-level perceptual information in drawings \cite{FanCommon2018}, capture perceptual judgments of object shape similarity \cite{kubilius2016deep}, and predict neural population responses in categories across the ventral visual stream \cite{yamins2014performance}. 
 Consistent with this prior work, we hypothesized that higher layers of these networks would provide a superior visual feature basis for modeling human-like visual abstraction in this task, relative to the lower-level image statistics represented in earlier layers.
 
-
-First, we use the empirical estimates $\textrm{sim}(s,o)$ to evaluate the contribution of context and cost sensitivity to explaining human sketch production. Next, using our trained visual encoder, we evaluate the contribution of visual abstraction 
-
-
-% The social inference module depends on two sources of information in order to decide which sketch would be most communicatively useful to produce in context: (1) the perceptual correspondence between each object in context and any sketch it could produce, where the set of producible sketches includes all sketches in the test set (i.e., not used to train the visual encoder) and (2) the cost of producing those sketches, operationalized as the amount of time taken to produce it. Using this information, it outputs a distribution of scores over all test-set sketches, where the scores reflect each sketch's relative communicative utility.
-
-% We formalized the problem of how to produce sketches that are informative in context in terms of two components: a \textit{visual encoder} module, which is a function taking a sketch and object rendering as input and returns how well the sketch corresponds to the object, and a \textit{social inference} module, another function that evaluates the degree to which different sketches would inform the viewer about the identity of the target object in context without being too costly to produce, and returns a distribution of scores over possible sketches. 
-
-% Consistent with prior work \cite{FanCommon2018}, we hypothesized that the best-fitting visual encoder module would use the abstract features learned by modern deep convolutional neural networks pre-trained on natural object recognition tasks, rather than lower-level image statistics. 
-% Also in line with prior work \cite{goodman2016pragmatic}, we hypothesized that the best-fitting probabilistic social inference module would possess both context and cost sensitivity. 
-
-Formally, the visual encoder is instantiated as a deep convolutional neural network (DCNN), a member of the class of universal function approximators \cite{hornik1991approximation}. This choice of model class is further motivated by prior work showing that such networks, when optimized to recognize objects in the highly variable photographs in the ImageNet dataset \cite{deng2009imagenet}, learn feature representations that capture adult perceptual judgments of object shape similarity \cite{kubilius2016deep} and predict neural population responses in categories throughout object-selective cortex \cite{yamins2014performance}. 
-The encoder accepts a pair of images, a sketch, $s$, and an object rendering, $o$, as input and returns a scalar value reflecting the degree of perceptual correspondence between the sketch and object, $\textrm{sim}(s,o)$, which lies in the range $[0,1]$, where $0$ reflects no correspondence and $1$ reflects maximal correspondence (Eq. \ref{visual_encoder}).
+Concretely, the visual encoder is a function that accepts a pair of images, a sketch, $s$, and an object rendering, $o$, as input and returns a scalar value reflecting the degree of perceptual correspondence between the sketch and object, $\textrm{sim}(s,o)$, which lies in the range $[0,1]$, where $0$ reflects no correspondence and $1$ reflects maximal correspondence (Eq. \ref{visual_encoder}).
 
 \begin{equation}
 \label{visual_encoder}
 \textrm{sim}(s,o) = a(b(s,o))
 \end{equation}
 
-This module is composed of two functions: a base visual encoder network, $b$, and an adaptor network, $a$. We employ VGG-19 \cite{simonyan2014very} pretrained on Imagenet as our base visual encoder, whose parameters do not undergo further fine-tuning. 
+The encoder consists of two functional components: a base visual encoder network, $b$, and an adaptor network, $a$. We employ VGG-19 \cite{simonyan2014very} pretrained on Imagenet as our base visual encoder, whose parameters do not undergo further fine-tuning. 
 We then augment the pretrained feature representation in a higher layer of VGG-19 (i.e., `fc6', the first fully-connected layer) with a shallow adaptor network, which is trained to predict the perceptual correspondence between specific sketch-object pairs. 
 We use this adaptor network because while prior work has shown that the representation of object categories converges for sketches and photos at higher layers in pretrained DCNN models \cite{FanCommon2018}, learning additional transformations can greatly improve the accuracy of comparisons between specific images across modalities \cite{sangkloy2016sketchy}. 
 We also train adaptor networks appended to early and intermediate layers of VGG-19 (see Materials and Methods) in order to test the assumption based on previous work that high-level visual features are necessary to achieve good fits to human perceptual judgments.
 All model evaluations involving the base encoder and trained adaptor network were performed in a fivefold crossvalidated manner, with the full communication task dataset split into training, validation, and test sets in a 80\%, 10\%, and 10\% ratio. 
 
+We used this modeling framework to test each aspect of our hypothesis about the core cognitive faculties employed by humans to decide which sketch to produce in context. First, we directly use the empirical estimates $\textrm{sim}(s,o)$ to evaluate the contribution of context sensitivity and cost sensitivity. Second, using our trained visual encoder, we evaluate the contribution of visual abstraction. 
 
-
-
-
-\subsubsection*{Modeling social inference}
+\subsubsection*{Evaluating context sensitivity}
 
 %% report RSA modeling results using human perceptual measurements directly to compute informativity
 %% prag with cost, prag no cost, no prag cost, no prag no cost
