@@ -176,7 +176,7 @@ Rather, these results suggest that context plays a critical role in determining 
 And they suggest an analogy to how context influences how people produce linguistic utterances during verbal communication, a key target of contemporary theories of pragmatics in language use \cite{grice1975syntax,goodman2016pragmatic}.
 Informed by this prior work, we propose that human sketchers determine what kind of sketch to produce in context by deploying two main faculties: \textit{visual abstraction}, which refers to the ability to judge how well a sketch evokes a real object, and \textit{pragmatic inference}, which refers to the ability to prefer sketches that are sufficiently detailed to be diagnostic of the target object in context, but no more detailed than necessary. 
 Intuitively, this latter faculty can be decomposed into two aspects: context sensitivity, a preference for sketches that are diagnostic of the target relative to the distractors; and cost sensitivity, a preference for less costly sketches. 
-To test this proposal, we developed a computational model of the sketcher that embodied both visual abstraction and pragmatic inference, and was instantiated as a probabilistic program wrapped around a deep convolutional neural network. 
+To test this proposal, we developed a computational model of the sketcher that embodied both visual abstraction and pragmatic inference, and was instantiated as a probabilistic program ``wrapped'' around a deep convolutional neural network. 
 Constructing such a model allowed us to evaluate the contribution of each component using formal model comparison, as well as quantitatively characterize the model's behavior in novel contexts.
 
 We define the sketcher $\mathcal{S}$, to be a decision-theoretic agent that prefers to produce a sketch, $s_i$, of target object, $t$, in a context containing distractors, $d$, proportional to their communicative utility, $U$, where the utilities of each sketch have been normalized over the space of producible sketches via the softmax function (Eq. \ref{sketcher_distribution}):
@@ -187,7 +187,6 @@ We define the sketcher $\mathcal{S}$, to be a decision-theoretic agent that pref
 
 We introduce three variants of the sketcher, whose decision-making behavior is determined by their respective utility functions. 
 In each variant, this utility consist of two terms: an informativity term and a cost term. 
-
 First, we define the utility function for a context-sensitive and cost-sensitive sketcher, $S_{2C}$, which defines a sketch's informativity in terms of its diagnosticity in context. 
 A sketch's diagnosticity is defined by the natural log probability that an imagined viewer, $\mathcal{V}$, would select the target object given the sketch and all objects in context, $\ln \mathcal{V}(t|s,d)$. 
 A sketch's cost is defined to be a monotonic function of the amount of time taken to produce it $C(s)$. 
@@ -204,7 +203,7 @@ The imagined viewer $\mathcal{V}$, in turn, is assumed to select an object in co
 \end{equation}
 where $\alpha$ is another scaling parameter determining the assumed optimality of the listener's decision policy: as $\alpha \rightarrow \infty$, the imagined listener is more likely to choose the object with highest perceptual correspondence to the sketch.
 
-Second, we define the utility function for a \textit{context-insensitive} sketcher, $S_{sim}$, which replaces the diagnosticity term (defined in terms of the viewer) with a resemblance term reflecting the absolute degree of perceptual correspondence between a sketch and the target, $\textrm{sim}(s,o)$, ignoring the distractors. 
+Second, we define the utility function for a \textit{context-insensitive} sketcher, $S_{sim}$, which replaces the diagnosticity term (defined in terms of the viewer) with a resemblance term reflecting the absolute degree of perceptual correspondence between a sketch and the target, $\textrm{sim}(s,o)$, and ignores the distractors. 
 
 Third, we define the utility function for a \textit{cost-insensitive} sketcher, $S_{nocost}$, which sets the cost term to zero ($w_c=0$), and thus captures the aim to produce sketches that would be informative to an imagined viewer in context without regard for how much time they would take to produce. 
 
@@ -220,8 +219,8 @@ U(s,o) =  w_p \cdot  f(s,o) - w_c \cdot C(s)
 
 In order for this sketcher to generate quantitative predictions, it needs to be able to compute the perceptual correspondence ($\textrm{sim}(s,o)$) for any sketch-object pair. We approached this problem in two ways: by employing human responses on the sketch-object matching task as an empirical approximation to $\textrm{sim}(s,o)$ for every sketch in our dataset, and employing a visual encoder model to predict $\textrm{sim}(s,o)$, once trained on empirical estimates of $\textrm{sim}(s,o)$ for a separate subset of our data. 
 
-Informed by recent advances in computational vision \cite{FanCommon2018,yamins2014performance}, we instantiated the visual encoder as a deep convolutional neural network (DCNN), a member of the class of universal function approximators \cite{hornik1991approximation}. 
-This choice of model class is further motivated by prior work showing that such networks, when trained on challenging natural object recognition tasks \cite{deng2009imagenet}, learn higher-layer feature representations that capture high-level perceptual information in drawings \cite{FanCommon2018}, capture perceptual judgments of object shape similarity \cite{kubilius2016deep}, and predict neural population responses in categories across the ventral visual stream \cite{yamins2014performance}. 
+Informed by recent advances in computational vision \cite{FanCommon2018,yamins2014performance}, we instantiated the visual encoder as a deep convolutional neural network (DCNN). 
+This choice of model class is motivated by prior work showing that such networks, in addition to being a type of universal function approximator \cite{hornik1991approximation}, learn higher-layer feature representations that capture high-level perceptual information in drawings \cite{FanCommon2018}, capture perceptual judgments of object shape similarity \cite{kubilius2016deep}, and predict neural population responses in categories across the ventral visual stream \cite{yamins2014performance} when trained on challenging natural object recognition tasks \cite{deng2009imagenet}. 
 Consistent with this prior work, we hypothesized that higher layers of these networks would provide a superior visual feature basis for modeling human-like visual abstraction in this task, relative to the lower-level image statistics represented in earlier layers.
 
 Concretely, the visual encoder is a function that accepts a pair of images, a sketch, $s$, and an object rendering, $o$, as input and returns a scalar value reflecting the degree of perceptual correspondence between the sketch and object, $\textrm{sim}(s,o)$, which lies in the range $[0,1]$, where $0$ reflects no correspondence and $1$ reflects maximal correspondence (Eq. \ref{visual_encoder}).
@@ -237,7 +236,9 @@ We train an adaptor network because while prior work has shown that the represen
 We also train adaptor networks appended to early and intermediate layers of VGG-19 (see Materials and Methods) in order to test the assumption based on previous work that high-level visual features are necessary to achieve good fits to human perceptual judgments.
 All model evaluations involving the base encoder and trained adaptor network were performed in a fivefold crossvalidated manner, with the full communication task dataset split into training, validation, and test sets in a 80\%, 10\%, and 10\% ratio. 
 
-Within this modeling framework, we conducted series of targeted lesion studies to test each aspect of our hypothesis about the core cognitive faculties employed by humans to decide which sketch to produce in context. First, we evaluated the contribution of context sensitivity and cost sensitivity by removing each of these faculties from the sketcher agent; these experiments relied upon empirical estimates of $\textrm{sim}(s,o)$. Second, we replicated these lesion experiments with the visual encoder model, which allowed us to further evaluate the contribution of using high-level visual features, in addition to cost and context sensitivity.
+Within this modeling framework, we conducted series of targeted lesion studies to test each aspect of our hypothesis about the core cognitive faculties employed by humans to decide which sketch to produce in context. 
+First, we evaluated the contribution of pragmatic inference by removing context sensitivity and cost sensitivity, in turn, from the sketcher agent; these experiments relied upon empirical estimates of $\textrm{sim}(s,o)$. 
+Second, we replicated these lesion experiments after incorporating the visual encoder, which allowed us to further evaluate the contribution of using high-level visual features, in addition to pragmatic inference.
 
 \subsubsection*{Evaluating context sensitivity}
 
