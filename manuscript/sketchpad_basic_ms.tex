@@ -172,12 +172,14 @@ Consistent with possible explanation above, we found that close sketches were ma
 
 The above findings suggest that human sketchers spontaneously account for information in common ground with their viewer, producing more informative sketches at the cost of additional time and ink in close contexts relative to far contexts. 
 Observing such contextual flexibility argues against there being a unique solution to the problem of pictorial representation, whereby sketch production is constrained exclusively by the appearance of the target of depiction. 
-Rather, these results suggest that context plays a critical role in determining how informative and costly of a sketch people produce during visual communication. 
+Rather, these results suggest that context plays a critical role in determining how informative and costly of a sketch people decide to produce during visual communication. 
 And they suggest an analogy to how context influences how people produce linguistic utterances during verbal communication, a key target of contemporary theories of pragmatics in language use \cite{grice1975syntax,goodman2016pragmatic}.
 Informed by this prior work, we propose that human sketchers determine what kind of sketch to produce in context by deploying two main faculties: \textit{visual abstraction}, which refers to the ability to judge how well a sketch evokes a real object, and \textit{pragmatic inference}, which refers to the ability to prefer sketches that are sufficiently detailed to be diagnostic of the target object in context, but no more detailed than necessary. 
 Intuitively, this latter faculty can be decomposed into two aspects: context sensitivity, a preference for sketches that are diagnostic of the target relative to the distractors; and cost sensitivity, a preference for less costly sketches. 
 To test this proposal, we developed a computational model of the sketcher that embodied both visual abstraction and pragmatic inference, and was instantiated as a probabilistic program ``wrapped'' around a deep convolutional neural network. 
 Constructing such a model allowed us to evaluate the contribution of each component using formal model comparison, as well as quantitatively characterize the model's behavior in novel contexts.
+
+\subsubsection*{Defining communicative utility of sketches}
 
 We define the sketcher $\mathcal{S}$, to be a decision-theoretic agent that prefers to produce a sketch, $s_i$, of target object, $t$, in a context containing distractors, $d$, proportional to their communicative utility, $U$, where the utilities of each sketch have been normalized over the space of producible sketches via the softmax function (Eq. \ref{sketcher_distribution}):
 
@@ -217,6 +219,8 @@ After algebraically simplifying, the full utility is:
 U(s,o) =  w_p \cdot  f(s,o) - w_c \cdot C(s)
 \end{equation}
 
+\subsubsection*{Defining perceptual correspondence between sketches and objects}
+
 In order for this sketcher to generate quantitative predictions, it needs to be able to compute the perceptual correspondence ($\textrm{sim}(s,o)$) for any sketch-object pair. We approached this problem in two ways: by employing human responses on the sketch-object matching task as an empirical approximation to $\textrm{sim}(s,o)$ for every sketch in our dataset, and employing a visual encoder model to predict $\textrm{sim}(s,o)$, once trained on empirical estimates of $\textrm{sim}(s,o)$ for a separate subset of our data. 
 
 Informed by recent advances in computational vision \cite{FanCommon2018,yamins2014performance}, we instantiated the visual encoder as a deep convolutional neural network (DCNN). 
@@ -230,21 +234,37 @@ Concretely, the visual encoder is a function that accepts a pair of images, a sk
 \textrm{sim}(s,o) = a(b(s,o))
 \end{equation}
 
-The encoder consists of two functional components: a base visual encoder network, $b$, and an adaptor network, $a$. We employ VGG-19 \cite{simonyan2014very} pretrained on Imagenet as our base visual encoder, whose parameters do not undergo further fine-tuning. 
+The encoder consists of two functional components: a base visual encoder network, $b$, and an adaptor network, $a$. We employ VGG-19 \cite{simonyan2014very} pretrained on Imagenet as our base visual encoder, whose parameters remain frozen. 
 We then augment the pretrained feature representation in a higher layer of VGG-19 (i.e., `fc6', the first fully-connected layer) with a shallow adaptor network, which is trained to predict the perceptual correspondence between specific sketch-object pairs. 
 We train an adaptor network because while prior work has shown that the representation of object categories converges for sketches and photos at higher layers in DCNN models trained only on photos \cite{FanCommon2018}, additional supervision can substantially improve the accuracy of image-level predictions involving comparisons between sketches and photos \cite{sangkloy2016sketchy}. 
 We also train adaptor networks appended to early and intermediate layers of VGG-19 (see Materials and Methods) in order to test the assumption based on previous work that high-level visual features are necessary to achieve good fits to human perceptual judgments.
 All model evaluations involving the base encoder and trained adaptor network were performed in a fivefold crossvalidated manner, with the full communication task dataset split into training, validation, and test sets in a 80\%, 10\%, and 10\% ratio. 
 
-Within this modeling framework, we conducted series of targeted lesion studies to test each aspect of our hypothesis about the core cognitive faculties employed by humans to decide which sketch to produce in context. 
-First, we evaluated the contribution of pragmatic inference by removing context sensitivity and cost sensitivity, in turn, from the sketcher agent; these experiments relied upon empirical estimates of $\textrm{sim}(s,o)$. 
-Second, we replicated these lesion experiments after incorporating the visual encoder, which allowed us to further evaluate the contribution of using high-level visual features, in addition to pragmatic inference.
+Within this modeling framework, we conducted a series of targeted lesion studies to test each aspect of our hypothesis about the core cognitive faculties employed by humans to decide which sketch to produce in context. 
+First, we evaluated the contribution of pragmatic inference by removing context sensitivity and cost sensitivity from the sketcher agent; these experiments relied upon empirical estimates of $\textrm{sim}(s,o)$. 
+Second, we replicated these lesion experiments after incorporating the visual encoder, which allowed us to further evaluate the contribution of visual abstraction, in conjunction with pragmatic inference.
 
-\subsubsection*{Evaluating context sensitivity}
+\subsubsection*{Evaluating contribution of pragmatic inference}
 
-\subsubsection*{Evaluating cost sensitivity}
+% In each variant, this utility consist of two terms: an informativity term and a cost term. 
+% First, we define the utility function for a context-sensitive and cost-sensitive sketcher, $S_{2C}$, which defines a sketch's informativity in terms of its diagnosticity in context. 
+% A sketch's diagnosticity is defined by the natural log probability that an imagined viewer, $\mathcal{V}$, would select the target object given the sketch and all objects in context, $\ln \mathcal{V}(t|s,d)$. 
+% A sketch's cost is defined to be a monotonic function of the amount of time taken to produce it $C(s)$. 
 
-Lesioning the production component simply requires setting the parameter weighting the \emph{cost} term of our speaker's utility to zero, such that all sketches are equally easy to produce. For the pragmatic component, we compare a \emph{context-sensitive sketcher}, which takes context into account, against an \emph{context-insensitive sketcher} that simply aims to make a sketch with high absolute perceptual similarity to the target, ignoring context. To define our social sketcher, we generalize the Rational Speech Act (RSA) framework from the linguistic domain, where it has captured language use as a process of recursive social inference \cite{goodman2016pragmatic,kao2014formalizing,goodman2013knowledge}. By reasoning about a viewer who normalizes perceptual similarity across objects in context, a social sketcher is able to choose sketches that are \emph{informative}, or that apply to the target relatively better than distractors. For example, in a context only containing birds, a generic outline of a bird would not be very informative, even if it has high absolute similarity to the target, because it also resembles the distractors. Because both absolute and relative similarity may influence a sketcher's decision, we introduced a parameter $w_p \in [0,1]$ that interpolates between the two values. We conducted a Bayesian Data Analysis, plugging in the similarity function directly estimated from empirical human ratings in the matching task. We found that the social speaker was strongly preferred over the asocial speaker ($BF = XX; w_p = YY$, 95\% credible interval $= [X, Y]$) and the model including a cost term was strongly preferred over a cost-free variant ($BF = XX; w_c = YY$, 95\% credible interval $=[X, Y]$; see Fig. \ref{model_results}A).
+We hypothesized that a computational sketcher model that is sensitive to both context and cost would fit human sketch production behavior well, and outperform lesioned alternatives lacking either component.
+To evaluate this hypothesis, we compared three variants of the sketcher model characterized by their distinct definitions of the communicative utility of a sketch: one sensitive to both context and cost ($S_{2C}$), one that is \textit{not} sensitive to context but sensitive to cost ($S_{sim}$), and one that \textit{is} sensitive to context but \textit{not} sensitive to cost ($S_{nocost}$).
+
+In this set of model evaluations, we employed empirical estimates of the correspondence between sketches and objects, $\textrm{sim}(s,o)$, to compute sketch diagnosticity in context. In this and subsequent model evaluations, we defined a sketch's cost, $C(s)$, to be a monotonic function of the amount of time taken to produce it.
+
+To generate predictions for each model, we employed Bayesian data analysis to infer a posterior distribution over their parameters (i.e., )
+
+
+We found that the context and cost sensitive sketcher, $S_{2C}$, provided 
+
+ over the asocial speaker ($BF = XX; w_p = YY$, 95\% credible interval $= [X, Y]$) and the model including a cost term was strongly preferred over a cost-free variant ($BF = XX; w_c = YY$, 95\% credible interval $=[X, Y]$; see Fig. \ref{model_results}A).
+
+% Lesioning the production component simply requires setting the parameter weighting the \emph{cost} term of our speaker's utility to zero, such that all sketches are equally easy to produce. For the pragmatic component, we compare a \emph{context-sensitive sketcher}, which takes context into account, against an \emph{context-insensitive sketcher} that simply aims to make a sketch with high absolute perceptual similarity to the target, ignoring context. To define our social sketcher, we generalize the Rational Speech Act (RSA) framework from the linguistic domain, where it has captured language use as a process of recursive social inference \cite{goodman2016pragmatic,kao2014formalizing,goodman2013knowledge}. By reasoning about a viewer who normalizes perceptual similarity across objects in context, a social sketcher is able to choose sketches that are \emph{informative}, or that apply to the target relatively better than distractors. For example, in a context only containing birds, a generic outline of a bird would not be very informative, even if it has high absolute similarity to the target, because it also resembles the distractors. Because both absolute and relative similarity may influence a sketcher's decision, we introduced a parameter $w_p \in [0,1]$ that interpolates between the two values. 
+% We conducted a Bayesian Data Analysis, plugging in the similarity function directly estimated from empirical human ratings in the matching task. 
 
 \subsubsection*{Evaluating visual abstraction}
 
