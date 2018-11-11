@@ -210,7 +210,7 @@ Second, we define the utility function for a \textit{context-insensitive} sketch
 Third, we define the utility function for a \textit{cost-insensitive} sketcher, $S_{nocost}$, which sets the cost term to zero ($w_c=0$), and thus captures the aim to produce sketches that would be informative to an imagined viewer in context without regard for how much time they would take to produce. 
 
 In our full sketcher model, $\mathcal{S}$, we define the informativity term to be a mixture of the purely diagnosticity-based definition employed by $S_{2C}$ and the purely resemblance-based definition employed by $S_{sim}$. 
-To do this, we infer a mixture weight parameter, $w_{diag}$, that interpolates between these two notions of informativity: $$f(s,o) = w_{diag}\ln \mathcal{V}(o | s) + (1-w_{diag}) \textrm{sim}(s,o)$$. 
+To do this, we infer a mixture weight parameter, $w_{d}$, that interpolates between these two notions of informativity: $$f(s,o) = w_{d}\ln \mathcal{V}(o | s) + (1-w_{d}) \textrm{sim}(s,o)$$. 
 Combining the utilities in this way captures the intuition that a communicative sketcher seeks to produce a sketch that both resembles the target object and distinguishes the target from the distractors.
 
 After algebraically simplifying, the full utility is:
@@ -221,7 +221,8 @@ U(s,o) =  w_p \cdot  f(s,o) - w_c \cdot C(s)
 
 \subsubsection*{Defining perceptual correspondence between sketches and objects}
 
-In order for this sketcher to generate quantitative predictions, it needs to be able to compute the perceptual correspondence ($\textrm{sim}(s,o)$) for any sketch-object pair. We approached this problem in two ways: by employing human responses on the sketch-object matching task as an empirical approximation to $\textrm{sim}(s,o)$ for every sketch in our dataset, and employing a visual encoder model to predict $\textrm{sim}(s,o)$, once trained on empirical estimates of $\textrm{sim}(s,o)$ for a separate subset of our data. 
+In order for this sketcher to generate quantitative predictions, it needs to be able to compute the perceptual correspondence ($\textrm{sim}(s,o)$) for any sketch-object pair. 
+We approached this problem in two ways: by employing human responses on the sketch-object matching task as an empirical approximation to $\textrm{sim}(s,o)$ for every sketch in our dataset, and employing a visual encoder model to predict $\textrm{sim}(s,o)$, once trained on empirical estimates of $\textrm{sim}(s,o)$ for a separate subset of our data. 
 
 Informed by recent advances in computational vision \cite{FanCommon2018,yamins2014performance}, we instantiated the visual encoder as a deep convolutional neural network (DCNN). 
 This choice of model class is motivated by prior work showing that such networks, in addition to being a type of universal function approximator \cite{hornik1991approximation}, learn higher-layer feature representations that capture high-level perceptual information in drawings \cite{FanCommon2018}, capture perceptual judgments of object shape similarity \cite{kubilius2016deep}, and predict neural population responses in categories across the ventral visual stream \cite{yamins2014performance} when trained on challenging natural object recognition tasks \cite{deng2009imagenet}. 
@@ -251,15 +252,22 @@ Second, we replicated these lesion experiments after incorporating the visual en
 % A sketch's diagnosticity is defined by the natural log probability that an imagined viewer, $\mathcal{V}$, would select the target object given the sketch and all objects in context, $\ln \mathcal{V}(t|s,d)$. 
 % A sketch's cost is defined to be a monotonic function of the amount of time taken to produce it $C(s)$. 
 
-We hypothesized that a computational sketcher model that is sensitive to both context and cost would fit human sketch production behavior well, and outperform lesioned alternatives lacking either component.
-To evaluate this hypothesis, we compared three variants of the sketcher model characterized by their distinct definitions of the communicative utility of a sketch: one sensitive to both context and cost ($S_{2C}$), one that is \textit{not} sensitive to context but sensitive to cost ($S_{sim}$), and one that \textit{is} sensitive to context but \textit{not} sensitive to cost ($S_{nocost}$).
+We hypothesized that a \textit{pragmatic} computational sketcher model that is sensitive to both context and cost would provide a strong fit to human sketch production behavior, as well as outperform lesioned alternatives lacking either component.
+To test this hypothesis, we evaluated three model variants characterized by their distinct definitions of communicative utility: a pragmatic one sensitive to both context and cost ($S_{2C}$), one \textit{not} sensitive to context but sensitive to cost ($S_{sim}$), and one \textit{is} sensitive to context but \textit{not} sensitive to cost ($S_{nocost}$).
+In this set of model evaluations, we employed empirical estimates of the correspondence between sketches and objects, $\textrm{sim}(s,o)$, to compute sketch diagnosticity in context. 
+ 
 
-In this set of model evaluations, we employed empirical estimates of the correspondence between sketches and objects, $\textrm{sim}(s,o)$, to compute sketch diagnosticity in context. In this and subsequent model evaluations, we defined a sketch's cost, $C(s)$, to be a monotonic function of the amount of time taken to produce it.
+In this and subsequent model evaluations, we defined a sketch's cost, $C(s)$, to be a monotonic function of the amount of time taken to produce it.
 
-To generate predictions for each model, we employed Bayesian data analysis to infer a posterior distribution over their parameters (i.e., )
+Because the goal of our modeling experiments was to ascertain how well each model could modulate its behavior according to the context condition, and not necessarily to reproduce exactly the same sketch as a particular participant had on a specific trial, we aggregated sketches of the same object produced in the same context condition when estimating their key functional properties (i.e., perceptual correspondence, cost). Model predictions were generated to the same level of granularity, yielding a probability distribution over each of 64 categories of sketches, reflecting each combination of object-context conditions (e.g., `basset sketch produced in a close context'). 
 
+To generate predictions, first we employed Bayesian data analysis to infer a posterior distribution over the four latent scaling parameters applied to the informativity ($w_{i}$), cost ($w_{c}$), diagnosticity ($w_{d}$), and $\textrm{sim}(s,o)$ ($\alpha$) terms. 
 
-We found that the context and cost sensitive sketcher, $S_{2C}$, provided 
+Next, we presented the model with exactly the same set of contexts as were presented to human sketchers in the communication experiment, and evaluated the probabilities assigned to sketches from each object-context category, marginalizing over the joint posterior distribution over latent parameters. 
+
+We found that the pragmatic sketcher, $S_{2C}$, was the only of these three model variants to 
+
+provided a much stronger overall fit over the
 
  over the asocial speaker ($BF = XX; w_p = YY$, 95\% credible interval $= [X, Y]$) and the model including a cost term was strongly preferred over a cost-free variant ($BF = XX; w_c = YY$, 95\% credible interval $=[X, Y]$; see Fig. \ref{model_results}A).
 
@@ -494,11 +502,11 @@ Combining the two modules, we can define the sketcher, $\mathcal{S}$ to be a dec
 The utility function of our context-sensitive sketcher, $U_{S_1}$, trades off the extent to which a given sketch is informative to an imagined viewer, $\mathcal{V}$, with the cost of producing that sketch, $C(s)$. This notion of informativity is defined by the (natural log) probability that a viewer would select the true object given the sketch and all objects in context. In our experiments, the cost of a sketch is operationalized as the amount of time taken to produce it, though in principle other metrics could be used (e.g., the number of strokes, proportion of canvas filled).
 
 \begin{equation} \label{sketcher_utility}
-U_{S_1}(s, o) = w_p \ln \mathcal{V}(o|s) - w_c C(s)
+U_{S_1}(s, o) = w_i \ln \mathcal{V}(o|s) - w_c C(s)
 \end{equation}
-where $w_p$ and $w_c$ are latent parameters weighting the influences of the sketch's perceptual properties and cost, respectively.
+where $w_i$ and $w_c$ are latent parameters weighting the influences of the sketch's perceptual properties and cost, respectively.
 
-The viewer ($\mathcal{V}$) is assumed to decide between objects in context proportional to the perceptual correspondence between each object and the current sketch, $\textrm{sim}(s,o)$.
+The viewer ($\mathcal{V}$) is assumed to decide between objects in context proportional to the perceptual correspondence between each object and the current sketch, $\textrm{sim}(s,o)$, which is scaled by a latent parameter $\alpha$.
 
 \begin{equation} \label{literal_viewer_score}
 \mathcal{V}(o|s) \propto \exp\{\alpha \cdot \textrm{sim(s, o)}\}
