@@ -628,9 +628,6 @@ def generate_bootstrap_model_preds_dataframe(boot_files, out_dir='./bootstrap_re
     return X
 
 
-
-
-
 def plot_target_vs_foil_rank_by_object(P,split_type='balancedavg1'):
     '''
     What is the rank of the correct sketch category (correct object + correct context) 
