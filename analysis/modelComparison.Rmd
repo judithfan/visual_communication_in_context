@@ -9,8 +9,10 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 library(ggthemes)
+library(coda)
+library(xtable)
+
 # library(lme4)
-# library(stringr)
 # # Note: to install langcog, 
 # library(langcog)
 library(jsonlite)
@@ -24,17 +26,37 @@ sumlogprob <- function(a, b) {
 }
 ```
 
+# Load in all the flattened output
+
+```{r}
+splits <- c(1,3,4,5) # 2,
+# models <- c('human', 'multimodal_conv42', 'multimodal_fc6', 'multimodal_pool1')
+#variants <- 
+combined <- data.frame(perception = c(), infWeight = c(), simScaling = c(), 
+                       pragWeight = c(), costWeight = c(), logLikelihood = c(),
+                       split = c())
+for (split in splits) {
+  file <- paste0(c('balancedavg', split, '.csv'), collapse = '')
+  path <- paste0(c('..', 'models', 'enumerateOutput', file), collapse = '/')
+  combined <- rbind(combined, read_csv(path) %>% mutate(split = split))
+}
+```
+
 # Explore priors
 
 ```{r}
+comparison.df <- data.frame(comparison = c(), BF = c())
+```
+
+```{r}
 ## Noticed that for some reason, some files duplicated param levels so we use `distinct` to remove duplicates
-posterior = read_csv('./enumerateOutput.csv') %>%
+posterior = combined %>%
+  group_by(split) %>%
   distinct() %>% 
   mutate(logPriorProb = -log(length(loglikelihood))) %>%
   mutate(normalizingConstant = reduce(loglikelihood, sumlogprob)) %>%
   mutate(logPosteriorProb = loglikelihood - normalizingConstant) 
 
-str(posterior)
 ```
 
 Examine difference in perception model, collapsing over params
@@ -44,40 +66,57 @@ Examine difference in perception model, collapsing over params
 ```{r}
 ## First, restrict to human and normalize everything to sum to 1
 humanPosterior <- posterior %>%
+  group_by(split) %>%
   filter(perception == 'human') %>%
   mutate(logPosteriorProb = logPosteriorProb - reduce(logPosteriorProb, sumlogprob),
          logPriorProb = -log(length(logPriorProb))) #%>% summarize(a = reduce(logPriorProb, sumlogprob), b = reduce(logPosteriorProb, sumlogprob))
 
 ## Next, consider nested 'no pragmatics' model and integrate over nuisance params to get Bayes Factor
-humanPosterior %>%
-  filter(pragWeight == 0) %>%
-  summarize(posterior = reduce(logPosteriorProb, sumlogprob),
-            prior = reduce(logPriorProb, sumlogprob)) %>% 
-  mutate(BF = 1/exp(posterior - prior))
-
-## Next, consider nested 'no cost' model and integrate over nuisance params to get Bayes Factor=
-humanPosterior %>%
-  filter(costWeight == 0) %>%
-  summarize(posterior = reduce(logPosteriorProb, sumlogprob),
-            prior = reduce(logPriorProb, sumlogprob)) %>% 
-  mutate(BF = 1/exp(posterior - prior))
+comparison.df = rbind(
+  comparison.df, 
+  humanPosterior %>%
+    filter(pragWeight == 0) %>%
+    summarize(posterior = reduce(logPosteriorProb, sumlogprob),
+              prior = reduce(logPriorProb, sumlogprob)) %>% 
+    mutate(BF = log10(1/exp(posterior - prior))) %>%
+    select(-posterior, -prior) %>%
+    mutate(comparison = 'human_pragVSnoprag')
+)
 ```
 
-* Inside 3 vision models, compare vision models
+```{r}
+## Next, consider nested 'no cost' model and integrate over nuisance params to get Bayes Factor=
+comparison.df = rbind(
+  comparison.df, 
+  humanPosterior %>%
+    filter(costWeight == 0) %>%
+    summarize(posterior = reduce(logPosteriorProb, sumlogprob),
+              prior = reduce(logPriorProb, sumlogprob)) %>% 
+    mutate(BF = log10(1/exp(posterior - prior))) %>%
+    mutate(comparison = 'human_costVSnocost') %>%
+    select(-posterior, -prior)
+)
+```
+
+* compare three vision models
 
 ```{r}
 modelPosterior <- posterior %>%
+  group_by(split) %>%
   filter(perception != 'human') %>%
   mutate(logPosteriorProb = logPosteriorProb - reduce(logPosteriorProb, sumlogprob),
          logPriorProb = -log(length(logPriorProb))) #%>% summarize(a = reduce(logPriorProb, sumlogprob), b = reduce(logPosteriorProb, sumlogprob))
 
-modelPosterior %>%
-  group_by(perception) %>%
-  summarize(posterior = reduce(logPosteriorProb, sumlogprob)) %>% 
-  spread(perception, posterior) %>%
-  summarize(BF_fc6_conv42 = exp(multimodal_fc6 - multimodal_conv42),
-            BF_fc6_pool1  = exp(multimodal_fc6 - multimodal_pool1))
-
+comparison.df = rbind(
+  comparison.df, 
+  modelPosterior %>%
+    group_by(split, perception) %>%
+    summarize(posterior = reduce(logPosteriorProb, sumlogprob)) %>% 
+    spread(perception, posterior) %>%
+    summarize(fc6VSconv42 = log10(exp(multimodal_fc6 - multimodal_conv42)),
+              fc6VSpool1  = log10(exp(multimodal_fc6 - multimodal_pool1))) %>%
+    gather(comparison, BF, fc6VSconv42, fc6VSpool1)
+)
 ```
 
 * Within best vision model, test informativity & cost...
@@ -88,25 +127,65 @@ fc6Posterior <- posterior %>%
   mutate(logPosteriorProb = loglikelihood - reduce(loglikelihood, sumlogprob),
          logPriorProb = -log(length(logPriorProb))) #%>% summarize(a = reduce(logPriorProb, sumlogprob), b = reduce(logPosteriorProb, sumlogprob))
 
-fc6Posterior %>%
-  filter(pragWeight == 0) %>%
-  summarize(posterior = reduce(logPosteriorProb, sumlogprob),
-            prior = reduce(logPriorProb, sumlogprob)) %>% 
-  mutate(BF = 1/exp(posterior - prior))
+comparison.df = rbind(
+  comparison.df, 
+  fc6Posterior %>%
+    filter(pragWeight == 0) %>%
+    summarize(posterior = reduce(logPosteriorProb, sumlogprob),
+              prior = reduce(logPriorProb, sumlogprob)) %>% 
+    mutate(BF = log10(1/exp(posterior - prior))) %>%
+    select(-posterior, -prior) %>%
+    mutate(comparison = 'fc6_pragVSnoprag')
+)
+```
 
+```{r}
 ## Next, consider nested 'no cost' model and integrate over nuisance params to get Bayes Factor=
-fc6Posterior %>%
-  filter(costWeight == 0) %>%
-  summarize(posterior = reduce(logPosteriorProb, sumlogprob),
-            prior = reduce(logPriorProb, sumlogprob)) %>% 
-  mutate(BF = 1/exp(posterior - prior))
+comparison.df = rbind(
+  comparison.df, 
+  fc6Posterior %>%
+    filter(costWeight == 0) %>%
+    summarize(posterior = reduce(logPosteriorProb, sumlogprob),
+              prior = reduce(logPriorProb, sumlogprob)) %>% 
+    mutate(BF = log10(1/exp(posterior - prior))) %>%
+    select(-posterior, -prior) %>%
+    mutate(comparison = 'fc6_costVSnocost')
+)
+```
 
+Make table
+
+```{r}
+table <- comparison.df %>% 
+  group_by(comparison) %>% 
+  do(rbind(., data.frame(
+    split = 'median', 
+    BF = median(.$BF), 
+    comparison = first(.$comparison)
+  ))) %>% 
+  spread(comparison, BF) %>%
+  rename(`cost (fc6)` = fc6_costVSnocost,
+         `context (fc6)` = fc6_pragVSnoprag,
+         `cost (human)` = human_costVSnocost,
+         `context (human)` = human_pragVSnoprag,
+         `fc6 vs. conv42` = fc6VSconv42,
+         `fc6 vs. pool1` = fc6VSpool1) %>%
+  xtable() 
+
+names( table ) <- sapply(names(table), function(x) {
+  if(x == 'split') {
+    return('split') 
+  } else {
+    return (paste0(c('\\multicolumn{1}{p{0.35in}}{\\centering ', x, '}'),
+            collapse = ''))
+  }
+}, USE.NAMES = F)
+print(table, include.rownames=FALSE, sanitize.colnames.function=function(x){x})
 ```
 
 Visualize marginals w/ facet plot
 
 ```{r}
-library(coda)
 
 estimate_mode <- function(s) {
   d <- density(s)

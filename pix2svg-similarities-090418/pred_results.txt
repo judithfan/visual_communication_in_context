@@ -1,0 +1,104 @@
+------------------------------
+/mnt/visual_communication_dataset/trained_models_9_4_18//conv42/1/model_best.pth.tar
+------------------------------
+Object-level Accuracy: 0.259398
+Category-level Accuracy: 0.875940
+------------------------------
+
+------------------------------
+/mnt/visual_communication_dataset/trained_models_9_4_18//conv42/2/model_best.pth.tar
+------------------------------
+Object-level Accuracy: 0.263158
+Category-level Accuracy: 0.864662
+------------------------------
+
+------------------------------
+/mnt/visual_communication_dataset/trained_models_9_4_18//conv42/3/model_best.pth.tar
+------------------------------
+Object-level Accuracy: 0.259398
+Category-level Accuracy: 0.849624
+------------------------------
+
+------------------------------
+/mnt/visual_communication_dataset/trained_models_9_4_18//conv42/4/model_best.pth.tar
+------------------------------
+Object-level Accuracy: 0.263158
+Category-level Accuracy: 0.857143
+------------------------------
+
+------------------------------
+/mnt/visual_communication_dataset/trained_models_9_4_18//conv42/5/model_best.pth.tar
+------------------------------
+Object-level Accuracy: 0.285714
+Category-level Accuracy: 0.894737
+------------------------------
+
+------------------------------
+/mnt/visual_communication_dataset/trained_models_9_4_18//pool1/1/model_best.pth.tar
+------------------------------
+Object-level Accuracy: 0.127820
+Category-level Accuracy: 0.552632
+------------------------------
+
+------------------------------
+/mnt/visual_communication_dataset/trained_models_9_4_18//pool1/2/model_best.pth.tar
+------------------------------
+Object-level Accuracy: 0.127820
+Category-level Accuracy: 0.586466
+------------------------------
+
+------------------------------
+/mnt/visual_communication_dataset/trained_models_9_4_18//pool1/3/model_best.pth.tar
+------------------------------
+Object-level Accuracy: 0.112782
+Category-level Accuracy: 0.492481
+------------------------------
+
+------------------------------
+/mnt/visual_communication_dataset/trained_models_9_4_18//pool1/4/model_best.pth.tar
+------------------------------
+Object-level Accuracy: 0.112782
+Category-level Accuracy: 0.515038
+------------------------------
+
+------------------------------
+/mnt/visual_communication_dataset/trained_models_9_4_18//pool1/5/model_best.pth.tar
+------------------------------
+Object-level Accuracy: 0.101504
+Category-level Accuracy: 0.526316
+------------------------------
+
+------------------------------
+/mnt/visual_communication_dataset/trained_models_9_4_18//fc6/1/model_best.pth.tar
+------------------------------
+Object-level Accuracy: 0.454887
+Category-level Accuracy: 0.962406
+------------------------------
+
+------------------------------
+/mnt/visual_communication_dataset/trained_models_9_4_18//fc6/2/model_best.pth.tar
+------------------------------
+Object-level Accuracy: 0.477444
+Category-level Accuracy: 0.958647
+------------------------------
+
+------------------------------
+/mnt/visual_communication_dataset/trained_models_9_4_18//fc6/3/model_best.pth.tar
+------------------------------
+Object-level Accuracy: 0.454887
+Category-level Accuracy: 0.969925
+------------------------------
+
+------------------------------
+/mnt/visual_communication_dataset/trained_models_9_4_18//fc6/4/model_best.pth.tar
+------------------------------
+Object-level Accuracy: 0.466165
+Category-level Accuracy: 0.981203
+------------------------------
+
+------------------------------
+/mnt/visual_communication_dataset/trained_models_9_4_18//fc6/5/model_best.pth.tar
+------------------------------
+Object-level Accuracy: 0.488722
+Category-level Accuracy: 0.958647
+------------------------------
