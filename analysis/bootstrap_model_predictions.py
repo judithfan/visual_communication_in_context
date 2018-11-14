@@ -86,25 +86,53 @@ if __name__ == "__main__":
 
 	print 'Running bootstrap with {} trials, for variable "{}" for {} iterations...'.format(num_trials,var_of_interest,nIter)
 
+	# boot_vec = []
+	# for boot_iter in np.arange(nIter):
+	# 	if boot_iter%10==0:
+	# 		print 'Now on boot iteration {}'.format(boot_iter)
+	# 	boot_ind = np.random.RandomState(boot_iter).choice(np.arange(num_trials),size=num_trials,replace=True)    
+	# 	grouped = B.groupby('sample_ind')
+	# 	_boot_vec = []
+	# 	for name, group in grouped:
+	# 		## append subsetted boot_vec to temp _boot_vec vector that is built up across groups
+	# 		_boot_vec = np.hstack((_boot_vec,group[var_of_interest].values[boot_ind])) 
+		
+	# 	## add summary statistic to bootstrap vector
+	# 	if var_of_interest != 'sign_diff_rank':
+	# 		## compute boot sample mean, marginalizing over MCMC sample variability
+	# 		boot_vec.append(np.mean(_boot_vec))
+	# 	else:
+	# 		## if computing prop_congruent, get proportion congruent!
+	# 		prop_congruent = np.sum(_boot_vec)/len(_boot_vec)
+	# 		boot_vec.append(prop_congruent)
+
 	boot_vec = []
 	for boot_iter in np.arange(nIter):
 		if boot_iter%10==0:
 			print 'Now on boot iteration {}'.format(boot_iter)
 		boot_ind = np.random.RandomState(boot_iter).choice(np.arange(num_trials),size=num_trials,replace=True)    
 		grouped = B.groupby('sample_ind')
+		_close_boot_vec = []
+		_far_boot_vec = []
 		_boot_vec = []
 		for name, group in grouped:
 			## append subsetted boot_vec to temp _boot_vec vector that is built up across groups
-			_boot_vec = np.hstack((_boot_vec,group[var_of_interest].values[boot_ind])) 
-		
+			boot_vals = group[var_of_interest].values[boot_ind]
+			cond_vals = group['condition'].values[boot_ind]
+			close_vals = boot_vals[cond_vals=='closer']
+			far_vals = boot_vals[cond_vals=='further']
+			_close_boot_vec = np.hstack((_close_boot_vec,close_vals))
+			_far_boot_vec = np.hstack((_far_boot_vec,far_vals))
+			_boot_vec = np.hstack((_boot_vec,boot_vals))
+
 		## add summary statistic to bootstrap vector
-		if var_of_interest != 'sign_diff_rank':
-			## compute boot sample mean, marginalizing over MCMC sample variability
+		close_mean = np.mean(_close_boot_vec)
+		far_mean = np.mean(_far_boot_vec)    
+		## compute boot sample mean, marginalizing over MCMC sample variability        		 
+		if args.condition in ['closer','further']:
 			boot_vec.append(np.mean(_boot_vec))
 		else:
-			## if computing prop_congruent, get proportion congruent!
-			prop_congruent = np.sum(_boot_vec)/len(_boot_vec)
-			boot_vec.append(prop_congruent)
+			boot_vec.append(np.mean([close_mean,far_mean])) ## total probability, conditioning on context (alleviates bias due to imbalanced data across conditions)
 
 
 	## now save out boot_vec
