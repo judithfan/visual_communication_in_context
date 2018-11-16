@@ -940,8 +940,10 @@ def generate_aggregated_estimate_dataframe(B,
                 TRMS = TRM[(TRM['split_type']==this_split) & (TRM['condition']==this_condition)]
                 this_boot = TRMS.bootvec.values[0]
                 split_mu = np.mean(this_boot)
-                split_sd = np.std(this_boot)
+                split_sd = np.std(this_boot) 
                 split_var = np.var(this_boot)
+                if split_var == 0:
+                    split_var += 1e-6 ## add some epsilon if std == 0                        
                 agg_mu.append(split_mu)
                 agg_var.append(split_var)
 
