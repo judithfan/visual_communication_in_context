@@ -29,6 +29,7 @@ if __name__ == "__main__":
 
 	split_types = ['balancedavg1','balancedavg2','balancedavg3','balancedavg4','balancedavg5']
 
+        
 	model_space = ['human_combined_cost',
 		       'human_S0_cost',
 		       'human_combined_nocost',
@@ -38,10 +39,10 @@ if __name__ == "__main__":
 	               'multimodal_conv42_combined_cost',
 		       'multimodal_pool1_combined_cost']
         
-        #conditions = ['all','closer','further']
-        conditions = ['all']
+        conditions = ['all','closer','further']
+                
 	vois = ['target_rank','foil_rank','sign_diff_rank','cost']
-
+                
 	nIter = args.nIter
 
 	print 'Now running ...'
