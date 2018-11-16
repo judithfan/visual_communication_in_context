@@ -86,26 +86,6 @@ if __name__ == "__main__":
 
 	print 'Running bootstrap with {} trials, for variable "{}" for {} iterations...'.format(num_trials,var_of_interest,nIter)
 
-	# boot_vec = []
-	# for boot_iter in np.arange(nIter):
-	# 	if boot_iter%10==0:
-	# 		print 'Now on boot iteration {}'.format(boot_iter)
-	# 	boot_ind = np.random.RandomState(boot_iter).choice(np.arange(num_trials),size=num_trials,replace=True)    
-	# 	grouped = B.groupby('sample_ind')
-	# 	_boot_vec = []
-	# 	for name, group in grouped:
-	# 		## append subsetted boot_vec to temp _boot_vec vector that is built up across groups
-	# 		_boot_vec = np.hstack((_boot_vec,group[var_of_interest].values[boot_ind])) 
-		
-	# 	## add summary statistic to bootstrap vector
-	# 	if var_of_interest != 'sign_diff_rank':
-	# 		## compute boot sample mean, marginalizing over MCMC sample variability
-	# 		boot_vec.append(np.mean(_boot_vec))
-	# 	else:
-	# 		## if computing prop_congruent, get proportion congruent!
-	# 		prop_congruent = np.sum(_boot_vec)/len(_boot_vec)
-	# 		boot_vec.append(prop_congruent)
-
 	boot_vec = []
 	for boot_iter in np.arange(nIter):
 		if boot_iter%10==0:
