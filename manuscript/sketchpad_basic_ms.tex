@@ -303,6 +303,7 @@ split & \multicolumn{1}{p{0.35in}}{\centering cost (fc6)} & \multicolumn{1}{p{0.
 
 To generate these predictions, first we employed Bayesian data analysis to infer a posterior distribution over the four latent scaling parameters in the model, applied to the informativity ($w_{i}$), cost ($w_{c}$), diagnosticity ($w_{d}$), and correspondence ($\alpha$) terms. 
 Next, we presented each model with exactly the same set of contexts that were presented to human sketchers in the communication experiment, and evaluated the posterior predictive probabilities that each model assigned to sketches in every object-context category, marginalizing over the posterior distribution over latent parameters. 
+We conduct these evaluations on each of the test sets from the same five crossvalidation folds that were used to train and test the visual encoder (described in the next section), to permit direct comparison of these two sets of modeling results. 
 
 We found that the pragmatic sketcher, $S$, provided a much stronger overall fit to human behavior than the context-insensitive variant, $S_{sim}$ ($Bayes Factor (BF) = XX; w_d = YY$, 95\% credible interval $= [X, Y]$), and the cost-insensitive variant, $S_{nocost}$ ($BF = XX; w_c = YY$, 95\% credible interval $=[X, Y]$; see Table \ref{model_comparison}). 
 
@@ -326,14 +327,18 @@ Together, these results suggest that both context and cost sensitivity are criti
 
 \subsubsection*{Evaluating contribution of visual abstraction}
 
-% set up basic evaluation dimensions
 Having established the importance of pragmatic inference for explaining contextual flexibility during visual communication, we next sought to evaluate the contribution of visual abstraction. 
-To accomplish this, we incorporated a visual encoder into our computational model of the sketcher, instantiated as a deep convolutional neural network. 
+To accomplish this, we incorporated a visual encoder into our computational model of the sketcher, instantiated as a deep convolutional neural network (i.e., VGG-19). 
 Having an encoding model that operates directly on image inputs is important for a computational theory of visual communication because it allows our full model to generate predictions in novel contexts, without the need to collect new empirical estimates of sketch-object correspondence. 
 In particular, we hypothesized that generalization to novel communication contexts would be supported by a visual encoder that uses high-level features to predict sketch-object correspondences, rather than lower-level features from earlier or intermediate layers of the neural network. 
-To test this hypothesis, we compared three variants of the best-performing pragmatic sketcher model above that used visual features adapted from different layers of the neural network: high, middle, and low. 
+To test this hypothesis, we compared three variants of the best-performing pragmatic sketcher model above that used visual features adapted from different layers of the neural network: \textit{high}, \textit{middle}, and \textit{low}. 
 To assess how well our full model matched human behavior in the communication task, we again performed the same context and cost sensitivity lesion experiments as above with the best-performing encoder.
 
+
+
+How well did feature representations adapted from different layers of VGG-19 perform on the 
+
+perform in assigning a high rank to the target sketch category in context? Supporting our hypothesis that sketch-object perceptual correspondences provide a strong basis for modeling contextual flexibility, we found that directly using empirical measurements of perceptual sketch-object correspondences led to the best overall sketch retrieval performance (Human-Context-Cost: X.XX, Human-NoContext-Cost: X.XX, Human-Context-NoCost: X.XX). Relative to this benchmark, we found that visual encoder modules using higher-level features generally succeeded in assigning a high score to the congruent sketch category, as measured by the rank of the target sketch category (High-Context-Cost: X.XX, Mid-Context-Cost: X.XX), whereas using low-level features adapted from an early layer of the convnet yielded poor performance (Low-Context-Cost: X.XX).
 
 
 % Next, to test the influence of perceptual representations, we compared our empirically measured similarity values with three alternative similarity functions lightly adapted from different layers of a convolutional neural network (see \emph{Materials and Methods}, Eq. 1) \mwu{maybe mention why we want to try different layers}. Critically, because these are \emph{encoding} models that take raw visual input, they can generalize to entirely novel sketches. One of the most striking aspects of visual communication is the human ability to recognize an object from a handful of strokes, even though the respective images have little to no overlap in low-level visual features. Motivated by prior work \cite{FanCommon2018}, we hypothesized that performance in visual communication would improve as we ascend the layers of a visual encoding model \mwu{a sentence talking about how visual encoding change in VGG might help build intuition.}. We augmented a pre-trained \mwu{what does pre-training mean -- define} deep convolutional neural network architecture with a shallow \emph{adaptor} network that was trained on the data from our matching task and learned to evaluate the perceptual correspondence between drawings and photos.
@@ -349,12 +354,12 @@ To assess how well our full model matched human behavior in the communication ta
 % BF evidence for pragmatics (within fc6): 7.1 x 10^34
 % BF evidence for *cost* (within fc6): 48.6
 
-\subsubsection*{Evaluating model predictions}
+% \subsubsection*{Evaluating model predictions}
 
 % set up basic evaluation dimensions
-Having established the contributions of visual abstraction, context sensitivity, and cost sensitivity to the ability of the full model generalize to unseen contexts and sketches, we sought to gain deeper insight into the model's pattern of behavior in the communication task. 
+% Having established the contributions of visual abstraction, context sensitivity, and cost sensitivity to the ability of the full model generalize to unseen contexts and sketches, we sought to gain deeper insight into the model's pattern of behavior in the communication task. 
 
-Here we compare how well the full model, and its lesioned variants, on three task dimensions: (1) sketch retrieval: the ability to assign a high absolute rank to the target sketch category in context, selecting among all objects and context categories; (2) context congruity: the ability to consistently prefer the context-congruent version of the target object (i.e., a close sketch of the target on a close trial); (3) cost modulation: a consistent preference for more costly sketches on close trials and less costly sketches on far trials, mirroring human behavior.
+% Here we compare how well the full model, and its lesioned variants, on three task dimensions: (1) sketch retrieval: the ability to assign a high absolute rank to the target sketch category in context, selecting among all objects and context categories; (2) context congruity: the ability to consistently prefer the context-congruent version of the target object (i.e., a close sketch of the target on a close trial); (3) cost modulation: a consistent preference for more costly sketches on close trials and less costly sketches on far trials, mirroring human behavior.
 
 %% report absolute rank performance
 
