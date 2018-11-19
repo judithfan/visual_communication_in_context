@@ -490,7 +490,7 @@ The high adaptor is composed of a linear layer that maps from $\mathbb{R}^{8192}
 
 When appying the mid-level visual encoder, two mid-level feature representations are intercepted from an intermediate layer (i.e., the 10th convolutional layer, $conv4_2$).
 Features from the 10th convolutional layer of VGG are $512 x 28 x 28$.
-We first ``flatten" the input into a one dimensional vector in $\mathbb{R}^{512}$ using a weighted linear combination $\sum_{i=1}^{28}\sum_{j=1}^{28} w_{ij} * x_{ij}$, where $x_{ij}$ indexes a location in the spatial representation at this layer. 
+We first ``flatten" the input into a one dimensional vector in $\mathbb{R}^{512}$ using a weighted linear combination over the spatial dimension $\sum_{i=1}^{28}\sum_{j=1}^{28} w_{ij} * x_{ij}$, where $x_{ij}$ indexes a spatial location in the image representation at this layer. 
 The weight parameters  $\{w_{ij}|1\leq i,j \leq 28\}$ are learned jointly with the parameters of mid adaptor, and are separately learned for the sketch and object modalities. 
 % Intuitively, this is akin to attention over the spatial features of the 10th convolutional layer of VGG. 
 % The weights used to ``flatten''  3D-object and sketch spatial features, creating two vectors of size 512, then concatenate prior to mid-adaptor.
@@ -499,10 +499,12 @@ The mid adaptor consists of a linear layer that maps from $\mathbb{R}^{1024} \ri
 Although the hidden layer size (i.e., 1021 units) seems peculiar, this was the most suitable choice to ensure that the total number of learnable parameters for this adaptor was as similar to the high adaptor as possible. 
 
 The architecture of the low adaptor is almost identical to that of the mid adaptor, except VGG features are intercepted at the first max pooling layer (i.e., $pool1$).
-Features in this layer are $64 x 112 x 112$. 
-Explicitly, this network starts with a linear layer of 4096 to 7875 (like the mid-adaptor, 7875 is chosen to match the number of parameters), swish, dropout, then a linear layer form 7875 to 1. Due to the input size, each attention module in early-adaptor has 12,544 learnable weights.
+Features in this layer are $64 x 112 x 112$. As above, a weighted sum of model activations over the $112 x 112$ spatial features is applied, yielding one vector in $\mathbb{R}^{64}$ each for the sketch and object, which are then concatenated. 
+The low adaptor maps from $\mathbb{R}^{128} \rightarrow \mathbb{R}^{7875}$, followed by the same Swish nonlinearity, dropout, and another linear layer that maps from $\mathbb{R}^{7875} \rightarrow \mathbb{R}^{1}$. As above, the hidden layer size was chosen such that the total number of learnable parameters were comparable to those in the other adaptors. 
 
-\subsubsection{Sketch data preprocessing.} We filter the sketch dataset used to train each adaptor network to include only sketches that were correctly identified during the communication task (6.2\% incorrect) and were compliant with task instructions by not including `drawn' text annotations (4.4\% non-compliant). This filtered sketch dataset was then split into training, validation, and test sets in a 80\%, 10\%, and 10\% ratio, and this split was performed in a 5-fold cross-validated manner. Splits were based on context, defined as the set containing a specific target object and three distractor objects, such that no context appeared both in the training and test splits of any cross-validation fold. Specifically, we ensured that: (1) the number of sketches from each category (i.e. car) and (2) the proportion of sketches from close and far trials were equated across splits. This was done to mitigate biases in accuracy due to imbalances in the training or test set.
+% Explicitly, this network starts with a linear layer that maps  128 to 7875 (like the mid-adaptor, 7875 is chosen to match the number of parameters), swish, dropout, then a linear layer form 7875 to 1. Due to the input size, each attention module in early-adaptor has 12,544 learnable weights.
+
+\subsubsection*{Sketch data preprocessing} We filter the sketch dataset used to train each adaptor network to include only sketches that were correctly identified during the communication task (6.2\% incorrect) and were compliant with task instructions by not including `drawn' text annotations (4.4\% non-compliant). This filtered sketch dataset was then split into training, validation, and test sets in a 80\%, 10\%, and 10\% ratio, and this split was performed in a 5-fold cross-validated manner. Splits were based on context, defined as the set containing a specific target object and three distractor objects, such that no context appeared both in the training and test splits of any cross-validation fold. Specifically, we ensured that: (1) the number of sketches from each category (i.e. car) and (2) the proportion of sketches from close and far trials were equated across splits. This was done to mitigate biases in accuracy due to imbalances in the training or test set.
 
 % \todo{clarification: equating number of `car' instances or number of `bluesport' instances within `car' category?} 
 
@@ -515,7 +517,7 @@ Explicitly, this network starts with a linear layer of 4096 to 7875 (like the mi
 % \label{fig:adaptor_training}
 % \end{figure}
 
-\paragraph{Adaptor network training procedure.}
+\subsubsection*{Adaptor network training procedure}
 % We now describe the training procedure for each visual encoder. 
 Each adaptor network accepts a sketch-object pair as input and returns a real number as output, reflecting their perceptual correspondence. 
 We construct a similarity vector of size 32 between a sketch and each object in the domain $\mathcal{I}$ (32 total), and apply a softmax on top to induce a probability distribution over objects. We define a loss function, $\mathcal{L}$, as the cross entropy loss between the induced distribution, $q$ and a empirical distribution of human recognition responses, $p$:
