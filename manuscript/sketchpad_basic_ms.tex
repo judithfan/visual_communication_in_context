@@ -443,7 +443,40 @@ To obtain robust estimates of sketch-object perceptual correspondences, each ske
 % To test this proposal, we developed a computational model of the sketcher that embodied both visual abstraction and pragmatic inference, and was instantiated as a probabilistic program ``wrapped'' around a deep convolutional neural network. 
 % Constructing such a model allowed us to evaluate the contribution of each component using formal model comparison, as well as quantitatively characterize the model's behavior in novel contexts. 
 
-\subsubsection*{Visual encoder architecture and training}
+\subsubsection*{Sketch data preprocessing} 
+For our modeling experiments, we first filter the sketch dataset to retain only sketches that were correctly identified by the viewer during the communication task (6.2\% incorrect) and were compliant with task instructions by not including `drawn' text annotations (4.4\% non-compliant). 
+% This was done in order to evaluate the  
+This filtered sketch dataset was then split into training, validation, and test sets in a 80\%, 10\%, and 10\% ratio, and this split was performed in a 5-fold cross-validated manner.
+Splits were based on context, defined as the set containing a specific target object and three distractor objects, such that no context appeared both in the training and test splits of any cross-validation fold. 
+Specifically, we ensured that: (1) the number of sketches from each category (i.e. car) and (2) the proportion of sketches from close and far trials were equated across splits. 
+This was done to mitigate biases in accuracy due to imbalances in the training or test set.
+
+\subsubsection*{Deriving empirical estimates of perceptual correspondence between sketches and objects}
+
+% We evaluate our model using both empirical and model-based approaches to measuring perceptual correspondence. 
+In the recognition experiment, most sketches were not matched exclusively to a single object, but to several. 
+These sketches can thus be thought of having some nonzero degree of perceptual correspondence to the several objects it was matched to at least once, as opposed to only having some correspondence to the modal object. 
+We define 
+
+For each sketch and context in a test set, the empirical perceptual correspondence between the sketch and a given object in context is defined as the proportion of recognition task trials on which all sketches from the same object-context category were matched to this object out of context. 
+As such, all correspondence scores lie in the range $[0,1]$ and sum to 1 for sketches in the same object-context category:
+
+$$\sum_{n=1}^{32} \textrm{corr} (s,o_{n}) = 1 $$,
+
+where $n$ represents the $nth$ object in the stimulus set. $s$ refers to sketches from the same object-context category (i.e., depict object $o$ in context $c$, which can be either close or far). Because recognition responses are aggregated across all sketches within the same object-context category to compute the proportions above, this yields 32 sketch categories x 32 objects x 2 contexts = 2048 empirical perceptual correspondence scores in total.
+
+Model-based perceptual correspondence scores are defined to the same level of granularity, with all sketches from the same object-context category sharing the same perceptual correspondence to a particular object, under a particular choice of visual encoder module (i.e., vgg-high, vgg-mid, vgg-low).
+
+To compute this score for a visual encoder variant and object, each test-set sketch from a given object-context category is passed in with this object to the visual encoder module, yielding a single image-level correspondence score lying in the range $[0,1]$. These image-level correspondence scores are then averaged across all sketches belonging to the same object-context category, yielding 32 objects x 32 sketches x 2 contexts  = 2048 model-based perceptual correspondence scores for each visual encoder module.
+
+\subsubsection*{Deriving empirical estimates of sketch costs}
+
+% While we are presently agnostic to the underlying representation of sketch cost used by participants, we assumed the cost of each sketch to be proportional to the amount of time taken by the participant to produce it during the communication task. 
+We reasoned that drawing time would be a natural proxy for the cost incurred by workers on Amazon Mechanical Turk, who increase their total compensation by completing tasks in a timely manner. 
+However, as there were no absolute constraints on the amount of time that could be spent on each trial, there was considerable variability across different participants in terms of how much time they spent producing their sketches. 
+To control for this variability across participants and to ensure robust estimates, we first removed outliers (draw times exceeding 5 s.d. from the mean), then z-score normalized drawing times across all remaining trials within a participant, and finally averaged these normalized draw times across sketches within the same object-context category as above, yielding 32 objects x 2 contexts = 64 empirical cost estimates in total.
+
+\subsubsection*{Visual encoder architecture}
 
 % \mwu{this section is a huge brain dump - need more sentences to tie paragraphs together.}
 
@@ -504,8 +537,6 @@ The low adaptor maps from $\mathbb{R}^{128} \rightarrow \mathbb{R}^{7875}$, foll
 
 % Explicitly, this network starts with a linear layer that maps  128 to 7875 (like the mid-adaptor, 7875 is chosen to match the number of parameters), swish, dropout, then a linear layer form 7875 to 1. Due to the input size, each attention module in early-adaptor has 12,544 learnable weights.
 
-\subsubsection*{Sketch data preprocessing} We filter the sketch dataset used to train each adaptor network to include only sketches that were correctly identified during the communication task (6.2\% incorrect) and were compliant with task instructions by not including `drawn' text annotations (4.4\% non-compliant). This filtered sketch dataset was then split into training, validation, and test sets in a 80\%, 10\%, and 10\% ratio, and this split was performed in a 5-fold cross-validated manner. Splits were based on context, defined as the set containing a specific target object and three distractor objects, such that no context appeared both in the training and test splits of any cross-validation fold. Specifically, we ensured that: (1) the number of sketches from each category (i.e. car) and (2) the proportion of sketches from close and far trials were equated across splits. This was done to mitigate biases in accuracy due to imbalances in the training or test set.
-
 % \todo{clarification: equating number of `car' instances or number of `bluesport' instances within `car' category?} 
 
 % In the visual communication dataset, there is a close context and a far context. The former includes 4 objects of the same category (i.e. 3 distractor cars and 1 target car) whereas the latter includes 4 objects of different categories (i.e. a target car and a dog, chair, and bird as distractors).
@@ -517,10 +548,17 @@ The low adaptor maps from $\mathbb{R}^{128} \rightarrow \mathbb{R}^{7875}$, foll
 % \label{fig:adaptor_training}
 % \end{figure}
 
-\subsubsection*{Adaptor network training procedure}
+\subsubsection*{Visual encoder training}
 % We now describe the training procedure for each visual encoder. 
+
+
+We train each adaptor network to predict, for each sketch, a 32-dimensional vector that captures the \textit{pattern} of perceptual correspondences between that sketch and all 32 objects. 
+
+
 Each adaptor network accepts a sketch-object pair as input and returns a real number as output, reflecting their perceptual correspondence. 
-We construct a similarity vector of size 32 between a sketch and each object in the domain $\mathcal{I}$ (32 total), and apply a softmax on top to induce a probability distribution over objects. We define a loss function, $\mathcal{L}$, as the cross entropy loss between the induced distribution, $q$ and a empirical distribution of human recognition responses, $p$:
+We construct a similarity vector of size 32 between a sketch and each object in the domain $\mathcal{I}$ (32 total), and apply a softmax on top to induce a probability distribution over objects.
+
+ We define a loss function, $\mathcal{L}$, as the cross entropy loss between the induced distribution, $q$ and a empirical distribution of human recognition responses, $p$:
 
 \begin{equation}
     \mathcal{L} = \sum_{x \in \mathcal{I}} p(x)\log q(x)
@@ -529,7 +567,9 @@ We construct a similarity vector of size 32 between a sketch and each object in 
 
 The empirical response distribution was derived by computing the proportion of trials from the recognition experiment on which all sketches from the same context-object category (e.g., all sparrow sketches produced on close trials) was matched with each object. As a consequence, this response distribution not only provides an estimate of the strength of the match between a sketch and its corresponding object, but also the pattern of confusions that human observers exhibit, thus creating a more detailed profile of recognition behavior for each adaptor to match.
 
-We use the Adam optimization algorithm \cite[]{kingma2014adam} with a learning rate of 1e-4 and minibatch size of 10 for 100 epochs, where an epoch is a full pass through the training set. As a property of the input domain, the gradients with respect to adaptor parameters are very small (1.51e-4 $\pm$ 2.61e-4), inevitably resulting in poor learning (we can reproduce this effect from several intializations). We find that naively increasing the learning rate led to unstable optimization, but that multiplying the loss by a large constant $C$ leads to a much smoother learning trajectories and good test generalization\footnote{Increasing the learning rate and multiplying the loss by a constant are not equivalent for second moment gradient methods.}. In practice, $C =$ 1e4. After training each adaptor for 100 epochs, we freeze the model with the best performance on a validation set. For each 3D object and sketch pair in the test set, we evaluate the perceptual correspondence and provide this as input to the social inference module, described next.
+We use the Adam optimization algorithm \cite[]{kingma2014adam} (learning rate = $1e-4$) over minibatches of size 10 for 100 epochs, where an epoch is a full pass through the training set. 
+
+As a property of the input domain, the gradients with respect to adaptor parameters are very small (1.51e-4 $\pm$ 2.61e-4), inevitably resulting in poor learning (we can reproduce this effect from several intializations). We find that naively increasing the learning rate led to unstable optimization, but that multiplying the loss by a large constant $C$ leads to a much smoother learning trajectories and good test generalization\footnote{Increasing the learning rate and multiplying the loss by a constant are not equivalent for second moment gradient methods.}. In practice, $C =$ 1e4. After training each adaptor for 100 epochs, we freeze the model with the best performance on a validation set. For each 3D object and sketch pair in the test set, we evaluate the perceptual correspondence and provide this as input to the social inference module, described next.
 
 % \mwu{We split the datasets of images and sketches into three groups: a training set, a validation set, and a test set. Post training, we use the parameters from the epoch with the highest validation accuracy i.e. early stopping ADD CITATION. During training, the model never sees any test data.}
 
@@ -576,20 +616,6 @@ We use the Adam optimization algorithm \cite[]{kingma2014adam} with a learning r
 
 % Each communication task trial is defined by a context containing four objects and a sketch. There are two attributes of each trial that are required for any variant of our model to be able to generate predictions given a context: (1) the perceptual correspondence between the sketch to each object in context and (2) the cost of producing the sketch.
 
-
-\subsubsection*{Deriving empirical estimates of perceptual correspondence between sketches and objects}
-
-We evaluate our model using both empirical and model-based approaches to measuring perceptual correspondence. For each sketch and context in a test set, the empirical perceptual correspondence between the sketch and a given object in context is defined as the proportion of recognition task trials on which all sketches from the same object-context category were matched to this object out of context. As such, all correspondence scores lie in the range $[0,1]$ and sum to 1 for sketches in the same object-context category:
-
-$$\sum_{n=1}^{32} \textrm{corr} (s,o_{n}) = 1 $$,
-
-where $n$ represents the $nth$ object in the stimulus set. $s$ refers to sketches from the same object-context category (i.e., depict object $o$ in context $c$, which can be either close or far). Because recognition responses are aggregated across all sketches within the same object-context category to compute the proportions above, this yields 32 sketch categories x 32 objects x 2 contexts = 2048 empirical perceptual correspondence scores in total.
-
-Model-based perceptual correspondence scores are defined to the same level of granularity, with all sketches from the same object-context category sharing the same perceptual correspondence to a particular object, under a particular choice of visual encoder module (i.e., vgg-high, vgg-mid, vgg-low).
-
-To compute this score for a visual encoder variant and object, each test-set sketch from a given object-context category is passed in with this object to the visual encoder module, yielding a single image-level correspondence score lying in the range $[0,1]$. These image-level correspondence scores are then averaged across all sketches belonging to the same object-context category, yielding 32 objects x 32 sketches x 2 contexts  = 2048 model-based perceptual correspondence scores for each visual encoder module.
-
-We measured the cost of each sketch empirically as the amount of time taken by the participant to produce it during the communication task. We reasoned that drawing time would be both a natural and straightforward way of measuring the cost of sketching for workers on Amazon Mechanical Turk, who increase their total compensation by completing tasks in a timely manner. However, as there were no absolute constraints on the amount of time that could be spent on each trial, there was considerable variability across different participants in terms of how much time they spent producing their sketches. To control for this variability across participants and to ensure robust estimates, we first removed outliers (draw times exceeding 5 s.d. from the mean), then z-score normalized drawing times across all remaining trials within a participant, and finally averaged these normalized draw times across sketches within the same object-context category as above, yielding 32 objects x 2 contexts = 64 empirical cost estimates in total.
 
 \subsubsection*{Model comparison}
 
