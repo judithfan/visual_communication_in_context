@@ -273,7 +273,8 @@ This encoder consists of two functional components: a base visual encoder networ
 We employ VGG-19 pretrained to recognize objects from the Imagenet database as our base visual encoder, whose parameters remain frozen \cite{simonyan2014very}. 
 We then augment the pretrained feature representation in a higher layer of VGG-19 (i.e., the first fully-connected layer) with a shallow adaptor network, which is trained to predict the perceptual correspondence between specific sketch-object pairs. 
 We train an adaptor network because while prior work has shown that the representation of object \textit{categories} converges for sketches and photos at higher layers in DCNN models trained only on photos \cite{FanCommon2018}, additional supervision can substantially improve the accuracy of predictions involving comparisons between sketches and photos at the \textit{image} level \cite{sangkloy2016sketchy}. 
-Consistent with prior work \cite{kubilius2016deep,FanCommon2018}, we hypothesized that higher layers of these networks would provide a more transferable visual feature basis for modeling human-like visual abstraction in this task, relative to the lower-level image statistics represented in earlier layers.
+% Consistent with prior work \cite{kubilius2016deep,FanCommon2018}, 
+To explore the degree to which the \textit{visual abstraction} afforded by the complex transformations applied by successive layers of VGG-19 are required to capture human behavior during visual communication, we hypothesized that higher layers of these networks would provide a more transferable visual feature basis for modeling human-like visual abstraction in this task, relative to the lower-level image statistics represented in earlier layers.
 
 % Motivated by other prior work suggesting that higher-level visual features provide a better fit to human perceptual judgments than features from earlier layers \cite{kubilius2016deep}, we hypothesized that generalization to novel communication contexts would be supported by a visual encoder that uses high-level features to predict sketch-object correspondences, rather than lower-level features from earlier or intermediate layers of the neural network.
 
@@ -449,39 +450,49 @@ To obtain robust estimates of sketch-object perceptual correspondences, each ske
 % To test this proposal, we developed a computational model of the sketcher that embodied both visual abstraction and pragmatic inference, and was instantiated as a probabilistic program ``wrapped'' around a deep convolutional neural network. 
 % Constructing such a model allowed us to evaluate the contribution of each component using formal model comparison, as well as quantitatively characterize the model's behavior in novel contexts. 
 
-\subsubsection*{Visual encoder}
+\subsubsection*{Visual encoder architecture and training}
 
 % \mwu{this section is a huge brain dump - need more sentences to tie paragraphs together.}
 
-The visual encoder is a function that accepts a pair of images, a sketch and an object rendering (both 224 x 224 RGB images), as input and returns a scalar value in the range $[0,1]$, reflecting the degree of perceptual correspondence between the sketch and object. This module consists of two components: a base visual encoder and an adaptor network.
+The visual encoder is a function that accepts a pair of images, a sketch and an object rendering (both 224 x 224 RGB images), as input and returns a scalar value in the range $[0,1]$, reflecting the degree of perceptual correspondence between the sketch and object. 
 
-We employ VGG-19 \cite{simonyan2014very} as our base visual encoder, a high-performing and widely used deep convolutional neural network architecture. This network had been pretrained to categorize objects on the ImageNet database, which contains millions of photographs from hundreds of object categories \cite{deng2009imagenet}. Despite the fact that drawings are highly abstracted away from natural visual inputs, prior work has shown a striking isomorphism in the similarity structure \cite{kriegeskorte2008matching} of object categories in sketches and photos at higher layers in these models \cite{FanCommon2018}, without any additional training. While these deep nets excel at (and were indeed optimized for) categorization of objects, two additional competencies are required to succeed at the visual communication task described above. First, an observer must be able to represent fine-grained differences between different images of objects from the same category; second, this observer must also be able to discern image-level correspondences between sketches and photos of the same object.\mwu{maybe we can say: image-level differences are easy -- we can use VGG off the shelf. To dscern fine-grain detail, we need an adaptor.}
+The encoder consists of two components: a base visual encoder and an adaptor network. We employ VGG-19 \cite{simonyan2014very} as our base visual encoder architecture, which had been pretrained to categorize objects on the ImageNet database, and whose parameters remain frozen \cite{deng2009imagenet}.
+%, a high-performing and widely used deep convolutional neural network architecture. 
+% This network had been pretrained to categorize objects on the ImageNet database, which contains millions of photographs from hundreds of object categories \cite{deng2009imagenet}. 
+% Despite the fact that drawings are highly abstracted away from natural visual inputs, prior work has shown a striking isomorphism in the similarity structure \cite{kriegeskorte2008matching} of object categories in sketches and photos at higher layers in these models \cite{FanCommon2018}, without any additional training. 
+% While these deep nets excel at (and were indeed optimized for) categorization of objects, two additional competencies are required to succeed at the visual communication task described above. 
+% First, an observer must be able to represent fine-grained differences between different images of objects from the same category; second, this observer must also be able to discern image-level correspondences between sketches and photos of the same object.
+% \mwu{maybe we can say: image-level differences are easy -- we can use VGG off the shelf. To dscern fine-grain detail, we need an adaptor.}
+We augment VGG-19 with a shallow fully-connected \textit{adaptor} network that is trained to adapt the generic visual feature representation computed by VGG-19 to predict the perceptual correspondence between individual sketches and objects. 
+Here only the parameters of this adaptor network are trained and we do not finetune the base visual encoder. 
+% This approach has been successfully used in prior work to better predict human semantic categorization judgments \cite[]{peterson2016adapting}, and to improve sketch-based photo retrieval \cite[]{sangkloy2016sketchy}.
+% To explore the degree to which the \textit{visual abstraction} afforded by the complex transformations applied by successive layers of VGG-19 are required to capture human behavior during visual communication, 
+We compare three adaptor networks that intercept VGG-19 image representations at different layers: the first max pooling layer (early), the tenth convolutional layer (mid), and the first fully connected layer (high). 
+% \mwu{add something about early being edges, high being object recognition masks, etc.} 
+To facilitate comparison between adaptor networks, we ensured that each of the three contain a comparable number of trainable parameters (Table~\ref{table:parameters}) with identical training hyperparameters (learing rate, batch size, etc.). 
+To discriminate which layer provides the best starting feature basis for predicting sketch-object correspondence, these adaptor networks were also deliberately constrained to be shallow, i.e., consisting only of two linear layers with an intervening point-wise nonlinearity.
 
-In order to better approximate the granularity with which human observers can distinguish different images, we augment VGG-19 with a shallow fully-connected \textit{adaptor} network that is trained to adapt the generic visual feature representation computed by VGG-19 to predict the perceptual correspondence between individual sketches and objects. Here only the parameters of this adaptor network are trained and we do not finetune the base visual encoder. This approach has been successfully used in prior work to better predict human semantic categorization judgments \cite[]{peterson2016adapting}, and to improve sketch-based photo retrieval \cite[]{sangkloy2016sketchy}.
-
-To explore the degree to which the \textit{visual abstraction} afforded by the complex transformations applied by successive layers of VGG-19 are required to capture human behavior during visual communication, we train three adaptor networks that intercept VGG-19 image representations at different layers: the first max pooling layer (early), the tenth convolutional layer (mid), and the first fully connected layer (high). \mwu{add something about early being edges, high being object recognition masks, etc.} To facilitate comparison between adaptor networks, we ensured that each of the three contain a comparable number of trainable parameters (Table~\ref{table:parameters}) with identical training hyperparameters (learing rate, batch size, etc.). To discriminate which layer provides the best starting feature basis for predicting sketch-object correspondence, these adaptor networks were also deliberately constrained to be shallow, i.e., consisting only of two linear layers with an intervening point-wise nonlinearity.
-
-In the following, we provide a detailed description of the architecture and hyperparameter choices for each adaptor. We refer to the respective adaptor network as: \textit{early-adaptor}, \textit{mid-adaptor}, and \textit{high-adaptor}.
+% In the following, we provide a detailed description of the architecture and hyperparameter choices for each adaptor. We refer to the respective adaptor network as: \textit{early-adaptor}, \textit{mid-adaptor}, and \textit{high-adaptor}.
 
 \begin{table}
 \centering
 \begin{tabular}{| l | c |}
 \hline
-Model & Parameters \\
+adaptor & parameters \\
 \hline
 \hline
-early-adaptor & 1048839 \\
+low & 1048839 \\
 \hline
-mid-adaptor & 1049115 \\
+mid & 1049115 \\
 \hline
-high-adaptor & 1048833 \\
+high & 1048833 \\
 \hline
 \end{tabular}
-\caption{Number of parameters in the visual encoder modules.}
+\caption{Number of parameters in each adaptor network variant.}
 \label{table:parameters}
 \end{table}
 
-Two 4096-dimensional feature vectors are extracted for the sketch and object from the first fully-connected layer ($fc6$) of VGG-19. These two vectors are then concatenated to form a single 8192-dimensional vector, to be passed into the high-adaptor network. The high-adaptor architecture is composed of a linear layer from 8192 to 128, followed by a ``swish'' nonlinearity \footnote{Swish is a recent nonlinearity found via reinforcement learning-based search shown to work better than ReLU for deep models on a suite of tasks.} \cite[]{ramachandran2018searching} and dropout, then another linear layer from 128 to 1.
+Two feature vectors in $\mathbb{R}^{4096}$ are extracted for the sketch and object from a higher layer of VGG-19 (i.e., the first fully-connected layer, also known as $fc6$). These two vectors are then concatenated to form a single vector in $\mathbb{R}^{8192}$, to be passed into the high-adaptor network. The high-adaptor architecture is composed of a linear layer that maps from $\mathbb{R}^{8192} \rightarrow \mathbb{R}^{128}$, followed by a ``Swish'' nonlinearity \footnote{Swish is a recent nonlinearity found via reinforcement learning-based search to outperform the rectified linear nonlinearity (ReLU) for deep models on a suite of tasks.} \cite[]{ramachandran2018searching} and dropout, then another linear layer that maps from $\mathbb{R}^{128} \rightarrow \mathbb{R}^{1}$.
 
 In practice, we find the ability of the model to fit the data is robust to the choice of nonlinearity (alternative nonlinearities were TanH and ReLU) and size of hidden layer, within the range $(2^{7},2^{9})$).
 
@@ -489,7 +500,9 @@ Similarly, the mid-adaptor consists of a linear layer of 1024 to 1021, swish, dr
 
 Finally, the early-adaptor is almost identical to the mid-adaptor, except each feature is of size 64 by 112 by 112. Explicitly, this network starts with a linear layer of 4096 to 7875 (like the mid-adaptor, 7875 is chosen to match the number of parameters), swish, dropout, then a linear layer form 7875 to 1. Due to the input size, each attention module in early-adaptor has 12,544 learnable weights.
 
-\paragraph{Sketch data preprocessing.} We filter the sketch dataset used to train each adaptor network to include only sketches that were correctly identified during the communication task (6.2\% incorrect) and were compliant with task instructions by not including `drawn' text annotations (4.4\% non-compliant). This filtered sketch dataset was then split into training, validation, and test sets in a 80\%, 10\%, and 10\% ratio, and this split was performed in a 5-fold cross-validated manner. Splits were based on context, defined as the set containing a specific target object and three distractor objects, such that no context appeared both in the training and test splits of any cross-validation fold. Specifically, we ensured that: (1) the number of sketches from each category (i.e. car) and \todo{clarification: equating number of `car' instances or number of `bluesport' instances within `car' category?} (2) the number of sketches from close and far trials were equated across splits. This was done to mitigate biases in accuracy due to imbalances in the training or test set.
+\paragraph{Sketch data preprocessing.} We filter the sketch dataset used to train each adaptor network to include only sketches that were correctly identified during the communication task (6.2\% incorrect) and were compliant with task instructions by not including `drawn' text annotations (4.4\% non-compliant). This filtered sketch dataset was then split into training, validation, and test sets in a 80\%, 10\%, and 10\% ratio, and this split was performed in a 5-fold cross-validated manner. Splits were based on context, defined as the set containing a specific target object and three distractor objects, such that no context appeared both in the training and test splits of any cross-validation fold. Specifically, we ensured that: (1) the number of sketches from each category (i.e. car) and (2) the proportion of sketches from close and far trials were equated across splits. This was done to mitigate biases in accuracy due to imbalances in the training or test set.
+
+% \todo{clarification: equating number of `car' instances or number of `bluesport' instances within `car' category?} 
 
 % In the visual communication dataset, there is a close context and a far context. The former includes 4 objects of the same category (i.e. 3 distractor cars and 1 target car) whereas the latter includes 4 objects of different categories (i.e. a target car and a dog, chair, and bird as distractors).
 
@@ -591,7 +604,7 @@ We compare our results from AIS to a more exact but brute-force approach: comput
 This is of particular interest for nested model comparisons, e.g. comparing our full model to a no-cost variant.
 Rather than computing the full marginalized likelihood for both models, we can use the Savage-Dickey method \cite{wagenmakers2010bayesian} to simply compare the posterior probability against the prior at the nested point of interest (e.g. $w_c = 0$) for the full model.
 
-We begin by comparing the full model using empirically estimated perceptual correspondences against nested ``no-cost'' ($w_c = 0$) and ``no-context'' ($w_prag = 0$) lesions. We then proceed to compare the three vision models derived from different layers of neural networks, marginalizing over all other parameters. Finally, we perform the same comparisons against cost and context lesions for the best-performing setting of the vision model (using ``fc6'').
+We begin by comparing the full model using empirically estimated perceptual correspondences against nested ``no-cost'' ($w_c = 0$) and ``no-context'' ($w_d = 0$) lesions. We then proceed to compare the three vision models derived from different layers of neural networks, marginalizing over all other parameters. Finally, we perform the same comparisons against cost and context lesions for the best-performing setting of the vision model (using ``fc6'').
 
 \subsubsection*{Evaluating model predictions}
 
