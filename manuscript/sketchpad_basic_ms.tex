@@ -406,32 +406,25 @@ Together, this work provides the first unified computational theory of how perce
 
 \subsection*{Communication experiment: Manipulation of context in sketch-based reference game}
 
-\subsubsection*{Participants}
+% \subsubsection*{Participants}
 
 A total of 192 unique participants, who were recruited via Amazon Mechanical Turk (AMT) and grouped into pairs, completed the experiment. They were provided a base compensation of \$X.XX for participation and earned a \$X.XX bonus for each correct trial. In this and subsequent behavioral experiments, participants provided informed consent in accordance with the Stanford IRB.
-
-\subsubsection*{Stimuli}
-
+% \subsubsection*{Stimuli}
 Stimuli were thirty two 3D mesh models of objects belonging to 4 categories (i.e., birds, chairs, cars, dogs), containing eight objects each. Each object was rendered in color on a gray background at three-quarter perspective, 10$^{\circ}$ viewing angle (i.e., slightly above), and fixed distance.
-
-\subsubsection*{Task}
-
+% \subsubsection*{Task}
 % Drawings were collected in the context of an online, sketching-based reference game (``Guess My Sketch!''). The game involved two players: a \textit{sketcher} who aims to help a \textit{viewer} pick out a target object from a set of distractor objects by representing it in a sketch. On each trial, both participants were shown an array of the same four objects; however, the positions of these objects were randomized for each participant so that participants could not use object location information to solve the task. On each trial, one of the four objects was highlighted on the sketcher's screen to designate it as the target.
-
 Sketchers drew using black ink on digital canvas (pen width = 5 pixels; 300 x 300 pixels) embedded in a web browser window using Paper.js (http://paperjs.org/). Participants drew using the mouse cursor, and were not able to delete previous strokes. Each stroke of which was rendered on the viewer's screen immediately upon the completion of each stroke. There were no restrictions on how long participants could take to make their drawings. After clicking a submit button, the viewer guessed the identity of the drawn object by clicking one of the four objects in the array. Otherwise, the viewer had no other means of communicating with the sketcher. Both participants received immediate task-related feedback: the sketcher learned which object the viewer had clicked, and the viewer learned the identity of the target. Both participants earned bonus points for each correct response.
+For each pair, objects were randomly allocated to eight quartets: Four of these quartets contained objects from the same category (``close''); the other four of these quartets contained objects from different categories (``far'' condition). 
+Each quartet was presented four times, such that each object in the quartet served as the target exactly once. The assignment of objects to quartet and condition was randomized across pairs.
 
-For each pair, objects were grouped into eight quartets: Four of these quartets contained objects from the same category (``close''); the other four of these quartets contained objects from different categories (``far'' condition). Each quartet was presented four times, such that each object in the quartet served as the target exactly once. The assignment of objects to quartet and condition was randomized across pairs.
-
-Successful communication was primarily quantified as the viewer's accuracy in identifying the target. The investment of time was measured as the length of time between the beginning of the first stroke to the completion of the final stroke in each sketch, and the investment of ink was measured in two ways: as the number of strokes used for each sketch and the proportion of the drawing canvas filled by ink.
+% Successful communication was primarily quantified as the viewer's accuracy in identifying the target. The investment of time was measured as the length of time between the beginning of the first stroke to the completion of the final stroke in each sketch, and the investment of ink was measured in two ways: as the number of strokes used for each sketch and the proportion of the drawing canvas filled by ink.
 
 \subsection*{Recognition experiment: Measuring perceptual similarity between sketches and objects}
 
-\subsubsection*{Participants}
+% \subsubsection*{Participants}
 
 A total of 112 participants were recruited via Amazon Mechanical Turk (AMT). They were provided a base compensation of \$1.00 for their participation, and earned an additional \$0.01 bonus for each correct response.
-
-\subsubsection*{Task}
-
+% \subsubsection*{Task}
 On each trial, participants were presented with a randomly selected sketch collected in the communication experiment, surrounded by a grid containing the 32 objects from that experiment. Their goal was to select the object in the grid that best matched the sketch. 
 % Participants were provided with binary feedback about the correctness of their response on each trial via a bonus counter that incremented by 1 point for each correct identification, but did not change for incorrect trials. 
 Participants received task feedback in the form of a bonus earned for each correct trial. 
@@ -469,52 +462,63 @@ Here only the parameters of this adaptor network are trained and we do not finet
 % To explore the degree to which the \textit{visual abstraction} afforded by the complex transformations applied by successive layers of VGG-19 are required to capture human behavior during visual communication, 
 We compare three adaptor networks that intercept VGG-19 image representations at different layers: the first max pooling layer (early), the tenth convolutional layer (mid), and the first fully connected layer (high). 
 % \mwu{add something about early being edges, high being object recognition masks, etc.} 
-To facilitate comparison between adaptor networks, we ensured that each of the three contain a comparable number of trainable parameters (Table~\ref{table:parameters}) with identical training hyperparameters (learing rate, batch size, etc.). 
+To facilitate comparison between adaptor networks, we ensured that each of the three contain a comparable number of trainable parameters (number of learnable parameters for high: $1048839$; mid: $1049115$; low: $1048833$) with identical training hyperparameters (i.e., learning rate, batch size, etc.). 
 To discriminate which layer provides the best starting feature basis for predicting sketch-object correspondence, these adaptor networks were also deliberately constrained to be shallow, i.e., consisting only of two linear layers with an intervening point-wise nonlinearity.
 
 % In the following, we provide a detailed description of the architecture and hyperparameter choices for each adaptor. We refer to the respective adaptor network as: \textit{early-adaptor}, \textit{mid-adaptor}, and \textit{high-adaptor}.
 
-\begin{table}
-\centering
-\begin{tabular}{| l | c |}
-\hline
-adaptor & parameters \\
-\hline
-\hline
-low & 1048839 \\
-\hline
-mid & 1049115 \\
-\hline
-high & 1048833 \\
-\hline
-\end{tabular}
-\caption{Number of parameters in each adaptor network variant.}
-\label{table:parameters}
-\end{table}
+% \begin{table}
+% \centering
+% \begin{tabular}{| l | c |}
+% \hline
+% adaptor & parameters \\
+% \hline
+% \hline
+% low & 1048839 \\
+% \hline
+% mid & 1049115 \\
+% \hline
+% high & 1048833 \\
+% \hline
+% \end{tabular}
+% \caption{Number of parameters in each adaptor network variant.}
+% \label{table:parameters}
+% \end{table}
 
-Two feature vectors in $\mathbb{R}^{4096}$ are extracted for the sketch and object from a higher layer of VGG-19 (i.e., the first fully-connected layer, also known as $fc6$). These two vectors are then concatenated to form a single vector in $\mathbb{R}^{8192}$, to be passed into the high-adaptor network. The high-adaptor architecture is composed of a linear layer that maps from $\mathbb{R}^{8192} \rightarrow \mathbb{R}^{128}$, followed by a ``Swish'' nonlinearity \footnote{Swish is a recent nonlinearity found via reinforcement learning-based search to outperform the rectified linear nonlinearity (ReLU) for deep models on a suite of tasks.} \cite[]{ramachandran2018searching} and dropout, then another linear layer that maps from $\mathbb{R}^{128} \rightarrow \mathbb{R}^{1}$.
+When applying the high-level visual encoder, a sketch and object are first passed through VGG and a feature vector in $\mathbb{R}^{4096}$ for each is extracted from one of the highest layers (i.e., the first fully-connected layer, also known as $fc6$). These two vectors are then concatenated to form a single vector in $\mathbb{R}^{8192}$, to be passed into the high adaptor network. 
+The high adaptor is composed of a linear layer that maps from $\mathbb{R}^{8192} \rightarrow \mathbb{R}^{128}$, followed by a ``Swish'' nonlinearity \footnote{Swish is a recent nonlinearity found via reinforcement learning-based search to outperform the rectified linear nonlinearity (ReLU) for deep models on a suite of tasks. In practice, the ability of the model to fit the data appeared to be robust to the choice of nonlinearity (alternative nonlinearities were TanH and ReLU) and size of hidden layer, within the range $(2^{7},2^{9})$).} \cite[]{ramachandran2018searching} and dropout, then another linear layer that maps from $\mathbb{R}^{128} \rightarrow \mathbb{R}^{1}$.
 
-In practice, we find the ability of the model to fit the data is robust to the choice of nonlinearity (alternative nonlinearities were TanH and ReLU) and size of hidden layer, within the range $(2^{7},2^{9})$).
+When appying the mid-level visual encoder, two mid-level feature representations are intercepted from an intermediate layer (i.e., the 10th convolutional layer, $conv4_2$).
+Features from the 10th convolutional layer of VGG are $512 x 28 x 28$.
+We first ``flatten" the input into a one dimensional vector in $\mathbb{R}^{512}$ using a weighted linear combination $\sum_{i=1}^{28}\sum_{j=1}^{28} w_{ij} * x_{ij}$, where $x_{ij}$ indexes a location in the spatial representation at this layer. 
+The weight parameters  $\{w_{ij}|1\leq i,j \leq 28\}$ are learned jointly with the parameters of mid adaptor, and are separately learned for the sketch and object modalities. 
+% Intuitively, this is akin to attention over the spatial features of the 10th convolutional layer of VGG. 
+% The weights used to ``flatten''  3D-object and sketch spatial features, creating two vectors of size 512, then concatenate prior to mid-adaptor.
+The two vectors in $\mathbb{R}^{512}$ are then concatenated to form a single vector in $\mathbb{R}^{1024}$, to be passed to the mid adaptor network. 
+The mid adaptor consists of a linear layer that maps from $\mathbb{R}^{1024} \rightarrow \mathbb{R}^{1021}$, followed by a Swish nonlinearity, dropout, then a linear layer from $\mathbb{R}^{1021} \rightarrow \mathbb{R}^{1}$. 
+Although the hidden layer size (i.e., 1021 units) seems peculiar, this was the most suitable choice to ensure that the total number of learnable parameters for this adaptor was as similar to the high adaptor as possible. 
 
-Similarly, the mid-adaptor consists of a linear layer of 1024 to 1021, swish, dropout, then a linear layer from 1021 to 1. Although 1021 seems like a peculiar choice, we want to ensure that the number of trainable parameters in mid-adaptor is as close to that of high-adaptor as possible. In this case, 1021 hidden units in the first layer is the most suitable choice. Since features from the 10th convolutionary layer of VGG are three dimensional (512 by 28 by 28), we first ``flatten" the input into a one dimensional vector of size 512 using a weighted linear combination $\sum_{i=1}^{28}\sum_{j=1}^{28} w_{ij} * x_{ij}$, where $x_{ij}$ represents a cross-section from VGG. The parameters  $\{w_{ij}|1\leq i,j \leq 28\}$ are learned jointly with the parameters of mid-adaptor. Intuitively, this is akin to attention over the spatial features of the 10th convolutional layer of VGG. We separately attend over 3D-object and sketch spatial features, creating two vectors of size 512, then concatenate prior to mid-adaptor.
+The architecture of the low adaptor is almost identical to that of the mid adaptor, except VGG features are intercepted at the first max pooling layer (i.e., $pool1$).
+Features in this layer are $64 x 112 x 112$. 
+Explicitly, this network starts with a linear layer of 4096 to 7875 (like the mid-adaptor, 7875 is chosen to match the number of parameters), swish, dropout, then a linear layer form 7875 to 1. Due to the input size, each attention module in early-adaptor has 12,544 learnable weights.
 
-Finally, the early-adaptor is almost identical to the mid-adaptor, except each feature is of size 64 by 112 by 112. Explicitly, this network starts with a linear layer of 4096 to 7875 (like the mid-adaptor, 7875 is chosen to match the number of parameters), swish, dropout, then a linear layer form 7875 to 1. Due to the input size, each attention module in early-adaptor has 12,544 learnable weights.
-
-\paragraph{Sketch data preprocessing.} We filter the sketch dataset used to train each adaptor network to include only sketches that were correctly identified during the communication task (6.2\% incorrect) and were compliant with task instructions by not including `drawn' text annotations (4.4\% non-compliant). This filtered sketch dataset was then split into training, validation, and test sets in a 80\%, 10\%, and 10\% ratio, and this split was performed in a 5-fold cross-validated manner. Splits were based on context, defined as the set containing a specific target object and three distractor objects, such that no context appeared both in the training and test splits of any cross-validation fold. Specifically, we ensured that: (1) the number of sketches from each category (i.e. car) and (2) the proportion of sketches from close and far trials were equated across splits. This was done to mitigate biases in accuracy due to imbalances in the training or test set.
+\subsubsection{Sketch data preprocessing.} We filter the sketch dataset used to train each adaptor network to include only sketches that were correctly identified during the communication task (6.2\% incorrect) and were compliant with task instructions by not including `drawn' text annotations (4.4\% non-compliant). This filtered sketch dataset was then split into training, validation, and test sets in a 80\%, 10\%, and 10\% ratio, and this split was performed in a 5-fold cross-validated manner. Splits were based on context, defined as the set containing a specific target object and three distractor objects, such that no context appeared both in the training and test splits of any cross-validation fold. Specifically, we ensured that: (1) the number of sketches from each category (i.e. car) and (2) the proportion of sketches from close and far trials were equated across splits. This was done to mitigate biases in accuracy due to imbalances in the training or test set.
 
 % \todo{clarification: equating number of `car' instances or number of `bluesport' instances within `car' category?} 
 
 % In the visual communication dataset, there is a close context and a far context. The former includes 4 objects of the same category (i.e. 3 distractor cars and 1 target car) whereas the latter includes 4 objects of different categories (i.e. a target car and a dog, chair, and bird as distractors).
 
-\begin{figure}[h!]
-\centering
-\includegraphics[width=0.95\columnwidth]{figures/adaptor_algorithm.pdf}
-\caption{The adaptor measures similarity between a given sketch and 3D object rendering. To train the adaptor, we can minimize the distance between the distribution induced from a softmax over similarities and the human annotations.}
-\label{fig:adaptor_training}
-\end{figure}
+% \begin{figure}[h!]
+% \centering
+% \includegraphics[width=0.95\columnwidth]{figures/adaptor_algorithm.pdf}
+% \caption{The adaptor measures similarity between a given sketch and 3D object rendering. To train the adaptor, we can minimize the distance between the distribution induced from a softmax over similarities and the human annotations.}
+% \label{fig:adaptor_training}
+% \end{figure}
 
 \paragraph{Adaptor network training procedure.}
-We now describe the training procedure for each visual encoder. Each adaptor network accepts a sketch-object pair as input and returns a real number as output, reflecting their perceptual correspondence. We construct a similarity vector of size 32 between a sketch and each object in the domain $\mathcal{I}$ (32 total), and apply a softmax on top to induce a probability distribution over objects. We define a loss function, $\mathcal{L}$, as the cross entropy between the induced distribution, $q$ and a empirical distribution of human recognition responses, $p$:
+% We now describe the training procedure for each visual encoder. 
+Each adaptor network accepts a sketch-object pair as input and returns a real number as output, reflecting their perceptual correspondence. 
+We construct a similarity vector of size 32 between a sketch and each object in the domain $\mathcal{I}$ (32 total), and apply a softmax on top to induce a probability distribution over objects. We define a loss function, $\mathcal{L}$, as the cross entropy loss between the induced distribution, $q$ and a empirical distribution of human recognition responses, $p$:
 
 \begin{equation}
     \mathcal{L} = \sum_{x \in \mathcal{I}} p(x)\log q(x)
@@ -525,7 +529,7 @@ The empirical response distribution was derived by computing the proportion of t
 
 We use the Adam optimization algorithm \cite[]{kingma2014adam} with a learning rate of 1e-4 and minibatch size of 10 for 100 epochs, where an epoch is a full pass through the training set. As a property of the input domain, the gradients with respect to adaptor parameters are very small (1.51e-4 $\pm$ 2.61e-4), inevitably resulting in poor learning (we can reproduce this effect from several intializations). We find that naively increasing the learning rate led to unstable optimization, but that multiplying the loss by a large constant $C$ leads to a much smoother learning trajectories and good test generalization\footnote{Increasing the learning rate and multiplying the loss by a constant are not equivalent for second moment gradient methods.}. In practice, $C =$ 1e4. After training each adaptor for 100 epochs, we freeze the model with the best performance on a validation set. For each 3D object and sketch pair in the test set, we evaluate the perceptual correspondence and provide this as input to the social inference module, described next.
 
-\mwu{We split the datasets of images and sketches into three groups: a training set, a validation set, and a test set. Post training, we use the parameters from the epoch with the highest validation accuracy i.e. early stopping ADD CITATION. During training, the model never sees any test data.}
+% \mwu{We split the datasets of images and sketches into three groups: a training set, a validation set, and a test set. Post training, we use the parameters from the epoch with the highest validation accuracy i.e. early stopping ADD CITATION. During training, the model never sees any test data.}
 
 % \subsubsection*{Pragmatic inference}
 
