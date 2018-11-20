@@ -111,7 +111,7 @@ We found that our full model fits the data well and outperformed lesioned varian
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=0.4\textwidth]{figures/1_task_display_alt.pdf}
+\includegraphics[width=0.4\textwidth]{figures/1_task_display_alt.png}
 \caption{(A) Communication task. (B) Context manipulation. (C) Recognition task.}
 \label{task_display}
 \end{figure}
@@ -522,7 +522,7 @@ To discriminate which layer provides the best starting feature basis for predict
 % \end{table}
 
 When applying the high-level visual encoder, a sketch and object are first passed through VGG and a feature vector in $\mathbb{R}^{4096}$ for each is extracted from a higher layer (i.e., the first fully-connected layer, also known as $fc6$). These two vectors are then concatenated to form a single vector in $\mathbb{R}^{8192}$, to be passed into the high adaptor network. 
-The high adaptor is composed of a linear layer that maps from $\mathbb{R}^{8192} \rightarrow \mathbb{R}^{128}$, followed by a ``Swish'' nonlinearity \footnote{Swish is a recently discovered nonlinearity that outperforms the common rectified linear nonlinearity (ReLU) in deep models on a suite of tasks. Regardless, the ability of the model to fit the data appeared to be robust to the choice of nonlinearity (alternative nonlinearities were TanH and ReLU) and size of hidden layer, within the range $(2^{7},2^{9})$).} \cite[]{ramachandran2018searching} and dropout, then another linear layer that maps from $\mathbb{R}^{128} \rightarrow \mathbb{R}^{1}$.
+The high adaptor is composed of a linear layer that maps from $\mathbb{R}^{8192} \rightarrow \mathbb{R}^{128}$, followed by a ``Swish'' nonlinearity \footnote{Swish is a recently discovered nonlinearity that outperforms the common rectified linear nonlinearity (ReLU) in deep models on a suite of tasks \cite[]{ramachandran2018searching}. Regardless, the ability of the model to fit the data appeared to be robust to the choice of nonlinearity (alternative nonlinearities were TanH and ReLU) and size of hidden layer, within the range $(2^{7},2^{9})$).}  and dropout, then another linear layer that maps from $\mathbb{R}^{128} \rightarrow \mathbb{R}^{1}$.
 
 When appying the mid-level visual encoder, two mid-level feature representations are intercepted from an intermediate layer (i.e., the 10th convolutional layer, $conv4_2$).
 Features from the 10th convolutional layer of VGG are $512 x 28 x 28$.
@@ -654,7 +654,6 @@ We use MCMC to draw 1000 samples from the joint posterior with a lag of YYY, dis
 We constructed posterior predictive distributions by computing the measure of interest on the data set at every sample.
 To estimate standard errors to statistically compare predictions across models, we employed a multi-stage bootstrapping procedure controlling for three nested sources of variability: estimation of measures on the data for a particular parameter setting and test split, variation across the parameter posterior for a test split, and variation across test splits.
 We implemented our models and conducted inference in the probabilistic programming language WebPPL (Goodman \& Stuhlmuller, 2014).
-All code necessary to reproduce our model results are available at the project github.
 
 }
 
