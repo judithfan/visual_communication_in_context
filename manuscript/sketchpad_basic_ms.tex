@@ -444,30 +444,31 @@ To obtain robust estimates of sketch-object perceptual correspondences, each ske
 % Constructing such a model allowed us to evaluate the contribution of each component using formal model comparison, as well as quantitatively characterize the model's behavior in novel contexts. 
 
 \subsubsection*{Sketch data preprocessing} 
-For our modeling experiments, we first filter the sketch dataset to retain only sketches that were correctly identified by the viewer during the communication task (6.2\% incorrect) and were compliant with task instructions by not including `drawn' text annotations (4.4\% non-compliant). 
-% This was done in order to evaluate the  
+To train and evaluate our sketcher model, we first filter the sketch dataset to retain only sketches that were correctly identified by the viewer during the communication task (6.2\% incorrect) and were compliant with task instructions by not including `drawn' text annotations (4.4\% non-compliant). 
+% Only correctly identified sketches were retained to mitigate the amount of noise in estimating sketch-object correspondences
+% and to simplify the interpretation of the model likelihood: we score each model according to the probability it assigned to the ground truth sketch category, which we assume to have led to successful communication. 
 This filtered sketch dataset was then split into training, validation, and test sets in a 80\%, 10\%, and 10\% ratio, and this split was performed in a 5-fold cross-validated manner.
 Splits were based on context, defined as the set containing a specific target object and three distractor objects, such that no context appeared both in the training and test splits of any cross-validation fold. 
 Specifically, we ensured that: (1) the number of sketches from each category (i.e. car) and (2) the proportion of sketches from close and far trials were equated across splits. 
-This was done to mitigate biases in accuracy due to imbalances in the training or test set.
+This was done to control for biases in model peformance due to imbalances in the training or test set.
 
 \subsubsection*{Deriving empirical estimates of perceptual correspondence between sketches and objects}
 
 % We evaluate our model using both empirical and model-based approaches to measuring perceptual correspondence. 
 In the recognition experiment, most sketches were not matched exclusively to a single object, but to several. 
-These sketches can thus be thought of having some nonzero degree of perceptual correspondence to the several objects it was matched to at least once, as opposed to only having some correspondence to the modal object. 
-We define 
+These sketches can thus be thought of having some degree of perceptual correspondence to the several objects it was matched to at least once. 
+For a single sketch, we estimate the perceptual correspondence between that sketch and any object as the proportion of recognition task trials on which it was matched to that object. 
+For a set of sketches of a specific object produced in a specific context condition, we estimate the \textit{aggregated} sketch-object correspondence to be the proportion of recognition task trials on which any sketch from this set was matched to that object. 
+Because our goal was to understand how well each model could produce produce informative sketches according to the context condition, and not necessarily to reproduce exactly the same sketch as a particular participant had on a specific trial, we use this aggregate correspondence measure in all of our modeling experiments.  
+As a result, sketch-object correspondence scores lie in the range $[0,1]$, and sum to 1 for sketches in the same object-context category. 
+Because all sketches from the same object-context category share the same correspondence to each object, there are a total of 32 sketch categories x 32 objects x 2 contexts = 2048 empirical perceptual correspondence scores.
 
-For each sketch and context in a test set, the empirical perceptual correspondence between the sketch and a given object in context is defined as the proportion of recognition task trials on which all sketches from the same object-context category were matched to this object out of context. 
-As such, all correspondence scores lie in the range $[0,1]$ and sum to 1 for sketches in the same object-context category:
 
-$$\sum_{n=1}^{32} \textrm{corr} (s,o_{n}) = 1 $$,
 
-where $n$ represents the $nth$ object in the stimulus set. $s$ refers to sketches from the same object-context category (i.e., depict object $o$ in context $c$, which can be either close or far). Because recognition responses are aggregated across all sketches within the same object-context category to compute the proportions above, this yields 32 sketch categories x 32 objects x 2 contexts = 2048 empirical perceptual correspondence scores in total.
+% $\sum_{n=1}^{32} \textrm{sim} (s,o_{n}) = 1$, where $n$ is over the 32 objects in our stimulus set, $s$ refers to all sketches from the same object-context category. 
+% Model-based perceptual correspondence scores are defined to the same level of granularity, with all sketches from the same object-context category sharing the same perceptual correspondence to a particular object, under a particular choice of visual encoder module (i.e., vgg-high, vgg-mid, vgg-low).
 
-Model-based perceptual correspondence scores are defined to the same level of granularity, with all sketches from the same object-context category sharing the same perceptual correspondence to a particular object, under a particular choice of visual encoder module (i.e., vgg-high, vgg-mid, vgg-low).
 
-To compute this score for a visual encoder variant and object, each test-set sketch from a given object-context category is passed in with this object to the visual encoder module, yielding a single image-level correspondence score lying in the range $[0,1]$. These image-level correspondence scores are then averaged across all sketches belonging to the same object-context category, yielding 32 objects x 32 sketches x 2 contexts  = 2048 model-based perceptual correspondence scores for each visual encoder module.
 
 \subsubsection*{Deriving empirical estimates of sketch costs}
 
@@ -518,22 +519,23 @@ To discriminate which layer provides the best starting feature basis for predict
 % \label{table:parameters}
 % \end{table}
 
-When applying the high-level visual encoder, a sketch and object are first passed through VGG and a feature vector in $\mathbb{R}^{4096}$ for each is extracted from one of the highest layers (i.e., the first fully-connected layer, also known as $fc6$). These two vectors are then concatenated to form a single vector in $\mathbb{R}^{8192}$, to be passed into the high adaptor network. 
-The high adaptor is composed of a linear layer that maps from $\mathbb{R}^{8192} \rightarrow \mathbb{R}^{128}$, followed by a ``Swish'' nonlinearity \footnote{Swish is a recent nonlinearity found via reinforcement learning-based search to outperform the rectified linear nonlinearity (ReLU) for deep models on a suite of tasks. In practice, the ability of the model to fit the data appeared to be robust to the choice of nonlinearity (alternative nonlinearities were TanH and ReLU) and size of hidden layer, within the range $(2^{7},2^{9})$).} \cite[]{ramachandran2018searching} and dropout, then another linear layer that maps from $\mathbb{R}^{128} \rightarrow \mathbb{R}^{1}$.
+When applying the high-level visual encoder, a sketch and object are first passed through VGG and a feature vector in $\mathbb{R}^{4096}$ for each is extracted from a higher layer (i.e., the first fully-connected layer, also known as $fc6$). These two vectors are then concatenated to form a single vector in $\mathbb{R}^{8192}$, to be passed into the high adaptor network. 
+The high adaptor is composed of a linear layer that maps from $\mathbb{R}^{8192} \rightarrow \mathbb{R}^{128}$, followed by a ``Swish'' nonlinearity \footnote{Swish is a recently discovered nonlinearity that outperforms the common rectified linear nonlinearity (ReLU) in deep models on a suite of tasks. Regardless, the ability of the model to fit the data appeared to be robust to the choice of nonlinearity (alternative nonlinearities were TanH and ReLU) and size of hidden layer, within the range $(2^{7},2^{9})$).} \cite[]{ramachandran2018searching} and dropout, then another linear layer that maps from $\mathbb{R}^{128} \rightarrow \mathbb{R}^{1}$.
 
 When appying the mid-level visual encoder, two mid-level feature representations are intercepted from an intermediate layer (i.e., the 10th convolutional layer, $conv4_2$).
 Features from the 10th convolutional layer of VGG are $512 x 28 x 28$.
 We first ``flatten" the input into a one dimensional vector in $\mathbb{R}^{512}$ using a weighted linear combination over the spatial dimension $\sum_{i=1}^{28}\sum_{j=1}^{28} w_{ij} * x_{ij}$, where $x_{ij}$ indexes a spatial location in the image representation at this layer. 
-The weight parameters  $\{w_{ij}|1\leq i,j \leq 28\}$ are learned jointly with the parameters of mid adaptor, and are separately learned for the sketch and object modalities. 
+The weight parameters $\{w_{ij}|1\leq i,j \leq 28\}$ are learned jointly with the parameters of mid adaptor, and are separately learned for the sketch and 3D object modalities. 
 % Intuitively, this is akin to attention over the spatial features of the 10th convolutional layer of VGG. 
 % The weights used to ``flatten''  3D-object and sketch spatial features, creating two vectors of size 512, then concatenate prior to mid-adaptor.
 The two vectors in $\mathbb{R}^{512}$ are then concatenated to form a single vector in $\mathbb{R}^{1024}$, to be passed to the mid adaptor network. 
 The mid adaptor consists of a linear layer that maps from $\mathbb{R}^{1024} \rightarrow \mathbb{R}^{1021}$, followed by a Swish nonlinearity, dropout, then a linear layer from $\mathbb{R}^{1021} \rightarrow \mathbb{R}^{1}$. 
-Although the hidden layer size (i.e., 1021 units) seems peculiar, this was the most suitable choice to ensure that the total number of learnable parameters for this adaptor was as similar to the high adaptor as possible. 
+This hidden layer size (i.e., 1021 units) was chosen to ensure that the total number of learnable parameters was as similar to the high adaptor as possible. 
 
 The architecture of the low adaptor is almost identical to that of the mid adaptor, except VGG features are intercepted at the first max pooling layer (i.e., $pool1$).
 Features in this layer are $64 x 112 x 112$. As above, a weighted sum of model activations over the $112 x 112$ spatial features is applied, yielding one vector in $\mathbb{R}^{64}$ each for the sketch and object, which are then concatenated. 
-The low adaptor maps from $\mathbb{R}^{128} \rightarrow \mathbb{R}^{7875}$, followed by the same Swish nonlinearity, dropout, and another linear layer that maps from $\mathbb{R}^{7875} \rightarrow \mathbb{R}^{1}$. As above, the hidden layer size was chosen such that the total number of learnable parameters were comparable to those in the other adaptors. 
+The low adaptor maps from $\mathbb{R}^{128} \rightarrow \mathbb{R}^{7875}$, followed by the same Swish nonlinearity, dropout, and another linear layer that maps from $\mathbb{R}^{7875} \rightarrow \mathbb{R}^{1}$. 
+As above, the hidden layer size (i.e., $7875$ units) was chosen so that this adaptor contained a comparable number of learnable parameters. 
 
 % Explicitly, this network starts with a linear layer that maps  128 to 7875 (like the mid-adaptor, 7875 is chosen to match the number of parameters), swish, dropout, then a linear layer form 7875 to 1. Due to the input size, each attention module in early-adaptor has 12,544 learnable weights.
 
@@ -549,27 +551,32 @@ The low adaptor maps from $\mathbb{R}^{128} \rightarrow \mathbb{R}^{7875}$, foll
 % \end{figure}
 
 \subsubsection*{Visual encoder training}
-% We now describe the training procedure for each visual encoder. 
 
-
-We train each adaptor network to predict, for each sketch, a 32-dimensional vector that captures the \textit{pattern} of perceptual correspondences between that sketch and all 32 objects. 
-
-
-Each adaptor network accepts a sketch-object pair as input and returns a real number as output, reflecting their perceptual correspondence. 
-We construct a similarity vector of size 32 between a sketch and each object in the domain $\mathcal{I}$ (32 total), and apply a softmax on top to induce a probability distribution over objects.
-
- We define a loss function, $\mathcal{L}$, as the cross entropy loss between the induced distribution, $q$ and a empirical distribution of human recognition responses, $p$:
+We trained each adaptor (i.e., high, mid, low) to predict, for each sketch, a 32-dimensional vector that captures the \textit{pattern} of perceptual correspondences between that sketch and all 32 objects. 
+Each encoder accepts a sketch-object pair as input and returns a real number as output (in range $(-\infty, + \infty)$), reflecting their perceptual correspondence.
+We iterate over all objects in the stimulus set $\mathcal{I}$ to generate the predicted 32-vector for each sketch, and then apply softmax normalization, yielding a vector that sums to 1. 
+We define the loss function, $\mathcal{L}$, to be the cross entropy loss between the predicted distribution, $q$ and the empirically estimated perceptual correspondence vector, $p$ (which also sums to 1):
 
 \begin{equation}
     \mathcal{L} = \sum_{x \in \mathcal{I}} p(x)\log q(x)
     \label{eqn:cross_entropy}
 \end{equation}
 
-The empirical response distribution was derived by computing the proportion of trials from the recognition experiment on which all sketches from the same context-object category (e.g., all sparrow sketches produced on close trials) was matched with each object. As a consequence, this response distribution not only provides an estimate of the strength of the match between a sketch and its corresponding object, but also the pattern of confusions that human observers exhibit, thus creating a more detailed profile of recognition behavior for each adaptor to match.
+% The empirical response distribution was derived by computing the proportion of trials from the recognition experiment on which all sketches from the same context-object category (e.g., all sparrow sketches produced on close trials) was matched with each object. 
+% As a consequence, this response distribution not only provides an estimate of the strength of the match between a sketch and its corresponding object, but also the pattern of confusions that human observers exhibit, thus creating a more detailed profile of recognition behavior for each adaptor to match.
+
+This loss function explicitly encourages the adaptor to learn not only to predict the strength of the correspondence between a sketch and the object it was intended to depict (measured by correct matches during recognition), but also to predict its correspondence to all of the other objects (measured by the pattern of confusions during recognition).
 
 We use the Adam optimization algorithm \cite[]{kingma2014adam} (learning rate = $1e-4$) over minibatches of size 10 for 100 epochs, where an epoch is a full pass through the training set. 
+After training each adaptor for 100 epochs, we freeze the model with the best performance on a validation set. \footnote{As a property of the input domain, the gradients with respect to adaptor parameters are very small (1.51e-4 $\pm$ 2.61e-4), inevitably resulting in poor learning (we can reproduce this effect from several intializations). We find that naively increasing the learning rate led to unstable optimization, but that multiplying the loss by a large constant $C$ leads to a much smoother learning trajectories and good test generalizationIncreasing the learning rate and multiplying the loss by a constant are not equivalent for second moment gradient methods. In practice, $C =$ 1e4.} 
 
-As a property of the input domain, the gradients with respect to adaptor parameters are very small (1.51e-4 $\pm$ 2.61e-4), inevitably resulting in poor learning (we can reproduce this effect from several intializations). We find that naively increasing the learning rate led to unstable optimization, but that multiplying the loss by a large constant $C$ leads to a much smoother learning trajectories and good test generalization\footnote{Increasing the learning rate and multiplying the loss by a constant are not equivalent for second moment gradient methods.}. In practice, $C =$ 1e4. After training each adaptor for 100 epochs, we freeze the model with the best performance on a validation set. For each 3D object and sketch pair in the test set, we evaluate the perceptual correspondence and provide this as input to the social inference module, described next.
+\subsubsection*{Generating encoder-based estimates of perceptual correspondence between sketches and objects}
+
+To generate sketch-object correspondence scores for sketches in each test split, we first pass each sketch-object pair into a visual encoder, yielding a single image-level correspondence score lying in the range $(-\infty,+\infty)$. 
+To map these raw image-level scores to the appropriate range for a correspondence score ($[0,1]$), we first z-score them ($f(x) = \frac{x - \bar{x}}{\mathrm{s}}$), then apply the logistic function ($f(x)= \frac{1}{1+e^{-x}}$).
+These normalized image-level correspondence scores are then averaged across all sketches belonging to the same object-context category, yielding 32 objects x 32 sketches x 2 contexts  = 2048 model-based perceptual correspondence scores for each visual encoder variant (i.e., high, mid, low).
+
+% To compute this score for a visual encoder variant and object, each test-set sketch from a given object-context category is passed in with this object to the visual encoder module, yielding
 
 % \mwu{We split the datasets of images and sketches into three groups: a training set, a validation set, and a test set. Post training, we use the parameters from the epoch with the highest validation accuracy i.e. early stopping ADD CITATION. During training, the model never sees any test data.}
 
@@ -612,7 +619,6 @@ As a property of the input domain, the gradients with respect to adaptor paramet
 % \begin{equation}
 % U(s,o) =  w_p \cdot  f(s,o) - w_c \cdot C(s)
 % \end{equation}
-
 
 % Each communication task trial is defined by a context containing four objects and a sketch. There are two attributes of each trial that are required for any variant of our model to be able to generate predictions given a context: (1) the perceptual correspondence between the sketch to each object in context and (2) the cost of producing the sketch.
 

@@ -120,8 +120,8 @@ def generate_bdaInput_csv(D,filtration_level,train_test_split=True,
     print 'Saved out bdaInput CSV ... {}'.format(filtration_level)
 
 
-def sigmoid(x,k=1,x0=0.5):
-    return 1 / (1 + np.exp(-k * (x - x0)))
+# def sigmoid(x,k=1,x0=0.5):
+#     return 1 / (1 + np.exp(-k * (x - x0)))
 
 def add_rescaled_metric(X,metric,transform='maxnorm',k=5):
     '''
