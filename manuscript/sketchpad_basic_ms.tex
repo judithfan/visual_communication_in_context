@@ -75,7 +75,7 @@ Together, this work provides the first unified computational theory of how perce
 
 %%%%% In another version of the intro, you recap the visual production stuff on its own, and then point out that drawing is not one task, but several, and could depend a lot of the goals and context, and in this paper, we extend previous models to handle this.
 
-A watershed moment in the history of human cognition and culture was the invention of graphical representation, independently in Europe and Asia, about 30-60 thousand years ago \cite{hoffmann2018u,Aubert:2014jy}. 
+\noindent A watershed moment in the history of human cognition and culture was the invention of graphical representation, independently in Europe and Asia, about 30-60 thousand years ago \cite{hoffmann2018u,Aubert:2014jy}. 
 Graphical representation was transformative because it provided a means for people to encode their thoughts in a durable and shareable format \cite{donald1991origins}. 
 From ancient etchings on cave walls to modern digital displays, using graphical representations for visual communication lies at the heart of key human innovations (e.g., mapmaking, data visualization), and forms the foundation for the cultural transmission of knowledge and higher-level reasoning \cite{tomasello2009cultural,card1999readings}. 
 Drawing, in which a person produces marks that form a meaningful image, is a particularly important case study for understanding human visual communication. Drawn images predate symbolic writing systems \cite{clottes2008cave}, are pervasive in many cultures \cite{gombrich1989story}, and are produced prolifically by children from an early age \cite{kellogg1969analyzing}.
@@ -109,6 +109,13 @@ The goal of this paper is to provide a computational framework for systematicall
 We present an integrated computational model of contextual flexibility in visual communication that combines deep convolutional neural network models of visual perception with a Bayesian probabilistic model of pragmatic reasoning \cite{goodman2016pragmatic} to make detailed quantitative predictions of what drawings people will produce across a variety of communicative contexts. 
 We found that our full model fits the data well and outperformed lesioned variants.
 
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.4\textwidth]{figures/1_task_display_alt.pdf}
+\caption{(A) Communication task. (B) Context manipulation. (C) Recognition task.}
+\label{task_display}
+\end{figure}
+
 \section*{Results}
 
 \subsection*{Effect of context manipulation on communication task performance}
@@ -124,13 +131,6 @@ We found that our full model fits the data well and outperformed lesioned varian
 %% Supplemental 2: Param posteriors
 %% Supplemental 3: Error analysis for each lesioned versions
 
-\begin{figure*}[htbp]
-\centering
-\includegraphics[width=0.95\textwidth]{figures/1_task_display.png}
-\caption{(A) Communication task. (B) Context manipulation. (C) Recognition task.}
-\label{task_display}
-\end{figure*}
-
 To evaluate the effect of context on visual communication behavior, we developed a paradigm in which participants (N=192) were paired in an online environment to play a sketching-based reference game. On each trial, both participants were shown an array containing the same four real-world objects, but object locations were randomized for each participant so that they could not use object location information to solve the task. Objects belonged to four basic-level categories (i.e., bird, car, chair, dog), and were rendered in the same three-quarter pose, under identical illumatination, and on a gray background, so participants could not use pose, illumination, or background information to distinguish them. 
 On each trial, the sketcher's goal was to draw one of these objects --- the target --- so that the viewer could pick it out from a set of distractor objects. 
 % The sketcher drew in black ink using a fixed stroke width and each stroke appeared on the viewer's screen immediately after being drawn. 
@@ -138,14 +138,15 @@ Across trials, the similarity of the distractors to the target was manipulated, 
 We predicted that while sketchers would be generally successful at conveying the identity of the target, their sketching behavior would systematically differ between the two contexts. 
 Specifically, we predicted that sketchers would invest more time and ink in producing their sketches in close contexts, but still produce sufficiently informative sketches with less time and ink in far contexts. 
 
-% Successful communication was primarily quantified as the viewer's accuracy in identifying the target. The investment of time was measured as the length of time between the beginning of the first stroke to the completion of the final stroke in each sketch, and the investment of ink was measured in two ways: as the number of strokes used for each sketch and the proportion of the drawing canvas filled by ink.  
-
 \begin{figure*}[htbp]
 \centering
-\includegraphics[width=0.95\textwidth]{figures/2_sketch_gallery.pdf}
+\includegraphics[width=0.8\textwidth]{figures/2_sketch_gallery.pdf}
 \caption{(A) Object stimuli. (B) Example sketches produced in close condition. (C) Example skeches produced in far condition.}
 \label{sketch_gallery}
 \end{figure*}
+
+
+% Successful communication was primarily quantified as the viewer's accuracy in identifying the target. The investment of time was measured as the length of time between the beginning of the first stroke to the completion of the final stroke in each sketch, and the investment of ink was measured in two ways: as the number of strokes used for each sketch and the proportion of the drawing canvas filled by ink.  
 
 Consistent with our prediction, we found that viewers were highly accurate overall at identifying the target from the sketches produced (proportion correct: 93.8\%, 95\% CI: [92.7\%, 94.8\%], estimated by bootstrap resampling participants). 
 Moreover, we found that sketchers spent less time (close: 30.3s, far: 13.7s, \textit{p}$<$0.001), applied fewer strokes (close: 8.03 vs. far: 13.5, 95\% CI of difference: [3.75, 7.90], \textit{p}$<$0.001), and used less ink (proportion of canvas filled; close: 0.054, far: 0.042, 95\% CI: [0.01, 0.014], \textit{p}$<$0.001) to produce their sketches in the far condition than in the close condition. 
@@ -161,10 +162,11 @@ Consistent with possible explanation above, we found that close sketches were ma
 
 \begin{figure*}[htbp]
 \centering
-\includegraphics[width=0.95\textwidth]{figures/3_behavioral_performance.pdf}
+\includegraphics[width=0.9\textwidth]{figures/3_behavioral_performance.pdf}
 \caption{(A-C) Sketchers used fewer strokes, less ink, and spent less time producing sketches in the far condition, relative to the close condition. (D-E) Viewers were at ceiling accuracy in identifying the target in the far condition, and were highly accurate in the close condition. (F) Naive matcher participants were more accurate for close sketches than far sketches.}
 \label{task_performance}
 \end{figure*}
+
 
 %%% recognition experiments
 
@@ -241,7 +243,7 @@ U(s,o) =  w_i \cdot  I(s,t,D) - w_c \cdot C(s)
 
 \begin{figure*}[htbp]
 \centering
-\includegraphics[width=0.95\textwidth]{figures/4_model_schematic.pdf}
+\includegraphics[width=0.8\textwidth]{figures/4_model_schematic.pdf}
 \caption{(A) Architecture of visual encoder model for sketches and object renderings. Consists of pre-trained deep convolutional neural network (VGG-19) and shallow nonlinear ``adaptor'' neural network that predicts sketch-object correspondence. 
 Takes sketch and object image as input, and outputs a correspondence score reflecting how well the sketch resembles the object. 
 Three adaptor networks trained, using features from a one of the highest, an intermediate, and an early layer of VGG.
@@ -646,12 +648,8 @@ We begin by comparing the full model using empirically estimated perceptual corr
 
 \subsubsection*{Evaluating model predictions}
 
-To further interpret the findings of our model comparison, we examined posteriors over the inferred parameters of the best-performing model and also computed posterior predictives to evaluate its behavior on several measures of interest:
-\begin{enumerate}
-    \item absolute rank of target class
-    \item probability assigned to sketches from the congruent context, i.e. $$P(\textrm{`close' sketches} | \textrm{`close' context)} + \textrm{P(`far' sketches} | \textrm{`far' context})$$
-    \item mean cost of predicted sketches
-\end{enumerate}
+% To further interpret the findings of our model comparison, we examined posteriors over the inferred parameters of the best-performing model and also computed posterior predictives to evaluate its behavior on several measures of interest: (1) the absolute rank of target sketch category; (2) probability assigned to sketches from the congruent context, i.e. $P(\textrm{`close' sketches} | \textrm{`close' context)} + \textrm{P(`far' sketches} | \textrm{`far' context})$; and (3) the mean cost of predicted sketches. 
+
 We use MCMC to draw 1000 samples from the joint posterior with a lag of YYY, discarding XXX burn-in samples.
 We constructed posterior predictive distributions by computing the measure of interest on the data set at every sample.
 To estimate standard errors to statistically compare predictions across models, we employed a multi-stage bootstrapping procedure controlling for three nested sources of variability: estimation of measures on the data for a particular parameter setting and test split, variation across the parameter posterior for a test split, and variation across test splits.
