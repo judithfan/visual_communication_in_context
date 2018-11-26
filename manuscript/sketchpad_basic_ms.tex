@@ -384,27 +384,36 @@ These results converge with those of the lesion experiments conducted on the pra
 \section*{Discussion}
 
 The present study examined how communicative context influences visual communication behavior in a drawing-based reference game. 
-We explored the hypothesis that people spontaneously take information in common ground with their communication partner into account to produce drawings that are diagnostic of the target relative to the alternatives, while not being too costly to produce. 
-We found that people spontaneously modulate how much time they invest in their drawings according to how similar the distractors are to the target, spending more time to produce more informative drawings when the alternatives were highly similar, but getting away spending less time and producing less informative drawings when the alternatives were highly distinct.
-Observing such contextual flexibility argues against the notion that visual production is constrained exclusively by the perceptual properties of the target. 
-Rather, they led us to hypothesize that two abilities are critical to explain human contextual flexibility in this task: visual abstraction, the capacity to perceive the correspondence between an object and a drawing of it; and pragmatic inference, the ability to infer what information would be relevant for helping a viewer distinguish the target from the distracotrs. 
-To test this hypothesis, we developed a computational model that embodied both visual abstraction and pragmatic inference, instantiated as a probabilistic program ``wrapped'' around a deep convolutional neural network, and found that it fit the data well and outperformed lesioned variants of the model. 
+We explored the hypothesis that people spontaneously account for information in common ground with their communication partner to produce drawings that are diagnostic of the target relative to the alternatives, while not being too costly to produce. 
+We found that people spontaneously modulate how much time they invest in their drawings according to how similar the distractors are to the target, spending more time to produce more informative drawings when the alternatives were highly similar, but getting away wtih spending less time and producing less informative drawings when the alternatives were highly distinct.
+Observing such contextual flexibility demonstrates that visual production is not constrained exclusively by the perceptual properties of the target. 
+Rather, they suggest that pragmatic inference --- the ability to infer what information would be \textit{relevant} to communicate --- and visual abstraction --- the capacity to perceive the correspondence between an object and a drawing of it --- both play crucial roles.
+To test this hypothesis, we developed a computational model that embodied both pragmatic inference and visual abstraction, and found that it fit the data well and outperformed lesioned variants of the model. 
 
 
 % related literatures
 	% relationship to RSA models to language
+This work can be thought of as generalizing the Rational Speech Act (RSA) modeling framework \cite{frank2012predicting,goodman2013knowledge}.
+RSA models take inspiration from the insights of Paul Grice \cite{grice1975syntax}, who provided a philosophical framework for understanding how natural language use reflects exquisite social reasoning in context. 
+RSA models draw on ideas and insights from decision theory, probabilistic models of cognition, bounded rationality, and linguistics, and have captured a variety of complex linguistic patterns, achieved good quantitative fits with experimental data, and been incorporated into artificial agents that communicate with each other to solve real-world tasks \cite{goodman2013knowledge,kao2014formalizing,monroe2017colors}.
+Our findings suggest the utility of this modeling approach for nonverbal communicative behaviors, including sketch production ... and raise several questions XX, YY, ZZ. 
+
 	% other graphical communication papers
+\cite{Garrod:2007wk}
+\cite{fay2010interactive}
+\cite{Healey:2007vq}
 
 % limitations of this work
-	% pix2svg -- for image-level predictions
-	% requires heavy supervision to get adaptor to work well, suggests that we need better approach to approximating image-level correspondence 
+	% requires heavy supervision to get adaptor to work well, suggests that we need better approach to approximating image-level correspondence
 
 % future directions
 	% pix2svg -- for image-level predictions
 	% graphical conventions
+	% neural mechanisms of contextual flexibility
+	% better characterization of the subsetting/smoothing that characterizes visual abstraction
 
 
-Together, this work provides the first unified computational theory of how perception and social cognition support contextual flexibility in real-time visual communication.
+Together, this work provides the first computational theory of how perception and social cognition support contextual flexibility in real-time visual communication.
 
 \subsubsection*{Code availability} The code for the analyses presented in this article is publicly available in a Github repository at: \url{https://github.com/judithfan/visual_communication_in_context}.
 
