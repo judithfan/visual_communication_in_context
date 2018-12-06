@@ -183,8 +183,8 @@ Consistent with the above account, we found that close sketches were matched wit
 Our empirical findings suggest that human sketchers spontaneously take information in common ground with the viewer into account, producing more informative sketches at the cost of additional time and ink in close contexts relative to far contexts. 
 Observing such contextual flexibility argues against the notion that sketch production is constrained exclusively by the appearance of the target of depiction. 
 Rather, these results suggest that information in common ground with the viewer plays a critical role in determining how informative and costly of a sketch people decide to produce during visual communication. 
-And they suggest an analogy to how context influences how people produce linguistic utterances during verbal communication, a key target of contemporary theories of pragmatics in language use \cite{grice1975syntax,goodman2016pragmatic}.
-Informed by these pragmatic theories, we propose that human sketchers determine what kind of sketch to produce in context by deploying two main faculties: \textit{visual abstraction}, which refers to the ability to judge how well a sketch evokes a real object, and \textit{pragmatic inference}, which refers to the ability to prefer sketches that are sufficiently detailed to be diagnostic of the target object in context, but no more detailed than necessary. 
+And they suggest an analogy to how context influences how people produce linguistic utterances during verbal communication, a key target of current computational theories of pragmatics in language use \cite{frank2012predicting,goodman2013knowledge,franke2016probabilistic,bergen2016pragmatic}.
+Informed by this prior work, we propose that human sketchers determine what kind of sketch to produce in context by deploying two main faculties: \textit{visual abstraction}, which refers to the ability to judge how well a sketch evokes a real object, and \textit{pragmatic inference}, which refers to the ability to prefer sketches that are sufficiently detailed to be diagnostic of the target object in context, but no more detailed than necessary. 
 Intuitively, this latter faculty can be decomposed into two aspects: context sensitivity, a preference for sketches that are diagnostic of the target relative to the distractors; and cost sensitivity, a preference for less costly sketches. 
 To test this proposal, we developed a computational model of the sketcher that embodied both visual abstraction and pragmatic inference, and was instantiated as a probabilistic program ``wrapped'' around a deep convolutional neural network. 
 Constructing such a model allowed us to evaluate the contribution of each component using formal model comparison, as well as quantitatively characterize the model's behavior in novel contexts.
@@ -390,20 +390,26 @@ Observing such contextual flexibility demonstrates that visual production is not
 Rather, they suggest that pragmatic inference --- the ability to infer what information would be \textit{relevant} to communicate --- and visual abstraction --- the capacity to perceive the correspondence between an object and a drawing of it --- both play crucial roles.
 To test this hypothesis, we developed a computational model that embodied both pragmatic inference and visual abstraction, and found that it fit the data well and outperformed lesioned variants of the model. 
 
-
 % related literatures
-	% relationship to RSA models to language
-This work can be thought of as generalizing the Rational Speech Act (RSA) modeling framework, originally developed to explain contextual effects in verbal communication \cite{frank2012predicting,goodman2013knowledge}.
-RSA models take inspiration from the insights of Paul Grice \cite{grice1975syntax}, who provided a philosophical framework for understanding how natural language use reflects exquisite social reasoning in context. 
-RSA models draw on ideas and insights from decision theory, probabilistic models of cognition, bounded rationality, and linguistics, and have recently been shown to captured a variety of complex linguistic patterns, achieved good quantitative fits with experimental data, and been incorporated into artificial agents that communicate with each other to solve real-world tasks \cite{goodman2013knowledge,kao2014formalizing,monroe2017colors}.
-Our findings demonstrate the utility of this modeling approach for nonverbal communication, including sketch production, and suggest a way forward for addressing fundamental questions about how pictorial representations derive meaning.
+% relationship to RSA models to language
+This work generalizes the Rational Speech Act (RSA) modeling framework, originally developed to explain contextual effects in verbal communication \cite{frank2012predicting,goodman2013knowledge,franke2016probabilistic,bergen2016pragmatic}, to the domain of visual communication.
+RSA models take inspiration from the insights of Paul Grice \cite{grice1975syntax}, and incorporate ideas from decision theory, probabilistic models of cognition, bounded rationality, and linguistics, to understand how substantial variance in natural language use can be explained by general principles of social cognition. 
+They have been shown to capture key patterns of natural language use \cite{goodman2013knowledge}, achieve good quantitative fits with experimental data \cite{kao2014formalizing}, and enhance the ability of artificial agents to produce informative language in reference game tasks \cite{monroe2017colors,Cohn-GordonGP18}.
+In successfully adapting this modeling approach to the visual domain, our findings provide support for the possibility that similar cognitive mechanisms may support pragmatic behavior in both verbal and nonverbal communication modalities. 
+Moreover, they provide a principled strategy for understanding how variability across depictions of the same object can be derived from the task goals of the agent producing the drawing --- in this case, to coordinate with a viewer on the same object of reference in a context with known alternatives. 
 
-In particular, 
 
-	% other graphical communication papers
+By focusing on how goals influence the form that drawings take, the present study also resonates with prior empirical work that has examined the use of 
+
+% other graphical communication papers -- l
+
+
+% prior studies haven't manipulated context 
+
 \cite{Garrod:2007wk}
 \cite{fay2010interactive}
-\cite{Healey:2007vq}
+\cite{garrod2010can}
+
 
 % limitations of this work
 	% requires heavy supervision to get adaptor to work well, suggests that we need better approach to approximating image-level correspondence
