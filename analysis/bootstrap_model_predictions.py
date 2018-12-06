@@ -12,7 +12,6 @@ test data set for each split, marginalizing out the parametric uncertainty (from
 Generate, for each model in model_space and each split_type in split_types, a boot_vec that is 
 nIter in length (nIter=1000), and can be used to estimate standard error both within split and to get
 standard error estimate when combining across splits.
-
 '''
 
 split_types = ['balancedavg1','balancedavg2','balancedavg3','balancedavg4','balancedavg5']
