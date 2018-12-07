@@ -296,7 +296,7 @@ As such, we aggregated all sketches of the same object produced in the same cont
 Model predictions were generated to the same level of granularity, in the form of a probability distribution over each of 64 categories of sketches, reflecting each combination of object and context condition (e.g., `basset sketch produced in a close context'). 
 
 % latex table generated in R 3.5.1 by xtable 1.8-3 package
-% Mon Oct 22 12:53:09 2018
+% Fri Dec  7 10:07:57 2018
 \begin{table}[ht]
 \centering
 \begin{tabular}{lrrrrrr}
@@ -304,14 +304,15 @@ Model predictions were generated to the same level of granularity, in the form o
 split & \multicolumn{1}{p{0.35in}}{\centering cost (fc6)} & \multicolumn{1}{p{0.35in}}{\centering context (fc6)} & \multicolumn{1}{p{0.35in}}{\centering fc6 vs. conv42} & \multicolumn{1}{p{0.35in}}{\centering fc6 vs. pool1} & \multicolumn{1}{p{0.35in}}{\centering cost (human)} & \multicolumn{1}{p{0.35in}}{\centering context (human)} \\ 
   \hline
 1 & 2.70 & 44.54 & 105.51 & 281.65 & 11.93 & 17.98 \\ 
+  2 & -0.33 & 20.93 & 92.45 & 241.84 & 9.89 & 8.46 \\ 
   3 & 1.98 & 31.86 & 94.77 & 256.83 & 8.95 & 19.15 \\ 
   4 & -0.67 & 8.35 & 93.41 & 247.57 & 9.54 & 13.41 \\ 
   5 & 5.99 & 28.12 & 113.59 & 268.80 & 7.92 & 16.07 \\ 
-  median & 2.34 & 29.99 & 100.14 & 262.81 & 9.25 & 17.02 \\ 
-   \hline
-\end{tabular}
-\caption{Bayes Factors for different model comparisons across different splits}
+  median & 1.98 & 28.12 & 94.77 & 256.83 & 9.54 & 16.07 \\ 
+  \hline
+  \caption{Bayes Factors for different model comparisons across different splits}
 \label{model_comparison}
+\end{tabular}
 \end{table}
 
 To generate these predictions, first we employed Bayesian data analysis to infer a posterior distribution over the four latent scaling parameters in the model, applied to the informativity ($w_{i}$), cost ($w_{c}$), diagnosticity ($w_{d}$), and correspondence ($\alpha$) terms. 
