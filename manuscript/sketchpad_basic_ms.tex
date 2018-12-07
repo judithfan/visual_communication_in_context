@@ -386,10 +386,10 @@ These results converge with those of the lesion experiments conducted on the pra
 The present study examined how communicative context influences visual communication behavior in a drawing-based reference game. 
 We explored the hypothesis that people spontaneously account for information in common ground with their communication partner to produce drawings that are diagnostic of the target relative to the alternatives, while not being too costly to produce. 
 We found that people spontaneously modulate how much time they invest in their drawings according to how similar the distractors are to the target, spending more time to produce more informative drawings when the alternatives were highly similar, but getting away wtih spending less time and producing less informative drawings when the alternatives were highly distinct.
-Observing such contextual flexibility demonstrates that visual production is not constrained exclusively by the perceptual properties of the target. 
-Rather, they suggest that pragmatic inference --- the ability to infer what information would be \textit{relevant} to communicate --- and visual abstraction --- the capacity to perceive the correspondence between an object and a drawing of it --- both play crucial roles.
+Observing such contextual flexibility suggests that while visual abstraction --- the capacity to perceive the correspondence between an object and a drawing of it --- is important for explaining why drawings of objects look the way they do, that visual production is not constrained exclusively by the perceptual properties of an object.  
+Rather they suggest an additional role for pragmatic inference --- the ability to infer what information would be \textit{relevant} to communicate, and not merely true.
 To test this hypothesis, we developed a computational model that embodied both pragmatic inference and visual abstraction, and found that it fit the data well and outperformed lesioned variants of the model. 
-Together, this work provides a first algorithmically explicit theory of how perception and social cognition support contextual flexibility in real-time visual communication.
+Together, this paper provides a first algorithmically explicit theory of how perceptual and social cognition support contextual flexibility in real-time visual communication.
 
 % related literatures
 % relationship to RSA models to language
@@ -398,30 +398,28 @@ RSA models take inspiration from the insights of Paul Grice \cite{grice1975synta
 They have been shown to capture key patterns of natural language use \cite{goodman2013knowledge}, achieve good quantitative fits with experimental data \cite{kao2014formalizing}, and enhance the ability of artificial agents to produce informative language in reference game tasks \cite{monroe2017colors,Cohn-GordonGP18}.
 In successfully adapting this modeling approach to the visual domain, our findings provide novel evidence for the possibility that similar cognitive mechanisms may underlie pragmatic behavior in both verbal and nonverbal communication modalities, a notion implicitly endorsed by prior work that has used nonverbal modalities (e.g., sketching, gesture) to investigate functional constraints on communication shared with language
 \cite{goldin1977development,Garrod:2007wk,fay2010interactive,theisen2010systematicity,garrod2010can,Galantucci:2005uh,verhoef2014emergence}. % mention that prior studies haven't manipulated context? 
-Moreover, they provide a principled strategy for understanding how variability across depictions of the same object can be derived from the task goals of the agent producing the drawing --- in this case, to coordinate with a viewer on the same object of reference in a context with known alternatives.
+Moreover, they provide a principled strategy for understanding how variability across depictions of the same object can be derived from the task goals of the sketcher --- in this case, to coordinate with a viewer on the same object of reference in a context with known alternatives.
 
 % limitations of this work
 	% requires heavy supervision to get adaptor to work well, suggests that we need better approach to approximating image-level correspondence
 	% greater diversity in shapes and contexts
 	% image-level predictions
 
-There are several limitations of our model that would be fruitful to address in future work. 
-First, obtaining a visual encoder that could produce accurate predictions of perceptual correspondence between sketches and objects for unseen sketches required substantial supervision. 
-While heavy supervision is not uncommon for neural network models of sketch representation \cite{sangkloy2016sketchy,yu2017sketch,song2017deep}, future work should investigate alternative visual encoder architectures, including those that exploit abstract correspondences in the hierarchical organization of object structure that may be present in both natural images and sketches \cite{battaglia2016interaction,mrowca2018graph}.
-Second, while discretizing the output of our model over the 64 object-context combinations enabled us to test our key hypotheses concerning the joint contributions of visual abstraction and pragmatic inference to contextual flexibility, this is of course quite dissimilar to the action space that human participants in fact navigated when performing the reference game task, wherein they could produce a sequence of strokes of any length anywhere on the canvas. 
-While there has been some recent and promising advances in modeling sketch production as a sequence of such actions \cite{lake2015human,ha2017neural,ganin2018synthesizing}, these approaches have not yet been shown to successfully emulate how people sketch real objects, much less how this behavior is modulated by communicative context. 
-Future work should develop sketch production that more closely approximates the actual size of the action space inherent to the drawing task. 
-Meeting these challenges is not only important for developing more human-like artificial intelligence, but may also shed new light on the nature of human visual abstraction, and how ongoing perception and long-term conceptual knowledge (e.g., that birds have wings, and dogs have four legs) guide action selection. 
-
-
-% Furthermore, the present study raises several 
-
 % future directions
 	% pix2svg -- fully generative model that produces strokes
-	% graphical conventions %%%%%%%
+	% graphical conventions 
 	% neural mechanisms of contextual flexibility
-	% better characterization of the subsetting/smoothing that characterizes visual abstraction
+	% better characterization of the subsetting/smoothing that characterizes visual abstraction	
 
+There are several limitations of our model that would be fruitful to address in future work. 
+First, obtaining a visual encoder that could produce accurate predictions of perceptual correspondence between individual sketch-object pairs required substantial supervision. 
+While heavy supervision is not uncommon when developing neural network models of sketch representation \cite{sangkloy2016sketchy,yu2017sketch,song2017deep}, future work should investigate architectures that require weaker supervision to estimate image-level correspondences between sketches and natural photographs. 
+One promising approach may be to exploit the hierarchical and compositional structure of natural objects (i.e., parts, subparts, and their relations), as they are expressed in both natural images and sketches of objects \cite{battaglia2016interaction,mrowca2018graph}.
+Second, our model produces a decision over which \textit{type} of sketch to produce in context, rather than producing a \textit{particular} sketch.  
+This is of course different from the decision problem human participants face, wherein they can produce an arbitrary number of strokes of any kind anywhere on the canvas. 
+While there have been recent and promising advances in modeling sketch production as a sequence of such actions \cite{lake2015human,ha2017neural,ganin2018synthesizing}, these approaches have not yet been shown to successfully emulate how people sketch real objects, much less how this behavior is modulated by communicative context. 
+Future work should develop sketch production models that more closely approximates the actual dimensionality of the action space inherent to the task.
+Meeting these challenges is not only important for developing more human-like artificial intelligence, but may also shed new light on the nature of human visual abstraction, and how online perception and long-term conceptual knowledge guide action selection. 
 
 \subsubsection*{Code availability} The code for the analyses presented in this article is publicly available in a Github repository at: \url{https://github.com/judithfan/visual_communication_in_context}.
 
