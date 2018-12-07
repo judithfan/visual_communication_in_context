@@ -29,7 +29,7 @@ sumlogprob <- function(a, b) {
 # Load in all the flattened output
 
 ```{r}
-splits <- c(1,3,4,5) # 2,
+splits <- c(1,2,3,4,5) 
 # models <- c('human', 'multimodal_conv42', 'multimodal_fc6', 'multimodal_pool1')
 #variants <- 
 combined <- data.frame(perception = c(), infWeight = c(), simScaling = c(), 
@@ -38,7 +38,12 @@ combined <- data.frame(perception = c(), infWeight = c(), simScaling = c(),
 for (split in splits) {
   file <- paste0(c('balancedavg', split, '.csv'), collapse = '')
   path <- paste0(c('..', 'models', 'enumerateOutput', file), collapse = '/')
-  combined <- rbind(combined, read_csv(path) %>% mutate(split = split))
+  combined <- rbind(combined, read_csv(path) %>% 
+                      mutate(split = split) %>% 
+                      distinct() %>% 
+                      mutate(logPriorProb = -log(length(loglikelihood))) %>%
+                      mutate(normalizingConstant = reduce(loglikelihood, sumlogprob)) %>%
+                      mutate(logPosteriorProb = loglikelihood - normalizingConstant))
 }
 ```
 
@@ -48,26 +53,15 @@ for (split in splits) {
 comparison.df <- data.frame(comparison = c(), BF = c())
 ```
 
-```{r}
-## Noticed that for some reason, some files duplicated param levels so we use `distinct` to remove duplicates
-posterior = combined %>%
-  group_by(split) %>%
-  distinct() %>% 
-  mutate(logPriorProb = -log(length(loglikelihood))) %>%
-  mutate(normalizingConstant = reduce(loglikelihood, sumlogprob)) %>%
-  mutate(logPosteriorProb = loglikelihood - normalizingConstant) 
-
-```
-
 Examine difference in perception model, collapsing over params
 
 * Within human, test informativity & cost
 
 ```{r}
 ## First, restrict to human and normalize everything to sum to 1
-humanPosterior <- posterior %>%
-  group_by(split) %>%
+humanPosterior <- combined %>%
   filter(perception == 'human') %>%
+  group_by(split) %>%
   mutate(logPosteriorProb = logPosteriorProb - reduce(logPosteriorProb, sumlogprob),
          logPriorProb = -log(length(logPriorProb))) #%>% summarize(a = reduce(logPriorProb, sumlogprob), b = reduce(logPosteriorProb, sumlogprob))
 
@@ -101,9 +95,9 @@ comparison.df = rbind(
 * compare three vision models
 
 ```{r}
-modelPosterior <- posterior %>%
-  group_by(split) %>%
+modelPosterior <- combined %>%
   filter(perception != 'human') %>%
+  group_by(split) %>%
   mutate(logPosteriorProb = logPosteriorProb - reduce(logPosteriorProb, sumlogprob),
          logPriorProb = -log(length(logPriorProb))) #%>% summarize(a = reduce(logPriorProb, sumlogprob), b = reduce(logPosteriorProb, sumlogprob))
 
@@ -122,8 +116,9 @@ comparison.df = rbind(
 * Within best vision model, test informativity & cost...
 
 ```{r}
-fc6Posterior <- posterior %>%
+fc6Posterior <- combined %>%
   filter(perception == 'multimodal_fc6') %>%
+  group_by(split) %>%
   mutate(logPosteriorProb = loglikelihood - reduce(loglikelihood, sumlogprob),
          logPriorProb = -log(length(logPriorProb))) #%>% summarize(a = reduce(logPriorProb, sumlogprob), b = reduce(logPosteriorProb, sumlogprob))
 
