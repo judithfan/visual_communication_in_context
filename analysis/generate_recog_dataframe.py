@@ -46,7 +46,7 @@ if __name__ == '__main__':
 
 	parser.add_argument('--out_path', type=str, \
 									  help='filepath to write dataframe to', 
-									  default='./sketchpad_basic_recog_group_data_2.csv')
+									  default='./group_data/sketchpad_basic_recog_group_data_2.csv')
 
 	args = parser.parse_args()
 
@@ -148,7 +148,7 @@ if __name__ == '__main__':
 					num_strokes.append(b['numStrokes'])    
 					counter += 1
 			except:
-			    print 'Something went wrong with {} {}'.format(rec['gameID'],rec['trialNum'])
+				print 'Something went wrong with {} {}'.format(rec['gameID'],rec['trialNum'])
 				pass
 
 
@@ -178,7 +178,10 @@ if __name__ == '__main__':
 	X = X[(X['rt']>=too_fast) & (X['rt']<=too_slow)]
 
 	print '{} annotations retained.'.format(X.shape[0])
+	print 'This means that {} of annotations were removed for taking too long or too little time.'.format(1 - X.shape[0]/X0.shape[0])
 
 	## save out to CSV
 	print 'Saving dataframe to path: {}'.format(args.out_path)
+	if not os.path.exists('./group_data'):
+		os.makedirs('./group_data')
 	X.to_csv(args.out_path)	
