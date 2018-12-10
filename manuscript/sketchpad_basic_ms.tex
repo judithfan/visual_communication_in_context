@@ -688,26 +688,27 @@ Unlike classical likelihood ratio tests, which use the maximum likelihood, the B
 We placed uninformative uniform priors over all five parameters required to specify our models: a discrete choice over alternative approaches to computing perceptual correspondance: 
 $$m \sim \textrm{Unif}\{\textrm{``empirical''}, \textrm{``high''}, \textrm{``mid''}, \textrm{``low''}\}$$
 and over the continuous latent parameters, 
-$$w_i, w_c, w_d, \alpha \sim \textrm{Unif}(0, 50)$$. 
+$$w_i, w_c, w_d, \alpha \sim \textrm{Unif}(0, 50).$$ 
 To compute the likelihood function $P(D | M, \theta)$ for a speaker model $M$ under parameters $\theta$, we perform exact inference for our sketcher model using (nested) enumeration and sum over all test set datapoints within a crossvalidation fold. 
 
-There are several possible methods to approximate Bayes Factors when exact evaluation of the integral is intractable. We compare two independent methods to check the robustness of our estimate: annealed importance sampling and exact enumeration over a discretized grid of parameters. Annealed importance sampling (AIS; \cite{neal2001annealed}) is a Monte Carlo algorithm that is commonly used to estimate the partition function, or marginalized likelihood, of probabilistic models. Because the integral is dominated by a typical set near the region of high likelihood, AIS uses an MCMC chain to construct a sequence of intermediate distributions interpolating between a tractable initial distribution (in our case, the prior) and intractable target distribution: we set the number of steps to 2000 and take the expectation over 48 independent samples from this procedure for every model of interest, using the implementation provided in the probabilistic programming language WebPPL. We can then obtain Bayes Factors to compare models by taking ratios of these estimates.
+% There are several possible methods to approximate Bayes Factors when exact evaluation of the integral is intractable. We compare two independent methods to check the robustness of our estimate: annealed importance sampling and exact enumeration over a discretized grid of parameters. Annealed importance sampling (AIS; \cite{neal2001annealed}) is a Monte Carlo algorithm that is commonly used to estimate the partition function, or marginalized likelihood, of probabilistic models. Because the integral is dominated by a typical set near the region of high likelihood, AIS uses an MCMC chain to construct a sequence of intermediate distributions interpolating between a tractable initial distribution (in our case, the prior) and intractable target distribution: we set the number of steps to 2000 and take the expectation over 48 independent samples from this procedure for every model of interest, using the implementation provided in the probabilistic programming language WebPPL. We can then obtain Bayes Factors to compare models by taking ratios of these estimates.
 
-We compare our results from AIS to a more exact but brute-force approach: computing the exact likelihood at every point on a discrete grid of parameters.
-This is of particular interest for nested model comparisons, e.g. comparing our full model to a no-cost variant.
+% We compare our results from AIS to a more exact but brute-force approach: 
+
+Specifically, we compute the exact likelihood at every point on a discrete grid of parameters.
+This is of particular interest for nested model comparisons, e.g. comparing our full model to a context-insensitive variant.
 Rather than computing the full marginalized likelihood for both models, we can use the Savage-Dickey method \cite{wagenmakers2010bayesian} to simply compare the posterior probability against the prior at the nested point of interest (e.g. $w_c = 0$) for the full model.
 
-We begin by comparing the full model using empirically estimated perceptual correspondences against nested ``no-cost'' ($w_c = 0$) and ``no-context'' ($w_d = 0$) lesions. We then proceed to compare the three vision models derived from different layers of neural networks, marginalizing over all other parameters. Finally, we perform the same comparisons against cost and context lesions for the best-performing setting of the vision model (using ``fc6'').
+To evaluate the contribution of pragmatic inference, we begin by comparing the pragmatic sketcher model using empirically estimated perceptual correspondences to nested ``cost-insensitive'' ($w_c = 0$) and ``context-insensitive'' ($w_d = 0$) variants. To evaluate the contribution of visual abstraction, we then proceed to compare the three visual encoder variants that adapt features from different layers of VGG-19, marginalizing over all other parameters. Finally, we perform the same context and cost lesion experiments on the full model, employing best-performing visual encoder (i.e., ``high'').
 
 \subsubsection*{Evaluating model predictions}
 
 % To further interpret the findings of our model comparison, we examined posteriors over the inferred parameters of the best-performing model and also computed posterior predictives to evaluate its behavior on several measures of interest: (1) the absolute rank of target sketch category; (2) probability assigned to sketches from the congruent context, i.e. $P(\textrm{`close' sketches} | \textrm{`close' context)} + \textrm{P(`far' sketches} | \textrm{`far' context})$; and (3) the mean cost of predicted sketches. 
 
-We use MCMC to draw 1000 samples from the joint posterior with a lag of YYY, discarding XXX burn-in samples.
+We use MCMC to draw 1000 samples from the joint posterior with a lag of 0, discarding 3000 burn-in samples.
 We constructed posterior predictive distributions by computing the measure of interest on the data set at every sample.
-To estimate standard errors to statistically compare predictions across models, we employed a multi-stage bootstrapping procedure controlling for three nested sources of variability: estimation of measures on the data for a particular parameter setting and test split, variation across the parameter posterior for a test split, and variation across test splits.
-We implemented our models and conducted inference in the probabilistic programming language WebPPL (Goodman \& Stuhlmuller, 2014).
-
+To estimate standard errors to statistically compare predictions across models, we employed a multi-stage bootstrapping procedure to account for three nested sources of variability: estimation of measures on the data for a particular parameter setting and test split, variation across the parameter posterior for a test split, and variation across test splits.
+We implemented our models and conducted inference in the probabilistic programming language WebPPL \cite{goodman2014design}.
 }
 
 \showmatmethods % Display the Materials and Methods section
