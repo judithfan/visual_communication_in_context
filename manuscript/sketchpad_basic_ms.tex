@@ -40,7 +40,7 @@
 % Please give the surname of the lead author for the running footer
 \leadauthor{Fan}
 
-\significancestatement{Drawing is a versatile tool for communication, spanning detailed drawings and simple sketches. Even the same object can be drawn in many ways, depending on the context. How do people decide how to draw in order to be understood? We collected a large number of drawings in different contexts and found that people adapted their drawings accordingly, producing detailed drawings when necessary, but simpler drawings when sufficient. To explain this contextual flexibility, we developed a computational model combining the capacity to perceive the correspondence between an object and drawing with the ability to infer what information is relevant to the viewer in context. Our results suggest drawing may be so versatile because of humans' joint capacity for visual abstraction and pragmatic inference.}
+\significancestatement{Drawing is a versatile tool for communication, spanning detailed renderings and simple sketches. Even the same object can be drawn in many ways, depending on the context. How do people decide how to draw in order to be understood? We collected a large number of drawings in different contexts and found that people adapted their drawings accordingly, producing detailed drawings when necessary, but simpler drawings when sufficient. To explain this contextual flexibility, we developed a computational model combining the capacity to perceive the correspondence between an object and drawing with the ability to infer what information is relevant to the viewer in context. Our results suggest drawing may be so versatile because of humans' joint capacity for visual abstraction and pragmatic inference.}
 
 % Please include corresponding author, author contribution and author declaration information
 \authorcontributions{J.E.F and R.X.D.H. designed and conducted human experiments, J.E.F, R.X.D.H, and M.W. analyzed data and performed computational modeling. J.E.F, R.X.D.H, M.W., and N.D.G. formulated models, interpreted results, and wrote the paper.}
@@ -54,10 +54,10 @@
 Visual modes of communication are ubiquitous in modern life --- from maps to data plots to political cartoons. 
 Here we investigate drawing, the most basic form of visual communication. 
 Communicative drawing poses a core challenge for theories of how vision and social cognition interact, requiring a detailed understanding of how sensory information and social context jointly determine what information is relevant to communicate. 
-Participants (N=192) were paired in an online environment to play a drawing-based reference game. On each trial, both participants were shown the same four objects, but in different locations. The \textit{sketcher's} goal was to draw one of these objects --- the target --- so that the \textit{viewer} could pick it out from a set of distractor objects. 
+Participants (N=192) were paired in an online environment to play a sketching-based reference game. On each trial, both participants were shown the same four objects, but in different locations. The sketcher's goal was to draw one of these objects --- the target --- so that the viewer could pick it out from a set of distractor objects. 
 There were two types of trials: close, where objects belonged to the same basic-level category (i.e., bird, car, chair, dog), and far, where objects belonged to different categories. 
-We found that people exploited information in common ground with their partner to efficiently communicate about the target: on far trials, sketchers achieved 99.7\% recognition accuracy while applying fewer strokes, using less ink, and spending less time (\textit{p}s$<$0.001) on their drawings than on close trials. 
-We hypothesized that humans excel at this task by recruiting two core competencies: (1) \textbf{visual abstraction}, the capacity to perceive the correspondence between an object and a drawing of it; and (2) \textbf{pragmatic inference}, the ability to infer what information would help a viewer distinguish the target from distractors. 
+We found that people exploited information in common ground with their partner to efficiently communicate about the target: on far trials, sketchers achieved high recognition accuracy while applying fewer strokes, using less ink, and spending less time (\textit{p}s$<$0.001) on their drawings than on close trials. 
+We hypothesized that humans excel at this task by recruiting two core competencies: (1) visual abstraction, the capacity to perceive the correspondence between an object and a drawing of it; and (2) pragmatic inference, the ability to infer what information would help a viewer distinguish the target from distractors. 
 We instantiated these competencies in a computational model that combines a deep convolutional neural network visual encoder with a Bayesian model of recursive social reasoning, and found that it fit the data well and outperformed lesioned variants of the model. 
 Together, this work provides the first unified computational theory of how perception and social cognition support contextual flexibility in real-time visual communication.
 \end{abstract}
@@ -93,10 +93,17 @@ Together, these findings suggest that a thorough understanding of the functional
 However, such an explanation is clearly incomplete. 
 Even drawings of the same object can be highly variable \cite{quickdraw2017}, illustrating the importance of other factors that may influence how a drawing conveys meaning. 
 For example, extended visual communication within a community may lead to the formation of culturally-specific graphical conventions over the course of several generations \cite{toku2001cross,boltz1994origin}. 
-Recent laboratory studies of visual communication have also provided experimental evidence that pairs of interacting participants can, over the course of minutes, learn to produce drawings that are referentially meaningful to their partner in context, even when these drawings do not strongly resemble any particular real-world referent out of context \cite{Garrod:2007wk,fay2010interactive,Galantucci:2005uh,Healey:2007vq}. 
+Recent laboratory studies of visual communication have found that pairs of interacting participants can rapidly learn to produce drawings that are referentially meaningful to their partner in context, even when these drawings do not strongly resemble any particular real-world referent out of context \cite{Garrod:2007wk,fay2010interactive,Galantucci:2005uh,Healey:2007vq}. 
 Together, findings in this literature suggest the importance of social context --- and over longer timescales, culturally shared conventions --- in determining how drawings convey meaning.
 
 Building on this prior work, the current study is guided by the overarching hypothesis that successful visual communication by drawing recruits pragmatic inference \cite{goodman2016pragmatic,clark1996using,wilson1986relevance,grice1975syntax} --- the ability to determine which information is not only \textit{valid} to include in a drawing, but also \textit{relevant} in context --- in combination with visual abstraction --- the set of computations that transform raw visual inputs into semantically meaningful internal representations.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.4\textwidth]{figures/1_task_display_alt.png}
+\caption{(A) Communication task. Participants were paired in an online environment to play a sketching-based reference game and assigned the roles of \textit{sketcher} and \textit{viewer}. On each trial, the sketcher's goal was to draw one of these objects so that the viewer could distinguish the target from three distractor objects. (B) Context manipulation. Distractor similarity to target was manipulated across two context conditions: close contexts, where the target and distractors all belonged to the same basic-level category, and far contexts, where the target and distractors belonged to different basic-level categories. (C) Recognition task. Naive participants were presented with a randomly sampled sketch from the communication experiment and an array containing all 32 objects, and were instructed to identify the best-matching object.}
+\label{task_display}
+\end{figure}
 
 To investigate visual communication in a naturalistic yet controlled setting, here we employ sketching-based reference games. 
 These reference games involve two players: a sketcher who aims to help a viewer pick out a target object from an array of alternative, distractor objects by representing it in a sketch. 
@@ -110,13 +117,6 @@ As such, previous studies employing drawing tasks to study visual communication 
 The goal of this paper is to provide a computational framework for systematically investigating how social context influences how people convey visual concepts in real-time. 
 We present an integrated computational model of contextual flexibility in visual communication that combines deep convolutional neural network models of visual perception with a Bayesian probabilistic model of pragmatic reasoning \cite{goodman2016pragmatic} to make detailed quantitative predictions of what drawings people will produce across a variety of communicative contexts. 
 We found that our full model fits the data well and outperformed lesioned variants.
-
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=0.4\textwidth]{figures/1_task_display_alt.png}
-\caption{(A) Communication task. (B) Context manipulation. (C) Recognition task.}
-\label{task_display}
-\end{figure}
 
 \section*{Results}
 
@@ -150,17 +150,17 @@ Specifically, we predicted that sketchers would invest more time and ink in prod
 % Successful communication was primarily quantified as the viewer's accuracy in identifying the target. The investment of time was measured as the length of time between the beginning of the first stroke to the completion of the final stroke in each sketch, and the investment of ink was measured in two ways: as the number of strokes used for each sketch and the proportion of the drawing canvas filled by ink.  
 
 Consistent with our prediction, we found that viewers were highly accurate overall at identifying the target from the sketches produced (proportion correct: 93.8\%, 95\% CI: [92.7\%, 94.8\%], estimated by bootstrap resampling participants). 
-Moreover, we found that sketchers spent less time (close: 30.3s, far: 13.7s, \textit{p}$<$0.001), applied fewer strokes (close: 8.03 vs. far: 13.5, 95\% CI of difference: [3.75, 7.90], \textit{p}$<$0.001), and used less ink (proportion of canvas filled; close: 0.054, far: 0.042, 95\% CI: [0.01, 0.014], \textit{p}$<$0.001) to produce their sketches in the far condition than in the close condition. 
+Moreover, we found that sketchers spent less time (close: 30.3s, far: 13.7s, \textit{p}$<$0.001), applied fewer strokes (close: 8.03 vs. far: 13.5, 95\% CI of difference: [3.75, 7.90], \textit{p}$<$0.001), and used less ink (proportion of canvas filled; close: 0.054, far: 0.042, 95\% CI of difference: [0.01, 0.014], \textit{p}$<$0.001) to produce their sketches in the far condition than in the close condition. 
 Despite the relative sparsity of sketches were in the far condition, viewers were near ceiling at identifying the target on these trials (far: 99.7\%, 95\% CI: [0.993, 0.999]; close: 87.9\%, 95\% CI: [0.858, 0.899]), and took less time to make these decisions than on close trials (far: 6.32 sec vs. close: 8.32 sec, 95\% CI: [-2.748, -1.251]).
 
 \subsection*{Effect of context manipulation on sketch recognizability}
 
-A natural explanation for the difference between close and far contexts in how costly the sketches were to produce is that they differed in how informative they were about identity of the target. Specifically, the greater time and ink spent on close sketches served to increase their degree of perceptual correspondence between the sketch and object, compared with less costly far sketches, which exhibited a weaker correspondence to the target object in absolute terms, while still being communicatively effective in context. 
+A natural explanation for the difference between context conditions in how costly the sketches were to produce is that they differed in how informative they were about identity of the target. 
+Specifically, we hypothesized that the greater time and ink spent on close sketches was associated with a greater degree of perceptual correspondence to the target object, compared with less costly far sketches, which exhibited a weaker correspondence to the target object in absolute terms, while still being communicatively effective in context. 
 To investigate this possibility, another group of naive participants (N=112) was recruited to perform a sketch-object matching task, the data from which were used to estimate the strength of perceptual correspondence between each sketch and every object in the experiment. 
-On each trial of this recognition experiment, participants were presented with a randomly sampled sketch and an image array containing all 32 objects, and were instructed to identify the object that best matched each sketch from the array. 
+On each trial of this recognition experiment, participants were presented with a randomly sampled sketch and an array containing all 32 objects, and were instructed to identify the object that best matched each sketch from the array. 
 % To obtain robust estimates of sketch-object perceptual correspondences, each sketch was presented approximately 10 times across different sessions. 
 Consistent with the above account, we found that close sketches were matched with their corresponding object rendering more consistently than far sketches were (close: 54.2\%; far: 37.5\%; $Z$=14.1, $p$<0.001), although both were successfully matched at rates greatly exceeding chance ($p$s < 0.001).
-
 
 \begin{figure*}[htbp]
 \centering
@@ -331,7 +331,7 @@ We found that in general, sketch retrieval performance was high for all three mo
 However, only the pragmatic sketcher was able to reliably produce the sketch appropriate for the context condition more frequently than would be predicted by chance (95\% CI proportion: $[0.571, 0.620]$; Fig.~\ref{model_results}B, left); neither the context-insensitive nor the cost-insensitive variants displayed this context congruity (95\% CI: context-insensitive = $[0.478, 0.525]$, cost-insensitive = $[0.498, 0.501]$). 
 We observed that the lack of context congruity in the lesioned variants was attributable to a shared bias to produce close sketches in all contexts, which are highly informative in absolute terms, and thus higher in communicative utility if the distractors are ignored, or in the absence of a cost penalty. 
 
-Moreover, only the pragmatic sketcher produced costlier sketches than average in the close condition (95\%CI normalized cost: $[0.205, 0.218]$ vs. grand mean cost = $0.196$; Fig.~\ref{model_results}C, left), and less costly sketches than average in the far condition (95\%CI: $[0.175, 0.180]$). 
+Moreover, only the pragmatic sketcher produced costlier sketches than average in the close condition (95\% CI normalized cost: $[0.205, 0.218]$ vs. grand mean cost = $0.196$; Fig.~\ref{model_results}C, left), and less costly sketches than average in the far condition (95\%CI: $[0.175, 0.180]$). 
 The context-insensitive variant is inherently unable to modulate the cost of the sketches it produces by context condition, and thus was no more or less likely to select a costlier, more diagnostic sketch on a close trial (95\% CI: $[0.187, 0.194]$) than a far trial (95\% CI: $[0.187, 0.192]$), and preferred slightly less costly sketches overall. 
 While the cost-insensitive variant did exhibit cost modulation by context, because it ignores their cost, it preferred costlier sketches overall in both close (95\%CI: $[0.229, 0.241]$) and far contexts (95\%CI: $[0.214, 0.220]$). 
 
@@ -365,9 +365,45 @@ Critically, we found that removing context and cost sensitivity diminished the a
 By contrast, these lesions led to only modest decrements in overall sketch retrieval performance (95\% CI target rank: context-insensitive = $[3.65, 4.05]$, cost-insensitive = $[3.33, 3.67]$;  Fig.~\ref{model_results}A), suggesting that the visual encoder itself is a major determinant of the ability to produce sketches of the correct object, whether or not the context-congruent version.
 These results converge with those of the lesion experiments conducted on the pragmatic sketcher model without a visual encoder, and together provide strong evidence for the importance of both visual abstraction and pragmatic inference for explaining contextual flexibility in human visual communication. 
 
+
+\begin{table}[]
+\centering
+
+\begin{tabular}{@{}
+>{\columncolor[HTML]{FFFFFF}}l 
+>{\columncolor[HTML]{FFFFFF}}l 
+>{\columncolor[HTML]{FFFFFF}}l 
+>{\columncolor[HTML]{FFFFFF}}l 
+>{\columncolor[HTML]{FFFFFF}}l 
+>{\columncolor[HTML]{FFFFFF}}l 
+>{\columncolor[HTML]{FFFFFF}}l @{}}
+\toprule
+ & \multicolumn{2}{c}{\cellcolor[HTML]{FFFFFF}{\color[HTML]{343434} \textbf{human recog}}} & \multicolumn{4}{c}{\cellcolor[HTML]{FFFFFF}{\color[HTML]{000000} \textbf{visual encoder}}} \\ \midrule
+{\color[HTML]{000000} \textbf{split}} & \multicolumn{1}{c}{\cellcolor[HTML]{FFFFFF}{\color[HTML]{343434} \textbf{context}}} & \multicolumn{1}{c}{\cellcolor[HTML]{FFFFFF}{\color[HTML]{343434} \textbf{cost}}} & \multicolumn{1}{c}{\cellcolor[HTML]{FFFFFF}{\color[HTML]{000000} \textbf{context}}} & \multicolumn{1}{c}{\cellcolor[HTML]{FFFFFF}{\color[HTML]{000000} \textbf{cost}}} & \multicolumn{1}{c}{\cellcolor[HTML]{FFFFFF}{\color[HTML]{000000} \textbf{mid}}} & \multicolumn{1}{c}{\cellcolor[HTML]{FFFFFF}{\color[HTML]{000000} \textbf{low}}} \\ \midrule
+{\color[HTML]{000000} \textbf{1}} & {\color[HTML]{343434} 18.0} & {\color[HTML]{343434} 11.9} & {\color[HTML]{000000} 44.5} & {\color[HTML]{000000} 2.70} & {\color[HTML]{000000} 105} & {\color[HTML]{000000} 282} \\ \midrule
+{\color[HTML]{000000} \textbf{2}} & {\color[HTML]{343434} 8.46} & {\color[HTML]{343434} 9.89} & {\color[HTML]{000000} 20.9} & {\color[HTML]{000000} -0.33} & {\color[HTML]{000000} 92.5} & {\color[HTML]{000000} 242} \\ \midrule
+{\color[HTML]{000000} \textbf{3}} & {\color[HTML]{343434} 19.2} & {\color[HTML]{343434} 8.95} & {\color[HTML]{000000} 31.9} & {\color[HTML]{000000} 1.98} & {\color[HTML]{000000} 94.8} & {\color[HTML]{000000} 257} \\ \midrule
+{\color[HTML]{000000} \textbf{4}} & {\color[HTML]{343434} 13.4} & {\color[HTML]{343434} 9.54} & {\color[HTML]{000000} 8.35} & {\color[HTML]{000000} -0.67} & {\color[HTML]{000000} 93.4} & {\color[HTML]{000000} 248} \\ \midrule
+{\color[HTML]{000000} \textbf{5}} & {\color[HTML]{343434} 16.1} & {\color[HTML]{343434} 7.92} & {\color[HTML]{000000} 28.1} & {\color[HTML]{000000} 5.99} & {\color[HTML]{000000} 114} & {\color[HTML]{000000} 269} \\ \midrule
+{\color[HTML]{000000} \textbf{median}} & {\color[HTML]{343434} \textbf{16.1}} & {\color[HTML]{343434} \textbf{9.54}} & {\color[HTML]{000000} \textbf{28.1}} & {\color[HTML]{000000} \textbf{1.98}} & {\color[HTML]{000000} \textbf{94.8}} & {\color[HTML]{000000} \textbf{257}} \\ \bottomrule
+\end{tabular}
+
+\caption{Bayes Factors for model comparisons between full and lesioned model variants (columns) for each crossvalidation fold (rows). Results under `human recog' heading (first two columns) reflect model predictions when using empirical estimates of perceptual correspondence based on human sketch recognition behavior. Results under `visual encoder' heading (final four columns) reflect model predictions when using variants of the DCNN visual encoder, the adaptor components of which were trained in a five-fold crossvalidated manner using human sketch recognition behavior. Other column labels indicate type of lesion: `context' refers to comparison between full model and context-insensitive variant; `cost' refers to comparison between full model and cost-insensitive variant; `mid' refers to comparison between full model using the high adaptor vs. mid adaptor; `low' refers comparison between full model using high adaptor vs. low adaptor}
+\label{model_comparison}
+\end{table}
+
+%%%%%%%% cost fc6, context fc6, high vs. mid, high vs. low, cost human, context human
+% 	1 & 2.70 & 44.54 & 105.51 & 281.65 & 11.93 & 17.98 \\ 
+%   2 & -0.33 & 20.93 & 92.45 & 241.84 & 9.89 & 8.46 \\ 
+%   3 & 1.98 & 31.86 & 94.77 & 256.83 & 8.95 & 19.15 \\ 
+%   4 & -0.67 & 8.35 & 93.41 & 247.57 & 9.54 & 13.41 \\ 
+%   5 & 5.99 & 28.12 & 113.59 & 268.80 & 7.92 & 16.07 \\ 
+%   median & 1.98 & 28.12 & 94.77 & 256.83 & 9.54 & 16.07 \\ 
+%%%%%%%% cost fc6, context fc6, high vs. mid, high vs. low, cost human, context human
+
 \section*{Discussion}
 
-The present study examined how communicative context influences visual communication behavior in a drawing-based reference game. 
+The present study examined how communicative context influences visual communication behavior in a sketching-based reference game. 
 We explored the hypothesis that people spontaneously account for information in common ground with their communication partner to produce drawings that are diagnostic of the target relative to the alternatives, while not being too costly to produce. 
 We found that people spontaneously modulate how much time they invest in their drawings according to how similar the distractors are to the target, spending more time to produce more informative drawings when the alternatives were highly similar, but getting away wtih spending less time and producing less informative drawings when the alternatives were highly distinct.
 Observing such contextual flexibility suggests that while visual abstraction --- the capacity to perceive the correspondence between an object and a drawing of it --- is important for explaining why drawings of objects look the way they do, that visual production is not constrained exclusively by the perceptual properties of an object.  
@@ -408,43 +444,6 @@ Meeting these challenges is not only important for developing more human-like ar
 
 Over time, elucidating the computational basis of visual communication may shed new light upon the sources of cultural variation in pictorial style, the origins of modern graphical techniques for conveying patterns in data, and lead to enhanced interactive visualization tools for education and research.
 
-\begin{table}[]
-\centering
-
-\begin{tabular}{@{}
->{\columncolor[HTML]{FFFFFF}}l 
->{\columncolor[HTML]{FFFFFF}}l 
->{\columncolor[HTML]{FFFFFF}}l 
->{\columncolor[HTML]{FFFFFF}}l 
->{\columncolor[HTML]{FFFFFF}}l 
->{\columncolor[HTML]{FFFFFF}}l 
->{\columncolor[HTML]{FFFFFF}}l @{}}
-\toprule
- & \multicolumn{2}{c}{\cellcolor[HTML]{FFFFFF}{\color[HTML]{343434} \textbf{human recog}}} & \multicolumn{4}{c}{\cellcolor[HTML]{FFFFFF}{\color[HTML]{000000} \textbf{visual encoder}}} \\ \midrule
-{\color[HTML]{000000} \textbf{split}} & \multicolumn{1}{c}{\cellcolor[HTML]{FFFFFF}{\color[HTML]{343434} \textbf{context}}} & \multicolumn{1}{c}{\cellcolor[HTML]{FFFFFF}{\color[HTML]{343434} \textbf{cost}}} & \multicolumn{1}{c}{\cellcolor[HTML]{FFFFFF}{\color[HTML]{000000} \textbf{context}}} & \multicolumn{1}{c}{\cellcolor[HTML]{FFFFFF}{\color[HTML]{000000} \textbf{cost}}} & \multicolumn{1}{c}{\cellcolor[HTML]{FFFFFF}{\color[HTML]{000000} \textbf{mid}}} & \multicolumn{1}{c}{\cellcolor[HTML]{FFFFFF}{\color[HTML]{000000} \textbf{low}}} \\ \midrule
-{\color[HTML]{000000} \textbf{1}} & {\color[HTML]{343434} 18.0} & {\color[HTML]{343434} 11.9} & {\color[HTML]{000000} 44.5} & {\color[HTML]{000000} 2.70} & {\color[HTML]{000000} 105} & {\color[HTML]{000000} 282} \\ \midrule
-{\color[HTML]{000000} \textbf{2}} & {\color[HTML]{343434} 8.46} & {\color[HTML]{343434} 9.89} & {\color[HTML]{000000} 20.9} & {\color[HTML]{000000} -0.33} & {\color[HTML]{000000} 92.5} & {\color[HTML]{000000} 242} \\ \midrule
-{\color[HTML]{000000} \textbf{3}} & {\color[HTML]{343434} 19.2} & {\color[HTML]{343434} 8.95} & {\color[HTML]{000000} 31.9} & {\color[HTML]{000000} 1.98} & {\color[HTML]{000000} 94.8} & {\color[HTML]{000000} 257} \\ \midrule
-{\color[HTML]{000000} \textbf{4}} & {\color[HTML]{343434} 13.4} & {\color[HTML]{343434} 9.54} & {\color[HTML]{000000} 8.35} & {\color[HTML]{000000} -0.67} & {\color[HTML]{000000} 93.4} & {\color[HTML]{000000} 248} \\ \midrule
-{\color[HTML]{000000} \textbf{5}} & {\color[HTML]{343434} 16.1} & {\color[HTML]{343434} 7.92} & {\color[HTML]{000000} 28.1} & {\color[HTML]{000000} 5.99} & {\color[HTML]{000000} 114} & {\color[HTML]{000000} 269} \\ \midrule
-{\color[HTML]{000000} \textbf{median}} & {\color[HTML]{343434} \textbf{16.1}} & {\color[HTML]{343434} \textbf{9.54}} & {\color[HTML]{000000} \textbf{28.1}} & {\color[HTML]{000000} \textbf{1.98}} & {\color[HTML]{000000} \textbf{94.8}} & {\color[HTML]{000000} \textbf{257}} \\ \bottomrule
-\end{tabular}
-
-\caption{Bayes Factors for model comparisons between full and lesioned model variants (columns) for each crossvalidation fold (rows). Results under `human recog' heading (first two columns) reflect model predictions when using empirical estimates of perceptual correspondence based on human sketch recognition behavior. Results under `visual encoder' heading (final four columns) reflect model predictions when using variants of the DCNN visual encoder, the adaptor components of which were trained in a five-fold crossvalidated manner using human sketch recognition behavior. Other column labels indicate type of lesion: `context' refers to comparison between full model and context-insensitive variant; `cost' refers to comparison between full model and cost-insensitive variant; `mid' refers to comparison between full model using the high adaptor vs. mid adaptor; `low' refers comparison between full model using high adaptor vs. low adaptor}
-\label{model_comparison}
-\end{table}
-
-%%%%%%%% cost fc6, context fc6, high vs. mid, high vs. low, cost human, context human
-% 	1 & 2.70 & 44.54 & 105.51 & 281.65 & 11.93 & 17.98 \\ 
-%   2 & -0.33 & 20.93 & 92.45 & 241.84 & 9.89 & 8.46 \\ 
-%   3 & 1.98 & 31.86 & 94.77 & 256.83 & 8.95 & 19.15 \\ 
-%   4 & -0.67 & 8.35 & 93.41 & 247.57 & 9.54 & 13.41 \\ 
-%   5 & 5.99 & 28.12 & 113.59 & 268.80 & 7.92 & 16.07 \\ 
-%   median & 1.98 & 28.12 & 94.77 & 256.83 & 9.54 & 16.07 \\ 
-%%%%%%%% cost fc6, context fc6, high vs. mid, high vs. low, cost human, context human
-
-
-
 
 \subsubsection*{Code availability} The code for the analyses presented in this article is publicly available in a Github repository at: \url{https://github.com/judithfan/visual_communication_in_context}.
 
@@ -477,12 +476,13 @@ Each quartet was presented four times, such that each object in the quartet serv
 
 A total of 112 participants were recruited via Amazon Mechanical Turk (AMT). They were provided a base compensation of \$1.00 for their participation, and earned an additional \$0.01 bonus for each correct response.
 % \subsubsection*{Task}
-On each trial, participants were presented with a randomly selected sketch collected in the communication experiment, surrounded by a grid containing the 32 objects from that experiment. Their goal was to select the object in the grid that best matched the sketch. 
+On each trial, participants were presented with a randomly selected sketch collected in the communication experiment, surrounded by a grid containing the 32 objects from that experiment. 
+Their goal was to select the object in the grid that best matched the sketch. 
 % Participants were provided with binary feedback about the correctness of their response on each trial via a bonus counter that incremented by 1 point for each correct identification, but did not change for incorrect trials. 
 Participants received task feedback in the form of a bonus earned for each correct trial. 
 Participants were instructed to prioritize accuracy over speed. 
-We applied a conservative outlier removal procedure based on response latency, whereby trials that were either too fast to have supported careful consideration of the sketch and menu of objects (RT<1000ms), or too slow and suggestive of an attentional lapse (RT>30s), were filtered from the dataset. 
-The removal of these outlier trials (XX\%) did not have a substantial impact on the pattern of recognition behavior. 
+We applied a conservative outlier removal procedure based on response latency, whereby trials that were either too fast to have supported careful consideration of the sketch and menu of objects (RT<$1000ms$), or too slow and suggestive of an attentional lapse (RT>$30s$), were filtered from the dataset. 
+The removal of these outlier trials ($8.01$\%) did not have a substantial impact on the pattern of recognition behavior. 
 In order to mitigate the possibility that participants could adjust their matching strategy according to any particular sketcher's style, each session was populated with 64 sketches sampled randomly from different reference games. 
 To obtain robust estimates of sketch-object perceptual correspondences, each sketch was presented approximately 10 times across different sessions.  
 
@@ -682,9 +682,9 @@ To quantify the evidence for one model over another, we computed Bayes Factors:
 the ratio of likelihoods for each model, integrating over all their respective parameters under the prior:
 $$BF = \frac{\int P(D | M_1, \theta_1)P(\theta_1)}{\int P(D | M_2, \theta_2)P(\theta_2)}$$
 Unlike classical likelihood ratio tests, which use the maximum likelihood, the Bayes Factor naturally penalizes models for their complexity \cite{wagenmakers2018bayesian,jefferys1992ockham}.
-We placed uninformative uniform priors over all five parameters required to specify our models: a discrete choice of the vision model used to compute perceptual correspondance
-$$m \sim \textrm{Unif}\{\textrm{``low''}, \textrm{``mid''}, \textrm{``high''}, \textrm{``empirical''}\}$$
-and continuous latent parameters
+We placed uninformative uniform priors over all five parameters required to specify our models: a discrete choice over alternative approaches to computing perceptual correspondance: 
+$$m \sim \textrm{Unif}\{\textrm{``empirical''}, \textrm{``high''}, \textrm{``mid''}, \textrm{``low''}\}$$
+and over the continuous latent parameters, 
 $$w_i, w_c, w_d, \alpha \sim \textrm{Unif}(0, 50)$$. 
 To compute the likelihood function $P(D | M, \theta)$ for a speaker model $M$ under parameters $\theta$, we perform exact inference for our sketcher model using (nested) enumeration and sum over all test set datapoints within a crossvalidation fold. 
 
