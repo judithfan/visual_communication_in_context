@@ -476,11 +476,11 @@ In the long term, elucidating the computational basis of visual communication ma
 
 A total of 192 unique participants, who were recruited via Amazon Mechanical Turk (AMT) and grouped into pairs, completed the experiment. They were provided a base compensation of \$2.70 for participation and earned a \$0.03 bonus for each correct trial. In this and subsequent behavioral experiments, participants provided informed consent in accordance with the Stanford IRB.
 % \subsubsection*{Stimuli}
-Stimuli were thirty two 3D mesh models of objects belonging to 4 categories (i.e., birds, chairs, cars, dogs), containing eight objects each. Each object was rendered in color on a gray background at three-quarter perspective, 10$^{\circ}$ viewing angle (i.e., slightly above), and fixed distance.
+Stimuli were thirty two 3D mesh models of objects belonging to 4 categories (i.e., birds, chairs, cars, dogs), containing eight objects each. Each object was rendered in color on a gray background at three-quarter perspective, 10$^{\circ}$ viewing angle (i.e., slightly above), and fixed distance. \mwu{is there any significance to these choices? why did we choose these?}
 % \subsubsection*{Task}
 % Drawings were collected in the context of an online, sketching-based reference game (``Guess My Sketch!''). The game involved two players: a \textit{sketcher} who aims to help a \textit{viewer} pick out a target object from a set of distractor objects by representing it in a sketch. On each trial, both participants were shown an array of the same four objects; however, the positions of these objects were randomized for each participant so that participants could not use object location information to solve the task. On each trial, one of the four objects was highlighted on the sketcher's screen to designate it as the target.
 Sketchers drew using black ink on digital canvas (pen width = 5 pixels; 300 x 300 pixels) embedded in a web browser window using Paper.js (http://paperjs.org/). Participants drew using the mouse cursor, and were not able to delete previous strokes. Each stroke of which was rendered on the viewer's screen immediately upon the completion of each stroke. There were no restrictions on how long participants could take to make their drawings. After clicking a submit button, the viewer guessed the identity of the drawn object by clicking one of the four objects in the array. Otherwise, the viewer had no other means of communicating with the sketcher. Both participants received immediate task-related feedback: the sketcher learned which object the viewer had clicked, and the viewer learned the identity of the target. Both participants earned bonus points for each correct response.
-For each pair, objects were randomly allocated to eight quartets: Four of these quartets contained objects from the same category (``close''); the other four of these quartets contained objects from different categories (``far'' condition). 
+For each pair \mwu{im lost; is this describing how pairs were chosen or what the viewer sees? what is a quartet?}, objects were randomly allocated to eight quartets: Four of these quartets contained objects from the same category (``close''); the other four of these quartets contained objects from different categories (``far'' condition). 
 Each quartet was presented four times, such that each object in the quartet served as the target exactly once. The assignment of objects to quartet and condition was randomized across pairs.
 
 % Successful communication was primarily quantified as the viewer's accuracy in identifying the target. The investment of time was measured as the length of time between the beginning of the first stroke to the completion of the final stroke in each sketch, and the investment of ink was measured in two ways: as the number of strokes used for each sketch and the proportion of the drawing canvas filled by ink.
@@ -550,7 +550,7 @@ To control for this variability across participants and to ensure robust estimat
 
 The visual encoder is a function that accepts a pair of images, a sketch and an object rendering (both 224 x 224 RGB images), as input and returns a scalar value in the range $[0,1]$, reflecting the degree of perceptual correspondence between the sketch and object. 
 
-The encoder consists of two components: a base visual encoder and an adaptor network. We employ VGG-19 \cite{simonyan2014very} as our base visual encoder architecture, which had been pretrained to categorize objects on the ImageNet database, and whose parameters remain frozen \cite{deng2009imagenet}.
+\mwu{this paragraph is repetitive with main text} The encoder consists of two components: a base visual encoder and an adaptor network. We employ VGG-19 \cite{simonyan2014very} as our base visual encoder architecture, which had been pretrained to categorize objects on the ImageNet database, and whose parameters remain frozen \cite{deng2009imagenet}.
 %, a high-performing and widely used deep convolutional neural network architecture. 
 % This network had been pretrained to categorize objects on the ImageNet database, which contains millions of photographs from hundreds of object categories \cite{deng2009imagenet}. 
 % Despite the fact that drawings are highly abstracted away from natural visual inputs, prior work has shown a striking isomorphism in the similarity structure \cite{kriegeskorte2008matching} of object categories in sketches and photos at higher layers in these models \cite{FanCommon2018}, without any additional training. 
@@ -586,23 +586,26 @@ To discriminate which layer provides the best starting feature basis for predict
 % \label{table:parameters}
 % \end{table}
 
-When applying the high-level visual encoder, a sketch and object are first passed through VGG and a feature vector in $\mathbb{R}^{4096}$ for each is extracted from a higher layer (i.e., the first fully-connected layer, also known as $fc6$). These two vectors are then concatenated to form a single vector in $\mathbb{R}^{8192}$, to be passed into the high adaptor network. 
-The high adaptor is composed of a linear layer that maps from $\mathbb{R}^{8192} \rightarrow \mathbb{R}^{128}$, followed by a ``Swish'' nonlinearity \footnote{Swish is a recently discovered nonlinearity that outperforms the common rectified linear nonlinearity (ReLU) in deep models on a suite of tasks \cite[]{ramachandran2018searching}. Regardless, the ability of the model to fit the data appeared to be robust to the choice of nonlinearity (alternative nonlinearities were TanH and ReLU) and size of hidden layer, within the range $(2^{7},2^{9})$).}  and dropout, then another linear layer that maps from $\mathbb{R}^{128} \rightarrow \mathbb{R}^{1}$.
+When applying the high-level visual encoder, a sketch and object are first passed through VGG and a feature vector in $\mathbb{R}^{4096}$ for each image is extracted from a higher layer (i.e., the first fully-connected layer, also known as \textit{fc6}). These two vectors are then concatenated to form a single vector in $\mathbb{R}^{8192}$, to be passed into the high adaptor network. 
+The high adaptor is composed of a linear layer that maps from $\mathbb{R}^{8192} \rightarrow \mathbb{R}^{128}$, followed by a ``Swish'' nonlinearity \footnote{Swish is a recently discovered nonlinearity that outperforms the common rectified linear nonlinearity (ReLU) in deep models on a suite of tasks \cite[]{ramachandran2018searching}. Regardless, the ability of the model to fit the data appeared to be robust to the choice of nonlinearity (alternative nonlinearities were TanH and ReLU) and size of hidden layer, within the range $(2^{7},2^{9})$).}  and dropout, then another linear layer that maps from $\mathbb{R}^{128} \rightarrow \mathbb{R}^{1}$. \mwu{maybe mention that we added dropout bc it helps not overfit, leading to improved generalization. Btw, ``high", ``middle", ``low" are not the same notation we used above. we should be consistent.}
 
-When appying the mid-level visual encoder, two mid-level feature representations are intercepted from an intermediate layer (i.e., the 10th convolutional layer, $conv4_2$).
-Features from the 10th convolutional layer of VGG are $512 x 28 x 28$.
-We first ``flatten" the input into a one dimensional vector in $\mathbb{R}^{512}$ using a weighted linear combination over the spatial dimension $\sum_{i=1}^{28}\sum_{j=1}^{28} w_{ij} * x_{ij}$, where $x_{ij}$ indexes a spatial location in the image representation at this layer. 
+When applying the mid-level visual encoder, two mid-level feature representations are intercepted from an intermediate layer (i.e., the 10th convolutional layer, \textit{conv\_4\_2}).
+Features from the 10th convolutional layer of VGG are three-dimensional: 512 by 28 by 28 pixels.
+We first ``flatten" the input into a one dimensional vector in $\mathbb{R}^{512}$ using a weighted linear combination over the spatial dimensions $\sum_{i=1}^{28}\sum_{j=1}^{28} w_{ij} * x_{ij}$, where $x_{ij}$ indexes a spatial location in the image representation at this layer. 
 The weight parameters $\{w_{ij}|1\leq i,j \leq 28\}$ are learned jointly with the parameters of mid adaptor, and are separately learned for the sketch and 3D object modalities. 
 % Intuitively, this is akin to attention over the spatial features of the 10th convolutional layer of VGG. 
 % The weights used to ``flatten''  3D-object and sketch spatial features, creating two vectors of size 512, then concatenate prior to mid-adaptor.
+\mwu{might want to mention that this process is soft-attention over the spatial features + citation?}
 The two vectors in $\mathbb{R}^{512}$ are then concatenated to form a single vector in $\mathbb{R}^{1024}$, to be passed to the mid adaptor network. 
 The mid adaptor consists of a linear layer that maps from $\mathbb{R}^{1024} \rightarrow \mathbb{R}^{1021}$, followed by a Swish nonlinearity, dropout, then a linear layer from $\mathbb{R}^{1021} \rightarrow \mathbb{R}^{1}$. 
 This hidden layer size (i.e., 1021 units) was chosen to ensure that the total number of learnable parameters was as similar to the high adaptor as possible. 
 
-The architecture of the low adaptor is almost identical to that of the mid adaptor, except VGG features are intercepted at the first max pooling layer (i.e., $pool1$).
-Features in this layer are $64 x 112 x 112$. As above, a weighted sum of model activations over the $112 x 112$ spatial features is applied, yielding one vector in $\mathbb{R}^{64}$ each for the sketch and object, which are then concatenated. 
+The architecture of the low adaptor is almost identical to that of the mid adaptor, except VGG features are intercepted at the first max pooling layer (i.e., \textit{pool1}).
+Features in this layer are 64 by 112 by 112 pixels. As above, a weighted sum of model activations over the 112 by 112 spatial features is applied, yielding one vector in $\mathbb{R}^{64}$ each for the sketch and object, which are then concatenated. 
 The low adaptor maps from $\mathbb{R}^{128} \rightarrow \mathbb{R}^{7875}$, followed by the same Swish nonlinearity, dropout, and another linear layer that maps from $\mathbb{R}^{7875} \rightarrow \mathbb{R}^{1}$. 
 As above, the hidden layer size (i.e., $7875$ units) was chosen so that this adaptor contained a comparable number of learnable parameters. 
+
+\mwu{text in the last two paragraphs needs tightening.}
 
 % Explicitly, this network starts with a linear layer that maps  128 to 7875 (like the mid-adaptor, 7875 is chosen to match the number of parameters), swish, dropout, then a linear layer form 7875 to 1. Due to the input size, each attention module in early-adaptor has 12,544 learnable weights.
 
@@ -634,8 +637,8 @@ We define the loss function, $\mathcal{L}$, to be the cross entropy loss between
 
 This loss function explicitly encourages the adaptor to learn not only to predict the strength of the correspondence between a sketch and the object it was intended to depict (measured by correct matches during recognition), but also to predict its correspondence to all of the other objects (measured by the pattern of confusions during recognition).
 
-We use the Adam optimization algorithm \cite[]{kingma2014adam} (learning rate = $1e-4$) over minibatches of size 10 for 100 epochs, where an epoch is a full pass through the training set. 
-After training each adaptor for 100 epochs, we freeze the model with the best performance on a validation set. \footnote{As a property of the input domain, the gradients with respect to adaptor parameters are very small (1.51e-4 $\pm$ 2.61e-4), inevitably resulting in poor learning (we can reproduce this effect from several intializations). We find that naively increasing the learning rate led to unstable optimization, but that multiplying the loss by a large constant $C$ leads to a much smoother learning trajectories and good test generalizationIncreasing the learning rate and multiplying the loss by a constant are not equivalent for second moment gradient methods. In practice, $C =$ 1e4.} 
+We use the Adam optimization algorithm \cite[]{kingma2014adam} (learning rate = 1e-4) over minibatches of size 10 for 100 epochs, where an epoch is a full pass through the training set. 
+After training each adaptor for 100 epochs, we freeze the model with the best performance on a validation set. \footnote{As a property of the input domain, the gradients with respect to adaptor parameters are very small (1.51e-4 $\pm$ 2.61e-4), inevitably resulting in poor learning (we can reproduce this effect from several intializations). We find that naively increasing the learning rate led to unstable optimization, but that multiplying the loss by a large constant $C$ leads to a much smoother learning trajectories and good test generalization. Critically, increasing the learning rate and multiplying the loss by a constant are not equivalent for second moment gradient methods. In practice, $C =$ 1e4.} 
 
 \subsubsection*{Generating encoder-based estimates of perceptual correspondence between sketches and objects}
 
@@ -694,7 +697,7 @@ These normalized image-level correspondence scores are then averaged across all 
 
 In order to test the contribution of each component of our sketcher model, we conducted a series of lesion experiments and formal model comparisons.
 To quantify the evidence for one model over another, we computed Bayes Factors:
-the ratio of likelihoods for each model, integrating over all their respective parameters under the prior:
+the ratio of likelihoods for each model \mwu{ah... this is the def i was looking for.}, integrating over all their respective parameters under the prior:
 $$BF = \frac{\int P(D | M_1, \theta_1)P(\theta_1)}{\int P(D | M_2, \theta_2)P(\theta_2)}$$
 Unlike classical likelihood ratio tests, which use the maximum likelihood, the Bayes Factor naturally penalizes models for their complexity \cite{wagenmakers2018bayesian,jefferys1992ockham}.
 We placed uninformative uniform priors over all five parameters required to specify our models: a discrete choice over alternative approaches to computing perceptual correspondance: 
