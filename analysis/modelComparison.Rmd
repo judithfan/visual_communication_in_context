@@ -63,7 +63,8 @@ humanPosterior <- combined %>%
   filter(perception == 'human') %>%
   group_by(split) %>%
   mutate(logPosteriorProb = logPosteriorProb - reduce(logPosteriorProb, sumlogprob),
-         logPriorProb = -log(length(logPriorProb))) #%>% summarize(a = reduce(logPriorProb, sumlogprob), b = reduce(logPosteriorProb, sumlogprob))
+         logPriorProb = -log(length(logPriorProb))) 
+         #%>% summarize(a = reduce(logPriorProb, sumlogprob), b = reduce(logPosteriorProb, sumlogprob))
 
 ## Next, consider nested 'no pragmatics' model and integrate over nuisance params to get Bayes Factor
 comparison.df = rbind(
