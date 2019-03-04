@@ -299,7 +299,7 @@ Second, we evaluated the contribution of visual abstraction by comparing how wel
 \begin{figure*}[htbp]
 \centering
 \includegraphics[width=0.99\textwidth]{figures/5_model_results_2.pdf}
-\caption{Sketch production behavior by model variant. The table below each panel indicates whether the corresponding model variant plotted above is sensitive to context or cost. A green disc indicates context/cost sensitivity; a red `X' indicates the lack of context/cost sensitivity. 
+\caption{Sketch production behavior by model variant. The table below each plot indicates whether the corresponding model variant plotted above is sensitive to context or cost. A green disc indicates context/cost sensitivity; a red `X' indicates the lack of context/cost sensitivity. 
 Results in lefthand region of each panel (white background) reflect model predictions when using empirical estimates of $sim(s,o)$ based on human sketch recognition behavior. 
 Results in the righthand region (gray background) reflect model predictions when using variants of the DCNN visual encoder, the adaptor components of which were trained in a five-fold crossvalidated manner using human sketch recognition behavior. 
 All results reflect average model behavior on test data only across identical train-test splits. 
@@ -398,7 +398,14 @@ These results converge with those of the lesion experiments conducted on the pra
 {\color[HTML]{000000} \textbf{median}} & {\color[HTML]{343434} \textbf{16.1}} & {\color[HTML]{343434} \textbf{9.54}} & {\color[HTML]{000000} \textbf{28.1}} & {\color[HTML]{000000} \textbf{1.98}} & {\color[HTML]{000000} \textbf{94.8}} & {\color[HTML]{000000} \textbf{257}} \\ \bottomrule
 \end{tabular}
 
-\caption{Bayes Factors for model comparisons between full and lesioned model variants (columns) for each crossvalidation fold (rows). Results under `human recog' heading (first two columns) reflect model predictions when using empirical estimates of perceptual correspondence based on human sketch recognition behavior. Results under `visual encoder' heading (final four columns) reflect model predictions when using variants of the DCNN visual encoder, the adaptor components of which were trained in a five-fold crossvalidated manner using human sketch recognition behavior. Other columns indicate comparisons between full model and different types of lesion: `context' reflects comparison to context-insensitive variant; `cost' reflects comparison to cost-insensitive variant; `mid' reflects comparison between full model using the high adaptor vs. mid adaptor; `low' reflects comparison between full model using high adaptor vs. low adaptor.}
+\caption{Log Bayes Factors (BF) for comparisons between full and lesioned model variants (columns) for each crossvalidation fold (rows). 
+Log-BFs$>$0 indicate greater evidence for the full model than the lesioned variant. 
+Human Recog: used empirical estimates of perceptual correspondence based on human sketch recognition behavior. 
+Visual Encoder: used DCNN visual encoder, trained in a five-fold crossvalidated manner using human sketch recognition behavior. 
+Context: comparison between context-sensitive and context-insensitive variant. 
+Cost: comparison between cost-sensitive and cost-insensitive variant; 
+Mid: comparison between high adaptor vs. mid adaptor in context/cost-sensitive model; 
+Low: comparison between high adaptor vs. low adaptor in context/cost-sensitive model.}
 \label{model_comparison}
 \end{table}
 
