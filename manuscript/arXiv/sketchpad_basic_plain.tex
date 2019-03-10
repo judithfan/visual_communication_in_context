@@ -1,39 +1,57 @@
-\documentclass[9pt,twocolumn,twoside]{pnas-new}
-% Use the lineno option to display guide line numbers if required.
-% Note that the use of elements such as single-column equations
-% may affect the guide line number alignment.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\templatetype{pnasresearcharticle} % Choose template
-% {pnasresearcharticle} = Template for a two-column research article
-% {pnasmathematics} = Template for a one-column mathematics article
-% {pnasinvited} = Template for a PNAS invited submission
+% neurosketch paper source
 
+% JOCN submission guidelines: https://www.mitpressjournals.org/journals/jocn/sub
+
+% Google Doc with collaborative writing timeline: https://docs.google.com/document/d/1G7SkJPb2oTNu2Pru5R0h7cy09543HHucXE-wK5ERZ9g/edit
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\documentclass[11pt,letterpaper]{article}
 \usepackage{pslatex}
-\usepackage{amsfonts}
+\usepackage{apacite}
 \usepackage{graphicx}
-\usepackage{color}
-\usepackage{todonotes}
-\usepackage{dsfont}
-\usepackage{array}
 \usepackage{textcomp}
-\usepackage{multirow}
-\usepackage{subfig}
-\usepackage{todonotes}
-\usepackage{hyperref}
-\usepackage{booktabs}
+\usepackage[all]{nowidow}
+\usepackage{amsfonts}
+\usepackage[font=small,skip=0pt]{caption}
+\usepackage{mathtools}
+\usepackage{float}
+\usepackage{courier}
+\usepackage{placeins}
+\usepackage{sidecap}
+\usepackage{lineno}
+\usepackage{authblk}
+\usepackage{caption,setspace}
 \usepackage{xcolor}
-\tolerance=1
-\emergencystretch=\maxdimen
-\hyphenpenalty=10000
-\hbadness=10000
+\usepackage{changepage}
+\usepackage{subcaption}
+\usepackage{booktabs}
+\usepackage{rotating}
+\usepackage[hyphens]{url}
 
-\newcommand{\mwu}[1]{{\color{red}{[mwu: #1]}}}
+
+\usepackage{color}
+\definecolor{Blue}{RGB}{50,50,200}
+\definecolor{Red}{RGB}{200,50,50}
+\newcommand{\todo}[1]{\textcolor{Red}{#1}}
+\newcommand{\revised}[1]{\textcolor{Blue}{#1}}
+
+\captionsetup{font={normal,stretch=1.1}}
+\setlength{\parindent}{2em}
+\setlength{\parskip}{0.5em}
+\renewcommand{\baselinestretch}{1.5}
+\usepackage[letterpaper, margin=0.9in]{geometry}
+\usepackage{pdflscape}
+
+% \setlength{\intextsep}{9pt}
+\setlength{\belowcaptionskip}{-\baselineskip}\addtolength{\belowcaptionskip}{1.6ex}
 
 \title{Pragmatic inference and visual abstraction enable contextual flexibility during visual communication}
+\date{}
 
-% Use letters for affiliations, numbers to show equal authorship (if applicable) and to indicate the corresponding author
-
-\author[a,c,1]{Judith E. Fan}
+\author[a,c]{Judith E. Fan}
 \author[a]{Robert X.D. Hawkins}
 \author[b]{Mike Wu}
 \author[a,b]{Noah D. Goodman}
@@ -42,20 +60,14 @@
 \affil[b]{Department of Computer Science, Stanford University}
 \affil[c]{Department of Psychology, University of California, San Diego}
 
-% Please give the surname of the lead author for the running footer
-\leadauthor{Fan}
+\renewcommand\Authands{ and }
 
-\significancestatement{Drawing is a versatile tool for communication, spanning detailed renderings and simple sketches. Even the same object can be drawn in many ways, depending on the context. How do people decide how to draw in order to be understood? We collected a large number of drawings in different contexts and found that people adapted their drawings accordingly, producing detailed drawings when necessary, but simpler drawings when sufficient. To explain this contextual flexibility, we developed a computational model combining: the capacity to perceive the correspondence between an object and drawing with the ability to infer what information is relevant to the viewer in context. Our results suggest drawing may be so versatile because humans possess these two capacities.}
-
-% Please include corresponding author, author contribution and author declaration information
-\authorcontributions{J.E.F and R.X.D.H. designed and conducted human experiments, J.E.F, R.X.D.H, and M.W. analyzed data and performed computational modeling. J.E.F, R.X.D.H, M.W., and N.D.G. formulated models, interpreted results, and wrote the paper.}
-\authordeclaration{The authors declare no conflict of interest.}
-\correspondingauthor{\textsuperscript{1}To whom correspondence should be addressed. E-mail: jefan@stanford.edu}
-
-% Keywords are not mandatory, but authors are strongly encouraged to provide them. If provided, please include two to five keywords, separated by the pipe symbol, e.g:
-\keywords{drawing $|$ social cognition $|$ perception $|$ deep learning $|$ probabilistic models}
+\begin{document}
+\maketitle
 
 \begin{abstract}
+\hyphenpenalty=1000 
+
 Visual modes of communication are ubiquitous in modern life --- from maps to data plots to political cartoons. 
 Here we investigate drawing, the most basic form of visual communication. 
 Communicative drawing poses a core challenge for theories of how vision and social cognition interact, requiring a detailed understanding of how sensory information and social context jointly determine what information is relevant to communicate. 
@@ -66,24 +78,16 @@ We hypothesized that humans succeed in this task by recruiting two core competen
 To evaluate this hypothesis, we developed a computational model of the sketcher that embodied both competencies, instantiated as a deep convolutional neural network nested within a probabilistic program. 
 We found that this model fit human data well and outperformed lesioned variants. 
 Together, this work provides the first algorithmically explicit theory of how perception and social cognition jointly support contextual flexibility in visual communication.
+
 \end{abstract}
+\textbf{Keywords:}
+drawing; social cognition;  perception;  deep learning;  probabilistic models
 
-\dates{This manuscript was compiled on \today}
-\doi{\url{www.pnas.org/cgi/doi/10.1073/pnas.XXXXXXXXXX}}
+\newpage
+\linenumbers
 
-\begin{document}
-
-% Optional adjustment to line up main text (after abstract) of first page with line numbers, when using both lineno and twocolumn options.
-% You should only change this length when you've finalised the article contents.
-\verticaladjustment{-2pt}
-
-\maketitle
-\thispagestyle{firststyle}
-\ifthenelse{\boolean{shortarticle}}{\ifthenelse{\boolean{singlecolumn}}{\abscontentformatted}{\abscontent}}{}
-
-%%%%% In another version of the intro, you recap the visual production stuff on its own, and then point out that drawing is not one task, but several, and could depend a lot of the goals and context, and in this paper, we extend previous models to handle this.
-
-\noindent \dropcap{A} watershed moment in the history of human cognition and culture was the invention of graphical representation, independently in Europe and Asia, about 30-60 thousand years ago \cite{hoffmann2018u,Aubert:2014jy}. 
+\section*{Introduction}
+A watershed moment in the history of human cognition and culture was the invention of graphical representation, independently in Europe and Asia, about 30-60 thousand years ago \cite{hoffmann2018u,Aubert:2014jy}. 
 Graphical representation was transformative because it provided a means for people to encode their thoughts in a durable and shareable format \cite{donald1991origins}. 
 From ancient etchings on cave walls to modern digital displays, using graphical representations for visual communication lies at the heart of key human innovations (e.g., mapmaking, data visualization), and forms the foundation for the cultural transmission of knowledge and higher-level reasoning \cite{tomasello2009cultural,card1999readings}. 
 Drawing, in which a person produces marks that form a meaningful image, is a particularly important case study for understanding human visual communication. Drawn images predate symbolic writing systems \cite{clottes2008cave}, are pervasive in many cultures \cite{gombrich1989story}, and are produced prolifically by children from an early age \cite{kellogg1969analyzing}.
@@ -104,6 +108,7 @@ Together, findings in this literature suggest the importance of social context -
 
 Building on this prior work, the current study is guided by the overarching hypothesis that successful visual communication by drawing recruits pragmatic inference \cite{goodman2016pragmatic,clark1996using,wilson1986relevance,grice1975syntax} --- the ability to determine which information is not only \textit{valid} to include in a drawing, but also \textit{relevant} in context --- in combination with visual abstraction --- the set of computations that transform raw visual inputs into semantically meaningful internal representations.
 
+
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.4\textwidth]{1_task_display_alt.png}
@@ -113,7 +118,7 @@ Building on this prior work, the current study is guided by the overarching hypo
 
 To investigate visual communication in a naturalistic yet controlled setting, we employ sketching-based reference games. 
 These reference games involve two players: a \textit{sketcher} who aims to help a \textit{viewer} pick out a target object from an array of distractor objects by representing it in a sketch. 
-This basic arrangement can be traced back to the language games explored by \citep{wittgenstein1953philosophical} and \citep{Lewis69_Convention}. 
+This basic arrangement can be traced back to the language games explored by \cite{wittgenstein1953philosophical} and \cite{Lewis69_Convention}. 
 Such games have proven to be a valuable tool for eliciting pragmatic inferences about \textit{language} use in context, and to make quantitative measurements of the behavioral consequences of these inferences \cite{goodman2016pragmatic,kao2014formalizing,goodman2013knowledge,frank2012predicting}. 
 Here we generalize this methodology to understand how sketchers account for information in common ground with their viewer in order to produce sketches that are informative \cite{grice1975syntax,wilson1986relevance} yet parsimonious \cite{zipf1936psycho}.
 
@@ -171,7 +176,7 @@ Consistent with the above account, we found that close sketches were matched wit
 
 \begin{figure*}[htbp]
 \centering
-\includegraphics[width=0.9\textwidth]{3_behavioral_performance.pdf}
+\includegraphics[width=0.99\textwidth]{3_behavioral_performance.pdf}
 \caption{(A-C) Mean number of strokes, amount of ink, and time spent producing sketches in each context condition. (D-E) Target identification performance in context during communication task. (F) Target identification performance out of context during recognition task.}
 \label{task_performance}
 \end{figure*}
@@ -253,7 +258,7 @@ All sketcher variants are parameterized by four scaling terms, applied to the in
 
 \begin{figure*}[htbp]
 \centering
-\includegraphics[width=0.8\textwidth]{4_model_schematic-min.pdf}
+\includegraphics[width=0.99\textwidth]{4_model_schematic-min.pdf}
 \caption{(A) Architecture of visual encoder model for sketches and object renderings. Consists of pre-trained deep convolutional neural network (VGG-19) and shallow nonlinear ``adaptor'' neural network that predicts sketch-object correspondence. 
 The encoder takes a sketch and object rendering as input, and outputs a correspondence score reflecting how well the sketch resembles the object. 
 Three adaptor networks trained, using features from a one of the highest, an intermediate, and an early layer of VGG.
@@ -347,6 +352,45 @@ While the cost-insensitive variant did exhibit cost modulation by context, becau
 
 Together, these results suggest that both context and cost sensitivity are critical for capturing key aspects of contextual flexibility in human visual communication. 
 
+\newgeometry{margin=1.4in} % modify this if you need even more space
+\begin{landscape}
+
+\begin{table}[]
+\begin{tabular}{@{}lll|llll@{}}
+\toprule
+\multicolumn{1}{{c}}{} & \multicolumn{2}{c|}{\textbf{human recog}} & \multicolumn{4}{c}{\textbf{visual encoder}} \\ \midrule
+\multicolumn{1}{c}{\textbf{split}} & \multicolumn{1}{c}{\textbf{context vs. no-context}} & \multicolumn{1}{c|}{\textbf{cost vs. no-cost}} & \multicolumn{1}{c}{\textbf{context vs. no-context}} & \multicolumn{1}{c}{\textbf{cost vs. no-cost}} & \multicolumn{1}{c}{\textbf{high vs. mid}} & \multicolumn{1}{c}{\textbf{high vs. low}} \\
+\textbf{1} & 18.0 & 11.9 & 44.5 & 2.70 & 105 & 282 \\
+\textbf{2} & 8.46 & 9.89 & 20.9 & -0.33 & 92.5 & 242 \\
+\textbf{3} & 19.2 & 8.95 & 31.9 & 1.98 & 94.8 & 257 \\
+\textbf{4} & 13.4 & 9.54 & 8.35 & -0.67 & 93.4 & 248 \\
+\textbf{5} & 16.1 & 7.92 & 28.1 & 5.99 & 114 & 269 \\
+\textbf{median} & \textbf{16.1} & \textbf{9.54} & \textbf{28.1} & \textbf{1.98} & \textbf{94.8} & \textbf{257} \\ \bottomrule
+\end{tabular}
+\caption{Log Bayes Factors (BF) for comparisons between full and lesioned model variants (columns) for each crossvalidation fold (rows). 
+Log-BFs$>$0 indicate greater evidence for the full model than the lesioned variant. 
+Human Recog: used empirical estimates of perceptual correspondence based on human sketch recognition behavior. 
+Visual Encoder: used DCNN visual encoder, trained in a five-fold crossvalidated manner using human sketch recognition behavior. 
+Context: comparison between context-sensitive and context-insensitive variant. 
+Cost: comparison between cost-sensitive and cost-insensitive variant; 
+Mid: comparison between high adaptor vs. mid adaptor in context/cost-sensitive model; 
+Low: comparison between high adaptor vs. low adaptor in context/cost-sensitive model.}
+\label{model_comparison}
+\end{table}
+
+\end{landscape}
+\restoregeometry
+
+%%%%%%%% cost fc6, context fc6, high vs. mid, high vs. low, cost human, context human
+% 	1 & 2.70 & 44.54 & 105.51 & 281.65 & 11.93 & 17.98 \\ 
+%   2 & -0.33 & 20.93 & 92.45 & 241.84 & 9.89 & 8.46 \\ 
+%   3 & 1.98 & 31.86 & 94.77 & 256.83 & 8.95 & 19.15 \\ 
+%   4 & -0.67 & 8.35 & 93.41 & 247.57 & 9.54 & 13.41 \\ 
+%   5 & 5.99 & 28.12 & 113.59 & 268.80 & 7.92 & 16.07 \\ 
+%   median & 1.98 & 28.12 & 94.77 & 256.83 & 9.54 & 16.07 \\ 
+%%%%%%%% cost fc6, context fc6, high vs. mid, high vs. low, cost human, context human
+
+
 \subsubsection*{Evaluating contribution of visual abstraction}
 
 Having established the importance of pragmatic inference, we next sought to evaluate the contribution of visual abstraction.
@@ -374,51 +418,6 @@ Again, we found that the pragmatic sketcher provided a stronger overall fit to h
 Critically, we found that removing context and cost sensitivity diminished the ability of this model to produce the context-congruent sketch of the correct object (context-insensitive 95\% CI: $[0.489, 0.539]$; cost-insensitive 95\% CI: $[0.507, 0.554]$; Fig.~\ref{model_results}B), and appropriately modulate the cost of the sketches it produced (context-insensitive 95\% CI: close = $[0.185, 0.190]$, far = $[0.185, 0.189]$; cost-insensitive 95\% CI: close = $[0.210, 0.219]$, far = $[0.196, 0.200]$; Fig.~\ref{model_results}C). 
 By contrast, these lesions led to only modest decrements in overall sketch retrieval performance (95\% CI target rank: context-insensitive = $[3.65, 4.05]$, cost-insensitive = $[3.33, 3.67]$;  Fig.~\ref{model_results}A), suggesting that the visual encoder itself is a major determinant of the ability to produce sketches of the correct \textit{object}, even if not the context-congruent version.
 These results converge with those of the lesion experiments conducted on the pragmatic sketcher model without a visual encoder, and together provide strong evidence for the importance of both visual abstraction and pragmatic inference for explaining contextual flexibility in human visual communication. 
-
-
-\begin{table}[]
-\centering
-
-\begin{tabular}{@{}
->{\columncolor[HTML]{FFFFFF}}l 
->{\columncolor[HTML]{FFFFFF}}l 
->{\columncolor[HTML]{FFFFFF}}l 
->{\columncolor[HTML]{FFFFFF}}l 
->{\columncolor[HTML]{FFFFFF}}l 
->{\columncolor[HTML]{FFFFFF}}l 
->{\columncolor[HTML]{FFFFFF}}l @{}}
-\toprule
- & \multicolumn{2}{c}{\cellcolor[HTML]{FFFFFF}{\color[HTML]{343434} \textbf{human recog}}} & \multicolumn{4}{c}{\cellcolor[HTML]{FFFFFF}{\color[HTML]{000000} \textbf{visual encoder}}} \\ \midrule
-{\color[HTML]{000000} \textbf{split}} & \multicolumn{1}{c}{\cellcolor[HTML]{FFFFFF}{\color[HTML]{343434} \textbf{context}}} & \multicolumn{1}{c}{\cellcolor[HTML]{FFFFFF}{\color[HTML]{343434} \textbf{cost}}} & \multicolumn{1}{c}{\cellcolor[HTML]{FFFFFF}{\color[HTML]{000000} \textbf{context}}} & \multicolumn{1}{c}{\cellcolor[HTML]{FFFFFF}{\color[HTML]{000000} \textbf{cost}}} & \multicolumn{1}{c}{\cellcolor[HTML]{FFFFFF}{\color[HTML]{000000} \textbf{mid}}} & \multicolumn{1}{c}{\cellcolor[HTML]{FFFFFF}{\color[HTML]{000000} \textbf{low}}} \\ \midrule
-{\color[HTML]{000000} \textbf{1}} & {\color[HTML]{343434} 18.0} & {\color[HTML]{343434} 11.9} & {\color[HTML]{000000} 44.5} & {\color[HTML]{000000} 2.70} & {\color[HTML]{000000} 105} & {\color[HTML]{000000} 282} \\ \midrule
-{\color[HTML]{000000} \textbf{2}} & {\color[HTML]{343434} 8.46} & {\color[HTML]{343434} 9.89} & {\color[HTML]{000000} 20.9} & {\color[HTML]{000000} -0.33} & {\color[HTML]{000000} 92.5} & {\color[HTML]{000000} 242} \\ \midrule
-{\color[HTML]{000000} \textbf{3}} & {\color[HTML]{343434} 19.2} & {\color[HTML]{343434} 8.95} & {\color[HTML]{000000} 31.9} & {\color[HTML]{000000} 1.98} & {\color[HTML]{000000} 94.8} & {\color[HTML]{000000} 257} \\ \midrule
-{\color[HTML]{000000} \textbf{4}} & {\color[HTML]{343434} 13.4} & {\color[HTML]{343434} 9.54} & {\color[HTML]{000000} 8.35} & {\color[HTML]{000000} -0.67} & {\color[HTML]{000000} 93.4} & {\color[HTML]{000000} 248} \\ \midrule
-{\color[HTML]{000000} \textbf{5}} & {\color[HTML]{343434} 16.1} & {\color[HTML]{343434} 7.92} & {\color[HTML]{000000} 28.1} & {\color[HTML]{000000} 5.99} & {\color[HTML]{000000} 114} & {\color[HTML]{000000} 269} \\ \midrule
-{\color[HTML]{000000} \textbf{median}} & {\color[HTML]{343434} \textbf{16.1}} & {\color[HTML]{343434} \textbf{9.54}} & {\color[HTML]{000000} \textbf{28.1}} & {\color[HTML]{000000} \textbf{1.98}} & {\color[HTML]{000000} \textbf{94.8}} & {\color[HTML]{000000} \textbf{257}} \\ \bottomrule
-\end{tabular}
-
-\caption{Log Bayes Factors (BF) for comparisons between full and lesioned model variants (columns) for each crossvalidation fold (rows). 
-Log-BFs$>$0 indicate greater evidence for the full model than the lesioned variant. 
-Human Recog: used empirical estimates of perceptual correspondence based on human sketch recognition behavior. 
-Visual Encoder: used DCNN visual encoder, trained in a five-fold crossvalidated manner using human sketch recognition behavior. 
-Context: comparison between context-sensitive and context-insensitive variant. 
-Cost: comparison between cost-sensitive and cost-insensitive variant; 
-Mid: comparison between high adaptor vs. mid adaptor in context/cost-sensitive model; 
-Low: comparison between high adaptor vs. low adaptor in context/cost-sensitive model.}
-\label{model_comparison}
-\end{table}
-
-% \mikewu{do we ever define BayesFactor? maybe in appendix.. i dont actually know what this table is showing}
-
-%%%%%%%% cost fc6, context fc6, high vs. mid, high vs. low, cost human, context human
-% 	1 & 2.70 & 44.54 & 105.51 & 281.65 & 11.93 & 17.98 \\ 
-%   2 & -0.33 & 20.93 & 92.45 & 241.84 & 9.89 & 8.46 \\ 
-%   3 & 1.98 & 31.86 & 94.77 & 256.83 & 8.95 & 19.15 \\ 
-%   4 & -0.67 & 8.35 & 93.41 & 247.57 & 9.54 & 13.41 \\ 
-%   5 & 5.99 & 28.12 & 113.59 & 268.80 & 7.92 & 16.07 \\ 
-%   median & 1.98 & 28.12 & 94.77 & 256.83 & 9.54 & 16.07 \\ 
-%%%%%%%% cost fc6, context fc6, high vs. mid, high vs. low, cost human, context human
 
 \section*{Discussion}
 
@@ -472,7 +471,7 @@ In the long term, investigating the computational basis of visual communication 
 
 % The main text of the paper must stand on its own without the SI. Refer to SI in the manuscript at an appropriate point in the text. Number supporting figures and tables starting with S1, S2, etc. Authors are limited to no more than 10 SI files, not including movie files. Authors who place detailed materials and methods in SI must provide sufficient detail in the main text methods to enable a reader to follow the logic of the procedures and results and also must reference the online methods. If a paper is fundamentally a study of a new method or technique, then the methods must be described completely in the main text. Because PNAS edits SI and composes it into a single PDF, authors must provide the following file formats only.
 
-\matmethods{
+\section*{Materials and Methods}
 
 \subsection*{Communication experiment: Manipulation of context in sketch-based reference game}
 
@@ -703,21 +702,32 @@ Specifically, for each model variant and for each test split we bootstrap resamp
 We applied inverse-variance weighting to aggregate these estimates of the mean and standard error across test splits, such that test splits with lower variance contribute more than do splits with higher variance, yielding an overall estimate of the mean and standard error for each measure of interest, for each model variant. 
 We estimated the half-widths of the 95\% confidence interval for each measure of interest under the the assumption of normality for the sampling distribution of the mean.
 
-}
 
-\showmatmethods % Display the Materials and Methods section
 
-\acknow{Thanks to Dan Yamins and the Stanford CoCo Lab for helpful comments and discussion.}
 
-\showacknow{} % Display the acknowledgments section
 
-% \pnasbreak splits and balances the columns before the references.
-% Uncomment \pnasbreak to view the references in the PNAS-style
-% If you see unexpected formatting errors, try commenting out \pnasbreak
-% as it can run into problems with floats and footnotes on the final page.
-%\pnasbreak
+\section*{Code availability} The code for the analyses presented in this article is publicly available in a Github repository:
 
-% Bibliography
+\section*{Data availability} The data presented in this article is publicly available in a figshare repository.
+
+\section*{Acknowledgements}
+
+Thanks to Dan Yamins and the Stanford CoCo Lab for helpful comments and discussion.
+
+\section*{Author contributions statement}
+
+J.E.F and R.X.D.H. designed and conducted human experiments, J.E.F, R.X.D.H, and M.W. analyzed data and performed computational modeling. J.E.F, R.X.D.H, M.W., and N.D.G. formulated models, interpreted results, and wrote the paper.
+
+\section*{Additional information}
+
+The authors declare no competing interests.
+
+\bibliographystyle{apacite}
+
+\setlength{\bibleftmargin}{.125in}
+\setlength{\bibindent}{-\bibleftmargin}
+
+\newpage
 \bibliography{references}
 
 \end{document}
