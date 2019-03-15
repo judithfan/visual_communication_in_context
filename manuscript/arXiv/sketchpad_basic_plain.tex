@@ -29,9 +29,6 @@
 \usepackage{subcaption}
 \usepackage{booktabs}
 \usepackage{rotating}
-\usepackage[hyphens]{url}
-
-
 \usepackage{color}
 \definecolor{Blue}{RGB}{50,50,200}
 \definecolor{Red}{RGB}{200,50,50}
@@ -44,6 +41,7 @@
 \renewcommand{\baselinestretch}{1.5}
 \usepackage[letterpaper, margin=0.9in]{geometry}
 \usepackage{pdflscape}
+\usepackage{url}
 
 % \setlength{\intextsep}{9pt}
 \setlength{\belowcaptionskip}{-\baselineskip}\addtolength{\belowcaptionskip}{1.6ex}
@@ -84,7 +82,7 @@ Together, this work provides the first algorithmically explicit theory of how pe
 drawing; social cognition;  perception;  deep learning;  probabilistic models
 
 \newpage
-\linenumbers
+% \linenumbers
 
 \section*{Introduction}
 A watershed moment in the history of human cognition and culture was the invention of graphical representation, independently in Europe and Asia, about 30-60 thousand years ago \cite{hoffmann2018u,Aubert:2014jy}. 
@@ -153,7 +151,7 @@ Specifically, we predicted that sketchers would invest more time and ink in prod
 
 \begin{figure*}[htbp]
 \centering
-\includegraphics[width=0.8\textwidth]{2_sketch_gallery-min.pdf}
+\includegraphics[width=0.99\textwidth]{2_sketch_gallery-min.pdf}
 \caption{(A) Object stimuli. (B) Example sketches produced in close context condition. (C) Example sketches produced in far context condition.}
 \label{sketch_gallery}
 \end{figure*}
@@ -390,7 +388,6 @@ Low: comparison between high adaptor vs. low adaptor in context/cost-sensitive m
 %   median & 1.98 & 28.12 & 94.77 & 256.83 & 9.54 & 16.07 \\ 
 %%%%%%%% cost fc6, context fc6, high vs. mid, high vs. low, cost human, context human
 
-
 \subsubsection*{Evaluating contribution of visual abstraction}
 
 Having established the importance of pragmatic inference, we next sought to evaluate the contribution of visual abstraction.
@@ -463,13 +460,6 @@ Meeting these challenges is not only important for developing more human-like ar
 
 In the long term, investigating the computational basis of visual communication may help to elucidate the sources of cultural variation in pictorial style, the origins of modern graphical techniques for conveying patterns in data, and lead to enhanced interactive visualization tools for education and research.
 
-\subsubsection*{Code availability} The code for the analyses presented in this article is publicly available in a Github repository at: \url{https://github.com/judithfan/visual_communication_in_context}.
-
-\subsubsection*{Data availability} The data presented in this article are publicly available in a figshare repository.
-
-% \subsection*{Supporting Information (SI)}
-
-% The main text of the paper must stand on its own without the SI. Refer to SI in the manuscript at an appropriate point in the text. Number supporting figures and tables starting with S1, S2, etc. Authors are limited to no more than 10 SI files, not including movie files. Authors who place detailed materials and methods in SI must provide sufficient detail in the main text methods to enable a reader to follow the logic of the procedures and results and also must reference the online methods. If a paper is fundamentally a study of a new method or technique, then the methods must be described completely in the main text. Because PNAS edits SI and composes it into a single PDF, authors must provide the following file formats only.
 
 \section*{Materials and Methods}
 
@@ -703,10 +693,7 @@ We applied inverse-variance weighting to aggregate these estimates of the mean a
 We estimated the half-widths of the 95\% confidence interval for each measure of interest under the the assumption of normality for the sampling distribution of the mean.
 
 
-
-
-
-\section*{Code availability} The code for the analyses presented in this article is publicly available in a Github repository:
+\section*{Code availability} The code for the analyses presented in this article is publicly available in a Github repository. \url{https://github.com/judithfan/visual_communication_in_context}.
 
 \section*{Data availability} The data presented in this article is publicly available in a figshare repository.
 
