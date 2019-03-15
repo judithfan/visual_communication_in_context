@@ -158,6 +158,7 @@ Specifically, we predicted that sketchers would invest more time and ink in prod
 \caption{(A) Object stimuli. (B) Example sketches produced in close context condition. (C) Example sketches produced in far context condition.}
 \label{sketch_gallery}
 \end{figure*}
+\ndg{fig 2 also not referred to in main text!}
 
 % Successful communication was primarily quantified as the viewer's accuracy in identifying the target. The investment of time was measured as the length of time between the beginning of the first stroke to the completion of the final stroke in each sketch, and the investment of ink was measured in two ways: as the number of strokes used for each sketch and the proportion of the drawing canvas filled by ink.  
 
@@ -183,7 +184,7 @@ Consistent with the above account, we found that close sketches were matched wit
 \caption{(A-C) Mean number of strokes, amount of ink, and time spent producing sketches in each context condition. (D-E) Target identification performance in context during communication task. (F) Target identification performance out of context during recognition task.}
 \label{task_performance}
 \end{figure*}
-
+\ndg{fig 3 also not referred to in main text. is this on purpose? i think it's super useful to point people to the figure where it is relevant to the narrative...}
 
 %%% recognition experiments
 
@@ -257,35 +258,34 @@ To determine the relative informativity of each sketch, the similarity scores be
 The cost of each sketch was assumed to vary with the amount of time taken to produce it.}
 \label{model_schematic}
 \end{figure*}
+\ndg{again, refer to fig 4  where relevant in main text}
 
 \subsubsection*{Defining perceptual correspondence between sketches and objects}
 
 In order for this sketcher to generate quantitative predictions, it needs to be able to compute the perceptual correspondence, $\textrm{sim}(s,o)$, for any sketch-object pair. 
 We approached this problem in two ways: in our first set of modeling experiments, we employ human recognition behavior in the sketch-object matching task as an empirical approximation to $\textrm{sim}(s,o)$ for every sketch in our dataset (see Materials and Methods). 
-In our second set of modeling experiments, we employ a visual encoder model adapted to predict $\textrm{sim}(s,o)$, which was trained in a crossvalidated fashion on empirical estimates of $\textrm{sim}(s,o)$.
 
+In our second set of modeling experiments, we employ a visual encoder model adapted to predict $\textrm{sim}(s,o)$, which was trained in a crossvalidated fashion on empirical estimates of $\textrm{sim}(s,o)$.
 Building on recent advances in computational vision \cite{FanCommon2018,yamins2014performance}, we instantiated the visual encoder as a deep convolutional neural network (DCNN). 
 This choice of model class is motivated by prior work showing that such networks, in addition to being a type of universal function approximator \cite{hornik1991approximation}, learn higher-layer feature representations that capture high-level perceptual information in drawings \cite{FanCommon2018}, capture perceptual judgments of object shape similarity \cite{kubilius2016deep}, and predict neural population responses in categories across the ventral visual stream \cite{yamins2014performance} when trained on challenging natural object recognition tasks \cite{deng2009imagenet}. 
 Having an encoding model that operates directly on image inputs is important for a computational theory of visual communication because it allows our full model to generate predictions in novel contexts (i.e., combinations of target and distractor objects).
 
-Concretely, the visual encoder is a function that accepts a pair of images as input: a sketch, $s$, and an object rendering, $o$, and returns a scalar value reflecting the degree of perceptual correspondence between the sketch and object, $\textrm{sim}(s,o)$, which lies in the range $[0,1]$, where $\textrm{sim}(s,o)=0$ reflects no correspondence and $\textrm{sim}(s,o)=1$ reflects maximal correspondence (Eq. \ref{visual_encoder}).
-
-\begin{equation}
-\label{visual_encoder}
-\textrm{sim}(s,o) = A(B(s,o))
+Concretely, the visual encoder is a function that accepts a pair of images as input: a sketch, $s$, and an object rendering, $o$, and returns a scalar value reflecting the degree of perceptual correspondence between the sketch and object, $\textrm{sim}(s,o)$, which lies in the range $[0,1]$, where $\textrm{sim}(s,o)=0$ reflects no correspondence and $\textrm{sim}(s,o)=1$ reflects maximal correspondence.
+This encoder consists of two functional components: a base visual encoder network, $B$, and an adaptor network, $A$: $\textrm{sim}(s,o) = A(B(s,o))$.
 % \textrm{sim}(s,o) = (\textrm{A} \circ \textrm{B}) (s,o)
-\end{equation}
-
-This encoder consists of two functional components: a base visual encoder network, $B$, and an adaptor network, $A$. 
 We employ VGG-19 pretrained to recognize objects from the Imagenet database as our base visual encoder, whose parameters remain frozen \cite{simonyan2014very}. 
-We then augment the pretrained feature representation in a higher layer of VGG-19 (i.e., the first fully-connected layer) with a shallow adaptor network, which is trained to predict the perceptual correspondence between specific sketch-object pairs. 
-We train an adaptor network because while prior work has shown that while   representation of object \textit{categories} converges for sketches and photos at higher layers in DCNN models trained only on photos \cite{FanCommon2018}, additional supervision can substantially improve the accuracy of predictions involving comparisons between sketches and photos at the \textit{instance} level \cite{sangkloy2016sketchy}. 
+We explore using both low and high level layers of VGG-19 as the readout of our base encoder, to explore whether higher layers provide a more transferable visual feature basis for modeling human-like visual abstraction.
+We then augment the pretrained feature representation of the base encoder with a shallow adaptor network, which is trained to predict the perceptual correspondence between specific sketch-object pairs. \ndg{one more sentence about the data / training of the adaptor would be useful here.}
+We train an adaptor network because, while prior work has shown that representation of object \textit{categories} converges for sketches and photos at higher layers in DCNN models trained only on photos \cite{FanCommon2018}, additional supervision can substantially improve the accuracy of predictions involving comparisons between sketches and photos at the \textit{instance} level \cite{sangkloy2016sketchy}. 
 % \mikewu{this might not be important for this paper, but actually pretty interesting that we need nonlinearities in the adaptation, meaning that the spaces are not aligned in an affine sense... these two sentences about (1) we can generalize to sketches out of the box, and (2) we need additional transformations seem contradictory. How do we explain this? @jefan: I think it's probably not too different from the way for most visual transfer learning problems, we usually need to learn some nonlinearities to get good performance on the transfer task. But Imagenet-training being prety reasonable as a place to start is a pretty consistent pattern, even leaving aside sketch reprsentation. }
 % Consistent with prior work \cite{kubilius2016deep,FanCommon2018}, 
-To explore the degree to which the visual abstraction afforded by the complex transformations applied by successive layers of VGG-19 are required to capture human behavior during visual communication, we hypothesized that higher layers of these networks would provide a more transferable visual feature basis for modeling human-like visual abstraction in this task, relative to the lower-level image statistics represented in earlier layers.
+%To explore the degree to which the visual abstraction afforded by the complex transformations applied by successive layers of VGG-19 are required to capture human behavior during visual communication, we hypothesized that 
+%higher layers of these networks would provide a more transferable visual feature basis for modeling human-like visual abstraction in this task, relative to the lower-level image statistics represented in earlier layers.
 
 % Motivated by other prior work suggesting that higher-level visual features provide a better fit to human perceptual judgments than features from earlier layers \cite{kubilius2016deep}, we hypothesized that generalization to novel communication contexts would be supported by a visual encoder that uses high-level features to predict sketch-object correspondences, rather than lower-level features from earlier or intermediate layers of the neural network.
 
+
+\ndg{it feels like there should be a section heading here? otherwise move this paragraph to start of next subsection?}
 Within this modeling framework, we conducted a series of targeted lesion studies to test each aspect of our hypothesis about the core cognitive faculties employed by humans to decide which sketch to produce in context. 
 First, we evaluated the contribution of pragmatic inference by removing context sensitivity and cost sensitivity from the sketcher agent; these experiments relied upon empirical estimates of $\textrm{sim}(s,o)$. 
 Second, we evaluated the contribution of visual abstraction by comparing how well visual features adapted from different layers of a deep convolutional neural network (i.e., VGG-19, \cite{simonyan2014very}) predicted human visual communication behavior. 
@@ -342,7 +342,7 @@ While the cost-insensitive variant did exhibit cost modulation by context, becau
 Together, these results suggest that both context and cost sensitivity are critical for capturing key aspects of contextual flexibility in human visual communication. 
 
 \subsubsection*{Evaluating contribution of visual abstraction}
-
+\ndg{i kind of think we should move the bulk of the "defining perseptual correspondence" section down here. that way the evaluating pragmatics section just says "we use the empirical data for sim", and then this section can ask how we can model that, introduce the cnn, and do the evaluation...}
 Having established the importance of pragmatic inference, we next sought to evaluate the contribution of visual abstraction.
 To accomplish this, we replaced the empirical estimates of perceptual correspondence used by the model with predictions generated by three variants of a visual encoder, each of which adapted features from different layers of VGG: \textit{high-level}, \textit{mid-level}, and \textit{low-level} (see Materials and Methods) .
 
