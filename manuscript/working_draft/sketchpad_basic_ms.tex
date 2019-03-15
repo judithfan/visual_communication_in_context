@@ -28,6 +28,8 @@
 \hbadness=10000
 
 \newcommand{\mwu}[1]{{\color{red}{[mwu: #1]}}}
+\definecolor{Green}{RGB}{50,200,50}
+\newcommand{\ndg}[1]{\textcolor{Green}{[ndg: #1]}}  
 
 \title{Pragmatic inference and visual abstraction enable contextual flexibility during visual communication}
 
@@ -91,7 +93,7 @@ Drawing, in which a person produces marks that form a meaningful image, is a par
 Remarkably, we perceive drawings of objects as resembling physical objects in spite of the fact that drawings and objects are profoundly different in composition. 
 What explains their effectiveness for conveying visual concepts? 
 One hypothesis explored in prior work is that the ability to perceive the correspondence between drawings and real-world objects arises from a common, general-purpose neural architecture evolved to handle natural visual inputs \cite{Sayim:2011bz,gibson2014ecological}. 
-In support of this hypothesis, it was recently shown that features learned by deep convolutional neural network models (DCNNs) trained exclusively to recognize objects in photos and had never seen a line drawing succeed in recognizing simple sketches \cite{FanCommon2018,yamins2014performance}. 
+In support of this hypothesis, it was recently shown that features learned by deep convolutional neural network models (DCNNs) trained exclusively to recognize objects in photos, that had never seen a line drawing, succeeded in recognizing simple sketches \cite{FanCommon2018,yamins2014performance}. 
 These results are consistent with evidence from other domains, including developmental, cross-cultural, and comparative studies of drawing perception. 
 For example, human infants \cite{hochberg1962pictorial}, people living in remote regions without pictorial art traditions and without substantial contact with Western visual media \cite{kennedy1975outline}, and higher non-human primates \cite{tanaka2007recognition} are able to recognize line drawings of familiar objects, even without prior experience with drawings. 
 Together, these findings suggest that a thorough understanding of the functional architecture of the visual system, which is largely shared across human cultures, may be sufficient to explain how people are able to perceive semantic content in drawings.
@@ -111,11 +113,15 @@ Building on this prior work, the current study is guided by the overarching hypo
 \label{task_display}
 \end{figure}
 
+\ndg{note: fig 1 is never referenced from main text?}
+
 To investigate visual communication in a naturalistic yet controlled setting, we employ sketching-based reference games. 
 These reference games involve two players: a \textit{sketcher} who aims to help a \textit{viewer} pick out a target object from an array of distractor objects by representing it in a sketch. 
 This basic arrangement can be traced back to the language games explored by \citep{wittgenstein1953philosophical} and \citep{Lewis69_Convention}. 
 Such games have proven to be a valuable tool for eliciting pragmatic inferences about \textit{language} use in context, and to make quantitative measurements of the behavioral consequences of these inferences \cite{goodman2016pragmatic,kao2014formalizing,goodman2013knowledge,frank2012predicting}. 
 Here we generalize this methodology to understand how sketchers account for information in common ground with their viewer in order to produce sketches that are informative \cite{grice1975syntax,wilson1986relevance} yet parsimonious \cite{zipf1936psycho}.
+
+\ndg{awkward segue here. either smooth it out with some words, or move the above paragraph to be last.}
 
 Traditionally, a barrier to progress in studying visual communication has been the lack of principled quantitative measures of high-level semantic information in drawings. 
 As such, previous studies employing drawing tasks to study visual communication have typically relied on qualitative assessments of drawings based on provisional criteria specific to each study \cite{Healey:2007vq}, or quantitative measures of low-level visual features that do not capture semantic information \cite{Garrod:2007wk}, limiting their ability to make detailed, quantitative predictions about visual communication behavior.
@@ -157,17 +163,19 @@ Specifically, we predicted that sketchers would invest more time and ink in prod
 
 Consistent with our prediction, we found that viewers were highly accurate overall at identifying the target from the sketches produced (proportion correct: 93.8\%, 95\% CI: [92.7\%, 94.8\%], estimated by bootstrap resampling participants). 
 Moreover, we found that sketchers spent less time (close: 30.3s, far: 13.7s, \textit{p}$<$0.001), applied fewer strokes (close: 8.03 vs. far: 13.5, 95\% CI of difference: [3.75, 7.90], \textit{p}$<$0.001), and used less ink (proportion of canvas filled; close: 0.054, far: 0.042, 95\% CI of difference: [0.01, 0.014], \textit{p}$<$0.001) to produce their sketches in the far condition than in the close condition. 
-Despite the relative sparsity of sketches in the far condition, viewers were near ceiling at identifying the target on these trials (far: 99.7\%, 95\% CI: [0.993, 0.999]; close: 87.9\%, 95\% CI: [0.858, 0.899]), and took less time to make these decisions than on close trials (far: 6.32 sec vs. close: 8.32 sec, 95\% CI: [-2.748, -1.251]).
+Despite the relative sparsity of sketches in the far condition, viewers were near ceiling at identifying the target on these trials (far: 99.7\%, 95\% CI: [0.993, 0.999]; close: 87.9\%, 95\% CI: [0.858, 0.899]), and took less time to make these decisions than on close trials (far: 6.32 sec vs. close: 8.32 sec, 95\% CI of difference: [-2.748, -1.251]).
 
 \subsection*{Effect of context manipulation on sketch recognizability}
 
-A natural explanation for the difference between context conditions in how costly the sketches were to produce is that they differed in how informative they were about the identity of the target. 
-Specifically, we hypothesized that the greater time and ink spent on close sketches was associated with a greater degree of perceptual correspondence to the target object, compared with less costly far sketches, which exhibited a weaker correspondence to the target object in absolute terms, while still being communicatively effective in context. 
+A natural explanation for the difference between context conditions in how costly the sketches were to produce is that the conditions differed in the required information level to identify the target.
+%they differed in how informative they were about the identity of the target. 
+Thus we hypothesized that the greater time and ink spent on close sketches was associated with a greater degree of perceptual correspondence to the target object, compared with less costly far sketches, which would exhibit a weaker correspondence to the target object in absolute terms, while still being communicatively effective in context. 
 To investigate this possibility, another group of naive participants (N=112) was recruited to perform a sketch-object matching task, the data from which were used to estimate the strength of perceptual correspondence between each sketch and every object in the experiment. 
 On each trial of this recognition experiment, participants were presented with a sketch and an array containing all 32 objects, and were instructed to identify the object that best matched each sketch from the array. 
 Across trials, sketches were randomly sampled from the original communication experiment such that no two sketches produced by the same participant appeared in a single recognition experimental session. 
 % To obtain robust estimates of sketch-object perceptual correspondences, each sketch appeared approximately 10 times across different sessions. 
 Consistent with the above account, we found that close sketches were matched with their corresponding object rendering more consistently than far sketches were (close: 54.2\%; far: 37.5\%; $Z$=14.1, $p$<0.001), although both were successfully matched at rates greatly exceeding chance ($p$s < 0.001).
+\ndg{interestingly the success rate was a lot lower than in the actual game, though there are more options so hard to compare.... could make a comment on this or leave out for brevity.}
 
 \begin{figure*}[htbp]
 \centering
@@ -190,7 +198,7 @@ Consistent with the above account, we found that close sketches were matched wit
 \subsection*{Computational model of sketch production in context}
 
 Our empirical findings suggest that human sketchers spontaneously take information that is shared with the viewer into account, producing more informative sketches in close contexts at the cost of additional time and ink. 
-Observing such contextual flexibility argues against the notion that sketch production is constrained exclusively by the appearance of the target of depiction. 
+Observing such contextual flexibility argues against the notion that sketch production is constrained exclusively by the appearance of the target of object. 
 Rather, these results suggest that information in common ground with the viewer plays a critical role in determining how informative and costly of a sketch people decide to produce during visual communication. 
 And they suggest an analogy to how context influences how people produce linguistic utterances during verbal communication, a key target of current computational theories of pragmatics in language use \cite{frank2012predicting,goodman2013knowledge,franke2016probabilistic,bergen2016pragmatic}.
 Informed by this prior work, we propose that human sketchers determine what kind of sketch to produce in context by deploying two main faculties: \textit{visual abstraction}, which refers to the ability to judge how well a sketch evokes a real object, and \textit{pragmatic inference}, which refers to the ability to prefer sketches that are sufficiently detailed to be diagnostic of the target object in context, but no more detailed than necessary. 
