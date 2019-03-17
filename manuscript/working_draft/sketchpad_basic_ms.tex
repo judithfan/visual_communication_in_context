@@ -214,29 +214,30 @@ Consistent with the above account, we found that close sketches were matched wit
 
 \subsection*{Computational model of sketch production in context}
 
-Our empirical findings suggest that human sketchers spontaneously take information that is shared with the viewer into account, producing more informative sketches in close contexts at the cost of additional time and ink. 
-Observing such contextual flexibility argues against the notion that sketch production is constrained exclusively by the appearance of the target of object. 
-Rather, these results suggest that information in common ground with the viewer plays a critical role in determining how informative and costly of a sketch people decide to produce during visual communication. 
-And they suggest an analogy to how context influences how people produce linguistic utterances during verbal communication, a key target of current computational theories of pragmatics in language use \cite{frank2012predicting,goodman2013knowledge,franke2016probabilistic,bergen2016pragmatic}.
-Informed by this prior work, we propose that human sketchers determine what kind of sketch to produce in context by deploying two main faculties: \textit{visual abstraction}, which refers to the ability to judge how well a sketch evokes a real object, and \textit{pragmatic inference}, which refers to the ability to prefer sketches that are sufficiently detailed to be diagnostic of the target object in context, but no more detailed than necessary. 
+Our empirical findings show that human sketchers spontaneously account for contextual information shared with the viewer, producing more informative sketches in close contexts at the cost of additional time and ink. 
+Such contextual flexibility argues against the notion that sketch production is constrained exclusively by the appearance of the target of object. 
+%Rather, common ground with the viewer plays a critical role in determining how informative and costly of a sketch people decide to produce during visual communication. \rdh{This seemed redundant with the first sentence}
+Rather, these results suggest an analogy to how context and common ground influences how people produce linguistic utterances during verbal communication, a key target of current computational theories of pragmatics in language use \cite{frank2012predicting,goodman2013knowledge,franke2016probabilistic,bergen2016pragmatic}.
+Informed by this prior work, we propose that human sketchers determine what kind of sketch to produce in context by deploying two main faculties: \textit{visual abstraction}, which refers to the ability to judge how well a sketch evokes a real object, and \textit{pragmatic inference}, which refers to the ability to reason about which sketches will be sufficiently detailed to be diagnostic of the target object in context, but no more detailed than necessary. 
 Intuitively, this latter faculty can be decomposed into two aspects: context sensitivity, a preference for sketches that are diagnostic of the target relative to the distractors; and cost sensitivity, a preference for less costly sketches. 
-To test this proposal, we developed a computational model of the sketcher that embodied both visual abstraction and pragmatic inference, and was instantiated as a deep convolutional neural network nested within a probabilistic program. 
+To test this proposal, we developed a computational model of the sketcher that formalizes both notions of visual abstraction and pragmatic inference, and was instantiated as a deep convolutional neural network nested within a probabilistic program. 
 Constructing such a model allowed us to evaluate the contribution of each component using formal model comparison, as well as quantitatively characterize the model's behavior in novel contexts.
 
 \subsubsection*{Defining communicative utility of sketches}
 
 We define a context, $O$, to be a set of objects containing a target, $t$, and three distractors, $D=\{d_1,d_2,d_3\}$: $O = \{t,D\}$.
-We define the sketcher $\mathcal{S}$, to be a decision-theoretic agent that prefers to produce a sketch of the target, $s$, proportional to its communicative utility, $U$, where the utilities of each sketch have been normalized over the set of $N$ producible sketches via the softmax function: \ndg{i think we need a comment here about the assumption that there are a finite set of possible sketches, since the continuity is a big difference from language....}
+We define the sketcher, $\mathcal{S}$, to be a decision-theoretic agent that produces sketches of the target, $s$, proportional to their communicative utility, $U$, where the utilities of each sketch have been normalized over the set producible sketches via the softmax function: 
 \begin{equation} \label{sketcher_distribution}
-\mathcal{S}(s|O) = \frac {\exp [{U(s,O)]}} {\sum_{i=1}^{N} {\exp [U(s_i,O)]}}
+\mathcal{S}(s|O) = \frac {\exp [{U(s,O)]}} {\sum_{i} {\exp [U(s_i,O)]}}
 \end{equation}
+In principle, the space of all producible sketches is infinite and continuous, leading to an intractable sum.
+For present purposes, then, we assume that the sketcher model chooses among a large but finite set of sketches: those actually produced by participants in our task.
 
 We introduce three variants of the sketcher, whose decision-making behavior is determined by their respective utility functions. 
 In each variant, this utility consists of two terms which trade off against one another: an informativity term and a cost term. 
 First, we define the utility function for our proposed \textit{pragmatic} sketcher, $S_{prag}$, that is sensitive to both context and cost. 
-This sketcher judges a sketch's informativity to be a mixture of two quantities: one reflecting its \textit{resemblance} to the target and the other its \textit{diagnosticity} in the context of particular distractors. 
-A sketch's resemblance is defined by the absolute degree of perceptual correspondence between a sketch and the target, $\textrm{sim}(s,t)$; our approach to estimating this is provided in the following section. 
-
+This sketcher judges a sketch's informativity to be a mixture of two quantities: one reflecting its absolute \textit{resemblance} to the target and the other its relative \textit{diagnosticity} in the context of particular distractors (see Fig. \ref{model_schematic}B). 
+A sketch's resemblance is defined by the degree of perceptual correspondence between a sketch and the target, $\textrm{sim}(s,t)$; our approach to estimating this is provided in the following section. 
 A sketch's diagnosticity is defined in terms of the natural log probability that a simulated viewer agent, $\mathcal{V}$, would select the target object given the sketch and all objects in context, $\ln \mathcal{V}(t|s,O)$. 
 The simulated viewer $\mathcal{V}$, in turn, is assumed to select the target object proportional to the perceptual correspondence between the sketch and the target, $\textrm{sim}(s,t)$, normalized by the correspondences between the sketch and all four objects in context, again via the softmax function:
 \begin{equation} \label{literal_viewer_score}
@@ -245,22 +246,22 @@ The simulated viewer $\mathcal{V}$, in turn, is assumed to select the target obj
 where $i$ indexes each object $o\in O$, and $\alpha$ is a scaling parameter determining the assumed optimality of the listener's decision policy: as $\alpha \rightarrow \infty$, the simulated viewer is more likely to choose the object with highest perceptual correspondence to the sketch. 
 Intuitively, this means that the viewer is more likely to pick the correct object when the sketch corresponds more strongly to the target than to the distractors. 
 
-To combine the resemblance and diagnosticity terms into a single informativity value, we infer a weight parameter, $w_{d}$, that interpolates between them:
+To combine the resemblance and diagnosticity terms into a single informativity value, we introduce a weight parameter, $w_{d}$, that interpolates between them:
 \begin{equation} \label{prag_interpolation}
 I(s,O) = w_{d} \cdot \ln \mathcal{V}(t|s,O) + (1-w_{d}) \cdot \textrm{sim}(s,t). 
 \end{equation} 
 This captures the intuition that a communicative sketcher seeks to produce a sketch that both resembles the target object and distinguishes the target from the distractors.
 
-A sketch's cost, $C(s)$, is defined to be a monotonic function of the amount of time taken to produce it, linearly transformed via min-max normalization to lie in the range $[0,1]$. \ndg{should i know what "min-max normalization" is? it sounds really fancy...}
+A sketch's cost, $C(s)$, is defined to be a monotonic function of the amount of time taken to produce it, linearly transformed  to lie in the range $[0,1]$. % via min-max normalization \ndg{should i know what "min-max normalization" is? it sounds really fancy...}
 Overall then:
 \begin{equation} \label{sketcher_utility}
 U_{S_{prag}}(s,O) = w_i \cdot I(s,O) - w_c \cdot  C(s)
 \end{equation}
 where $w_i$ and $w_c$ are independent scaling parameters that are applied to the informativity and cost terms, respectively, and determine how strongly each term contributes to the overall utility of the sketch. 
 
-Next, we define two additional variants of this sketcher: a \textit{context-insensitive} sketcher, $S_{sim}$, which removes the diagnosticity term from the definition of informativity (i.e.~$w_{d}{=}0$), leaving only the resemblance term, and a \textit{cost-insensitive} sketcher, $S_{nocost}$ which aims to produce informative sketches without regard for their cost (i.e.~$w_c=0$).
-
-All sketcher variants are parameterized by: the scaling terms applied to the informativity ($w_{i}$) and cost ($w_{c}$), the balance between diagnosticity vs.~resemblance ($w_{d}$), and the sketch-object correspondence ($\alpha$). These will be inferred from data via a Bayesian data analysis.
+To evaluate the  define two additional variants of this sketcher, which are nested within the fully pragmatic model: a \textit{context-insensitive} sketcher, $S_{sim}$, which removes the diagnosticity term from the definition of informativity (i.e.~$w_{d}{=}0$), leaving only the resemblance term, and a \textit{cost-insensitive} sketcher, $S_{nocost}$ which aims to produce informative sketches without regard for their cost (i.e.~$w_c=0$).
+All sketcher variants are parameterized by: the weights applied to informativity ($w_{i}$) and cost ($w_{c}$), the balance between diagnosticity vs.~resemblance ($w_{d}$), and the sketch-object correspondence optimality term ($\alpha$). 
+These will be inferred from data via a Bayesian data analysis.
 
 \begin{figure*}[htbp]
 \centering
