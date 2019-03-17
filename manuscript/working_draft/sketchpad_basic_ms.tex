@@ -28,6 +28,7 @@
 \hbadness=10000
 
 \newcommand{\mwu}[1]{{\color{red}{[mwu: #1]}}}
+\newcommand{\rdh}[1]{{\color{blue}{[rdh: #1]}}}
 \definecolor{Green}{RGB}{50,200,50}
 \newcommand{\ndg}[1]{\textcolor{Green}{[ndg: #1]}}  
 
@@ -233,13 +234,14 @@ We define the sketcher, $\mathcal{S}$, to be a decision-theoretic agent that pro
 \mathcal{S}(s|O) = \frac {\exp [{U(s,O)]}} {\sum_{i} {\exp [U(s_i,O)]}}
 \end{equation}
 In principle, the space of all producible sketches is infinite and continuous, leading to an intractable sum.
-For present purposes, then, we assume that the sketcher model chooses among a large but finite set of sketches: those actually produced by participants in our task.
+For present purposes, we this problem by assuming that the sketcher model chooses among a large but finite set of sketches: those actually produced by participants in our task.
 
-We introduce three variants of the sketcher, whose decision-making behavior is determined by their respective utility functions. 
-In each variant, this utility consists of two terms which trade off against one another: an informativity term and a cost term. 
-First, we define the utility function for our proposed \textit{pragmatic} sketcher, $S_{prag}$, that is sensitive to both context and cost. 
-This sketcher judges a sketch's informativity to be a mixture of two quantities: one reflecting its absolute \textit{resemblance} to the target and the other its relative \textit{diagnosticity} in the context of particular distractors (see Fig. \ref{model_schematic}B). 
-A sketch's resemblance is defined by the degree of perceptual correspondence between a sketch and the target, $\textrm{sim}(s,t)$; our approach to estimating this is provided in the following section. 
+A sketcher's decision-making is determined by its utility function.
+We first introduce the utility function for our proposed pragmatic sketcher, $S_{prag}$, and then consider lesioned variants for comparison. 
+Overall, this utility trades off an informativity term and a cost term.
+This sketcher judges a sketch's informativity to be a mixture of two quantities: one reflecting its absolute \textit{resemblance} to the target and the other its relative \textit{diagnosticity} in the context of particular distractors (see Fig. \ref{model_schematic}B).  \rdh{Maybe make this panel A, since it comes first in the text, and use `diagnosticity' instead of `informativity' in the figure titles to match the terminology here}
+A sketch's resemblance is defined by the absolute degree of perceptual correspondence between a sketch $s$ and the target $t$, i.e. $\textrm{sim}(s,t)$. 
+Our approach to estimating this correspondence for each sketch-object pair is provided in the following section. 
 A sketch's diagnosticity is defined in terms of the natural log probability that a simulated viewer agent, $\mathcal{V}$, would select the target object given the sketch and all objects in context, $\ln \mathcal{V}(t|s,O)$. 
 The simulated viewer $\mathcal{V}$, in turn, is assumed to select the target object proportional to the perceptual correspondence between the sketch and the target, $\textrm{sim}(s,t)$, normalized by the correspondences between the sketch and all four objects in context, again via the softmax function:
 \begin{equation} \label{literal_viewer_score}
@@ -254,16 +256,21 @@ I(s,O) = w_{d} \cdot \ln \mathcal{V}(t|s,O) + (1-w_{d}) \cdot \textrm{sim}(s,t).
 \end{equation} 
 This captures the intuition that a communicative sketcher seeks to produce a sketch that both resembles the target object and distinguishes the target from the distractors.
 
-A sketch's cost, $C(s)$, is defined to be a monotonic function of the amount of time taken to produce it, linearly transformed  to lie in the range $[0,1]$. % via min-max normalization \ndg{should i know what "min-max normalization" is? it sounds really fancy...}
-Overall then:
+Finally, we define a sketch's cost, $C(s)$, to be a monotonic function of the empirical amount of time taken to produce it, linearly transformed  to lie in the range $[0,1]$. % via min-max normalization \ndg{should i know what "min-max normalization" is? it sounds really fancy...}
+Putting these terms together, we have the full utility:
 \begin{equation} \label{sketcher_utility}
 U_{S_{prag}}(s,O) = w_i \cdot I(s,O) - w_c \cdot  C(s)
 \end{equation}
-where $w_i$ and $w_c$ are independent scaling parameters that are applied to the informativity and cost terms, respectively, and determine how strongly each term contributes to the overall utility of the sketch. 
+where $w_i$ and $w_c$ are independent scaling parameters that are applied to the informativity and cost terms, respectively.
+These parameters determine how strongly each term contributes to the overall utility of the sketch. 
+This model therefore has 4 parameters: the weights applied to informativity ($w_{i}$) and cost ($w_{c}$), the balance between diagnosticity vs.~resemblance ($w_{d}$), and the sketch-object correspondence optimality term ($\alpha$). 
+We inferred these parameters from data via Bayesian data analysis (see Materials and Methods).
 
-To evaluate the  define two additional variants of this sketcher, which are nested within the fully pragmatic model: a \textit{context-insensitive} sketcher, $S_{sim}$, which removes the diagnosticity term from the definition of informativity (i.e.~$w_{d}{=}0$), leaving only the resemblance term, and a \textit{cost-insensitive} sketcher, $S_{nocost}$ which aims to produce informative sketches without regard for their cost (i.e.~$w_c=0$).
-All sketcher variants are parameterized by: the weights applied to informativity ($w_{i}$) and cost ($w_{c}$), the balance between diagnosticity vs.~resemblance ($w_{d}$), and the sketch-object correspondence optimality term ($\alpha$). 
-These will be inferred from data via a Bayesian data analysis.
+Within this modeling framework, we conducted a series of targeted lesion studies to test each aspect of our hypothesis about the core cognitive faculties employed by humans to decide which sketch to produce in context. 
+To evaluate the necessity of pragmatics and cost, we define two simpler variants of this sketcher, which are nested within the fully pragmatic model.
+A \textit{context-insensitive} sketcher, $S_{sim}$, is derived by removing the diagnosticity term from the definition of informativity (i.e.~$w_{d}{=}0$), leaving only the resemblance term. 
+A \textit{cost-insensitive} sketcher, $S_{nocost}$, on the other hand, aims to produce informative sketches without regard for their cost (i.e.~$w_c=0$).
+In a second set of modeling experiments, we evaluate the role of visual abstraction by using different visual features (low-level, medium-level, or high-level) for the visual correspondence \textrm{sim}(s,t).
 
 \begin{figure*}[htbp]
 \centering
@@ -277,37 +284,7 @@ To determine the relative informativity of each sketch, the similarity scores be
 The cost of each sketch was assumed to vary with the amount of time taken to produce it.}
 \label{model_schematic}
 \end{figure*}
-\ndg{again, refer to fig 4  where relevant in main text}
 
-\subsubsection*{Defining perceptual correspondence between sketches and objects}
-
-In order for this sketcher to generate quantitative predictions, it needs to be able to compute the perceptual correspondence, $\textrm{sim}(s,o)$, for any sketch-object pair. 
-We approached this problem in two ways: in our first set of modeling experiments, we employ human recognition behavior in the sketch-object matching task as an empirical approximation to $\textrm{sim}(s,o)$ for every sketch in our dataset (see Materials and Methods). 
-
-In our second set of modeling experiments, we employ a visual encoder model adapted to predict $\textrm{sim}(s,o)$, which was trained in a crossvalidated fashion on empirical estimates of $\textrm{sim}(s,o)$.
-Building on recent advances in computational vision \cite{FanCommon2018,yamins2014performance}, we instantiated the visual encoder as a deep convolutional neural network (DCNN). 
-This choice of model class is motivated by prior work showing that such networks, in addition to being a type of universal function approximator \cite{hornik1991approximation}, learn higher-layer feature representations that capture high-level perceptual information in drawings \cite{FanCommon2018}, capture perceptual judgments of object shape similarity \cite{kubilius2016deep}, and predict neural population responses in categories across the ventral visual stream \cite{yamins2014performance} when trained on challenging natural object recognition tasks \cite{deng2009imagenet}. 
-Having an encoding model that operates directly on image inputs is important for a computational theory of visual communication because it allows our full model to generate predictions in novel contexts (i.e., combinations of target and distractor objects).
-
-Concretely, the visual encoder is a function that accepts a pair of images as input: a sketch, $s$, and an object rendering, $o$, and returns a scalar value reflecting the degree of perceptual correspondence between the sketch and object, $\textrm{sim}(s,o)$, which lies in the range $[0,1]$, where $\textrm{sim}(s,o)=0$ reflects no correspondence and $\textrm{sim}(s,o)=1$ reflects maximal correspondence.
-This encoder consists of two functional components: a base visual encoder network, $B$, and an adaptor network, $A$: $\textrm{sim}(s,o) = A(B(s,o))$.
-% \textrm{sim}(s,o) = (\textrm{A} \circ \textrm{B}) (s,o)
-We employ VGG-19 pretrained to recognize objects from the Imagenet database as our base visual encoder, whose parameters remain frozen \cite{simonyan2014very}. 
-We explore using both low and high level layers of VGG-19 as the readout of our base encoder, to explore whether higher layers provide a more transferable visual feature basis for modeling human-like visual abstraction.
-We then augment the pretrained feature representation of the base encoder with a shallow adaptor network, which is trained to predict the perceptual correspondence between specific sketch-object pairs. \ndg{one more sentence about the data / training of the adaptor would be useful here.}
-We train an adaptor network because, while prior work has shown that representation of object \textit{categories} converges for sketches and photos at higher layers in DCNN models trained only on photos \cite{FanCommon2018}, additional supervision can substantially improve the accuracy of predictions involving comparisons between sketches and photos at the \textit{instance} level \cite{sangkloy2016sketchy}. 
-% \mikewu{this might not be important for this paper, but actually pretty interesting that we need nonlinearities in the adaptation, meaning that the spaces are not aligned in an affine sense... these two sentences about (1) we can generalize to sketches out of the box, and (2) we need additional transformations seem contradictory. How do we explain this? @jefan: I think it's probably not too different from the way for most visual transfer learning problems, we usually need to learn some nonlinearities to get good performance on the transfer task. But Imagenet-training being prety reasonable as a place to start is a pretty consistent pattern, even leaving aside sketch reprsentation. }
-% Consistent with prior work \cite{kubilius2016deep,FanCommon2018}, 
-%To explore the degree to which the visual abstraction afforded by the complex transformations applied by successive layers of VGG-19 are required to capture human behavior during visual communication, we hypothesized that 
-%higher layers of these networks would provide a more transferable visual feature basis for modeling human-like visual abstraction in this task, relative to the lower-level image statistics represented in earlier layers.
-
-% Motivated by other prior work suggesting that higher-level visual features provide a better fit to human perceptual judgments than features from earlier layers \cite{kubilius2016deep}, we hypothesized that generalization to novel communication contexts would be supported by a visual encoder that uses high-level features to predict sketch-object correspondences, rather than lower-level features from earlier or intermediate layers of the neural network.
-
-
-\ndg{it feels like there should be a section heading here? otherwise move this paragraph to start of next subsection?}
-Within this modeling framework, we conducted a series of targeted lesion studies to test each aspect of our hypothesis about the core cognitive faculties employed by humans to decide which sketch to produce in context. 
-First, we evaluated the contribution of pragmatic inference by removing context sensitivity and cost sensitivity from the sketcher agent; these experiments relied upon empirical estimates of $\textrm{sim}(s,o)$. 
-Second, we evaluated the contribution of visual abstraction by comparing how well visual features adapted from different layers of a deep convolutional neural network (i.e., VGG-19, \cite{simonyan2014very}) predicted human visual communication behavior. 
 
 \begin{figure*}[htbp]
 \centering
@@ -332,11 +309,13 @@ Only models that span this dashed line match the pattern of contextual modulatio
 
 \subsubsection*{Evaluating contribution of pragmatic inference}
 
+First, we evaluated the contribution of pragmatic inference by removing context sensitivity and cost sensitivity from the sketcher agent.
 We hypothesized that a \textit{pragmatic} computational sketcher model that is sensitive to both context and cost would provide a strong fit to human sketch production behavior, as well as outperform lesioned alternatives lacking either component.
 To test this hypothesis, we evaluated three model variants characterized by their distinct definitions of communicative utility: a pragmatic one sensitive to both context and cost ($S_{prag}$), one \textit{not} sensitive to context but sensitive to cost ($S_{sim}$), and one that \textit{is} sensitive to context but \textit{not} sensitive to cost ($S_{nocost}$).
-In this set of model evaluations, we employed empirical estimates of the correspondence between sketches and objects, $\textrm{sim}(s,o)$, to compute sketch diagnosticity in context. 
-\ndg{we need just a few more words about how these empirical estimates are derived here or above?}
-In this and subsequent model evaluations, we defined a sketch's cost, $C(s)$, to be a monotonic function of the amount of time taken to produce it.
+In this set of model evaluations, we estimated the correspondence between sketches and objects, $\textrm{sim}(s,o)$ using empirical data from our recognition experiment (see Materials and Methods).
+
+%\ndg{we need just a few more words about how these empirical estimates are derived here or above?}
+%In this and subsequent model evaluations, we defined a sketch's cost, $C(s)$, to be a monotonic function of the amount of time taken to produce it. \rdh{we said this already}
 
 Our goal was to ascertain how well each model could produce informative sketches and appropriately modulate its behavior according to the context condition, and not necessarily to reproduce exactly the same sketch as a particular participant had on a specific trial. 
 As such, we aggregated all sketches of the same object produced in the same context condition when estimating their key functional properties (i.e., perceptual correspondence, cost), so each sketch was represented by the mean in its object-context category. 
@@ -352,7 +331,6 @@ We found that the full model, $S_{prag}$, provided a much stronger overall fit t
 To explore the behavioral patterns that may explain these differences in overall performance, we examined three aspects of each model's behavior: (a) \textit{sketch retrieval}: its ability to assign a high absolute rank to the target sketch category in context, out of the 64 object-context alternatives; (b) \textit{context congruity}: its ability to consistently assign a higher rank to the context-congruent version of the target object over the context-incongruent version (i.e., on a close trial, preferring a close sketch to a far sketch); and (c) \textit{cost modulation}: how consistently it produced costlier sketches than average in the close condition, and less costly sketches than average in the far condition, mirroring human behavior.
 
 We found that in general, sketch retrieval performance was high for all three model variants (target rank 95\% CI: pragmatic = $[1.43, 1.50]$, context-insensitive = $[1.54, 1.60]$, cost-insensitive = $[1.55, 1.60]$) (Fig.~\ref{model_results}A, left).
-
 However, only the pragmatic sketcher was able to reliably produce the sketch appropriate for the context condition more frequently than would be predicted by chance (95\% CI proportion: $[0.571, 0.620]$; Fig.~\ref{model_results}B, left); neither the context-insensitive nor the cost-insensitive variants displayed this context congruity (95\% CI: context-insensitive = $[0.478, 0.525]$, cost-insensitive = $[0.498, 0.501]$). 
 We observed that the lack of context congruity in the lesioned variants was attributable to an overall bias to produce close sketches in all contexts, which are highly informative in absolute terms, and thus higher in communicative utility if the distractors or sketch cost is ignored. 
 
@@ -363,10 +341,32 @@ While the cost-insensitive variant did exhibit cost modulation by context, becau
 Together, these results suggest that both context and cost sensitivity are critical for capturing key aspects of contextual flexibility in human visual communication. 
 
 \subsubsection*{Evaluating contribution of visual abstraction}
-\ndg{i kind of think we should move the bulk of the "defining perseptual correspondence" section down here. that way the evaluating pragmatics section just says "we use the empirical data for sim", and then this section can ask how we can model that, introduce the cnn, and do the evaluation...}
-Having established the importance of pragmatic inference, we next sought to evaluate the contribution of visual abstraction.
-To accomplish this, we replaced the empirical estimates of perceptual correspondence used by the model with predictions generated by three variants of a visual encoder, each of which adapted features from different layers of VGG: \textit{high-level}, \textit{mid-level}, and \textit{low-level} (see Materials and Methods) .
 
+After establishing the importance of pragmatic inference, we next sought to evaluate the contribution of visual abstraction by comparing how features adapted from different vision models predicted human visual communication behavior. 
+Having an encoding model that operates directly on image inputs is important for a computational theory of visual communication because it allows our full model to generate predictions in novel contexts (i.e., combinations of target and distractor objects).
+Building on recent advances in computational vision \cite{FanCommon2018,yamins2014performance}, we instantiated the visual encoder as a deep convolutional neural network (DCNN).
+This choice of model class is motivated by prior work showing that such networks, in addition to being a type of universal function approximator \cite{hornik1991approximation}, learn higher-layer feature representations that capture high-level perceptual information in drawings \cite{FanCommon2018}, capture perceptual judgments of object shape similarity \cite{kubilius2016deep}, and predict neural population responses in categories across the ventral visual stream \cite{yamins2014performance} when trained on challenging natural object recognition tasks \cite{deng2009imagenet}. 
+
+%In order for this sketcher to generate quantitative predictions, it needs to be able to compute the perceptual correspondence, $\textrm{sim}(s,o)$, for any sketch-object pair. 
+%In our second set of modeling experiments, we employ a visual encoder model adapted to predict $\textrm{sim}(s,o)$, which was trained in a crossvalidated fashion on empirical estimates of $\textrm{sim}(s,o)$.
+
+Concretely, the visual encoder is a function that accepts a pair of images as input (see Fig. \ref{model_schematic}A): a sketch, $s$, and an object rendering, $o$, and returns a scalar value reflecting the degree of perceptual correspondence between the sketch and object, $\textrm{sim}(s,o)$, which lies in the range $[0,1]$, where $\textrm{sim}(s,o)=0$ reflects no correspondence and $\textrm{sim}(s,o)=1$ reflects maximal correspondence.
+This encoder consists of two functional components: a base visual encoder network, $B$, and an adaptor network, $A$: $\textrm{sim}(s,o) = A(B(s,o))$.
+% \textrm{sim}(s,o) = (\textrm{A} \circ \textrm{B}) (s,o)
+We employ VGG-19 pretrained to recognize objects from the Imagenet database as our base visual encoder, whose parameters remain frozen \cite{simonyan2014very}. 
+We explore using both low and high level layers of VGG-19 as the readout of our base encoder, to explore whether higher layers provide a more transferable visual feature basis for modeling human-like visual abstraction.
+\rdh{Say exactly what layers we're using somewhere?}
+We then augment the pretrained feature representation of the base encoder with a shallow adaptor network, which is trained to predict the perceptual correspondence between specific sketch-object pairs. \ndg{one more sentence about the data / training of the adaptor would be useful here.}
+We train an adaptor network because, while prior work has shown that representation of object \textit{categories} converges for sketches and photos at higher layers in DCNN models trained only on photos \cite{FanCommon2018}, additional supervision can substantially improve the accuracy of predictions involving comparisons between sketches and photos at the \textit{instance} level \cite{sangkloy2016sketchy}. 
+% \mikewu{this might not be important for this paper, but actually pretty interesting that we need nonlinearities in the adaptation, meaning that the spaces are not aligned in an affine sense... these two sentences about (1) we can generalize to sketches out of the box, and (2) we need additional transformations seem contradictory. How do we explain this? @jefan: I think it's probably not too different from the way for most visual transfer learning problems, we usually need to learn some nonlinearities to get good performance on the transfer task. But Imagenet-training being prety reasonable as a place to start is a pretty consistent pattern, even leaving aside sketch reprsentation. }
+% Consistent with prior work \cite{kubilius2016deep,FanCommon2018}, 
+%To explore the degree to which the visual abstraction afforded by the complex transformations applied by successive layers of VGG-19 are required to capture human behavior during visual communication, we hypothesized that 
+%higher layers of these networks would provide a more transferable visual feature basis for modeling human-like visual abstraction in this task, relative to the lower-level image statistics represented in earlier layers.
+
+% Motivated by other prior work suggesting that higher-level visual features provide a better fit to human perceptual judgments than features from earlier layers \cite{kubilius2016deep}, we hypothesized that generalization to novel communication contexts would be supported by a visual encoder that uses high-level features to predict sketch-object correspondences, rather than lower-level features from earlier or intermediate layers of the neural network.
+
+
+%\ndg{it feels like there should be a section heading here? otherwise move this paragraph to start of next subsection?}
 Critically, all adaptor networks contained approximately the same number of learnable parameters, and were trained on the same data using exactly the same optimization procedure for an equal number of epochs. 
 All model evaluations involving the base encoder and trained adaptor network were performed in a fivefold crossvalidated manner, with the full communication task dataset split into training, validation, and test sets in a 80\%, 10\%, and 10\% ratio. 
 We followed the same procedure as above to generate model predictions for the test set of each crossvalidation fold of our dataset, such that each visual encoder was trained on a different subset of the data than was used to evaluate it. 
