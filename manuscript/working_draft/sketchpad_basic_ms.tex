@@ -84,56 +84,25 @@ Together, this work provides the first algorithmically explicit theory of how pe
 \thispagestyle{firststyle}
 \ifthenelse{\boolean{shortarticle}}{\ifthenelse{\boolean{singlecolumn}}{\abscontentformatted}{\abscontent}}{}
 
-%%%%% In another version of the intro, you recap the visual production stuff on its own, and then point out that drawing is not one task, but several, and could depend a lot of the goals and context, and in this paper, we extend previous models to handle this.
-
-% \noindent \dropcap{A} watershed moment in the history of human cognition and culture was the invention of graphical representation, independently in Europe and Asia, about 30-60 thousand years ago \cite{hoffmann2018u,Aubert:2014jy}. 
-% Graphical representation was transformative because it provided a means for people to encode their thoughts in a durable and shareable format \cite{donald1991origins}. 
-% From ancient etchings on cave walls to modern digital displays, using graphical representations for visual communication lies at the heart of key human innovations (e.g., mapmaking, data visualization), and forms the foundation for the cultural transmission of knowledge and higher-level reasoning \cite{tomasello2009cultural,card1999readings}. 
-
-% Drawing, in which a person produces marks that form a meaningful image, is a particularly important case study for understanding human visual communication. 
-% Drawn images predate symbolic writing systems \cite{clottes2008cave}, are pervasive in many cultures \cite{gombrich1989story}, and are produced prolifically by children from an early age \cite{kellogg1969analyzing}.
-
 \noindent \dropcap{F}rom ancient etchings on cave walls to modern digital displays, the ability to externalize our thoughts in visual form lies at the heart of key human innovations (e.g., painting, cartography, data visualization), and forms the foundation for the cultural transmission of knowledge \cite{tomasello2009cultural,donald1991origins}. 
 Perhaps the most basic and versatile visualization technique is drawing, the earliest examples of which date to at least 40,000 years ago \cite{hoffmann2018u,Aubert:2014jy}, and which can yield images ranging from photorealistic renderings to schematic diagrams. 
 Even in the simple case of drawing an object in the world, there are countless ways of depicting that object. 
 How do drawings, despite spanning such a broad range of appearances, reliably convey meaning? 
-
-% Remarkably, we perceive drawings of objects as resembling physical objects in spite of the fact that drawings and objects are profoundly different in composition. 
-% What explains their effectiveness for conveying visual concepts? 
 
 On the one hand, recent work in computational vision suggests that the identity of an object depicted in a drawing can be derived from its visual properties alone \cite{FanCommon2018}.
 These results are consistent with evidence from other domains, including developmental, cross-cultural, and comparative studies of drawing perception. 
 For example, human infants \cite{hochberg1962pictorial}, people living in remote regions without pictorial art traditions and without substantial contact with Western visual media \cite{kennedy1975outline}, and higher non-human primates \cite{tanaka2007recognition} are able to recognize line drawings of familiar objects, even without prior experience with drawings.
 Together, these findings suggest that the ability to perceive the correspondence between drawings and real-world objects arises from a general-purpose neural architecture evolved to handle variation in natural visual inputs \cite{Sayim:2011bz,gibson2014ecological}. 
 
-% In support of this hypothesis, it was recently shown that features learned by deep convolutional neural network models (DCNNs) trained exclusively to recognize objects in photos, that had never seen a line drawing, succeeded in recognizing simple sketches \cite{FanCommon2018}. 
-% Together, these findings suggest that a thorough understanding of the functional architecture of the visual system, which is largely shared across human cultures, may be sufficient to explain how people are able to perceive semantic content in drawings.
-
-% However, such an explanation is clearly incomplete. 
-% Even drawings of the same object can be highly variable \cite{quickdraw2017}, illustrating the importance of other factors that may influence how a drawing conveys meaning. 
-
 On the other hand, influential work in philosophy has emphasized the role of cultural and social context in determining how drawings denote objects \cite{goodman1976languages}.
 This perspective is consistent with the observation of substantial variation in pictorial art traditions across cultures \cite{gombrich1989story,gombrich1969art}, and the emergence of culturally-specific conventions for encoding meaning in pictorial form \cite{boltz1994origin,allen2000middle}. 
 Further support for the importance of social context for determining pictorial meaning has also come from recent laboratory studies of visual communication, which have found that pairs of interacting participants can learn to produce drawings that are referentially meaningful to their partner in context, even when these drawings do not strongly resemble any particular real-world referent out of context \cite{Garrod:2007wk,fay2010interactive,Galantucci:2005uh}. 
-
-% Together, these findings suggest the importance of social context --- and over longer timescales, culturally shared conventions --- in determining how drawings convey meaning.
 
 Towards reconciling these perspectives, the current paper is guided by the overarching hypothesis that visual information and social context jointly determine the relationship between a drawing and the object it depicts.  
 To evaluate this hypothesis, we investigated the consequences of manipulating communicative context on the drawings people produce during visual communication, finding that people spontaneously modulated how much time and ink they invested in their drawings in order to be sufficiently informative in context. 
 To explain these findings, we developed a computational model of visual communciation that embodied two core competencies: visual abstraction, the general capacity to perceive the correspondence between an object and a simple drawing of it; and pragmatic inference, the ability to infer what information is not only \textit{valid} to include in a drawing, but also \textit{relevant} in context  \cite{goodman2016pragmatic,grice1975syntax,abell2009canny}.
 This model was instantiated as a deep convolutional neural network visual encoder nested within a probabilistic program that inferred which drawings would be most informative in context.
 We found that our full model fits the data well and outperformed lesioned variants, providing a first algorithmically explicit theory of how perception and social cognition jointly support contextual flexibility in visual communication.
-
-%  two core competencies: (1) visual abstraction, the capacity to perceive the correspondence between an object and a drawing of it; and (2) pragmatic inference, the ability to infer what information would help a viewer distinguish the target from distractors. 
-% To evaluate this hypothesis, we developed a computational model of the sketcher that embodied both competencies, instantiated as a deep convolutional neural network nested within a probabilistic program.
- 
-% We present an integrated computational model of contextual flexibility in visual communication that combines deep convolutional neural network models of visual perception \cite{simonyan2014very,FanCommon2018} with a Bayesian probabilistic model of pragmatic reasoning \cite{goodman2016pragmatic} to make detailed predictions about what drawings people will produce across a variety of communicative contexts. 
-
-
-% \ndg{awkward segue here. either smooth it out with some words, or move the above paragraph to be last.}
-
-% Traditionally, a barrier to progress in studying visual communication has been the lack of principled quantitative measures of high-level semantic information in drawings. 
-% As such, previous studies employing drawing tasks to study visual communication have typically relied on qualitative assessments of drawings based on provisional criteria specific to each study \cite{Healey:2007vq}, or quantitative measures of low-level visual features that do not capture semantic information \cite{Garrod:2007wk}, limiting their ability to make detailed, quantitative predictions about visual communication behavior.
 
 \section*{Results}
 
