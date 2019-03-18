@@ -186,8 +186,7 @@ Rather, it suggests an analogy to how shared context influences what people choo
 Informed by this work, we propose that human sketchers determine what kind of sketch to produce in context by deploying two main faculties: \textit{visual abstraction}, which refers to the ability to judge how well a sketch evokes a real object, and \textit{pragmatic inference}, which refers to the ability to judge which sketches will be sufficiently detailed to be informative about the target object in context, but no more detailed than necessary. 
 % Pragmatic inference can thus be decomposed into two aspects: context sensitivity, a preference for sketches that are diagnostic of the target relative to the distractors; and cost sensitivity, a preference for sketches that require less time and effort to produce.
 To test this proposal, we developed a computational model of the sketcher that embodies both visual abstraction and pragmatic inference, and was instantiated as a deep convolutional neural network nested within a probabilistic program. 
-Constructing such a model allowed us to evaluate the contribution of each component using formal model comparison, as well as quantitatively characterize the model's behavior in novel contexts.
-\begin{figure*}[htbp]
+Constructing such a model allowed us to evaluate the contribution of each component using formal model comparison, as well as quantitatively characterize the model's behavior in novel contexts.\begin{figure*}[htbp]
 \centering
 \includegraphics[width=0.9\textwidth]{figures/2_sketch_gallery-min.pdf}
 \caption{(A) Object stimuli. (B) Example sketches produced in close context condition. (C) Example sketches produced in far context condition.}
@@ -236,19 +235,6 @@ We inferred these parameters from data via Bayesian data analysis (see Materials
 
 % In a second set of modeling experiments, we evaluate the role of visual abstraction by using different visual features (low-level, medium-level, or high-level) for the visual correspondence \textrm{sim}(s,t).
 
-\begin{figure*}[htbp]
-\centering
-\includegraphics[width=0.95\textwidth]{figures/4_model_schematic-min.pdf}
-\caption{(A) Architecture of visual encoder model for sketches and object renderings. Consists of pre-trained deep convolutional neural network (VGG-19) and shallow nonlinear ``adaptor'' neural network that predicts sketch-object correspondence. 
-The encoder takes a sketch and object rendering as input, and outputs a correspondence score reflecting how well the sketch resembles the object. 
-Three adaptor networks trained, using features from a one of the highest, an intermediate, and an early layer of VGG.
-Each adaptor network trained and evaluated in crossvalidated fashion. 
-(B) Sketch-object correspondence computed for each object in context and each sketch in the test set. 
-To determine the relative informativity of each sketch, the similarity scores between this sketch and all four objects were softmax normalized. 
-The cost of each sketch was assumed to vary with the amount of time taken to produce it.}
-\label{model_schematic}
-\end{figure*}
-
 \subsubsection*{Evaluating contribution of pragmatic inference}
 
 We hypothesized that a \textit{pragmatic} sketcher model that is sensitive to both context and cost would provide a strong fit to human sketch production behavior, as well as outperform lesioned alternatives lacking either component.
@@ -265,13 +251,25 @@ a \textit{cost-insensitive} sketcher, $S_{nocost}$, in which the cost term is re
 Our goal was to evaluate how well each model could produce informative sketches and appropriately modulate its behavior according to the context condition, and not necessarily to reproduce exactly the same sketch a particular participant had on a specific trial. 
 As such, we aggregated all sketches of the same object produced in the same context condition when estimating their key functional properties (i.e., perceptual correspondence, cost), so each sketch was represented by the mean in its object-context category. 
 Model predictions were generated to the same level of granularity, in the form of a probability distribution over 64 types of sketches, representing each combination of object and context condition (e.g., `basset sketch produced in a close context'). 
+\begin{figure*}[htbp]
+\centering
+\includegraphics[width=0.95\textwidth]{figures/4_model_schematic-min.pdf}
+\caption{(A) Architecture of visual encoder model for sketches and object renderings. Consists of pre-trained deep convolutional neural network (VGG-19) and shallow nonlinear ``adaptor'' neural network that predicts sketch-object correspondence. 
+The encoder takes a sketch and object rendering as input, and outputs a correspondence score reflecting how well the sketch resembles the object. 
+Three adaptor networks trained, using features from a one of the highest, an intermediate, and an early layer of VGG.
+Each adaptor network trained and evaluated in crossvalidated fashion. 
+(B) Sketch-object correspondence computed for each object in context and each sketch in the test set. 
+To determine the relative informativity of each sketch, the similarity scores between this sketch and all four objects were softmax normalized. 
+The cost of each sketch was assumed to vary with the amount of time taken to produce it.}
+\label{model_schematic}
+\end{figure*}
 
 To generate these predictions, first we employed Bayesian data analysis to infer a posterior distribution over the four latent parameters in the model ($w_{i}$, $w_{c}$, $w_{d}$, $\alpha$). 
 Next, we presented each model with exactly the same set of contexts that were presented to human sketchers in the communication experiment, and evaluated the posterior predictive probabilities that each model assigned to sketches in each object-context category, marginalizing over the posterior distribution over latent parameters. 
 We conducted these inference and evaluation steps independently on five balanced splits of the dataset, providing an estimate of reliability and permitting direct comparison with subsequent modeling results using the same splits for crossvalidation (see \textit{Evaluating contribution of visual abstraction}). 
 
 % We conduct these evaluations on each of the test sets from the same five crossvalidation folds that were used to train and test the visual encoder, to permit direct comparison of these two sets of modeling results. 
-% \ndg{does this mean that the posterior was fit on one fifth and then predictive evaluated on final fifth, or that posterior+predictive was on a fifth? also this is the first mention of a split into train/test folds so make it sound less like an obvious reference to something earlier?}
+% \n_dg{does this mean that the posterior was fit on one fifth and then predictive evaluated on final fifth, or that posterior+predictive was on a fifth? also this is the first mention of a split into train/test folds so make it sound less like an obvious reference to something earlier?}
 
 We found that the full model, $S_{prag}$, provided a much better fit to human behavior than the context-insensitive variant, $S_{sim}$ (median log Bayes Factor = $16.1$; see Table \ref{model_comparison}), and the cost-insensitive variant, $S_{nocost}$ (BF = $9.54$).
 We investigated three aspects of each model's behavior to understand what may have explained these gaps in model performance: (a) \textit{sketch retrieval}: the ability to assign a high absolute rank to the target sketch category in context, out of the 64 object-context alternatives; (b) \textit{context congruity}: the ability to consistently assign a higher rank to the context-congruent version of the target object over the context-incongruent version (i.e., on a close trial, preferring a close sketch to a far sketch); and (c) \textit{cost modulation}: how consistently a model produced costlier sketches than average in the close condition, and less costly sketches than average in the far condition, mirroring human behavior.
@@ -326,12 +324,17 @@ We employ VGG-19 pretrained to recognize objects from the Imagenet database as o
 We then augment the pretrained feature representation of the base encoder with a shallow adaptor network, which is trained to predict the perceptual correspondence between specific sketch-object pairs.
 We train an adaptor network because, while prior work has shown that representation of object \textit{categories} converges for sketches and photos at higher layers in DCNN models trained only on photos \cite{FanCommon2018}, additional supervision can substantially improve the accuracy of predictions involving comparisons between sketches and photos at the \textit{instance} level \cite{sangkloy2016sketchy}. 
 
-To evaluate the importance of network depth for providing a more transferable visual feature basis for modeling human-like visual abstraction, we compare adaptor networks that intercept VGG-19 image representations at three different layers: the first max pooling layer (early), the tenth convolutional layer (mid), and the first fully connected layer (high).
+% To explore the degree to which the visual abstraction afforded by the complex transformations applied by successive layers of VGG-19 are required to capture human behavior during visual communication,
+% To evaluate the importance of network depth for providing a more transferable visual feature basis for modeling human-like visual abstraction, 
 
-Critically, all adaptor networks contained approximately the same number of learnable parameters, and were trained on the same data using exactly the same optimization procedure for an equal number of epochs. 
-All model evaluations involving the base encoder and trained adaptor network were performed in a fivefold crossvalidated manner, with the full communication task dataset split into training, validation, and test sets in a 80\%, 10\%, and 10\% ratio.
+To evaluate the importance of the greater visual abstraction available at higher layers of VGG-19, we compare adaptor networks that intercept VGG-19 image representations at three different layers: the first max pooling layer (early), the tenth convolutional layer (mid), and the first fully connected layer (high).
+Each adaptor network was trained to predict the empirical estimates of sketch-object correspondence from the recognition experiment, and evaluated on held out data in a 5-fold crossvalidated manner using the same splits as before. 
 
-We followed the same procedure as above to generate model predictions for the test set of each crossvalidation fold of our dataset, such that each visual encoder was trained on a different subset of the data than was used to evaluate it. 
+% We report model predictions using the trained visual encoder for the test set from each crossvalidation fold.
+% Critically, all adaptor networks contained approximately the same number of learnable parameters, and were trained on the same data using exactly the same optimization procedure for an equal number of epochs. 
+% All model evaluations involving the base encoder and trained adaptor network were performed in a fivefold crossvalidated manner, with the full communication task dataset split into training, validation, and test sets in a 80\%, 10\%, and 10\% ratio.
+
+% We followed the same procedure as above to generate model predictions for the test set of each crossvalidation fold of our dataset, such that each visual encoder was trained on a different subset of the data than was used to evaluate it. 
 
 % \n_dg{one more sentence about the data / training of the adaptor would be useful here.}
 % \mikewu{this might not be important for this paper, but actually pretty interesting that we need nonlinearities in the adaptation, meaning that the spaces are not aligned in an affine sense... these two sentences about (1) we can generalize to sketches out of the box, and (2) we need additional transformations seem contradictory. How do we explain this? @jefan: I think it's probably not too different from the way for most visual transfer learning problems, we usually need to learn some nonlinearities to get good performance on the transfer task. But Imagenet-training being prety reasonable as a place to start is a pretty consistent pattern, even leaving aside sketch reprsentation. }
@@ -347,9 +350,9 @@ These results show that making fuller use of the depth of VGG to compute the per
 Critically, using high-level features supported strong performance on sketch retrieval (95\% CI target rank: $[3.03, 3.37]$, Fig.~\ref{model_results}A), compared to mid-level features (target rank: $[6.05, 6.56]$) and low-level features (target rank: $[22.4, 24.1]$). 
 These results show that without a high-performing visual encoder, the model is much less likely to produce sketches of the correct object, a basic prerequisite for successful visual communication even in the absence of contextual variability. 
 
-Moreover, the pragmatic sketcher model using high-level features also displayed context congruity (95\% CI: $[0.583, 0.632]$, Fig.~\ref{model_results}B), comparable in degree to the best-performing pragmatic model that lacked an encoder, showing that our full sketcher model was able to successfully reproduce this key signature of contextual flexibility for novel communicative contexts and sketches. 
-The variant using mid-level features also displayed context congruity to a weaker extent (95\% CI: $[0.526, 0.576]$), suggesting that an intermediate level of visual abstraction could achieve an intermediate degree of context congruity. 
-By contrast, the variant using low-level features failed to prefer the context-congruent sketch category (95\% CI: $[0.435, 0.475]$), providing a lower bound on the level of visual abstraction required in the underlying vision model to support flexible visual communication behavior. 
+Moreover, the pragmatic sketcher model using high-level features also displayed context congruity (95\% CI: $[0.583, 0.632]$, Fig.~\ref{model_results}B), comparable in degree to the best-performing pragmatic model that lacked an encoder, showing that our full sketcher model displayed this signature of contextual flexibility for novel communicative contexts and sketches. 
+The variant using mid-level features also displayed context congruity to a weaker extent (95\% CI: $[0.526, 0.576]$), suggesting that an intermediate level of visual abstraction is sufficient to achieve an intermediate degree of context congruity. 
+By contrast, the variant using low-level features failed to prefer the context-congruent sketch category (95\% CI: $[0.435, 0.475]$), providing a lower bound on the level of visual abstraction required in the underlying encoder to support flexible visual communication behavior. 
 
 Again, only the pragmatic sketcher model using high-level features displayed the same pattern of cost modulation as the best-performing pragmatic model lacking an encoder (95\%CI: close = $[0.199, 0.208]$, far = $[0.178, 0.181]$, Fig.~\ref{model_results}C), while both of the other variants using mid-level and low-level features failed to do so (95\%CI: mid-level: close = $[0.186, 0.189]$, far = $[0.186, 0.188]$; low-level: close = $[0.188, 0.189]$, far = $[0.188, 0.189]$).  
 
@@ -385,7 +388,6 @@ Mid: comparison between high adaptor vs. mid adaptor in context/cost-sensitive m
 Low: comparison between high adaptor vs. low adaptor in context/cost-sensitive model.}
 \label{model_comparison}
 \end{table*}
-
 
 %%%%%%%% cost fc6, context fc6, high vs. mid, high vs. low, cost human, context human
 % 	1 & 2.70 & 44.54 & 105.51 & 281.65 & 11.93 & 17.98 \\ 
@@ -526,7 +528,7 @@ Because all sketches from the same object-context category share the same corres
 \subsubsection*{Deriving empirical estimates of sketch costs}
 
 % While we are presently agnostic to the underlying representation of sketch cost used by participants, we assumed the cost of each sketch to be proportional to the amount of time taken by the participant to produce it during the communication task. 
-We reasoned that drawing time would be a natural proxy for the cost incurred by workers on Amazon Mechanical Turk, who increase their total compensation by completing tasks in a timely manner. 
+We reasoned that the amount of time taken producing each sketch would be a natural proxy for the cost incurred by workers on Amazon Mechanical Turk, who increase their total compensation by completing tasks in a timely manner. 
 However, as there were no absolute constraints on the amount of time that could be spent on each trial, there was considerable variability across different participants in terms of how much time they spent producing their sketches. 
 To control for this variability across participants and to ensure robust estimates, we first removed outliers (draw times exceeding 5 s.d. from the mean), then z-score normalized drawing times across all remaining trials within a participant, and finally averaged these normalized draw times across sketches within the same object-context category as above, yielding 32 objects x 2 contexts = 64 empirical cost estimates in total.
 
