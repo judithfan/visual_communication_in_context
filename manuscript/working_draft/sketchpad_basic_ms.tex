@@ -65,8 +65,8 @@ Communicative drawing poses a core challenge for theories of how visual percepti
 Participants (N=192) were paired in an online environment to play a sketching-based reference game. On each trial, both participants were shown the same four objects, but in different locations. The sketcher's goal was to draw one of these objects --- the target --- so that the viewer could select it from the array. 
 There were two types of trials: close, where objects belonged to the same basic-level category, and far, where objects belonged to different categories. 
 We found that people exploited information in common ground with their partner to efficiently communicate about the target: on far trials, sketchers achieved high recognition accuracy while applying fewer strokes, using less ink, and spending less time on their drawings than on close trials. 
-We hypothesized that humans succeed in this task by recruiting two core competencies: (1) visual abstraction, the capacity to perceive the correspondence between an object and a drawing of it; and (2) pragmatic inference, the ability to infer what information would help a viewer distinguish the target from distractors. 
-To evaluate this hypothesis, we developed a computational model of the sketcher that embodied both competencies, instantiated as a deep convolutional neural network nested within a probabilistic program. 
+We hypothesized that humans succeed in this task by recruiting two core faculties: (1) visual abstraction, the capacity to perceive the correspondence between an object and a drawing of it; and (2) pragmatic inference, the ability to infer what information would help a viewer distinguish the target from distractors. 
+To evaluate this hypothesis, we developed a computational model of the sketcher that embodied both faculties, instantiated as a deep convolutional neural network nested within a probabilistic program. 
 We found that this model fit human data well and outperformed lesioned variants. 
 Together, this work provides the first algorithmically explicit theory of how perception and social cognition jointly support contextual flexibility in visual communication.
 \end{abstract}
@@ -86,7 +86,7 @@ Together, this work provides the first algorithmically explicit theory of how pe
 
 \noindent \dropcap{F}rom ancient etchings on cave walls to modern digital displays, the ability to externalize our thoughts in visual form lies at the heart of key human innovations (e.g., painting, cartography, data visualization), and forms the foundation for the cultural transmission of knowledge \cite{tomasello2009cultural,donald1991origins}. 
 Perhaps the most basic and versatile visualization technique is drawing, the earliest examples of which date to at least 40,000 years ago \cite{hoffmann2018u,Aubert:2014jy}, and which can yield images ranging from photorealistic renderings to schematic diagrams. 
-Even in the simple case of drawing an object in the world, there are countless ways of depicting that object. 
+Even in the simple case of sketching an object in the world, there are countless ways of depicting that object. 
 How do drawings, despite spanning such a broad range of appearances, reliably convey meaning? 
 
 On the one hand, recent work in computational vision suggests that the identity of an object depicted in a drawing can be derived from its visual properties alone \cite{FanCommon2018}.
@@ -99,8 +99,8 @@ This perspective is consistent with the observation of substantial variation in 
 Further support for the importance of social context for determining pictorial meaning has also come from recent laboratory studies of visual communication, which have found that pairs of interacting participants can learn to produce drawings that are referentially meaningful to their partner in context, even when these drawings do not strongly resemble any particular real-world referent out of context \cite{Garrod:2007wk,fay2010interactive,Galantucci:2005uh}. 
 
 Towards reconciling these perspectives, the current paper is guided by the overarching hypothesis that visual information and social context jointly determine the relationship between a drawing and the object it depicts.  
-To evaluate this hypothesis, we investigated the consequences of manipulating communicative context on the drawings people produce during visual communication, finding that people spontaneously modulated how much time and ink they invested in their drawings in order to be sufficiently informative in context. 
-To explain these findings, we developed a computational model of visual communciation that embodied two core competencies: visual abstraction, the capacity to perceive the correspondence between a real-world object and a simple drawing of it; and pragmatic inference, the ability to infer what information is not only \textit{valid} to include in a drawing, but also \textit{relevant} in context  \cite{goodman2016pragmatic,grice1975syntax,abell2009canny}.
+To evaluate this hypothesis, we investigated how the drawings people produce during visual communication varied across different contexts, and found that people spontaneously modulated how much time and ink they invested in their drawings in order to be sufficiently informative in context.
+To explain these findings, we developed a computational model of visual communication that embodied two core faculties: visual abstraction, the capacity to judge the correspondence between a real-world object and a drawing of it; and pragmatic inference, the ability to infer what information is not only \textit{valid} to include in a drawing, but also \textit{relevant} in context  \cite{goodman2016pragmatic,grice1975syntax,abell2009canny}.
 This model was instantiated as a deep convolutional neural network visual encoder nested within a probabilistic program that inferred which drawings would be most informative in context.
 We found that our full model fits the data well and outperformed lesioned variants, providing a first algorithmically explicit theory of how perception and social cognition jointly support contextual flexibility in visual communication.
 
@@ -119,7 +119,7 @@ We found that our full model fits the data well and outperformed lesioned varian
 %% Supplemental 2: Param posteriors
 %% Supplemental 3: Error analysis for each lesioned versions
 
-To investigate visual communication in a naturalistic yet controlled setting, we employ a drawing-based reference game paradigm.
+To investigate visual communication in a naturalistic yet controlled setting, we employ a sketching-based reference game paradigm.
 This reference game involves two players: a \textit{sketcher} who aims to help a \textit{viewer} pick out a target object from an array of distractor objects by representing it in a sketch. 
 This basic arrangement can be traced back to the language games explored by \citep{wittgenstein1953philosophical} and \citep{Lewis69_Convention}. 
 Such games have proven to be a valuable tool for eliciting pragmatic inferences about \textit{language} use in context, and to make quantitative measurements of the behavioral consequences of these inferences \cite{goodman2016pragmatic,kao2014formalizing,goodman2013knowledge,frank2012predicting}. 
@@ -177,15 +177,15 @@ Consistent with the above account, we found that close sketches were matched wit
 
 % We measured this by comparing the within-category confusion rate to the overall confusion rate for close and far sketches, and found that XXX.
 
-\subsection*{Computational model of sketch production in context}
+\subsection*{Computational model of contextual flexibility in visual communication}
 
 Our empirical findings show that human sketchers spontaneously account for contextual information shared with the viewer, producing more informative sketches in close contexts at the cost of additional time and ink. 
 Such contextual flexibility argues against the notion that sketch production is constrained exclusively by the appearance of the target of object. 
-%Rather, common ground with the viewer plays a critical role in determining how informative and costly of a sketch people decide to produce during visual communication. \rdh{This seemed redundant with the first sentence}
-Rather, these results suggest an analogy to how context and common ground influences how people produce linguistic utterances during verbal communication, a key target of current computational theories of pragmatics in language use \cite{frank2012predicting,goodman2013knowledge,franke2016probabilistic,bergen2016pragmatic}.
-Informed by this prior work, we propose that human sketchers determine what kind of sketch to produce in context by deploying two main faculties: \textit{visual abstraction}, which refers to the ability to judge how well a sketch evokes a real object, and \textit{pragmatic inference}, which refers to the ability to reason about which sketches will be sufficiently detailed to be diagnostic of the target object in context, but no more detailed than necessary. 
-Intuitively, this latter faculty can be decomposed into two aspects: context sensitivity, a preference for sketches that are diagnostic of the target relative to the distractors; and cost sensitivity, a preference for less costly sketches. 
-To test this proposal, we developed a computational model of the sketcher that formalizes both notions of visual abstraction and pragmatic inference, and was instantiated as a deep convolutional neural network nested within a probabilistic program. 
+Rather, it suggests an analogy to how shared context influences what people choose to say during verbal communication, a key target of current computational theories of pragmatic language use \cite{frank2012predicting,goodman2013knowledge,franke2016probabilistic,bergen2016pragmatic}.
+
+Informed by this work, we propose that human sketchers determine what kind of sketch to produce in context by deploying two main faculties: \textit{visual abstraction}, which refers to the ability to judge how well a sketch evokes a real object, and \textit{pragmatic inference}, which refers to the ability to judge which sketches will be sufficiently detailed to be informative about the target object in context, but no more detailed than necessary. 
+% Pragmatic inference can thus be decomposed into two aspects: context sensitivity, a preference for sketches that are diagnostic of the target relative to the distractors; and cost sensitivity, a preference for sketches that require less time and effort to produce.
+To test this proposal, we developed a computational model of the sketcher that embodies both visual abstraction and pragmatic inference, and was instantiated as a deep convolutional neural network nested within a probabilistic program. 
 Constructing such a model allowed us to evaluate the contribution of each component using formal model comparison, as well as quantitatively characterize the model's behavior in novel contexts.
 \begin{figure*}[htbp]
 \centering
@@ -195,19 +195,21 @@ Constructing such a model allowed us to evaluate the contribution of each compon
 \end{figure*}
 \subsubsection*{Defining communicative utility of sketches}
 
-We define a context, $O$, to be a set of objects containing a target, $t$, and three distractors, $D=\{d_1,d_2,d_3\}$: $O = \{t,D\}$.
-We define the sketcher, $\mathcal{S}$, to be a decision-theoretic agent that produces sketches of the target, $s$, proportional to their communicative utility, $U$, where the utilities of each sketch have been normalized over the set producible sketches via the softmax function: 
+We define a context, $O$, to be a set of objects containing a target, $t$, and three distractors,  $D=\{d_1,d_2,d_3\}$: $O = \{t,D\}$.
+We define the sketcher, $\mathcal{S}$, to be a decision-theoretic agent that produces sketches of the target, $s$, proportional to their communicative utility, $U$, where the utilities of each sketch have been normalized over the set of producible sketches via the softmax function: 
 \begin{equation} \label{sketcher_distribution}
 \mathcal{S}(s|O) = \frac {\exp [{U(s,O)]}} {\sum_{i} {\exp [U(s_i,O)]}}
 \end{equation}
 In principle, the space of all producible sketches is infinite and continuous, leading to an intractable sum.
-For present purposes, we this problem by assuming that the sketcher model chooses among a large but finite set of sketches: those actually produced by participants in our task.
+In practice, we assume that the sketcher model chooses among a large but finite set of sketches: those actually produced by participants in our experiment.
 
 A sketcher's decision-making is determined by its utility function.
 We first introduce the utility function for our proposed pragmatic sketcher, $S_{prag}$, and then consider lesioned variants for comparison. 
 Overall, this utility trades off an informativity term and a cost term.
-This sketcher judges a sketch's informativity to be a mixture of two quantities: one reflecting its absolute \textit{resemblance} to the target and the other its relative \textit{diagnosticity} in the context of particular distractors (see Fig. \ref{model_schematic}B).  
+This sketcher judges a sketch's informativity to be a mixture of two quantities: one reflecting its absolute \textit{resemblance} to the target and the other its relative \textit{diagnosticity} in the presence of particular distractors (see Fig. \ref{model_schematic}B).  
 % \rdh{Maybe make this panel A, since it comes first in the text, and use `diagnosticity' instead of `informativity' in the figure titles to match the terminology here}
+
+
 A sketch's resemblance is defined by the absolute degree of perceptual correspondence between a sketch $s$ and the target $t$, i.e. $\textrm{sim}(s,t)$. 
 Our approach to estimating this correspondence for each sketch-object pair is provided in the following section. 
 A sketch's diagnosticity is defined in terms of the natural log probability that a simulated viewer agent, $\mathcal{V}$, would select the target object given the sketch and all objects in context, $\ln \mathcal{V}(t|s,O)$. 
@@ -254,28 +256,6 @@ The cost of each sketch was assumed to vary with the amount of time taken to pro
 \label{model_schematic}
 \end{figure*}
 
-
-\begin{figure*}[htbp]
-\centering
-\includegraphics[width=0.99\textwidth]{figures/5_model_results_2.pdf}
-\caption{Sketch production behavior by model variant. The table below each plot indicates whether the corresponding model variant plotted above is sensitive to context or cost. A green disc indicates context/cost sensitivity; a red `X' indicates the lack of context/cost sensitivity. 
-Results in lefthand region of each panel (white background) reflect model predictions when using empirical estimates of $sim(s,o)$ based on human sketch recognition behavior. 
-Results in the righthand region (gray background) reflect model predictions when using variants of the DCNN visual encoder, the adaptor components of which were trained in a five-fold crossvalidated manner using human sketch recognition behavior. 
-All results reflect average model behavior on test data only across identical train-test splits. 
-Error bars represent 1 s.e. for this average estimate, found by applying inverse-variance weighting on individual confidence intervals from each train-test split. 
-A: Rank of target sketch in list of 64 object-context categories, ordered by the probability assigned by each model. 
-Dashed line reflects expected target rank under uniform guessing. 
-Distribution of target rank scores across models suggest that high-quality estimates of $sim(s,o)$ are critical for strong performance. 
-B: Proportion of trials on which each model assigned a higher rank to the context-congruent sketch of the correct object than the context-incongruent version of the correct object. 
-Dashed line reflects indifference between the two versions of the sketch. 
-Only models above this line show consistent and appropriate modulation of sketch producton by context. C: Relative time cost of sketches produced by each model, after applying min-max normalization to raw draw duration measurements. 
-Predicted sketch cost on each trial computed by marginalizing over probabilities assigned to each sketch category. 
-Darker bars reflect behavior in the close condition; lighter bars the far condition. 
-Dashed line indicates the average cost of sketches in the full dataset; bars below this line reflect a preference for sketches that are less costly than average, bars above this line for sketches that are costlier than average. 
-Only models that span this dashed line match the pattern of contextual modulation of sketch cost displayed by human sketchers.}
-\label{model_results}
-\end{figure*}
-
 \subsubsection*{Evaluating contribution of pragmatic inference}
 
 First, we evaluated the contribution of pragmatic inference by removing context sensitivity and cost sensitivity from the sketcher agent.
@@ -316,6 +296,26 @@ After establishing the importance of pragmatic inference, we next sought to eval
 Having an encoding model that operates directly on image inputs is important for a computational theory of visual communication because it allows our full model to generate predictions in novel contexts (i.e., combinations of target and distractor objects).
 Building on recent advances in computational vision \cite{FanCommon2018,yamins2014performance}, we instantiated the visual encoder as a deep convolutional neural network (DCNN).
 This choice of model class is motivated by prior work showing that such networks, in addition to being a type of universal function approximator \cite{hornik1991approximation}, learn higher-layer feature representations that capture high-level perceptual information in drawings \cite{FanCommon2018}, capture perceptual judgments of object shape similarity \cite{kubilius2016deep}, and predict neural population responses in categories across the ventral visual stream \cite{yamins2014performance} when trained on challenging natural object recognition tasks \cite{deng2009imagenet}. 
+\begin{figure*}[htbp]
+\centering
+\includegraphics[width=0.99\textwidth]{figures/5_model_results_2.pdf}
+\caption{Sketch production behavior by model variant. The table below each plot indicates whether the corresponding model variant plotted above is sensitive to context or cost. A green disc indicates context/cost sensitivity; a red `X' indicates the lack of context/cost sensitivity. 
+Results in lefthand region of each panel (white background) reflect model predictions when using empirical estimates of $sim(s,o)$ based on human sketch recognition behavior. 
+Results in the righthand region (gray background) reflect model predictions when using variants of the DCNN visual encoder, the adaptor components of which were trained in a five-fold crossvalidated manner using human sketch recognition behavior. 
+All results reflect average model behavior on test data only across identical train-test splits. 
+Error bars represent 1 s.e. for this average estimate, found by applying inverse-variance weighting on individual confidence intervals from each train-test split. 
+A: Rank of target sketch in list of 64 object-context categories, ordered by the probability assigned by each model. 
+Dashed line reflects expected target rank under uniform guessing. 
+Distribution of target rank scores across models suggest that high-quality estimates of $sim(s,o)$ are critical for strong performance. 
+B: Proportion of trials on which each model assigned a higher rank to the context-congruent sketch of the correct object than the context-incongruent version of the correct object. 
+Dashed line reflects indifference between the two versions of the sketch. 
+Only models above this line show consistent and appropriate modulation of sketch producton by context. C: Relative time cost of sketches produced by each model, after applying min-max normalization to raw draw duration measurements. 
+Predicted sketch cost on each trial computed by marginalizing over probabilities assigned to each sketch category. 
+Darker bars reflect behavior in the close condition; lighter bars the far condition. 
+Dashed line indicates the average cost of sketches in the full dataset; bars below this line reflect a preference for sketches that are less costly than average, bars above this line for sketches that are costlier than average. 
+Only models that span this dashed line match the pattern of contextual modulation of sketch cost displayed by human sketchers.}
+\label{model_results}
+\end{figure*}
 
 %In order for this sketcher to generate quantitative predictions, it needs to be able to compute the perceptual correspondence, $\textrm{sim}(s,o)$, for any sketch-object pair. 
 %In our second set of modeling experiments, we employ a visual encoder model adapted to predict $\textrm{sim}(s,o)$, which was trained in a crossvalidated fashion on empirical estimates of $\textrm{sim}(s,o)$.
@@ -491,7 +491,7 @@ To obtain robust estimates of sketch-object perceptual correspondences, each ske
 
 \subsection*{Computational modeling}
 
-% We hypothesized that two core cognitive competencies are necessary and sufficient for explaining contextual flexibility in the visual communication task: (1) visual abstraction, the capacity to perceive the high-level perceptual correspondence between an object and a drawing of it; and (2) pragmatic inference, the ability to infer what information would help a viewer distinguish the target from distractors.
+% We hypothesized that two core cognitive faculties are necessary and sufficient for explaining contextual flexibility in the visual communication task: (1) visual abstraction, the capacity to perceive the high-level perceptual correspondence between an object and a drawing of it; and (2) pragmatic inference, the ability to infer what information would help a viewer distinguish the target from distractors.
 
 % To test this proposal, we developed a computational model of the sketcher that embodied both visual abstraction and pragmatic inference, and was instantiated as a probabilistic program ``wrapped'' around a deep convolutional neural network. 
 % Constructing such a model allowed us to evaluate the contribution of each component using formal model comparison, as well as quantitatively characterize the model's behavior in novel contexts. 
