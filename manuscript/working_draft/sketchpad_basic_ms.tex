@@ -288,14 +288,16 @@ Together, these results suggest that both context and cost sensitivity are criti
 
 \subsubsection*{Evaluating contribution of visual abstraction}
 
-After establishing the importance of pragmatic inference, we next sought to evaluate the contribution of visual abstraction by comparing how features adapted from different vision models predicted human visual communication behavior. 
+Having established the importance of pragmatic inference, we next sought to evaluate the contribution of visual abstraction, by developing a visual encoding model that is capable of judging how well a sketch corresponds to an object. 
+% by comparing how features adapted from different layers of  predicted human visual communication behavior. intercept VGG-19 image representations at three different layers: the first max pooling layer (early), the tenth convolutional layer (mid), and the first fully connected layer (high). afforded by the complex transformations applied by successive layers of VGG-19 are required to capture human behavior during visual communication, we hypothesized that 
 Having an encoding model that operates directly on image inputs is important for a computational theory of visual communication because it allows our full model to generate predictions in novel contexts (i.e., combinations of target and distractor objects).
 Building on recent advances in computational vision \cite{FanCommon2018,yamins2014performance}, we instantiated the visual encoder as a deep convolutional neural network (DCNN).
 This choice of model class is motivated by prior work showing that such networks, in addition to being a type of universal function approximator \cite{hornik1991approximation}, learn higher-layer feature representations that capture high-level perceptual information in drawings \cite{FanCommon2018}, capture perceptual judgments of object shape similarity \cite{kubilius2016deep}, and predict neural population responses in categories across the ventral visual stream \cite{yamins2014performance} when trained on challenging natural object recognition tasks \cite{deng2009imagenet}. 
 \begin{figure*}[htbp]
 \centering
 \includegraphics[width=0.99\textwidth]{figures/5_model_results_2.pdf}
-\caption{Sketch production behavior by model variant. The table below each plot indicates whether the corresponding model variant plotted above is sensitive to context or cost. A green disc indicates context/cost sensitivity; a red `X' indicates the lack of context/cost sensitivity. 
+\caption{Sketch production behavior by model variant. The table below each plot indicates whether the corresponding model variant plotted above is sensitive to context or cost. 
+A green disc indicates context/cost sensitivity; a red `X' indicates the lack of context/cost sensitivity. 
 Results in lefthand region of each panel (white background) reflect model predictions when using empirical estimates of $sim(s,o)$ based on human sketch recognition behavior. 
 Results in the righthand region (gray background) reflect model predictions when using variants of the DCNN visual encoder, the adaptor components of which were trained in a five-fold crossvalidated manner using human sketch recognition behavior. 
 All results reflect average model behavior on test data only across identical train-test splits. 
@@ -316,7 +318,7 @@ Only models that span this dashed line match the pattern of contextual modulatio
 %In order for this sketcher to generate quantitative predictions, it needs to be able to compute the perceptual correspondence, $\textrm{sim}(s,o)$, for any sketch-object pair. 
 %In our second set of modeling experiments, we employ a visual encoder model adapted to predict $\textrm{sim}(s,o)$, which was trained in a crossvalidated fashion on empirical estimates of $\textrm{sim}(s,o)$.
 
-Concretely, the visual encoder is a function that accepts a pair of images as input (see Fig. \ref{model_schematic}A): a sketch, $s$, and an object rendering, $o$, and returns a scalar value reflecting the degree of perceptual correspondence between the sketch and object, $\textrm{sim}(s,o)$, which lies in the range $[0,1]$, where $\textrm{sim}(s,o)=0$ reflects no correspondence and $\textrm{sim}(s,o)=1$ reflects maximal correspondence.
+Concretely, the visual encoder is a function that accepts a pair of images as input (see Fig. \ref{model_schematic}A): a sketch, $s$, and an object rendering, $o$, and returns a scalar value reflecting the degree of perceptual correspondence between the sketch and object, $\textrm{sim}(s,o)$, which lies in the range $[0,1]$, where $\textrm{sim}(s,o)=0$ reflects minimal correspondence and $\textrm{sim}(s,o)=1$ reflects maximal correspondence.
 This encoder consists of two functional components: a base visual encoder network, $B$, and an adaptor network, $A$: $\textrm{sim}(s,o) = A(B(s,o))$.
 
 % \textrm{sim}(s,o) = (\textrm{A} \circ \textrm{B}) (s,o)
@@ -325,8 +327,10 @@ We then augment the pretrained feature representation of the base encoder with a
 We train an adaptor network because, while prior work has shown that representation of object \textit{categories} converges for sketches and photos at higher layers in DCNN models trained only on photos \cite{FanCommon2018}, additional supervision can substantially improve the accuracy of predictions involving comparisons between sketches and photos at the \textit{instance} level \cite{sangkloy2016sketchy}. 
 
 To evaluate the importance of network depth for providing a more transferable visual feature basis for modeling human-like visual abstraction, we compare adaptor networks that intercept VGG-19 image representations at three different layers: the first max pooling layer (early), the tenth convolutional layer (mid), and the first fully connected layer (high).
+
 Critically, all adaptor networks contained approximately the same number of learnable parameters, and were trained on the same data using exactly the same optimization procedure for an equal number of epochs. 
 All model evaluations involving the base encoder and trained adaptor network were performed in a fivefold crossvalidated manner, with the full communication task dataset split into training, validation, and test sets in a 80\%, 10\%, and 10\% ratio.
+
 We followed the same procedure as above to generate model predictions for the test set of each crossvalidation fold of our dataset, such that each visual encoder was trained on a different subset of the data than was used to evaluate it. 
 
 % \n_dg{one more sentence about the data / training of the adaptor would be useful here.}
