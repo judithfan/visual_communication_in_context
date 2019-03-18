@@ -193,6 +193,7 @@ Constructing such a model allowed us to evaluate the contribution of each compon
 \caption{(A) Object stimuli. (B) Example sketches produced in close context condition. (C) Example sketches produced in far context condition.}
 \label{sketch_gallery}
 \end{figure*}
+
 \subsubsection*{Defining communicative utility of sketches}
 
 We define a context, $O$, to be a set of objects containing a target, $t$, and three distractors,  $D=\{d_1,d_2,d_3\}$: $O = \{t,D\}$.
@@ -214,31 +215,26 @@ The simulated viewer $\mathcal{V}$, in turn, is assumed to select the target obj
 \begin{equation} \label{literal_viewer_score}
 \mathcal{V}(t|s,O) \propto \frac {\exp\{\alpha \cdot \textrm{sim(s, t)}\}} {\sum_{i=1}^{4} \exp\{\textrm{sim}(s,o_i)\}}
 \end{equation}
-where $i$ indexes each object $o\in O$, and $\alpha$ is a scaling parameter determining the assumed optimality of the listener's decision policy: as $\alpha \rightarrow \infty$, the simulated viewer is more likely to choose the object with highest perceptual correspondence to the sketch. 
+where $i$ indexes each object $o\in O$, and $\alpha$ is a scaling parameter determining the assumed optimality of the simulated viewer's decision policy. 
+As $\alpha \rightarrow \infty$, the simulated viewer is more likely to choose the object with highest perceptual correspondence to the sketch. 
 Intuitively, this means that the viewer is more likely to pick the correct object when the sketch corresponds more strongly to the target than to the distractors. 
 
 To combine the resemblance and diagnosticity terms into a single informativity value, we introduce a weight parameter, $w_{d}$, that interpolates between them:
 \begin{equation} \label{prag_interpolation}
 I(s,O) = w_{d} \cdot \ln \mathcal{V}(t|s,O) + (1-w_{d}) \cdot \textrm{sim}(s,t). 
 \end{equation} 
-This captures the intuition that a communicative sketcher seeks to produce a sketch that both resembles the target object and distinguishes the target from the distractors.
-
-Finally, we define a sketch's cost, $C(s)$, to be a monotonic function of the empirical amount of time taken to produce it, linearly transformed  to lie in the range $[0,1]$. 
-
+Combining these terms captures the intuition that a communicative sketcher seeks to produce a sketch that both resembles the target object and distinguishes the target from the distractors.
+Finally, we define a sketch's cost, $C(s)$, to be a monotonic function of the amount of time taken to produce it, linearly transformed to lie in the range $[0,1]$. 
 Putting these terms together, we have the full utility:
 \begin{equation} \label{sketcher_utility}
 U_{S_{prag}}(s,O) = w_i \cdot I(s,O) - w_c \cdot  C(s)
 \end{equation}
 where $w_i$ and $w_c$ are independent scaling parameters that are applied to the informativity and cost terms, respectively.
 These parameters determine how strongly each term contributes to the overall utility of the sketch. 
-This model therefore has 4 parameters: the weights applied to informativity ($w_{i}$) and cost ($w_{c}$), the balance between diagnosticity vs.~resemblance ($w_{d}$), and the sketch-object correspondence optimality term ($\alpha$). 
+This model contains four latent parameters: one each on informativity ($w_{i}$) and cost ($w_{c}$), one that balances between diagnosticity and resemblance ($w_{d}$) within the informativity term, and one that tracks the optimality of the simulated viewer's decision policy ($\alpha$). 
 We inferred these parameters from data via Bayesian data analysis (see Materials and Methods).
 
-Within this modeling framework, we conducted a series of targeted lesion studies to test each aspect of our hypothesis about the core cognitive faculties employed by humans to decide which sketch to produce in context. 
-To evaluate the necessity of pragmatics and cost, we define two simpler variants of this sketcher, which are nested within the fully pragmatic model.
-A \textit{context-insensitive} sketcher, $S_{sim}$, is derived by removing the diagnosticity term from the definition of informativity (i.e.~$w_{d}{=}0$), leaving only the resemblance term. 
-A \textit{cost-insensitive} sketcher, $S_{nocost}$, on the other hand, aims to produce informative sketches without regard for their cost (i.e.~$w_c=0$).
-In a second set of modeling experiments, we evaluate the role of visual abstraction by using different visual features (low-level, medium-level, or high-level) for the visual correspondence \textrm{sim}(s,t).
+% In a second set of modeling experiments, we evaluate the role of visual abstraction by using different visual features (low-level, medium-level, or high-level) for the visual correspondence \textrm{sim}(s,t).
 
 \begin{figure*}[htbp]
 \centering
@@ -255,27 +251,30 @@ The cost of each sketch was assumed to vary with the amount of time taken to pro
 
 \subsubsection*{Evaluating contribution of pragmatic inference}
 
-First, we evaluated the contribution of pragmatic inference by removing context sensitivity and cost sensitivity from the sketcher agent.
-We hypothesized that a \textit{pragmatic} computational sketcher model that is sensitive to both context and cost would provide a strong fit to human sketch production behavior, as well as outperform lesioned alternatives lacking either component.
-To test this hypothesis, we evaluated three model variants characterized by their distinct definitions of communicative utility: a pragmatic one sensitive to both context and cost ($S_{prag}$), one \textit{not} sensitive to context but sensitive to cost ($S_{sim}$), and one that \textit{is} sensitive to context but \textit{not} sensitive to cost ($S_{nocost}$).
-In this set of model evaluations, we estimated the correspondence between sketches and objects, $\textrm{sim}(s,o)$ using empirical data from our recognition experiment (see Materials and Methods).
+We hypothesized that a \textit{pragmatic} sketcher model that is sensitive to both context and cost would provide a strong fit to human sketch production behavior, as well as outperform lesioned alternatives lacking either component.
+To test this hypothesis, we compare the full pragmatic model, ($S_{prag}$), with two nested variants with different utility functions:
+a \textit{context-insensitive} sketcher, $S_{sim}$, in which the diagnosticity term in the definition of informativity (i.e.~$w_{d}{=}0$) is removed, leaving only the resemblance term; and  
+a \textit{cost-insensitive} sketcher, $S_{nocost}$, in which the cost term is removed (i.e.~$w_c=0$), leaving the full informativity term. 
 
+% First, we evaluated the contribution of pragmatic inference by removing context sensitivity and cost sensitivity from the sketcher agent.
+% To test this hypothesis, we evaluated three model variants characterized by their distinct definitions of communicative utility: a pragmatic one sensitive to both context and cost ($S_{prag}$), one \textit{not} sensitive to context but sensitive to cost ($S_{sim}$), and one that \textit{is} sensitive to context but \textit{not} sensitive to cost ($S_{nocost}$).
+% In this set of model evaluations, we estimated the correspondence between sketches and objects, $\textrm{sim}(s,o)$ using empirical data from our recognition experiment (see Materials and Methods).
 %\n_dg{we need just a few more words about how these empirical estimates are derived here or above?}
 % In this and subsequent model evaluations, we defined a sketch's cost, $C(s)$, to be a monotonic function of the amount of time taken to produce it. \rdh{we said this already}
 
-Our goal was to ascertain how well each model could produce informative sketches and appropriately modulate its behavior according to the context condition, and not necessarily to reproduce exactly the same sketch as a particular participant had on a specific trial. 
+Our goal was to evaluate how well each model could produce informative sketches and appropriately modulate its behavior according to the context condition, and not necessarily to reproduce exactly the same sketch a particular participant had on a specific trial. 
 As such, we aggregated all sketches of the same object produced in the same context condition when estimating their key functional properties (i.e., perceptual correspondence, cost), so each sketch was represented by the mean in its object-context category. 
 Model predictions were generated to the same level of granularity, in the form of a probability distribution over 64 types of sketches, representing each combination of object and context condition (e.g., `basset sketch produced in a close context'). 
 
 To generate these predictions, first we employed Bayesian data analysis to infer a posterior distribution over the four latent parameters in the model ($w_{i}$, $w_{c}$, $w_{d}$, $\alpha$). 
-Next, we presented each model with exactly the same set of contexts that were presented to human sketchers in the communication experiment, and evaluated the posterior predictive probabilities that each model assigned to sketches in every object-context category, marginalizing over the posterior distribution over latent parameters. 
-We conduct these evaluations on each of the test sets from the same five crossvalidation folds that were used to train and test the visual encoder, to permit direct comparison of these two sets of modeling results. 
+Next, we presented each model with exactly the same set of contexts that were presented to human sketchers in the communication experiment, and evaluated the posterior predictive probabilities that each model assigned to sketches in each object-context category, marginalizing over the posterior distribution over latent parameters. 
+We conducted these inference and evaluation steps independently on five balanced splits of the dataset, providing an estimate of reliability and permitting direct comparison with subsequent modeling results using the same splits for crossvalidation (see \textit{Evaluating contribution of visual abstraction}). 
 
-\ndg{does this mean that the posterior was fit on one fifth and then predictive evaluated on final fifth, or that posterior+predictive was on a fifth? also this is the first mention of a split into train/test folds so make it sound less like an obvious reference to something earlier?}
+% We conduct these evaluations on each of the test sets from the same five crossvalidation folds that were used to train and test the visual encoder, to permit direct comparison of these two sets of modeling results. 
+% \ndg{does this mean that the posterior was fit on one fifth and then predictive evaluated on final fifth, or that posterior+predictive was on a fifth? also this is the first mention of a split into train/test folds so make it sound less like an obvious reference to something earlier?}
 
-We found that the full model, $S_{prag}$, provided a much stronger overall fit to human behavior than the context-insensitive variant, $S_{sim}$ (median log Bayes Factor = $16.1$; see Table \ref{model_comparison}), and the cost-insensitive variant, $S_{nocost}$ (BF = $9.54$).
-
-To explore the behavioral patterns that may explain these differences in overall performance, we examined three aspects of each model's behavior: (a) \textit{sketch retrieval}: its ability to assign a high absolute rank to the target sketch category in context, out of the 64 object-context alternatives; (b) \textit{context congruity}: its ability to consistently assign a higher rank to the context-congruent version of the target object over the context-incongruent version (i.e., on a close trial, preferring a close sketch to a far sketch); and (c) \textit{cost modulation}: how consistently it produced costlier sketches than average in the close condition, and less costly sketches than average in the far condition, mirroring human behavior.
+We found that the full model, $S_{prag}$, provided a much better fit to human behavior than the context-insensitive variant, $S_{sim}$ (median log Bayes Factor = $16.1$; see Table \ref{model_comparison}), and the cost-insensitive variant, $S_{nocost}$ (BF = $9.54$).
+We investigated three aspects of each model's behavior to understand what may have explained these gaps in model performance: (a) \textit{sketch retrieval}: the ability to assign a high absolute rank to the target sketch category in context, out of the 64 object-context alternatives; (b) \textit{context congruity}: the ability to consistently assign a higher rank to the context-congruent version of the target object over the context-incongruent version (i.e., on a close trial, preferring a close sketch to a far sketch); and (c) \textit{cost modulation}: how consistently a model produced costlier sketches than average in the close condition, and less costly sketches than average in the far condition, mirroring human behavior.
 
 We found that in general, sketch retrieval performance was high for all three model variants (target rank 95\% CI: pragmatic = $[1.43, 1.50]$, context-insensitive = $[1.54, 1.60]$, cost-insensitive = $[1.55, 1.60]$) (Fig.~\ref{model_results}A, left).
 However, only the pragmatic sketcher was able to reliably produce the sketch appropriate for the context condition more frequently than would be predicted by chance (95\% CI proportion: $[0.571, 0.620]$; Fig.~\ref{model_results}B, left); neither the context-insensitive nor the cost-insensitive variants displayed this context congruity (95\% CI: context-insensitive = $[0.478, 0.525]$, cost-insensitive = $[0.498, 0.501]$). 
