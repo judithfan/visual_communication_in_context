@@ -207,13 +207,10 @@ A sketcher's decision-making is determined by its utility function.
 We first introduce the utility function for our proposed pragmatic sketcher, $S_{prag}$, and then consider lesioned variants for comparison. 
 Overall, this utility trades off an informativity term and a cost term.
 This sketcher judges a sketch's informativity to be a mixture of two quantities: one reflecting its absolute \textit{resemblance} to the target and the other its relative \textit{diagnosticity} in the presence of particular distractors (see Fig. \ref{model_schematic}B).  
-% \rdh{Maybe make this panel A, since it comes first in the text, and use `diagnosticity' instead of `informativity' in the figure titles to match the terminology here}
 
-
-A sketch's resemblance is defined by the absolute degree of perceptual correspondence between a sketch $s$ and the target $t$, i.e. $\textrm{sim}(s,t)$. 
-Our approach to estimating this correspondence for each sketch-object pair is provided in the following section. 
-A sketch's diagnosticity is defined in terms of the natural log probability that a simulated viewer agent, $\mathcal{V}$, would select the target object given the sketch and all objects in context, $\ln \mathcal{V}(t|s,O)$. 
-The simulated viewer $\mathcal{V}$, in turn, is assumed to select the target object proportional to the perceptual correspondence between the sketch and the target, $\textrm{sim}(s,t)$, normalized by the correspondences between the sketch and all four objects in context, again via the softmax function:
+Resemblance is defined by how strongly a sketch $s$ corresponds to the target $t$, i.e. $\textrm{sim}(s,t)$, which we estimate using empirical data from the recognition experiment (see Materials and Methods).
+Diagnosticity is defined by the natural log probability that a simulated viewer agent, $\mathcal{V}$, would select the target object given the sketch and all objects in context, $\ln \mathcal{V}(t|s,O)$. 
+The simulated viewer $\mathcal{V}$, in turn, is assumed to select the target object proportional to the correspondence between the sketch and the target, $\textrm{sim}(s,t)$, normalized by the sum of correspondences between the sketch and all four objects in context, again via the softmax function:
 \begin{equation} \label{literal_viewer_score}
 \mathcal{V}(t|s,O) \propto \frac {\exp\{\alpha \cdot \textrm{sim(s, t)}\}} {\sum_{i=1}^{4} \exp\{\textrm{sim}(s,o_i)\}}
 \end{equation}
