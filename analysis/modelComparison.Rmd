@@ -149,6 +149,33 @@ comparison.df = rbind(
 )
 ```
 
+
+* compare full model with and without encoder
+
+```{r}
+
+## First, restrict to human + fc6 and normalize everything to sum to 1
+bestPosterior <- combined %>%
+  filter(perception %in% c('human','multimodal_fc6')) %>%
+  group_by(split) %>%
+  mutate(logPosteriorProb = logPosteriorProb - reduce(logPosteriorProb, sumlogprob),
+         logPriorProb = -log(length(logPriorProb))) 
+         #%>% summarize(a = reduce(logPriorProb, sumlogprob), b = reduce(logPosteriorProb, sumlogprob))
+
+## Next, integrate over nuisance params to get Bayes Factor
+comparison.df = rbind(
+  comparison.df, 
+  bestPosterior %>%
+    summarize(posterior = reduce(logPosteriorProb, sumlogprob),
+              prior = reduce(logPriorProb, sumlogprob)) %>% 
+    mutate(BF = log10(1/exp(posterior - prior))) %>%
+    select(-posterior, -prior) %>%
+    mutate(comparison = 'best_HumanVsFc6')
+)
+
+```
+
+
 Make table
 
 ```{r}
@@ -165,7 +192,8 @@ table <- comparison.df %>%
          `cost (human)` = human_costVSnocost,
          `context (human)` = human_pragVSnoprag,
          `fc6 vs. conv42` = fc6VSconv42,
-         `fc6 vs. pool1` = fc6VSpool1) %>%
+         `fc6 vs. pool1` = fc6VSpool1,
+         `human vs. fc6` = best_HumanVsFc6) %>%
   xtable() 
 
 names( table ) <- sapply(names(table), function(x) {
