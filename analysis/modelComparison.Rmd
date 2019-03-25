@@ -123,6 +123,7 @@ fc6Posterior <- combined %>%
   mutate(logPosteriorProb = loglikelihood - reduce(loglikelihood, sumlogprob),
          logPriorProb = -log(length(logPriorProb))) #%>% summarize(a = reduce(logPriorProb, sumlogprob), b = reduce(logPosteriorProb, sumlogprob))
 
+## Next, consider nested 'no context' model and integrate over nuisance params to get Bayes Factor=
 comparison.df = rbind(
   comparison.df, 
   fc6Posterior %>%
@@ -166,6 +167,7 @@ bestPosterior <- combined %>%
 comparison.df = rbind(
   comparison.df, 
   bestPosterior %>%
+    filter(perception == 'multimodal_fc6') %>%
     summarize(posterior = reduce(logPosteriorProb, sumlogprob),
               prior = reduce(logPriorProb, sumlogprob)) %>% 
     mutate(BF = log10(1/exp(posterior - prior))) %>%
@@ -206,6 +208,13 @@ names( table ) <- sapply(names(table), function(x) {
 }, USE.NAMES = F)
 print(table, include.rownames=FALSE, sanitize.colnames.function=function(x){x})
 ```
+
+```{r}
+comparison.df
+
+
+```
+
 
 Visualize marginals w/ facet plot
 
