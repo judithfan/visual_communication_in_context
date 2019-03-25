@@ -321,7 +321,7 @@ This encoder consists of two functional components: a base visual encoder networ
 % \textrm{sim}(s,o) = (\textrm{A} \circ \textrm{B}) (s,o)
 We employ VGG-19 pretrained to recognize objects from the Imagenet database as our base visual encoder, whose parameters remain frozen \cite{simonyan2014very}. 
 We then augment the pretrained feature representation of the base encoder with a shallow adaptor network, which is trained to predict the perceptual correspondence between specific sketch-object pairs.
-We train an adaptor network because, while prior work has shown that representation of object \textit{categories} converges for sketches and photos at higher layers in DCNN models trained only on photos \cite{FanCommon2018}, additional supervision can substantially improve the accuracy of predictions involving comparisons between sketches and photos at the \textit{instance} level \cite{sangkloy2016sketchy}. 
+The reason we train an adaptor network is that although prior work has shown that representation of object \textit{categories} converges for sketches and photos at higher layers in DCNN models trained only on photos \cite{FanCommon2018}, additional supervision can substantially improve the accuracy of predictions involving comparisons between sketches and photos at the \textit{instance} level \cite{sangkloy2016sketchy}. 
 
 % To explore the degree to which the visual abstraction afforded by the complex transformations applied by successive layers of VGG-19 are required to capture human behavior during visual communication,
 % To evaluate the importance of network depth for providing a more transferable visual feature basis for modeling human-like visual abstraction, 
@@ -343,13 +343,24 @@ Each adaptor network was trained to predict the empirical estimates of sketch-ob
 % Motivated by other prior work suggesting that higher-level visual features provide a better fit to human perceptual judgments than features from earlier layers \cite{kubilius2016deep}, we hypothesized that generalization to novel communication contexts would be supported by a visual encoder that uses high-level features to predict sketch-object correspondences, rather than lower-level features from earlier or intermediate layers of the neural network.
 %\n_dg{it feels like there should be a section heading here? otherwise move this paragraph to start of next subsection?}
 
-Consistent with our hypothesis, we found that a pragmatic sketcher model employing high-level features provided a substantially better fit to the data than one using mid-level features (high vs. mid median BF: $94.8$) or low-level features (high vs. low BF: $257$). 
+%%%%%%%% humanVsFc6 cost fc6, context fc6, high vs. mid, high vs. low, cost human, context human
+%   1 & 90.62 & 2.70 & 44.54 & 105.51 & 281.65 & 11.93 & 17.98 \\ 
+%   2 & 112.57 & -0.33 & 20.93 & 92.45 & 241.84 & 9.89 & 8.46 \\ 
+%   3 & 105.71 & 1.98 & 31.86 & 94.77 & 256.83 & 8.95 & 19.15 \\ 
+%   4 & 125.65 & -0.67 & 8.35 & 93.41 & 247.57 & 9.54 & 13.41 \\ 
+%   5 & 98.71 & 5.99 & 28.12 & 113.59 & 268.80 & 7.92 & 16.07 \\ 
+%   median & 105.71 & 1.98 & 28.12 & 94.77 & 256.83 & 9.54 & 16.07 \\ 
+%%%%%%%% cost fc6, context fc6, high vs. mid, high vs. low, cost human, context human
+
+Consistent with our hypothesis, we found that a pragmatic sketcher model employing high-level features provided a substantially better fit to the data than one using mid-level features (high vs. mid median BF: $94.8$) or low-level features (high vs. low BF: $257$).
 These results show that making fuller use of the depth of VGG to compute the perceptual correspondence between a sketch and object yields a stronger basis for explaining human visual communication behavior.
+Unsurprisingly, this model did not perform as well as the pragmatic sketcher model from the previous section that could operate directly on human recognition data (median Bayes Factor = $105.71$).
+However, a major advantage of incorporating a visual encoder is the capacity to generalize to novel sketches without requiring the collection of additional recognition data for each one.
 
 Critically, using high-level features supported strong performance on sketch retrieval (95\% CI target rank: $[3.03, 3.37]$, Fig.~\ref{model_results}A), compared to mid-level features (target rank: $[6.05, 6.56]$) and low-level features (target rank: $[22.4, 24.1]$). 
 These results show that without a high-performing visual encoder, the model is much less likely to produce sketches of the correct object, a basic prerequisite for successful visual communication even in the absence of contextual variability. 
 
-Moreover, the pragmatic sketcher model using high-level features also displayed context congruity (95\% CI: $[0.583, 0.632]$, Fig.~\ref{model_results}B), comparable in degree to the best-performing pragmatic model that lacked an encoder, showing that our full sketcher model displayed this signature of contextual flexibility for novel communicative contexts and sketches. 
+Moreover, the pragmatic sketcher model using high-level features also displayed context congruity (95\% CI: $[0.583, 0.632]$, Fig.~\ref{model_results}B), comparable in degree to the best-performing pragmatic model that operated directly on empirical estimates of sketch-object correspondence, showing that our full sketcher model displayed this signature of contextual flexibility for novel communicative contexts and sketches. 
 The variant using mid-level features also displayed context congruity to a weaker extent (95\% CI: $[0.526, 0.576]$), suggesting that an intermediate level of visual abstraction is sufficient to achieve an intermediate degree of context congruity. 
 By contrast, the variant using low-level features failed to prefer the context-congruent sketch category (95\% CI: $[0.435, 0.475]$), providing a lower bound on the level of visual abstraction required in the underlying encoder to support flexible visual communication behavior. 
 
@@ -362,7 +373,7 @@ Critically, we found that removing context and cost sensitivity diminished the a
 By contrast, these lesions led to only modest decrements in overall sketch retrieval performance (95\% CI target rank: context-insensitive = $[3.65, 4.05]$, cost-insensitive = $[3.33, 3.67]$;  Fig.~\ref{model_results}A), suggesting that the visual encoder itself is a major determinant of the ability to produce sketches of the correct \textit{object}, even if not the context-congruent version.
 These results converge with those of the lesion experiments conducted on the pragmatic sketcher model without a visual encoder, and together provide strong evidence for the importance of both visual abstraction and pragmatic inference for explaining contextual flexibility in human visual communication. 
 
-\ndg{i think we need some direct comparison of full model with and without encoder.... without encoder will win, and then we point out that it doesn't provide an explanation of the visual aspect as the encoder one does?}
+% \ndg{i think we need some direct comparison of full model with and without encoder.... without encoder will win, and then we point out that it doesn't provide an explanation of the visual aspect as the encoder one does?}
 
 \begin{table*}[]
 \centering
@@ -388,13 +399,13 @@ Low: comparison between high adaptor vs. low adaptor in context/cost-sensitive m
 \label{model_comparison}
 \end{table*}
 
-%%%%%%%% cost fc6, context fc6, high vs. mid, high vs. low, cost human, context human
-% 	1 & 2.70 & 44.54 & 105.51 & 281.65 & 11.93 & 17.98 \\ 
-%   2 & -0.33 & 20.93 & 92.45 & 241.84 & 9.89 & 8.46 \\ 
-%   3 & 1.98 & 31.86 & 94.77 & 256.83 & 8.95 & 19.15 \\ 
-%   4 & -0.67 & 8.35 & 93.41 & 247.57 & 9.54 & 13.41 \\ 
-%   5 & 5.99 & 28.12 & 113.59 & 268.80 & 7.92 & 16.07 \\ 
-%   median & 1.98 & 28.12 & 94.77 & 256.83 & 9.54 & 16.07 \\ 
+%%%%%%%% humanVsFc6 cost fc6, context fc6, high vs. mid, high vs. low, cost human, context human
+%   1 & 90.62 & 2.70 & 44.54 & 105.51 & 281.65 & 11.93 & 17.98 \\ 
+%   2 & 112.57 & -0.33 & 20.93 & 92.45 & 241.84 & 9.89 & 8.46 \\ 
+%   3 & 105.71 & 1.98 & 31.86 & 94.77 & 256.83 & 8.95 & 19.15 \\ 
+%   4 & 125.65 & -0.67 & 8.35 & 93.41 & 247.57 & 9.54 & 13.41 \\ 
+%   5 & 98.71 & 5.99 & 28.12 & 113.59 & 268.80 & 7.92 & 16.07 \\ 
+%   median & 105.71 & 1.98 & 28.12 & 94.77 & 256.83 & 9.54 & 16.07 \\ 
 %%%%%%%% cost fc6, context fc6, high vs. mid, high vs. low, cost human, context human
 
 \section*{Discussion}
