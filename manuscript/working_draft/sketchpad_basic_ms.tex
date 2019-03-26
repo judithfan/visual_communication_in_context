@@ -53,7 +53,7 @@
 % Please include corresponding author, author contribution and author declaration information
 \authorcontributions{J.E.F and R.X.D.H. designed and conducted human experiments, J.E.F, R.X.D.H, and M.W. analyzed data and performed computational modeling. J.E.F, R.X.D.H, M.W., and N.D.G. formulated models, interpreted results, and wrote the paper.}
 \authordeclaration{The authors declare no conflict of interest.}
-\correspondingauthor{\textsuperscript{1}To whom correspondence should be addressed. E-mail: jefan@stanford.edu}
+\correspondingauthor{\textsuperscript{1}To whom correspondence should be addressed. E-mail: jefan@ucsd.edu}
 
 % Keywords are not mandatory, but authors are strongly encouraged to provide them. If provided, please include two to five keywords, separated by the pipe symbol, e.g:
 \keywords{drawing $|$ social cognition $|$ perception $|$ deep learning $|$ probabilistic models}
@@ -62,7 +62,7 @@
 Visual modes of communication are ubiquitous in modern life --- from maps to data plots to political cartoons. 
 Here we investigate drawing, the most basic form of visual communication. 
 Communicative drawing poses a core challenge for theories of how visual perception and social cognition interact, requiring a detailed understanding of how sensory information and social context jointly determine what information is relevant to communicate. 
-Participants (N=192) were paired in an online environment to play a sketching-based reference game. On each trial, both participants were shown the same four objects, but in different locations. The sketcher's goal was to draw one of these objects --- the target --- so that the viewer could select it from the array. 
+Participants (N=192) were paired in an online environment to play a drawing-based reference game. On each trial, both participants were shown the same four objects, but in different locations. The sketcher's goal was to draw one of these objects --- the target --- so that the viewer could select it from the array. 
 There were two types of trials: close, where objects belonged to the same basic-level category, and far, where objects belonged to different categories. 
 We found that people exploited information in common ground with their partner to efficiently communicate about the target: on far trials, sketchers achieved high recognition accuracy while applying fewer strokes, using less ink, and spending less time on their drawings than on close trials. 
 We hypothesized that humans succeed in this task by recruiting two core faculties: (1) visual abstraction, the capacity to perceive the correspondence between an object and a drawing of it; and (2) pragmatic inference, the ability to infer what information would help a viewer distinguish the target from distractors. 
@@ -102,7 +102,7 @@ Towards reconciling these perspectives, the current paper is guided by the overa
 To evaluate this hypothesis, we investigated how the drawings people produce during visual communication varied across different contexts, and found that people spontaneously modulated how much time and ink they invested in their drawings in order to be sufficiently informative in context.
 To explain these findings, we developed a computational model of visual communication that embodied two core faculties: visual abstraction, the capacity to judge the correspondence between a real-world object and a drawing of it; and pragmatic inference, the ability to infer what information is not only \textit{valid} to include in a drawing, but also \textit{relevant} in context  \cite{goodman2016pragmatic,grice1975syntax,abell2009canny}.
 This model was instantiated as a deep convolutional neural network visual encoder nested within a probabilistic program that inferred which drawings would be most informative in context.
-We found that our full model fits the data well and outperformed lesioned variants, providing a first algorithmically explicit theory of how perception and social cognition jointly support contextual flexibility in visual communication.
+We found that our full model fit the data well and outperformed lesioned variants, providing a first algorithmically explicit theory of how visual perception and social cognition jointly support contextual flexibility in visual communication.
 
 \section*{Results}
 
@@ -119,15 +119,14 @@ We found that our full model fits the data well and outperformed lesioned varian
 %% Supplemental 2: Param posteriors
 %% Supplemental 3: Error analysis for each lesioned versions
 
-To investigate visual communication in a naturalistic yet controlled setting, we employ a sketching-based reference game paradigm.
+To investigate visual communication in a naturalistic yet controlled setting, we employ a drawing-based reference game paradigm.
 This reference game involves two players: a \textit{sketcher} who aims to help a \textit{viewer} pick out a target object from an array of distractor objects by representing it in a sketch. 
-This basic arrangement can be traced back to the language games explored by \citep{wittgenstein1953philosophical} and \citep{Lewis69_Convention}. 
-Such games have proven to be a valuable tool for eliciting pragmatic inferences about \textit{language} use in context, and to make quantitative measurements of the behavioral consequences of these inferences \cite{goodman2016pragmatic,kao2014formalizing,goodman2013knowledge,frank2012predicting}. 
-Here we generalize this methodology to understand how sketchers account for information in common ground with their viewer in order to produce sketches that are informative \cite{grice1975syntax,wilson1986relevance} yet parsimonious \cite{zipf1936psycho}.
+Such games, which have long provided a source for intuitions in the philosophy of language \citep{wittgenstein1953philosophical,Lewis69_Convention}, have also proven to be a valuable tool for systematically eliciting pragmatic inferences about language use in context, and to make quantitative measurements of the behavioral consequences of these inferences \cite{goodman2016pragmatic,kao2014formalizing,goodman2013knowledge,frank2012predicting}. 
+Here we generalize this methodology to understand how people account for information in common ground with their viewer in order to produce sketches that are informative \cite{grice1975syntax,wilson1986relevance} yet parsimonious \cite{zipf1936psycho} during visual communication.
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.35\textwidth]{figures/1_task_display_alt.png}
-\caption{(A) Communication task. Participants were paired in an online environment to play a sketching-based reference game and assigned the roles of \textit{sketcher} and \textit{viewer}. On each trial, the sketcher's goal was to draw one of these objects so that the viewer could distinguish the target from three distractor objects. (B) Context manipulation. Distractor similarity to target was manipulated across two context conditions: in close contexts, the target and distractors belonged to the same basic-level category, while in far contexts, the target and distractors all belonged to different basic-level categories. (C) Recognition task. Naive participants were presented with a randomly sampled sketch from the communication experiment and an array containing all 32 objects used in the experiment, and were instructed to identify the best-matching object.}
+\caption{(A) Communication task. Participants were paired in an online environment to play a drawing-based reference game and assigned the roles of sketcher and viewer. On each trial, the sketcher's goal was to draw one of these objects so that the viewer could distinguish the target from three distractor objects. (B) Context manipulation. Distractor similarity to target was manipulated across two context conditions: in close contexts, the target and distractors belonged to the same basic-level category, while in far contexts, the target and distractors all belonged to different basic-level categories. (C) Recognition task. Naive participants were presented with a randomly sampled sketch from the communication experiment and an array containing all 32 objects used in the experiment, and were instructed to identify the best-matching object.}
 \label{task_display}
 \end{figure}
 
@@ -354,7 +353,7 @@ Each adaptor network was trained to predict the empirical estimates of sketch-ob
 
 Consistent with our hypothesis, we found that a pragmatic sketcher model employing high-level features provided a substantially better fit to the data than one using mid-level features (high vs. mid median BF: $94.8$) or low-level features (high vs. low BF: $257$).
 These results show that making fuller use of the depth of VGG to compute the perceptual correspondence between a sketch and object yields a stronger basis for explaining human visual communication behavior.
-Unsurprisingly, this model did not perform as well as the pragmatic sketcher model from the previous section that could operate directly on human recognition data (median Bayes Factor = $105.71$).
+Unsurprisingly, this model did not perform as well as the pragmatic sketcher model from the previous section that could operate directly on human recognition data (median log Bayes Factor = $105.71$).
 However, a major advantage of incorporating a visual encoder is the capacity to generalize to novel sketches without requiring the collection of additional recognition data for each one.
 
 Critically, using high-level features supported strong performance on sketch retrieval (95\% CI target rank: $[3.03, 3.37]$, Fig.~\ref{model_results}A), compared to mid-level features (target rank: $[6.05, 6.56]$) and low-level features (target rank: $[22.4, 24.1]$). 
@@ -367,7 +366,7 @@ By contrast, the variant using low-level features failed to prefer the context-c
 Again, only the pragmatic sketcher model using high-level features displayed the same pattern of cost modulation as the best-performing pragmatic model lacking an encoder (95\%CI: close = $[0.199, 0.208]$, far = $[0.178, 0.181]$, Fig.~\ref{model_results}C), while both of the other variants using mid-level and low-level features failed to do so (95\%CI: mid-level: close = $[0.186, 0.189]$, far = $[0.186, 0.188]$; low-level: close = $[0.188, 0.189]$, far = $[0.188, 0.189]$).  
 
 Having identified the best-performing visual encoder as the one that adapted features from a higher layer of VGG, we then performed the same context and cost sensitivity lesion experiments as before in order to evaluate the contribution of pragmatic inference in our full model. 
-Again, we found that the pragmatic sketcher provided a stronger overall fit to human behavior than the context-insensitive variant (median Bayes Factor = $28.1$; see Table \ref{model_comparison}), and a modestly better fit than the cost-insensitive variant (BF = $1.98$). 
+Again, we found that the pragmatic sketcher provided a stronger overall fit to human behavior than the context-insensitive variant (median log Bayes Factor = $28.1$; see Table \ref{model_comparison}), and a modestly better fit than the cost-insensitive variant (BF = $1.98$). 
 % \mikewu{do we have intuition as to why this one is only modestly better?}
 Critically, we found that removing context and cost sensitivity diminished the ability of this model to produce the context-congruent sketch of the correct object (context-insensitive 95\% CI: $[0.489, 0.539]$; cost-insensitive 95\% CI: $[0.507, 0.554]$; Fig.~\ref{model_results}B), and appropriately modulate the cost of the sketches it produced (context-insensitive 95\% CI: close = $[0.185, 0.190]$, far = $[0.185, 0.189]$; cost-insensitive 95\% CI: close = $[0.210, 0.219]$, far = $[0.196, 0.200]$; Fig.~\ref{model_results}C). 
 By contrast, these lesions led to only modest decrements in overall sketch retrieval performance (95\% CI target rank: context-insensitive = $[3.65, 4.05]$, cost-insensitive = $[3.33, 3.67]$;  Fig.~\ref{model_results}A), suggesting that the visual encoder itself is a major determinant of the ability to produce sketches of the correct \textit{object}, even if not the context-congruent version.
@@ -412,7 +411,7 @@ Low: comparison between high adaptor vs. low adaptor in context/cost-sensitive m
 
 \section*{Discussion}
 
-The present study examined how communicative context influences visual communication behavior in a sketching-based reference game. 
+The present study examined how communicative context influences visual communication behavior in a drawing-based reference game. 
 We explored the hypothesis that people spontaneously account for information in common ground with their communication partner to produce drawings that are diagnostic of the target relative to the alternatives, while not being too costly to produce. 
 We found that people spontaneously modulate how much time they invest in their drawings according to how similar the distractors are to the target, spending more time to produce more informative drawings when the alternatives were highly similar, but getting away with spending less time and producing less informative drawings when the alternatives were highly distinct.
 Observing such contextual flexibility suggests that while visual abstraction --- the capacity to perceive the correspondence between an object and a drawing of it --- is important for explaining why drawings of objects look the way they do, visual production is not constrained exclusively by the perceptual properties of an object.  
@@ -456,7 +455,7 @@ In the long term, investigating the computational basis of visual communication 
 
 \subsubsection*{Code availability} The code for the analyses presented in this article is publicly available in a Github repository at: \url{https://github.com/judithfan/visual_communication_in_context}.
 
-\subsubsection*{Data availability} The data presented in this article are publicly available in a figshare repository.
+\subsubsection*{Data availability} The data presented in this article will be made publicly available in a figshare repository upon acceptance.
 
 % \subsection*{Supporting Information (SI)}
 
@@ -479,7 +478,7 @@ The assignment of objects to set and condition was randomized across pairs.
 Each set of four objects was presented four times each, such that each object in the quartet served as the target exactly once. 
 
 % \subsubsection*{Task}
-% Drawings were collected in the context of an online, sketching-based reference game (``Guess My Sketch!''). The game involved two players: a \textit{sketcher} who aims to help a \textit{viewer} pick out a target object from a set of distractor objects by representing it in a sketch. On each trial, both participants were shown an array of the same four objects; however, the positions of these objects were randomized for each participant so that participants could not use object location information to solve the task. On each trial, one of the four objects was highlighted on the sketcher's screen to designate it as the target.
+% Drawings were collected in the context of an online, drawing-based reference game (``Guess My Sketch!''). The game involved two players: a \textit{sketcher} who aims to help a \textit{viewer} pick out a target object from a set of distractor objects by representing it in a sketch. On each trial, both participants were shown an array of the same four objects; however, the positions of these objects were randomized for each participant so that participants could not use object location information to solve the task. On each trial, one of the four objects was highlighted on the sketcher's screen to designate it as the target.
 Sketchers drew using black ink on digital canvas (pen width = 5 pixels; 300 x 300 pixels) embedded in a web browser window using Paper.js (http://paperjs.org/). Participants drew using the mouse cursor, and were not able to delete previous strokes. Each stroke of which was rendered on the viewer's screen immediately upon the completion of each stroke. There were no restrictions on how long participants could take to make their drawings. After clicking a submit button, the viewer guessed the identity of the drawn object by clicking one of the four objects in the array. Otherwise, the viewer had no other means of communicating with the sketcher. Both participants received immediate task-related feedback: the sketcher learned which object the viewer had clicked, and the viewer learned the identity of the target. Both participants earned bonus points for each correct response.
 
 % Successful communication was primarily quantified as the viewer's accuracy in identifying the target. The investment of time was measured as the length of time between the beginning of the first stroke to the completion of the final stroke in each sketch, and the investment of ink was measured in two ways: as the number of strokes used for each sketch and the proportion of the drawing canvas filled by ink.
