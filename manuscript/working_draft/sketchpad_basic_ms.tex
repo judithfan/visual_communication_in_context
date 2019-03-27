@@ -252,10 +252,10 @@ We inferred these parameters from our data via Bayesian data analysis (see Mater
 
 \subsubsection*{Evaluating contribution of pragmatic inference}
 
-We hypothesized that a \textit{pragmatic} sketcher model that is sensitive to both context and cost would provide a strong fit to human sketch production behavior, as well as outperform lesioned alternatives lacking either component.
+We hypothesized that a pragmatic sketcher model that is sensitive to both context and cost would provide a strong fit to human sketch production behavior, as well as outperform lesioned alternatives lacking either component.
 To test this hypothesis, we compare the full pragmatic model, ($S_{prag}$), with two nested variants with different utility functions:
-a \textit{context-insensitive} sketcher, $S_{sim}$, in which the diagnosticity term in the definition of informativity (i.e.~$w_{d}{=}0$) is removed, leaving only the resemblance term; and  
-a \textit{cost-insensitive} sketcher, $S_{nocost}$, in which the cost term is removed (i.e.~$w_c=0$), leaving the full informativity term. 
+a \textit{context-insensitive} sketcher, $S_{sim}$, in which the diagnosticity term (i.e.~$w_{d}{=}0$) is removed, leaving only the resemblance term in the definition of informativity; and  
+a \textit{cost-insensitive} sketcher, $S_{nocost}$, in which the cost term is removed (i.e.~$w_c=0$), leaving only the full informativity term. 
 
 % First, we evaluated the contribution of pragmatic inference by removing context sensitivity and cost sensitivity from the sketcher agent.
 % To test this hypothesis, we evaluated three model variants characterized by their distinct definitions of communicative utility: a pragmatic one sensitive to both context and cost ($S_{prag}$), one \textit{not} sensitive to context but sensitive to cost ($S_{sim}$), and one that \textit{is} sensitive to context but \textit{not} sensitive to cost ($S_{nocost}$).
@@ -264,15 +264,41 @@ a \textit{cost-insensitive} sketcher, $S_{nocost}$, in which the cost term is re
 % In this and subsequent model evaluations, we defined a sketch's cost, $C(s)$, to be a monotonic function of the amount of time taken to produce it. \rdh{we said this already}
 
 Our goal was to evaluate how well each model could produce informative sketches and appropriately modulate its behavior according to the context condition, and not necessarily to reproduce exactly the same sketch a particular participant had on a specific trial. 
-As such, we aggregated all sketches of the same object produced in the same context condition when estimating their key functional properties (i.e., perceptual correspondence, cost), so each sketch was represented by the mean in its object-context category. 
-Model predictions were generated to the same level of granularity, in the form of a probability distribution over 64 types of sketches, representing each combination of object and context condition (e.g., `basset sketch produced in a close context'). 
-
-To generate these predictions, first we employed Bayesian data analysis to infer a posterior distribution over the four latent parameters in the model ($w_{i}$, $w_{c}$, $w_{d}$, $\alpha$). 
+As such, we aggregated all sketches of the same object produced in the same context condition, yielding 64 `prototype' sketches for each object-context category (e.g., `basset sketch produced in a close context'), characterized by displaying the average correspondence and cost in each category. 
+% when estimating their key functional properties (i.e., perceptual correspondence, cost), so each sketch was represented by the mean in its object-context category. 
+Decisions by the sketcher model were generated at the same level of granularity, in the form of a probability distribution over these 64 prototype sketches. 
+To generate these decisions, first we employed Bayesian data analysis to infer a posterior distribution over the four latent parameters in the model ($w_{i}$, $w_{c}$, $w_{d}$, $\alpha$). 
 Next, we presented each model with exactly the same set of contexts that were presented to human sketchers in the communication experiment, and evaluated the posterior predictive probabilities that each model assigned to sketches in each object-context category, marginalizing over the posterior distribution over latent parameters. 
 We conducted these inference and evaluation steps independently on five balanced splits of the dataset, providing an estimate of reliability and permitting direct comparison with subsequent modeling results using the same splits for crossvalidation (see \textit{Evaluating contribution of visual abstraction}). 
 
 % We conduct these evaluations on each of the test sets from the same five crossvalidation folds that were used to train and test the visual encoder, to permit direct comparison of these two sets of modeling results. 
 % \n_dg{does this mean that the posterior was fit on one fifth and then predictive evaluated on final fifth, or that posterior+predictive was on a fifth? also this is the first mention of a split into train/test folds so make it sound less like an obvious reference to something earlier?}
+
+\begin{figure*}[htbp]
+\centering
+\includegraphics[width=0.99\textwidth]{figures/5_model_results_2.pdf}
+\caption{Sketch production behavior by model variant. 
+The table below each bar plot indicates whether the corresponding model variant plotted above is sensitive to context or cost. 
+A green disc indicates context/cost sensitivity; a red `X' indicates the lack of context/cost sensitivity. 
+Results in lefthand region of each panel (white background) reflect model predictions when using empirical estimates of $sim(s,o)$ based on human sketch recognition behavior. 
+Results in the righthand region (gray background) reflect model predictions when using variants of the visual encoder that represented sketches and objects at varying levels of visual abstraction (i.e., high, mid, low).
+% adaptor intercepted features  were trained in a five-fold crossvalidated manner using human sketch recognition behavior. 
+% All results reflect average model behavior on test data only across identical train-test splits. 
+All results reflect average model behavior on test data across five crossvalidation folds. 
+Error bars represent 1 s.e. for this average estimate, found by applying inverse-variance weighting on individual confidence intervals from each train-test split. 
+A: Rank of target sketch in list of 64 object-context categories, ordered by the probability assigned by each model. 
+Dashed line reflects expected target rank under uniform guessing. 
+Distribution of target rank scores across models suggest that high-quality estimates of $sim(s,o)$ are critical for strong performance. 
+B: Proportion of trials on which each model assigned a higher rank to the context-congruent sketch of the correct object than the context-incongruent version of the correct object. 
+Dashed line reflects expected behavior under indifference between the two versions of the sketch. 
+Only models above this line show consistent and appropriate modulation of sketch producton by context. 
+C: Normalized time cost of sketches produced by each model.
+Predicted sketch cost on each trial computed by marginalizing over probabilities assigned to each sketch category. 
+Darker bars reflect behavior in the close condition; lighter bars the far condition. 
+Dashed line indicates the average cost of sketches in the full dataset; bars below this line reflect a preference for sketches that are less costly than average, bars above this line for sketches that are costlier than average. 
+Only models that span this dashed line match the pattern of contextual modulation of sketch cost displayed by human sketchers.}
+\label{model_results}
+\end{figure*}
 
 We found that the full model, $S_{prag}$, provided a much better fit to human behavior than the context-insensitive variant, $S_{sim}$ (median log Bayes Factor = $16.1$; see Table \ref{model_comparison}), and the cost-insensitive variant, $S_{nocost}$ (BF = $9.54$).
 We investigated three aspects of each model's behavior to understand what may have explained these gaps in model performance: (a) \textit{sketch retrieval}: the ability to assign a high absolute rank to the target sketch category in context, out of the 64 object-context alternatives; (b) \textit{context congruity}: the ability to consistently assign a higher rank to the context-congruent version of the target object over the context-incongruent version (i.e., on a close trial, preferring a close sketch to a far sketch); and (c) \textit{cost modulation}: how consistently a model produced costlier sketches than average in the close condition, and less costly sketches than average in the far condition, mirroring human behavior.
@@ -294,27 +320,6 @@ Having established the importance of pragmatic inference, we next sought to eval
 Having an encoding model that operates directly on image inputs is important for a computational theory of visual communication because it allows our full model to generate predictions in novel contexts (i.e., combinations of target and distractor objects).
 Building on recent advances in computational vision \cite{FanCommon2018,yamins2014performance}, we instantiated the visual encoder as a deep convolutional neural network (DCNN).
 This choice of model class is motivated by prior work showing that such networks, in addition to being a type of universal function approximator \cite{hornik1991approximation}, learn higher-layer feature representations that capture high-level perceptual information in drawings \cite{FanCommon2018}, capture perceptual judgments of object shape similarity \cite{kubilius2016deep}, and predict neural population responses in categories across the ventral visual stream \cite{yamins2014performance} when trained on challenging natural object recognition tasks \cite{deng2009imagenet}. 
-\begin{figure*}[htbp]
-\centering
-\includegraphics[width=0.99\textwidth]{figures/5_model_results_2.pdf}
-\caption{Sketch production behavior by model variant. The table below each plot indicates whether the corresponding model variant plotted above is sensitive to context or cost. 
-A green disc indicates context/cost sensitivity; a red `X' indicates the lack of context/cost sensitivity. 
-Results in lefthand region of each panel (white background) reflect model predictions when using empirical estimates of $sim(s,o)$ based on human sketch recognition behavior. 
-Results in the righthand region (gray background) reflect model predictions when using variants of the DCNN visual encoder, the adaptor components of which were trained in a five-fold crossvalidated manner using human sketch recognition behavior. 
-All results reflect average model behavior on test data only across identical train-test splits. 
-Error bars represent 1 s.e. for this average estimate, found by applying inverse-variance weighting on individual confidence intervals from each train-test split. 
-A: Rank of target sketch in list of 64 object-context categories, ordered by the probability assigned by each model. 
-Dashed line reflects expected target rank under uniform guessing. 
-Distribution of target rank scores across models suggest that high-quality estimates of $sim(s,o)$ are critical for strong performance. 
-B: Proportion of trials on which each model assigned a higher rank to the context-congruent sketch of the correct object than the context-incongruent version of the correct object. 
-Dashed line reflects indifference between the two versions of the sketch. 
-Only models above this line show consistent and appropriate modulation of sketch producton by context. C: Relative time cost of sketches produced by each model, after applying min-max normalization to raw draw duration measurements. 
-Predicted sketch cost on each trial computed by marginalizing over probabilities assigned to each sketch category. 
-Darker bars reflect behavior in the close condition; lighter bars the far condition. 
-Dashed line indicates the average cost of sketches in the full dataset; bars below this line reflect a preference for sketches that are less costly than average, bars above this line for sketches that are costlier than average. 
-Only models that span this dashed line match the pattern of contextual modulation of sketch cost displayed by human sketchers.}
-\label{model_results}
-\end{figure*}
 
 %In order for this sketcher to generate quantitative predictions, it needs to be able to compute the perceptual correspondence, $\textrm{sim}(s,o)$, for any sketch-object pair. 
 %In our second set of modeling experiments, we employ a visual encoder model adapted to predict $\textrm{sim}(s,o)$, which was trained in a crossvalidated fashion on empirical estimates of $\textrm{sim}(s,o)$.
@@ -356,29 +361,6 @@ Each adaptor network was trained to predict the empirical estimates of sketch-ob
 %   median & 105.71 & 1.98 & 28.12 & 94.77 & 256.83 & 9.54 & 16.07 \\ 
 %%%%%%%% cost fc6, context fc6, high vs. mid, high vs. low, cost human, context human
 
-Consistent with our hypothesis, we found that a pragmatic sketcher model employing high-level features provided a substantially better fit to the data than one using mid-level features (high vs. mid median BF: $94.8$) or low-level features (high vs. low BF: $257$).
-These results show that making fuller use of the depth of VGG to compute the perceptual correspondence between a sketch and object yields a stronger basis for explaining human visual communication behavior.
-Unsurprisingly, this model did not perform as well as the pragmatic sketcher model from the previous section that could operate directly on human recognition data (median log Bayes Factor = $105.71$).
-However, a major advantage of incorporating a visual encoder is the capacity to generalize to novel sketches without requiring the collection of additional recognition data for each one.
-
-Critically, using high-level features supported strong performance on sketch retrieval (95\% CI target rank: $[3.03, 3.37]$, Fig.~\ref{model_results}A), compared to mid-level features (target rank: $[6.05, 6.56]$) and low-level features (target rank: $[22.4, 24.1]$). 
-These results show that without a high-performing visual encoder, the model is much less likely to produce sketches of the correct object, a basic prerequisite for successful visual communication even in the absence of contextual variability. 
-
-Moreover, the pragmatic sketcher model using high-level features also displayed context congruity (95\% CI: $[0.583, 0.632]$, Fig.~\ref{model_results}B), comparable in degree to the best-performing pragmatic model that operated directly on empirical estimates of sketch-object correspondence, showing that our full sketcher model displayed this signature of contextual flexibility for novel communicative contexts and sketches. 
-The variant using mid-level features also displayed context congruity to a weaker extent (95\% CI: $[0.526, 0.576]$), suggesting that an intermediate level of visual abstraction is sufficient to achieve an intermediate degree of context congruity. 
-By contrast, the variant using low-level features failed to prefer the context-congruent sketch category (95\% CI: $[0.435, 0.475]$), providing a lower bound on the level of visual abstraction required in the underlying encoder to support flexible visual communication behavior. 
-
-Again, only the pragmatic sketcher model using high-level features displayed the same pattern of cost modulation as the best-performing pragmatic model lacking an encoder (95\%CI: close = $[0.199, 0.208]$, far = $[0.178, 0.181]$, Fig.~\ref{model_results}C), while both of the other variants using mid-level and low-level features failed to do so (95\%CI: mid-level: close = $[0.186, 0.189]$, far = $[0.186, 0.188]$; low-level: close = $[0.188, 0.189]$, far = $[0.188, 0.189]$).  
-
-Having identified the best-performing visual encoder as the one that adapted features from a higher layer of VGG, we then performed the same context and cost sensitivity lesion experiments as before in order to evaluate the contribution of pragmatic inference in our full model. 
-Again, we found that the pragmatic sketcher provided a stronger overall fit to human behavior than the context-insensitive variant (median log Bayes Factor = $28.1$; see Table \ref{model_comparison}), and a modestly better fit than the cost-insensitive variant (BF = $1.98$). 
-% \mikewu{do we have intuition as to why this one is only modestly better?}
-Critically, we found that removing context and cost sensitivity diminished the ability of this model to produce the context-congruent sketch of the correct object (context-insensitive 95\% CI: $[0.489, 0.539]$; cost-insensitive 95\% CI: $[0.507, 0.554]$; Fig.~\ref{model_results}B), and appropriately modulate the cost of the sketches it produced (context-insensitive 95\% CI: close = $[0.185, 0.190]$, far = $[0.185, 0.189]$; cost-insensitive 95\% CI: close = $[0.210, 0.219]$, far = $[0.196, 0.200]$; Fig.~\ref{model_results}C). 
-By contrast, these lesions led to only modest decrements in overall sketch retrieval performance (95\% CI target rank: context-insensitive = $[3.65, 4.05]$, cost-insensitive = $[3.33, 3.67]$;  Fig.~\ref{model_results}A), suggesting that the visual encoder itself is a major determinant of the ability to produce sketches of the correct \textit{object}, even if not the context-congruent version.
-These results converge with those of the lesion experiments conducted on the pragmatic sketcher model without a visual encoder, and together provide strong evidence for the importance of both visual abstraction and pragmatic inference for explaining contextual flexibility in human visual communication. 
-
-% \ndg{i think we need some direct comparison of full model with and without encoder.... without encoder will win, and then we point out that it doesn't provide an explanation of the visual aspect as the encoder one does?}
-
 \begin{table*}[]
 \centering
 \begin{tabular}{@{}lll|llll@{}}
@@ -404,6 +386,31 @@ Mid: comparison between high adaptor vs. mid adaptor in context/cost-sensitive m
 Low: comparison between high adaptor vs. low adaptor in context/cost-sensitive model.}
 \label{model_comparison}
 \end{table*}
+
+Consistent with our hypothesis, we found that a pragmatic sketcher model employing high-level features provided a substantially better fit to the data than one using mid-level features (high vs. mid median BF: $94.8$) or low-level features (high vs. low BF: $257$).
+These results show that making fuller use of the depth of VGG to compute the perceptual correspondence between a sketch and object yields a stronger basis for explaining human visual communication behavior.
+Unsurprisingly, this model did not perform as well as the pragmatic sketcher model from the previous section that could operate directly on human recognition data (median log Bayes Factor = $105.71$).
+However, a major advantage of incorporating a visual encoder is the capacity to generalize to novel sketches without requiring the collection of additional recognition data for each one.
+
+Critically, using high-level features supported strong performance on sketch retrieval (95\% CI target rank: $[3.03, 3.37]$, Fig.~\ref{model_results}A), compared to mid-level features (target rank: $[6.05, 6.56]$) and low-level features (target rank: $[22.4, 24.1]$). 
+These results show that without a high-performing visual encoder, the model is much less likely to produce sketches of the correct object, a basic prerequisite for successful visual communication even in the absence of contextual variability. 
+
+Moreover, the pragmatic sketcher model using high-level features also displayed context congruity (95\% CI: $[0.583, 0.632]$, Fig.~\ref{model_results}B), comparable in degree to the best-performing pragmatic model that operated directly on empirical estimates of sketch-object correspondence, showing that our full sketcher model displayed this signature of contextual flexibility for novel communicative contexts and sketches. 
+The variant using mid-level features also displayed context congruity to a weaker extent (95\% CI: $[0.526, 0.576]$), suggesting that an intermediate level of visual abstraction is sufficient to achieve an intermediate degree of context congruity. 
+By contrast, the variant using low-level features failed to prefer the context-congruent sketch category (95\% CI: $[0.435, 0.475]$), providing a lower bound on the level of visual abstraction required in the underlying encoder to support flexible visual communication behavior. 
+
+Again, only the pragmatic sketcher model using high-level features displayed the same pattern of cost modulation as the best-performing pragmatic model lacking an encoder (95\%CI: close = $[0.199, 0.208]$, far = $[0.178, 0.181]$, Fig.~\ref{model_results}C), while both of the other variants using mid-level and low-level features failed to do so (95\%CI: mid-level: close = $[0.186, 0.189]$, far = $[0.186, 0.188]$; low-level: close = $[0.188, 0.189]$, far = $[0.188, 0.189]$).  
+
+Having identified the best-performing visual encoder as the one that adapted features from a higher layer of VGG, we then performed the same context and cost sensitivity lesion experiments as before in order to evaluate the contribution of pragmatic inference in our full model. 
+Again, we found that the pragmatic sketcher provided a stronger overall fit to human behavior than the context-insensitive variant (median log Bayes Factor = $28.1$; see Table \ref{model_comparison}), and a modestly better fit than the cost-insensitive variant (BF = $1.98$). 
+% \mikewu{do we have intuition as to why this one is only modestly better?}
+Critically, we found that removing context and cost sensitivity diminished the ability of this model to produce the context-congruent sketch of the correct object (context-insensitive 95\% CI: $[0.489, 0.539]$; cost-insensitive 95\% CI: $[0.507, 0.554]$; Fig.~\ref{model_results}B), and appropriately modulate the cost of the sketches it produced (context-insensitive 95\% CI: close = $[0.185, 0.190]$, far = $[0.185, 0.189]$; cost-insensitive 95\% CI: close = $[0.210, 0.219]$, far = $[0.196, 0.200]$; Fig.~\ref{model_results}C). 
+By contrast, these lesions led to only modest decrements in overall sketch retrieval performance (95\% CI target rank: context-insensitive = $[3.65, 4.05]$, cost-insensitive = $[3.33, 3.67]$;  Fig.~\ref{model_results}A), suggesting that the visual encoder itself is a major determinant of the ability to produce sketches of the correct \textit{object}, even if not the context-congruent version.
+These results converge with those of the lesion experiments conducted on the pragmatic sketcher model without a visual encoder, and together provide strong evidence for the importance of both visual abstraction and pragmatic inference for explaining contextual flexibility in human visual communication. 
+
+% \ndg{i think we need some direct comparison of full model with and without encoder.... without encoder will win, and then we point out that it doesn't provide an explanation of the visual aspect as the encoder one does?}
+
+
 
 %%%%%%%% humanVsFc6 cost fc6, context fc6, high vs. mid, high vs. low, cost human, context human
 %   1 & 90.62 & 2.70 & 44.54 & 105.51 & 281.65 & 11.93 & 17.98 \\ 
