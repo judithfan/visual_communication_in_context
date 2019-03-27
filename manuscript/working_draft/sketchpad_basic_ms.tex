@@ -125,14 +125,14 @@ Such games, which have long provided a source for intuitions in the philosophy o
 Here we generalize this methodology to understand how people account for information in common ground with their viewer in order to produce sketches that are informative \cite{grice1975syntax,wilson1986relevance} yet parsimonious \cite{zipf1936psycho} during visual communication.
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=0.35\textwidth]{figures/1_task_display_alt.png}
+\includegraphics[width=0.38\textwidth]{figures/1_task_display_alt.png}
 \caption{(A) Communication task. Participants were paired in an online environment to play a drawing-based reference game and assigned the roles of sketcher and viewer. On each trial, the sketcher's goal was to draw one of these objects so that the viewer could distinguish the target from three distractor objects. (B) Context manipulation. Distractor similarity to target was manipulated across two context conditions: in close contexts, the target and distractors belonged to the same basic-level category, while in far contexts, the target and distractors all belonged to different basic-level categories. (C) Recognition task. Naive participants were presented with a randomly sampled sketch from the communication experiment and an array containing all 32 objects used in the experiment, and were instructed to identify the best-matching object.}
 \label{task_display}
 \end{figure}
 
 In our experiment, participants (N=192) were paired in an online environment and communicated with their partner only via a drawing canvas (Fig.~\ref{task_display}). 
 Each trial, both participants were shown an array containing the same four real-world objects, but object locations were randomized for each participant so that they could not use object location information to solve the task (Fig.~\ref{task_display}). 
-Objects belonged to four basic-level categories (i.e., bird, car, chair, dog), and were rendered in the same three-quarter pose, under identical illumatination, and on a gray background, so participants could not use pose, illumination, or background information to distinguish them. 
+There were thirty-two objects belonging to four basic-level categories (i.e., bird, car, chair, dog), that were rendered in the same three-quarter pose, under identical illumatination, and on a gray background, so participants could not use pose, illumination, or background information to distinguish them. 
 The sketcher's goal was to draw one of these objects --- the target --- so that the viewer could pick it out from the array. 
 % The sketcher drew in black ink using a fixed stroke width and each stroke appeared on the viewer's screen immediately after being drawn. 
 Across trials, the similarity of the distractors to the target was manipulated, yielding two types of communicative context: close contexts, where the target and distractors all belonged to the same basic-level category, and far contexts, where the target and distractors belonged to different basic-level categories. 
@@ -143,18 +143,17 @@ Specifically, we predicted that sketchers would invest more time and ink in prod
 
 Consistent with our prediction, we found that viewers were highly accurate overall at identifying the target from the sketches produced (proportion correct: 93.8\%, 95\% CI: [92.7\%, 94.8\%], estimated by bootstrap resampling participants). 
 Moreover, we found that sketchers spent less time (close: 30.3s, far: 13.7s, \textit{p}$<$0.001), applied fewer strokes (close: 8.03 vs. far: 13.5, 95\% CI of difference: [3.75, 7.90], \textit{p}$<$0.001), and used less ink (proportion of canvas filled; close: 0.054, far: 0.042, 95\% CI of difference: [0.01, 0.014], \textit{p}$<$0.001) to produce their sketches in the far condition than in the close condition (Fig.~\ref{task_performance}A-C). 
-Despite the relative sparsity of sketches in the far condition, viewers were near ceiling at identifying the target on these trials (far: 99.7\%, 95\% CI: [0.993, 0.999]; close: 87.9\%, 95\% CI: [0.858, 0.899],Fig.~\ref{task_performance}D), and took less time to make these decisions than on close trials (far: 6.32 sec vs. close: 8.32 sec, 95\% CI of difference: [-2.748, -1.251],Fig.~\ref{task_performance}E).
+Despite the relative sparsity of sketches in the far condition, viewers were near ceiling at identifying the target on these trials (far: 99.7\%, 95\% CI: [0.993, 0.999]; close: 87.9\%, 95\% CI: [0.858, 0.899], Fig.~\ref{task_performance}D), and took less time to make these decisions than on close trials (far: 6.32s vs. close: 8.32s, 95\% CI of difference: [-2.748, -1.251], Fig.~\ref{task_performance}E).
 
 \subsection*{Effect of context manipulation on sketch recognizability}
 
-A natural explanation for the difference between context conditions in how costly the sketches were to produce is that the conditions differed in the required information level to identify the target.
-%they differed in how informative they were about the identity of the target. 
-Thus we hypothesized that the greater time and ink spent on close sketches was associated with a greater degree of perceptual correspondence to the target object, compared with less costly far sketches, which would exhibit a weaker correspondence to the target object in absolute terms, while still being communicatively effective in context. 
-To investigate this possibility, another group of naive participants (N=112) was recruited to perform a sketch-object matching task, the data from which were used to estimate the strength of perceptual correspondence between each sketch and every object in the experiment. 
+A natural explanation for these findings is that the two context conditions differed in how much information was required to identify the target. 
+Specifically, sketchers invested greater time and ink in close contexts to strengthen the correspondence between their sketch and the target object, out of necessity, while they could still succeed in far contexts with sketches that were less costly to produce.
+To evaluate this possibility, we recruited another group of naive participants (N=112) to perform a sketch-object matching task, the data from which were used to estimate the strength of the perceptual correspondence between each sketch and every object in the communication experiment. 
 On each trial of this recognition experiment, participants were presented with a sketch and an array containing all 32 objects, and were instructed to identify the object that best matched each sketch from the array. 
 Across trials, sketches were randomly sampled from the original communication experiment such that no two sketches produced by the same participant appeared in a single recognition experimental session. 
 % To obtain robust estimates of sketch-object perceptual correspondences, each sketch appeared approximately 10 times across different sessions. 
-Consistent with the above account, we found that close sketches were matched with their corresponding object more consistently than far sketches were (close: 54.2\%; far: 37.5\%; $Z$=14.1, $p$<0.001), although sketches from both context conditions were successfully matched at rates greatly exceeding chance ($p$s < 0.001).
+Consistent with our hypothesis, we found that close sketches were matched with their corresponding object more consistently than far sketches were (close: 54.2\%; far: 37.5\%; $Z$=14.1, $p$<0.001), although sketches from both context conditions were successfully matched at rates greatly exceeding chance ($p$s < 0.001).
 
 % \n_dg{interestingly the success rate was a lot lower than in the actual game, though there are more options so hard to compare.... could make a comment on this or leave out for brevity.}
 
@@ -178,10 +177,9 @@ Consistent with the above account, we found that close sketches were matched wit
 \subsection*{Computational model of contextual flexibility in visual communication}
 
 Our empirical findings show that human sketchers spontaneously account for contextual information shared with the viewer, producing more informative sketches in close contexts at the cost of additional time and ink. 
-Such contextual flexibility argues against the notion that sketch production is constrained exclusively by the appearance of the target of object. 
-Rather, it suggests an analogy to how shared context influences what people choose to say during verbal communication, a key target of current computational theories of pragmatic language use \cite{frank2012predicting,goodman2013knowledge,franke2016probabilistic,bergen2016pragmatic}.
-
-Informed by this work, we propose that human sketchers determine what kind of sketch to produce in context by deploying two main faculties: \textit{visual abstraction}, which refers to the ability to judge how well a sketch evokes a real object, and \textit{pragmatic inference}, which refers to the ability to judge which sketches will be sufficiently detailed to be informative about the target object in context, but no more detailed than necessary. 
+Such contextual flexibility argues against the notion that visual communication is constrained exclusively by the appearance of the target of object. 
+Rather, it suggests an analogy to how shared context influences what people choose to say during verbal communication, a key target of recent advances in computational models of pragmatic language use \cite{frank2012predicting,goodman2013knowledge,franke2016probabilistic,bergen2016pragmatic}.
+Leveraging these advances, we propose that human sketchers determine what kind of sketch to produce in context by deploying two main faculties: \textit{visual abstraction}, which refers to the ability to judge how well a sketch evokes a real object, and \textit{pragmatic inference}, which refers to the ability to judge which sketches will be sufficiently detailed to be informative about the target object in context, but no more detailed than necessary. 
 % Pragmatic inference can thus be decomposed into two aspects: context sensitivity, a preference for sketches that are diagnostic of the target relative to the distractors; and cost sensitivity, a preference for sketches that require less time and effort to produce.
 To test this proposal, we developed a computational model of the sketcher that embodies both visual abstraction and pragmatic inference, and was instantiated as a deep convolutional neural network nested within a probabilistic program. 
 Constructing such a model allowed us to evaluate the contribution of each component using formal model comparison, as well as quantitatively characterize the model's behavior in novel contexts.\begin{figure*}[htbp]
