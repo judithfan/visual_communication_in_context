@@ -145,6 +145,14 @@ Consistent with our prediction, we found that viewers were highly accurate overa
 Moreover, we found that sketchers spent less time (close: 30.3s, far: 13.7s, \textit{p}$<$0.001), applied fewer strokes (close: 8.03 vs. far: 13.5, 95\% CI of difference: [3.75, 7.90], \textit{p}$<$0.001), and used less ink (proportion of canvas filled; close: 0.054, far: 0.042, 95\% CI of difference: [0.01, 0.014], \textit{p}$<$0.001) to produce their sketches in the far condition than in the close condition (Fig.~\ref{task_performance}A-C). 
 Despite the relative sparsity of sketches in the far condition, viewers were near ceiling at identifying the target on these trials (far: 99.7\%, 95\% CI: [0.993, 0.999]; close: 87.9\%, 95\% CI: [0.858, 0.899], Fig.~\ref{task_performance}D), and took less time to make these decisions than on close trials (far: 6.32s vs. close: 8.32s, 95\% CI of difference: [-2.748, -1.251], Fig.~\ref{task_performance}E).
 
+\begin{figure*}[htbp]
+\centering
+\includegraphics[width=0.9\textwidth]{figures/3_behavioral_performance.pdf}
+\caption{(A-C) Mean number of strokes, amount of ink, and time spent producing sketches in each context condition. (D-E) Target identification performance in context during communication task. (F) Target identification performance out of context during recognition task.}
+\label{task_performance}
+\end{figure*}
+
+
 \subsection*{Effect of context manipulation on sketch recognizability}
 
 A natural explanation for these findings is that the two context conditions differed in how much information was required to identify the target. 
@@ -153,16 +161,9 @@ To evaluate this possibility, we recruited another group of naive participants (
 On each trial of this recognition experiment, participants were presented with a sketch and an array containing all 32 objects, and were instructed to identify the object that best matched each sketch from the array. 
 Across trials, sketches were randomly sampled from the original communication experiment such that no two sketches produced by the same participant appeared in a single recognition experimental session. 
 % To obtain robust estimates of sketch-object perceptual correspondences, each sketch appeared approximately 10 times across different sessions. 
-Consistent with our hypothesis, we found that close sketches were matched with their corresponding object more consistently than far sketches were (close: 54.2\%; far: 37.5\%; $Z$=14.1, $p$<0.001), although sketches from both context conditions were successfully matched at rates greatly exceeding chance ($p$s < 0.001).
+Consistent with our hypothesis, we found that close sketches were matched with their corresponding target object more consistently than far sketches were (close: 54.2\%; far: 37.5\%; $Z$=14.1, $p$<0.001), although sketches from both context conditions were successfully matched at rates greatly exceeding chance ($p$s < 0.001).
 
 % \n_dg{interestingly the success rate was a lot lower than in the actual game, though there are more options so hard to compare.... could make a comment on this or leave out for brevity.}
-
-\begin{figure*}[htbp]
-\centering
-\includegraphics[width=0.9\textwidth]{figures/3_behavioral_performance.pdf}
-\caption{(A-C) Mean number of strokes, amount of ink, and time spent producing sketches in each context condition. (D-E) Target identification performance in context during communication task. (F) Target identification performance out of context during recognition task.}
-\label{task_performance}
-\end{figure*}
 
 %%% recognition experiments
 
@@ -176,35 +177,49 @@ Consistent with our hypothesis, we found that close sketches were matched with t
 
 \subsection*{Computational model of contextual flexibility in visual communication}
 
-Our empirical findings show that human sketchers spontaneously account for contextual information shared with the viewer, producing more informative sketches in close contexts at the cost of additional time and ink. 
-Such contextual flexibility argues against the notion that visual communication is constrained exclusively by the appearance of the target of object. 
-Rather, it suggests an analogy to how shared context influences what people choose to say during verbal communication, a key target of recent advances in computational models of pragmatic language use \cite{frank2012predicting,goodman2013knowledge,franke2016probabilistic,bergen2016pragmatic}.
-Leveraging these advances, we propose that human sketchers determine what kind of sketch to produce in context by deploying two main faculties: \textit{visual abstraction}, which refers to the ability to judge how well a sketch evokes a real object, and \textit{pragmatic inference}, which refers to the ability to judge which sketches will be sufficiently detailed to be informative about the target object in context, but no more detailed than necessary. 
+Our empirical findings suggest that sketchers spontaneously modulate the amount of information they convey about the target object in their sketches according to the communicative context. 
+Such contextual flexibility argues against the notion that visual communication is constrained exclusively by the appearance of the target object, but rather is systematically influenced by information that is shared between the sketcher and viewer. 
+Moreover, it suggests an analogy to how shared context influences what people choose to say during verbal communication, a key target of recent advances in computational models of pragmatic language use \cite{frank2012predicting,goodman2013knowledge,franke2016probabilistic,bergen2016pragmatic}.
+Leveraging these advances, we propose that human sketchers determine what kind of sketch to produce in context by deploying two main faculties: \textit{visual abstraction}, which here refers to the ability to judge how well a sketch evokes a real object, and \textit{pragmatic inference}, which here refers to the ability to judge which sketches will be sufficiently detailed to be informative about the target object in context, but no more detailed than necessary. 
 % Pragmatic inference can thus be decomposed into two aspects: context sensitivity, a preference for sketches that are diagnostic of the target relative to the distractors; and cost sensitivity, a preference for sketches that require less time and effort to produce.
 To test this proposal, we developed a computational model of the sketcher that embodies both visual abstraction and pragmatic inference, and was instantiated as a deep convolutional neural network nested within a probabilistic program. 
-Constructing such a model allowed us to evaluate the contribution of each component using formal model comparison, as well as quantitatively characterize the model's behavior in novel contexts.\begin{figure*}[htbp]
+Constructing such a model allowed us to use formal model comparison to evaluate the contribution of each component for explaining our empirical findings, as well as make quantitative predictions about visual communication behavior in novel contexts.
+
+\begin{figure*}[htbp]
 \centering
-\includegraphics[width=0.86\textwidth]{figures/2_sketch_gallery-min.pdf}
-\caption{(A) Object stimuli. (B) Example sketches produced in close context condition. (C) Example sketches produced in far context condition.}
-\label{sketch_gallery}
+\includegraphics[width=0.95\textwidth]{figures/4_model_schematic-min.pdf}
+\caption{
+(A) Schematic containing an example context and two candidate sketches under consideration. 
+The thickness of each blue line reflects the absolute strength of the correspondence between a candidate sketch and object in context (resemblance). 
+The thickness of each red line reflects the relative strength of the correspondence between a candidate sketch and each object, compared to its correspondence to the other objects in the context (diagnosticity). 
+The sketcher expects the viewer to select target object conditioned on the sketch and 
+The cost of each sketch was assumed to vary with the amount of time taken to produce it.
+(B) Architecture of visual encoder model for sketches and object renderings. Consists of pre-trained deep convolutional neural network (VGG-19) and shallow nonlinear ``adaptor'' neural network that predicts sketch-object correspondence. 
+The encoder takes a sketch and object rendering as input, and outputs a correspondence score reflecting how well the sketch resembles the object. 
+Three adaptor networks trained, using features from a one of the highest, an intermediate, and an early layer of VGG.
+Each adaptor network trained and evaluated in crossvalidated fashion.}
+\label{model_schematic}
 \end{figure*}
 
 \subsubsection*{Defining communicative utility of sketches}
 
-We define a context, $O$, to be a set of objects containing a target, $t$, and three distractors,  $D=\{d_1,d_2,d_3\}$: $O = \{t,D\}$.
-We define the sketcher, $\mathcal{S}$, to be a decision-theoretic agent that produces sketches of the target, $s$, proportional to their communicative utility, $U$, where the utilities of each sketch have been normalized over the set of producible sketches via the softmax function: 
+We define the sketcher, $\mathcal{S}$, to be a decision-theoretic agent that produces sketches of the target, $s$, proportional to their communicative utility, $U$.
+Communicative utility is a function of a sketch and a context ($U[s,O]$), where a context is defined as:
+$O = \{t,D\}$, where $t$ is the target object and $D$ is a set of three distractor objects, $D=\{d_1,d_2,d_3\}$.  
+
+When deciding which sketch to produce, the utilities of each sketch are assumed to be normalized over the set of producible sketches via the softmax function: 
 \begin{equation} \label{sketcher_distribution}
 \mathcal{S}(s|O) = \frac {\exp [{U(s,O)]}} {\sum_{i} {\exp [U(s_i,O)]}}
 \end{equation}
 In principle, the space of all producible sketches is infinite and continuous, leading to an intractable sum.
 In practice, we assume that the sketcher model chooses among a large but finite set of sketches: those actually produced by participants in our experiment.
 
-A sketcher's decision-making is determined by its utility function.
+% A sketcher's decision-making is determined by its utility function.
 We first introduce the utility function for our proposed pragmatic sketcher, $S_{prag}$, and then consider lesioned variants for comparison. 
-Overall, this utility trades off an informativity term and a cost term.
-This sketcher judges a sketch's informativity to be a mixture of two quantities: one reflecting its absolute \textit{resemblance} to the target and the other its relative \textit{diagnosticity} in the presence of particular distractors (see Fig. \ref{model_schematic}B).  
+Overall, this utility trades off between how informative a sketch is with how costly it was produce.
+The sketcher judges a sketch's informativity to be a mixture of two quantities: one reflecting its absolute \textit{resemblance} to the target and the other its relative \textit{diagnosticity} in the presence of particular distractors (see Fig. \ref{model_schematic}B).  
 
-Resemblance is defined by how strongly a sketch $s$ corresponds to the target $t$, i.e. $\textrm{sim}(s,t)$, which we estimate using empirical data from the recognition experiment (see Materials and Methods).
+Resemblance is defined by how strongly a sketch $s$ corresponds to the target $t$, i.e. $\textrm{sim}(s,t)$, which we estimate empirically using data from the recognition experiment (see Materials and Methods).
 Diagnosticity is defined by the natural log probability that a simulated viewer agent, $\mathcal{V}$, would select the target object given the sketch and all objects in context, $\ln \mathcal{V}(t|s,O)$. 
 The simulated viewer $\mathcal{V}$, in turn, is assumed to select the target object proportional to the correspondence between the sketch and the target, $\textrm{sim}(s,t)$, normalized by the sum of correspondences between the sketch and all four objects in context, again via the softmax function:
 \begin{equation} \label{literal_viewer_score}
@@ -226,8 +241,8 @@ U_{S_{prag}}(s,O) = w_i \cdot I(s,O) - w_c \cdot  C(s)
 \end{equation}
 where $w_i$ and $w_c$ are independent scaling parameters that are applied to the informativity and cost terms, respectively.
 These parameters determine how strongly each term contributes to the overall utility of the sketch. 
-This model contains four latent parameters: one each on informativity ($w_{i}$) and cost ($w_{c}$), one that balances between diagnosticity and resemblance ($w_{d}$) within the informativity term, and one that tracks the optimality of the simulated viewer's decision policy ($\alpha$). 
-We inferred these parameters from data via Bayesian data analysis (see Materials and Methods).
+This model contains four latent parameters: one each on informativity ($w_{i}$) and cost ($w_{c}$), one that balances between diagnosticity and resemblance within the informativity term ($w_{d}$), and one that tracks the optimality of the simulated viewer's decision policy ($\alpha$). 
+We inferred these parameters from our data via Bayesian data analysis (see Materials and Methods).
 
 % In a second set of modeling experiments, we evaluate the role of visual abstraction by using different visual features (low-level, medium-level, or high-level) for the visual correspondence \textrm{sim}(s,t).
 
@@ -247,18 +262,6 @@ a \textit{cost-insensitive} sketcher, $S_{nocost}$, in which the cost term is re
 Our goal was to evaluate how well each model could produce informative sketches and appropriately modulate its behavior according to the context condition, and not necessarily to reproduce exactly the same sketch a particular participant had on a specific trial. 
 As such, we aggregated all sketches of the same object produced in the same context condition when estimating their key functional properties (i.e., perceptual correspondence, cost), so each sketch was represented by the mean in its object-context category. 
 Model predictions were generated to the same level of granularity, in the form of a probability distribution over 64 types of sketches, representing each combination of object and context condition (e.g., `basset sketch produced in a close context'). 
-\begin{figure*}[htbp]
-\centering
-\includegraphics[width=0.95\textwidth]{figures/4_model_schematic-min.pdf}
-\caption{(A) Architecture of visual encoder model for sketches and object renderings. Consists of pre-trained deep convolutional neural network (VGG-19) and shallow nonlinear ``adaptor'' neural network that predicts sketch-object correspondence. 
-The encoder takes a sketch and object rendering as input, and outputs a correspondence score reflecting how well the sketch resembles the object. 
-Three adaptor networks trained, using features from a one of the highest, an intermediate, and an early layer of VGG.
-Each adaptor network trained and evaluated in crossvalidated fashion. 
-(B) Sketch-object correspondence computed for each object in context and each sketch in the test set. 
-To determine the relative informativity of each sketch, the similarity scores between this sketch and all four objects were softmax normalized. 
-The cost of each sketch was assumed to vary with the amount of time taken to produce it.}
-\label{model_schematic}
-\end{figure*}
 
 To generate these predictions, first we employed Bayesian data analysis to infer a posterior distribution over the four latent parameters in the model ($w_{i}$, $w_{c}$, $w_{d}$, $\alpha$). 
 Next, we presented each model with exactly the same set of contexts that were presented to human sketchers in the communication experiment, and evaluated the posterior predictive probabilities that each model assigned to sketches in each object-context category, marginalizing over the posterior distribution over latent parameters. 
@@ -406,6 +409,14 @@ Low: comparison between high adaptor vs. low adaptor in context/cost-sensitive m
 %   5 & 98.71 & 5.99 & 28.12 & 113.59 & 268.80 & 7.92 & 16.07 \\ 
 %   median & 105.71 & 1.98 & 28.12 & 94.77 & 256.83 & 9.54 & 16.07 \\ 
 %%%%%%%% cost fc6, context fc6, high vs. mid, high vs. low, cost human, context human
+
+\begin{figure*}[htbp]
+\centering
+\includegraphics[width=0.86\textwidth]{figures/2_sketch_gallery-min.pdf}
+\caption{(A) Object stimuli. (B) Example sketches produced in close context condition. (C) Example sketches produced in far context condition.}
+\label{sketch_gallery}
+\end{figure*}
+
 
 \section*{Discussion}
 
