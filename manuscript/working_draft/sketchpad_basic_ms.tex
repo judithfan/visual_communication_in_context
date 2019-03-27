@@ -377,12 +377,12 @@ Each adaptor network was trained to predict the empirical estimates of sketch-ob
 \end{tabular}
 \caption{Log Bayes Factors (BF) for comparisons between full and lesioned model variants (columns) for each crossvalidation fold (rows). 
 Log-BFs$>$0 indicate greater evidence for the full model than the lesioned variant. 
-Human Recog: used empirical estimates of perceptual correspondence based on human sketch recognition behavior. 
-Visual Encoder: used DCNN visual encoder, trained in a five-fold crossvalidated manner using human sketch recognition behavior. 
-Context: comparison between context-sensitive and context-insensitive variant. 
-Cost: comparison between cost-sensitive and cost-insensitive variant; 
-Mid: comparison between high adaptor vs. mid adaptor in context/cost-sensitive model; 
-Low: comparison between high adaptor vs. low adaptor in context/cost-sensitive model.}
+Columns under the human recog header contain comparisons between model variants that used empirical estimates of perceptual correspondence based on human sketch recognition behavior. 
+Columns under the visual encoder header contain comparisons between model variants that used a deep convolutional neural network visual encoder, trained in a five-fold crossvalidated manner using human sketch recognition behavior. 
+The context vs. no-context columns includes comparisons between context-sensitive and context-insensitive variant;
+the cost vs. no-cost columns includes comparisons between cost-sensitive and cost-insensitive variant; 
+the high vs. mid column includes comparisons between model variants using a high adaptor vs. mid adaptor in a context/cost-sensitive model; 
+and the high vs. low column inclues comparisons between between model variants using a high adaptor vs. low adaptor in context/cost-sensitive model.}
 \label{model_comparison}
 \end{table*}
 
