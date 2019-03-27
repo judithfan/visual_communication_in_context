@@ -51,7 +51,7 @@
 \significancestatement{Drawing is a versatile tool for communication, spanning detailed renderings and simple sketches. Even the same object can be drawn in many ways, depending on the context. How do people decide how to draw in order to be understood? We collected a large number of drawings in different contexts and found that people adapted their drawings accordingly, producing detailed drawings when necessary, but simpler drawings when sufficient. To explain this contextual flexibility, we developed a computational model combining: the capacity to perceive the correspondence between an object and drawing with the ability to infer what information is relevant to the viewer in context. Our results suggest drawing may be so versatile because humans possess these two capacities.}
 
 % Please include corresponding author, author contribution and author declaration information
-\authorcontributions{J.E.F and R.X.D.H. designed and conducted human experiments, J.E.F, R.X.D.H, and M.W. analyzed data and performed computational modeling. J.E.F, R.X.D.H, M.W., and N.D.G. formulated models, interpreted results, and wrote the paper.}
+\authorcontributions{J.E.F and R.X.D.H. designed and conducted behavioral experiments, J.E.F, R.X.D.H, and M.W. analyzed experimental data and performed computational modeling. J.E.F, R.X.D.H, M.W., and N.D.G. formulated models, interpreted results, and wrote the paper.}
 \authordeclaration{The authors declare no conflict of interest.}
 \correspondingauthor{\textsuperscript{1}To whom correspondence should be addressed. E-mail: jefan@ucsd.edu}
 
@@ -89,10 +89,10 @@ For example, human infants \cite{hochberg1962pictorial}, people living in remote
 Together, these findings suggest that the ability to perceive the correspondence between drawings and real-world objects arises from a general-purpose neural architecture evolved to handle variation in natural visual inputs \cite{Sayim:2011bz,gibson2014ecological}. 
 
 On the other hand, influential work in philosophy has emphasized the role of cultural and social context in determining how drawings denote objects \cite{goodman1976languages}.
-This perspective is consistent with the observation of substantial variation in pictorial art traditions across cultures \cite{gombrich1989story,gombrich1969art}, and the emergence of culturally-specific conventions for encoding meaning in pictorial form \cite{boltz1994origin,allen2000middle}. 
-Further support for the importance of social context for determining pictorial meaning has also come from recent laboratory studies of visual communication, which have found that pairs of interacting participants can learn to produce drawings that are referentially meaningful to their partner in context, even when these drawings do not strongly resemble any particular real-world referent out of context \cite{Garrod:2007wk,fay2010interactive,Galantucci:2005uh}. 
+This perspective is consistent with substantial variation in pictorial art traditions across cultures \cite{gombrich1989story,gombrich1969art}, and the emergence of culturally-specific conventions for encoding meaning in pictorial form \cite{boltz1994origin,allen2000middle}. 
+Further support for the importance of social context has also come from recent laboratory studies of visual communication, which have found that pairs of interacting participants can learn to produce drawings that are referentially meaningful to their partner in context, even when these drawings do not strongly resemble any particular real-world referent out of context \cite{Garrod:2007wk,fay2010interactive,Galantucci:2005uh}. 
 
-Towards reconciling these perspectives, the current paper is guided by the overarching hypothesis that visual information and social context jointly determine the relationship between a drawing and the object it depicts.  
+Towards reconciling these perspectives, the current paper explores the hypothesis that visual information and social context jointly determine the relationship between a drawing and the object it depicts.  
 To evaluate this hypothesis, we investigated how the drawings people produce during visual communication varied across different contexts, and found that people spontaneously modulated how much time and ink they invested in their drawings in order to be sufficiently informative in context.
 To explain these findings, we developed a computational model of visual communication that embodied two core faculties: visual abstraction, the capacity to judge the correspondence between a real-world object and a drawing of it; and pragmatic inference, the ability to infer what information is not only \textit{valid} to include in a drawing, but also \textit{relevant} in context  \cite{goodman2016pragmatic,grice1975syntax,abell2009canny}.
 This model was instantiated as a deep convolutional neural network visual encoder nested within a probabilistic program that inferred which drawings would be most informative in context.
@@ -117,12 +117,6 @@ To investigate visual communication in a naturalistic yet controlled setting, we
 This reference game involves two players: a \textit{sketcher} who aims to help a \textit{viewer} pick out a target object from an array of distractor objects by representing it in a sketch. 
 Such games, which have long provided a source for intuitions in the philosophy of language \citep{wittgenstein1953philosophical,Lewis69_Convention}, have also proven to be a valuable tool for systematically eliciting pragmatic inferences about language use in context, and to make quantitative measurements of the behavioral consequences of these inferences \cite{goodman2016pragmatic,kao2014formalizing,goodman2013knowledge,frank2012predicting}. 
 Here we generalize this methodology to understand how people account for information in common ground with their viewer in order to produce sketches that are informative \cite{grice1975syntax,wilson1986relevance} yet parsimonious \cite{zipf1936psycho} during visual communication.
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=0.38\textwidth]{figures/1_task_display_alt.png}
-\caption{(A) Communication task. Participants were paired in an online environment to play a drawing-based reference game and assigned the roles of sketcher and viewer. On each trial, the sketcher's goal was to draw one of these objects so that the viewer could distinguish the target from three distractor objects. (B) Context manipulation. Distractor similarity to target was manipulated across two context conditions: in close contexts, the target and distractors belonged to the same basic-level category, while in far contexts, the target and distractors all belonged to different basic-level categories. (C) Recognition task. Naive participants were presented with a randomly sampled sketch from the communication experiment and an array containing all 32 objects used in the experiment, and were instructed to identify the best-matching object.}
-\label{task_display}
-\end{figure}
 
 In our experiment, participants (N=192) were paired in an online environment and communicated with their partner only via a drawing canvas (Fig.~\ref{task_display}). 
 Each trial, both participants were shown an array containing the same four real-world objects, but object locations were randomized for each participant so that they could not use object location information to solve the task (Fig.~\ref{task_display}). 
@@ -138,6 +132,13 @@ Specifically, we predicted that sketchers would invest more time and ink in prod
 Consistent with our prediction, we found that viewers were highly accurate overall at identifying the target from the sketches produced (proportion correct: 93.8\%, 95\% CI: [92.7\%, 94.8\%], estimated by bootstrap resampling participants). 
 Moreover, we found that sketchers spent less time (close: 30.3s, far: 13.7s, \textit{p}$<$0.001), applied fewer strokes (close: 8.03 vs. far: 13.5, 95\% CI of difference: [3.75, 7.90], \textit{p}$<$0.001), and used less ink (proportion of canvas filled; close: 0.054, far: 0.042, 95\% CI of difference: [0.01, 0.014], \textit{p}$<$0.001) to produce their sketches in the far condition than in the close condition (Fig.~\ref{task_performance}A-C). 
 Despite the relative sparsity of sketches in the far condition, viewers were near ceiling at identifying the target on these trials (far: 99.7\%, 95\% CI: [0.993, 0.999]; close: 87.9\%, 95\% CI: [0.858, 0.899], Fig.~\ref{task_performance}D), and took less time to make these decisions than on close trials (far: 6.32s vs. close: 8.32s, 95\% CI of difference: [-2.748, -1.251], Fig.~\ref{task_performance}E).
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.4\textwidth]{figures/1_task_display_alt.png}
+\caption{(A) Communication task. Participants were paired in an online environment to play a drawing-based reference game and assigned the roles of sketcher and viewer. On each trial, the sketcher's goal was to draw one of these objects so that the viewer could distinguish the target from three distractor objects. (B) Context manipulation. Distractor similarity to target was manipulated across two context conditions: in close contexts, the target and distractors belonged to the same basic-level category, while in far contexts, the target and distractors all belonged to different basic-level categories. (C) Recognition task. Naive participants were presented with a randomly sampled sketch from the communication experiment and an array containing all 32 objects used in the experiment, and were instructed to identify the best-matching object.}
+\label{task_display}
+\end{figure}
 
 \begin{figure*}[htbp]
 \centering
