@@ -130,18 +130,19 @@ Across trials, the similarity of the distractors to the target was manipulated, 
 We predicted that while sketchers would be generally successful at conveying the identity of the target, their sketching behavior would systematically differ between the two contexts. 
 Specifically, we predicted that sketchers would invest more time and ink in producing their sketches in close contexts, but still produce sufficiently informative sketches with less time and ink in far contexts (Fig.~\ref{sketch_gallery}). 
 
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.42\textwidth]{1_task_display_alt.png}
+\caption{(A) Communication task. Participants were paired in an online environment to play a drawing-based reference game and assigned the roles of sketcher and viewer. On each trial, the sketcher's goal was to draw one of these objects so that the viewer could distinguish the target from three distractor objects. (B) Context manipulation. Distractor similarity to target was manipulated across two context conditions: in close contexts, the target and distractors belonged to the same basic-level category, while in far contexts, the target and distractors all belonged to different basic-level categories. (C) Recognition task. Naive participants were presented with a randomly sampled sketch from the communication experiment and an array containing all 32 objects used in the experiment, and were instructed to identify the best-matching object.}
+\label{task_display}
+\end{figure}
+
 % Successful communication was primarily quantified as the viewer's accuracy in identifying the target. The investment of time was measured as the length of time between the beginning of the first stroke to the completion of the final stroke in each sketch, and the investment of ink was measured in two ways: as the number of strokes used for each sketch and the proportion of the drawing canvas filled by ink.  
 
 Consistent with our prediction, we found that viewers were highly accurate overall at identifying the target from the sketches produced (proportion correct: 93.8\%, 95\% CI: [92.7\%, 94.8\%], estimated by bootstrap resampling participants). 
 Moreover, we found that sketchers spent less time (close: 30.3s, far: 13.7s, \textit{p}$<$0.001), applied fewer strokes (close: 8.03 vs. far: 13.5, 95\% CI of difference: [3.75, 7.90], \textit{p}$<$0.001), and used less ink (proportion of canvas filled; close: 0.054, far: 0.042, 95\% CI of difference: [0.01, 0.014], \textit{p}$<$0.001) to produce their sketches in the far condition than in the close condition (Fig.~\ref{task_performance}A-C). 
 Despite the relative sparsity of sketches in the far condition, viewers were near ceiling at identifying the target on these trials (far: 99.7\%, 95\% CI: [0.993, 0.999]; close: 87.9\%, 95\% CI: [0.858, 0.899], Fig.~\ref{task_performance}D), and took less time to make these decisions than on close trials (far: 6.32s vs. close: 8.32s, 95\% CI of difference: [-2.748, -1.251], Fig.~\ref{task_performance}E).
 
-\begin{figure}[t]
-\centering
-\includegraphics[width=0.42\textwidth]{1_task_display_alt.png}
-\caption{(A) Communication task. Participants were paired in an online environment to play a drawing-based reference game and assigned the roles of sketcher and viewer. On each trial, the sketcher's goal was to draw one of these objects so that the viewer could distinguish the target from three distractor objects. (B) Context manipulation. Distractor similarity to target was manipulated across two context conditions: in close contexts, the target and distractors belonged to the same basic-level category, while in far contexts, the target and distractors all belonged to different basic-level categories. (C) Recognition task. Naive participants were presented with a randomly sampled sketch from the communication experiment and an array containing all 32 objects used in the experiment, and were instructed to identify the best-matching object.}
-\label{task_display}
-\end{figure}
 
 \begin{figure*}[htbp]
 \centering
@@ -159,7 +160,7 @@ To evaluate this possibility, we recruited another group of naive participants (
 On each trial of this recognition experiment, participants were presented with a sketch and an array containing all 32 objects, and were instructed to identify the object that best matched each sketch from the array (Fig.~\ref{task_display}C). 
 Across trials, sketches were randomly sampled from the original communication experiment such that no two sketches produced by the same participant appeared in a single recognition experimental session. 
 % To obtain robust estimates of sketch-object perceptual correspondences, each sketch appeared approximately 10 times across different sessions. 
-Consistent with our hypothesis, we found that close sketches were matched with their corresponding target object more consistently than far sketches were (close: 54.2\%; far: 37.5\%; $Z$=14.1, $p$<0.001), although sketches from both context conditions were successfully matched at rates greatly exceeding chance ($p$s < 0.001).
+Consistent with our hypothesis, we found that close sketches were matched with their corresponding target object more consistently than far sketches were (close: 54.2\%; far: 37.5\%; $Z$=14.1, $p <$0.001), although sketches from both context conditions were successfully matched at rates greatly exceeding chance ($p$s $<$ 0.001).
 
 % \n_dg{interestingly the success rate was a lot lower than in the actual game, though there are more options so hard to compare.... could make a comment on this or leave out for brevity.}
 
@@ -172,6 +173,14 @@ Consistent with our hypothesis, we found that close sketches were matched with t
 % There was clear structure in the pattern of confusions for both close and far sketches. We further hypothesized that the particular way in which far sketches would differ perceptually from close sketches was that far sketches would be more confusable with other objects from the same basic-level category, while still being highly recognizable as a representation of the corresponding basic-level category.
 
 % We measured this by comparing the within-category confusion rate to the overall confusion rate for close and far sketches, and found that XXX.
+
+\begin{figure*}[htbp]
+\centering
+\includegraphics[width=0.95\textwidth]{2_sketch_gallery-min.pdf}
+\caption{(A) Object stimuli. (B) Example sketches produced in close context condition. (C) Example sketches produced in far context condition.}
+\label{sketch_gallery}
+\end{figure*}
+
 
 \subsection*{Computational model of contextual flexibility in visual communication}
 
@@ -360,6 +369,19 @@ Each adaptor network was trained to predict the empirical estimates of sketch-ob
 %   median & 105.71 & 1.98 & 28.12 & 94.77 & 256.83 & 9.54 & 16.07 \\ 
 %%%%%%%% cost fc6, context fc6, high vs. mid, high vs. low, cost human, context human
 
+Consistent with our hypothesis, we found that a pragmatic sketcher model employing high-level features provided a substantially better fit to the data than one using mid-level features (high vs. mid median BF: $94.8$) or low-level features (high vs. low BF: $257$).
+These results show that making fuller use of the depth of VGG to compute the perceptual correspondence between a sketch and object yields a stronger basis for explaining human visual communication behavior.
+Unsurprisingly, this pragmatic sketcher model employing high-level features did not fit the data as well as the pragmatic sketcher model that could directly access human recognition data (median log Bayes Factor = $105.71$).
+However, a major advantage of incorporating a visual encoder is the capacity to generalize to novel sketches without requiring the collection of additional recognition data for each new sketch.
+
+To further probe the functional consequences of decreasing the capacity for visual abstraction, we investigated each model variant on sketch retrieval, context congruity, and cost modulation. 
+Critically, we found that high-level features supported strong performance on sketch retrieval (95\% CI target rank: $[3.03, 3.37]$, Fig.~\ref{model_results}A), compared to mid-level features (target rank: $[6.05, 6.56]$) and low-level features (target rank: $[22.4, 24.1]$). 
+These results show that without a high-performing visual encoder, the model is much less likely to produce sketches of the correct object, a basic prerequisite for successful visual communication even in the absence of contextual variability. 
+
+Moreover, the pragmatic sketcher model using high-level features also displayed context congruity (95\% CI: $[0.583, 0.632]$, Fig.~\ref{model_results}B), comparable in degree to the best-performing pragmatic model that operated directly on empirical estimates of sketch-object correspondence, showing that our full sketcher model displayed this signature of contextual flexibility for novel communicative contexts and sketches. 
+The variant using mid-level features also displayed context congruity to a weaker extent (95\% CI: $[0.526, 0.576]$), suggesting that an intermediate level of visual abstraction is sufficient to achieve an intermediate degree of context congruity. 
+By contrast, the variant using low-level features failed to prefer the context-congruent sketch category (95\% CI: $[0.435, 0.475]$), providing a lower bound on the level of visual abstraction required in the underlying encoder to support flexible visual communication behavior. 
+
 \newgeometry{margin=1.4in} % modify this if you need even more space
 \begin{landscape}
 
@@ -389,21 +411,9 @@ and the high vs. low column inclues comparisons between between model variants u
 \end{landscape}
 \restoregeometry
 
-
-Consistent with our hypothesis, we found that a pragmatic sketcher model employing high-level features provided a substantially better fit to the data than one using mid-level features (high vs. mid median BF: $94.8$) or low-level features (high vs. low BF: $257$).
-These results show that making fuller use of the depth of VGG to compute the perceptual correspondence between a sketch and object yields a stronger basis for explaining human visual communication behavior.
-Unsurprisingly, this pragmatic sketcher model employing high-level features did not fit the data as well as the pragmatic sketcher model that could directly access human recognition data (median log Bayes Factor = $105.71$).
-However, a major advantage of incorporating a visual encoder is the capacity to generalize to novel sketches without requiring the collection of additional recognition data for each new sketch.
-
-To further probe the functional consequences of decreasing the capacity for visual abstraction, we investigated each model variant on sketch retrieval, context congruity, and cost modulation. 
-Critically, we found that high-level features supported strong performance on sketch retrieval (95\% CI target rank: $[3.03, 3.37]$, Fig.~\ref{model_results}A), compared to mid-level features (target rank: $[6.05, 6.56]$) and low-level features (target rank: $[22.4, 24.1]$). 
-These results show that without a high-performing visual encoder, the model is much less likely to produce sketches of the correct object, a basic prerequisite for successful visual communication even in the absence of contextual variability. 
-
-Moreover, the pragmatic sketcher model using high-level features also displayed context congruity (95\% CI: $[0.583, 0.632]$, Fig.~\ref{model_results}B), comparable in degree to the best-performing pragmatic model that operated directly on empirical estimates of sketch-object correspondence, showing that our full sketcher model displayed this signature of contextual flexibility for novel communicative contexts and sketches. 
-The variant using mid-level features also displayed context congruity to a weaker extent (95\% CI: $[0.526, 0.576]$), suggesting that an intermediate level of visual abstraction is sufficient to achieve an intermediate degree of context congruity. 
-By contrast, the variant using low-level features failed to prefer the context-congruent sketch category (95\% CI: $[0.435, 0.475]$), providing a lower bound on the level of visual abstraction required in the underlying encoder to support flexible visual communication behavior. 
-
 Again, only the pragmatic sketcher model using high-level features displayed the same qualitative pattern of cost modulation as people did (95\%CI: close = $[0.199, 0.208]$, far = $[0.178, 0.181]$, Fig.~\ref{model_results}C), while both of the other variants using mid-level and low-level features failed to do so (95\%CI: mid-level: close = $[0.186, 0.189]$, far = $[0.186, 0.188]$; low-level: close = $[0.188, 0.189]$, far = $[0.188, 0.189]$).  
+
+
 
 These results so far show the best-performing visual encoder to be the one making fuller use of the depth of the base visual encoder to extract more abstract perceptual properties, providing strong evidence for the importance of a high degree of visual abstraction for explaining our empirical findings. 
 Next, we performed the same context and cost sensitivity lesion experiments as before in order to evaluate the contribution of pragmatic inference in our full sketcher model. 
@@ -423,14 +433,6 @@ These results converge with those of the lesion experiments conducted on the pra
 %   5 & 98.71 & 5.99 & 28.12 & 113.59 & 268.80 & 7.92 & 16.07 \\ 
 %   median & 105.71 & 1.98 & 28.12 & 94.77 & 256.83 & 9.54 & 16.07 \\ 
 %%%%%%%% cost fc6, context fc6, high vs. mid, high vs. low, cost human, context human
-
-\begin{figure*}[htbp]
-\centering
-\includegraphics[width=0.95\textwidth]{2_sketch_gallery-min.pdf}
-\caption{(A) Object stimuli. (B) Example sketches produced in close context condition. (C) Example sketches produced in far context condition.}
-\label{sketch_gallery}
-\end{figure*}
-
 
 \section*{Discussion}
 
