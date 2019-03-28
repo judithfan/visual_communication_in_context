@@ -31,7 +31,15 @@ obj_list = []
 for cat in categories:
 	for i,j in h.objcat.iteritems():
 		if j==cat:
-			obj_list.append(i)             
+			obj_list.append(i) 
+
+# directory & file hierarchy
+proj_dir = os.path.abspath('..')
+analysis_dir = os.getcwd()
+data_dir = os.path.join(proj_dir,'data')
+sketch_dir = os.path.join(data_dir,'sketches')
+csv_dir = os.path.join(data_dir,'csv')
+curated_dir = os.path.join(sketch_dir, 'curated')
 
 '''
 Script to iterate through records on mongo and generate properly formatted
@@ -46,7 +54,7 @@ if __name__ == '__main__':
 
 	parser.add_argument('--out_path', type=str, \
 									  help='filepath to write dataframe to', 
-									  default='./group_data/sketchpad_basic_recog_group_data_2.csv')
+									  default='../data/csv/sketchpad_basic_recog_group_data_2.csv')
 
 	args = parser.parse_args()
 
@@ -182,6 +190,6 @@ if __name__ == '__main__':
 
 	## save out to CSV
 	print 'Saving dataframe to path: {}'.format(args.out_path)
-	if not os.path.exists('./group_data'):
-		os.makedirs('./group_data')
+	if not os.path.exists('../data/csv/group_data'):
+		os.makedirs('../data/csv/group_data')
 	X.to_csv(args.out_path)	

@@ -36,7 +36,7 @@ if __name__ == "__main__":
 
 	parser.add_argument('--out_path', type=str, \
 									  help='filepath to write dataframe to', 
-									  default='sketchpad_basic_pilot2_group_data')
+									  default='../data/csv/sketchpad_basic_pilot2_group_data')
 
 	args = parser.parse_args()
 

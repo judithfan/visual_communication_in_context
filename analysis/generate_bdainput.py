@@ -201,6 +201,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--iterationName', type=str, help='iteration name', default='pilot2')
     parser.add_argument('--analysis_dir', type=str, help='path to analysis dir', default='./')
+    parser.add_argument('--data_dir', type=str, help='path to analysis dir', default='../data')
     parser.add_argument('--adaptor_type', type=str,
                         help='which generation of sketch photo adaptor? options: human| multimodal_conv42 | multimodal_pool1 | multimodal_fc6',
                         default='multimodal_conv42')
@@ -225,7 +226,7 @@ if __name__ == "__main__":
 
     if (('human' in args.adaptor_type) & (args.gen_similarity)) | gen_human_similarity_anyway == True:
         ##### if we are dealing with a human encoder, then need to generate similarity json firststyle
-        X = pd.read_csv(os.path.join(args.analysis_dir,'group_data','sketchpad_basic_recog_group_data_2_augmented.csv'))
+        X = pd.read_csv(os.path.join(args.data_dir,'csv','sketchpad_basic_recog_group_data_2_augmented.csv'))
         print 'Shape of augmented sketch annotation csv: {}'.format(X.shape)
 
         from collections import Counter
@@ -297,7 +298,7 @@ if __name__ == "__main__":
 
             ## when outputting coarse grained similarity json, use coarse-grained sketch labels
             analysis_dir = os.getcwd()
-            D = pd.read_csv(os.path.join(analysis_dir,'group_data','sketchpad_basic_pilot2_group_data.csv'))
+            D = pd.read_csv(os.path.join(args.data_dir,'csv','sketchpad_basic_pilot2_group_data.csv'))
             D = add_extra_label_columns(D)
             ## make a condition lookup table in order to coarse grain the names of the keys in the similarities dictionary
             cond_json = {}
@@ -348,7 +349,7 @@ if __name__ == "__main__":
 
         ### if aggregating at the sketch category level
         analysis_dir = os.getcwd()
-        D = pd.read_csv(os.path.join(analysis_dir,'group_data','sketchpad_basic_pilot2_group_data.csv'))
+        D = pd.read_csv(os.path.join(args.data_dir,'csv','sketchpad_basic_pilot2_group_data.csv'))
         D = add_extra_label_columns(D)
         target_dict = dict(zip(D['sketch_label'],D['target']))
         cond_dict = dict(zip(D['sketch_label'],D['condition']))
@@ -433,12 +434,12 @@ if __name__ == "__main__":
     sketch_dir = os.path.abspath(os.path.join(os.getcwd(),'../../..','analysis',exp_path,'sketches',iterationName))
 
     # read in data
-    D = pd.read_csv(os.path.join(analysis_dir,'group_data','sketchpad_basic_pilot2_group_data.csv'))
-    DUNFIL = pd.read_csv(os.path.join(analysis_dir,'group_data','sketchpad_basic_pilot2_group_data_unfiltered.csv'))
+    D = pd.read_csv(os.path.join(args.data_dir,'csv','sketchpad_basic_pilot2_group_data.csv'))
+    DUNFIL = pd.read_csv(os.path.join(args.data_dir,'csv','sketchpad_basic_pilot2_group_data_unfiltered.csv'))
 
     # filter out incorrect and invalid trials as well
-    incorrects = pd.read_csv('./group_data/incorrect_trial_paths_pilot2.txt',header=None)[0].values
-    invalids = pd.read_csv('./group_data/invalid_trial_paths_pilot2.txt',header=None)[0].values
+    incorrects = pd.read_csv(os.path.join(args.data_dir,'csv','incorrect_trial_paths_pilot2.txt'),header=None)[0].values
+    invalids = pd.read_csv(os.path.join(args.data_dir,'csv','incorrect_trial_paths_pilot2.txt'),header=None)[0].values
 
     ## add some filename columns
     D = add_fnames(D)

@@ -17,12 +17,20 @@ for cat in categories:
         if j==cat:
             obj_list.append(i)
 
+# directory & file hierarchy
+proj_dir = os.path.abspath('..')
+analysis_dir = os.getcwd()
+data_dir = os.path.join(proj_dir,'data')
+sketch_dir = os.path.join(data_dir,'sketches')
+csv_dir = os.path.join(data_dir,'csv')
+curated_dir = os.path.join(sketch_dir, 'curated')
+
 if __name__ == "__main__":
 
     ## path to curated sketches for figure
-    path_to_close = 'sketches_pilot2/curated/close'
-    path_to_far = 'sketches_pilot2/curated/far'
-    path_to_objects = 'sketches_pilot2/curated/objects'
+    path_to_close = os.path.join(curated_dir,'close')
+    path_to_far = os.path.join(curated_dir,'far')
+    path_to_objects = os.path.join(curated_dir,'objects')
 
     ## get full list of close and far paths
     close_paths = [os.path.join(path_to_close,'{}.png'.format(i)) for i in obj_list]
