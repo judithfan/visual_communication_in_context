@@ -29,4 +29,4 @@ Drawing is a versatile tool for communication, spanning detailed life drawings a
     - Run `evaluate.wppl` to get model predictions for each trial in test set (i.e., probability of each sketch category given the current context)
     - Estimate confidence intervals for various statistics of interest, e.g., probability of congruent context condition ("close sparrow" vs. "far sparrow" on a close trial where sparrow is target), cost of sketches produced in close vs. far contexts
 - **Write paper**
-  - `/manuscript/`
+  - `/writeups/2019_manuscript`
