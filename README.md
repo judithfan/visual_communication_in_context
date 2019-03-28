@@ -1,7 +1,7 @@
 ## overview
 Drawing is a versatile tool for communication, spanning detailed life drawings and simple whiteboard sketches. Even the same object can be drawn in many ways, depending on the context. How do people decide how to draw in order to be understood? In this project, we collected a large number of drawings in different contexts and found that people adapted their drawings accordingly, producing detailed drawings when necessary, but simpler drawings when sufficient. To explain this contextual flexibility, we developed a computational model combining the capacity to perceive the correspondence between an object and drawing with the ability to infer what information is relevant to the viewer in context. Our results suggest drawing may be so versatile because of humans' joint capacity for visual abstraction and social reasoning.
 
-![](writeups/2019_manuscript/figures/2_sketch_gallery.pdf)
+![](writeups/2019_manuscript/figures/2_sketch_gallery_readme.png)
 
 ## workflow
 
