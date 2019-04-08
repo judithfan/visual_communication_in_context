@@ -1,10 +1,6 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% neurosketch paper source
-
-% JOCN submission guidelines: https://www.mitpressjournals.org/journals/jocn/sub
-
-% Google Doc with collaborative writing timeline: https://docs.google.com/document/d/1G7SkJPb2oTNu2Pru5R0h7cy09543HHucXE-wK5ERZ9g/edit
+% visual_communication_in_context paper source
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -285,8 +281,7 @@ We conducted these inference and evaluation steps independently on five balanced
 \centering
 \includegraphics[width=0.99\textwidth]{5_model_results_2.pdf}
 \caption{Sketch production behavior by model variant. 
-The table below each bar plot indicates whether the corresponding model variant plotted above is sensitive to context or cost. 
-A green disc indicates context/cost sensitivity; a red `X' indicates the lack of context/cost sensitivity. 
+A green disc indicates that a given model is context/cost sensitive; a red `X' indicates the lack of context/cost sensitivity. 
 Results in lefthand region of each panel (white background) reflect model predictions when using empirical estimates of $sim(s,o)$ based on human sketch recognition behavior. 
 Results in the righthand region (gray background) reflect model predictions when using variants of the visual encoder that represented sketches and objects at varying levels of visual abstraction (i.e., high, mid, low).
 % adaptor intercepted features  were trained in a five-fold crossvalidated manner using human sketch recognition behavior. 
@@ -393,34 +388,7 @@ Critically, we found that removing context and cost sensitivity diminished the a
 By contrast, these lesions led to only modest decrements in overall sketch retrieval performance (95\% CI target rank: context-insensitive = $[3.65, 4.05]$, cost-insensitive = $[3.33, 3.67]$;  Fig.~\ref{model_results}A), suggesting that the visual encoder itself is a major determinant of the ability to produce sketches of the correct \textit{object}, even if not the context-congruent version.
 These results converge with those of the lesion experiments conducted on the pragmatic sketcher model lacking a visual encoder, and together provide strong evidence for the importance of both visual abstraction and pragmatic inference for explaining contextual flexibility in human visual communication. 
 
-\newgeometry{margin=1.4in} % modify this if you need even more space
-\begin{landscape}
 
-\begin{table}[]
-\begin{tabular}{@{}lll|llll@{}}
-\toprule
-\multicolumn{1}{{c}}{} & \multicolumn{2}{c|}{\textbf{human recog}} & \multicolumn{4}{c}{\textbf{visual encoder}} \\ \midrule
-\multicolumn{1}{c}{\textbf{split}} & \multicolumn{1}{c}{\textbf{context vs. no-context}} & \multicolumn{1}{c|}{\textbf{cost vs. no-cost}} & \multicolumn{1}{c}{\textbf{context vs. no-context}} & \multicolumn{1}{c}{\textbf{cost vs. no-cost}} & \multicolumn{1}{c}{\textbf{high vs. mid}} & \multicolumn{1}{c}{\textbf{high vs. low}} \\
-\textbf{1} & 18.0 & 11.9 & 44.5 & 2.70 & 105 & 282 \\
-\textbf{2} & 8.46 & 9.89 & 20.9 & -0.33 & 92.5 & 242 \\
-\textbf{3} & 19.2 & 8.95 & 31.9 & 1.98 & 94.8 & 257 \\
-\textbf{4} & 13.4 & 9.54 & 8.35 & -0.67 & 93.4 & 248 \\
-\textbf{5} & 16.1 & 7.92 & 28.1 & 5.99 & 114 & 269 \\
-\textbf{median} & \textbf{16.1} & \textbf{9.54} & \textbf{28.1} & \textbf{1.98} & \textbf{94.8} & \textbf{257} \\ \bottomrule
-\end{tabular}
-\caption{Log Bayes Factors (BF) for comparisons between full and lesioned model variants (columns) for each crossvalidation fold (rows). 
-Log-BFs$>$0 indicate greater evidence for the full model than the lesioned variant. 
-Columns under the human recog header contain comparisons between model variants that used empirical estimates of perceptual correspondence based on human sketch recognition behavior. 
-Columns under the visual encoder header contain comparisons between model variants that used a deep convolutional neural network visual encoder, trained in a five-fold crossvalidated manner using human sketch recognition behavior. 
-The context vs. no-context columns includes comparisons between context-sensitive and context-insensitive variant;
-the cost vs. no-cost columns includes comparisons between cost-sensitive and cost-insensitive variant; 
-the high vs. mid column includes comparisons between model variants using a high adaptor vs. mid adaptor in a context/cost-sensitive model; 
-and the high vs. low column inclues comparisons between between model variants using a high adaptor vs. low adaptor in context/cost-sensitive model.}
-\label{model_comparison}
-\end{table}
-
-\end{landscape}
-\restoregeometry
 
 % \ndg{i think we need some direct comparison of full model with and without encoder.... without encoder will win, and then we point out that it doesn't provide an explanation of the visual aspect as the encoder one does?}
 
