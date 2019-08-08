@@ -129,7 +129,7 @@ Here we generalize this methodology to understand the role of pragmatic inferenc
 In our experiment, participants (N=192) were paired in an online environment and communicated with their partner only via a drawing canvas (Fig.~\ref{task_display}A). 
 Each trial, both participants were shown a set of four real-world objects, but object locations were randomized for each participant so that they could not use object location information to solve the task. 
 The sketcher's goal on each trial was to draw one of these objects --- the target --- so that the viewer could pick it out from the array. 
-There were 32 objects in total belonging to four basic-level categories (i.e., bird, car, chair, dog), that were rendered in the same three-quarter pose, under identical illumatination, and on a gray background, so participants could not use pose, illumination, or background information to distinguish them. 
+There were 32 objects in total belonging to four basic-level categories (i.e., bird, car, chair, dog), that were rendered in the same three-quarter pose, under identical illumination, and on a gray background, so participants could not use pose, illumination, or background information to distinguish them. 
 Each object was randomly assigned to exactly one set of four objects, and each set of four objects was presented four times each, such that each object served as the target exactly once. 
 % The sketcher drew in black ink using a fixed stroke width and each stroke appeared on the viewer's screen immediately after being drawn. 
 Across trials, the similarity of the distractors to the target was manipulated, yielding two types of communicative context that appeared in a randomly interleaved order: close contexts, where the target and distractors all belonged to the same basic-level category, and far contexts, where the target and distractors belonged to different basic-level categories (Fig.~\ref{task_display}B). 
@@ -308,7 +308,7 @@ Such evaluation requires an encoding model that describes how abstract perceptua
 
 Each encoder variant consists of two functional components: a base visual encoder network, $B$, and an adaptor network, $A$: $\textrm{sim}(s,o) = A(B(s,o))$.
 % For all variants, the visual encoder is a function that accepts a pair of images as input (see Fig. \ref{model_schematic}A): a sketch, $s$, and an object rendering, $o$, and returns a scalar value reflecting the degree of perceptual correspondence between the sketch and object, $\textrm{sim}(s,o)$, which lies in the range $[0,1]$, where $\textrm{sim}(s,o)=0$ reflects minimal correspondence and $\textrm{sim}(s,o)=1$ reflects maximal correspondence.
-For the base encoder, we employ a widely used and high-performing deep convolutional neural network architeceture, VGG-19, pretrained to recognize objects from the Imagenet database, whose parameters remain frozen \cite{simonyan2014very,deng2009imagenet}. 
+For the base encoder, we employ a widely used and high-performing deep convolutional neural network architecture, VGG-19, pretrained to recognize objects from the Imagenet database, whose parameters remain frozen \cite{simonyan2014very,deng2009imagenet}. 
 We then augment the pretrained feature representation of the base encoder with a shallow adaptor network, which is trained to predict the perceptual correspondence between specific sketch-object pairs.
 The reason we train an adaptor network is that although prior work has shown that representation of object \textit{categories} converges for sketches and photos at higher layers in DCNN models trained only on photos \cite{FanCommon2018}, additional supervision can substantially improve the accuracy of predictions involving comparisons between sketches and photos at the \textit{instance} level \cite{sangkloy2016sketchy}. 
 
@@ -425,7 +425,7 @@ Columns under the visual encoder header contain comparisons between model varian
 The context vs. no-context columns includes comparisons between context-sensitive and context-insensitive variant;
 the cost vs. no-cost columns includes comparisons between cost-sensitive and cost-insensitive variant; 
 the high vs. mid column includes comparisons between model variants using a high adaptor vs. mid adaptor in a context/cost-sensitive model; 
-and the high vs. low column inclues comparisons between between model variants using a high adaptor vs. low adaptor in context/cost-sensitive model.}
+and the high vs. low column includes comparisons between between model variants using a high adaptor vs. low adaptor in context/cost-sensitive model.}
 \label{model_comparison}
 \end{table}
 
@@ -492,7 +492,7 @@ One promising approach may be to exploit the hierarchical and compositional stru
 Second, our model produces a decision over which \textit{type} of sketch to produce in context, rather than producing a \textit{particular} sketch.  
 This is of course different from the action selection problem human participants face --- they must decide not only what stroke to make, but where to place them, how many, and in what order.
 While there have been recent and promising advances in modeling sketch production as a sequence of such actions \cite{lake2015human,ha2017neural,ganin2018synthesizing}, these approaches have not yet been shown to successfully emulate how people sketch real objects, much less how this behavior is modulated by communicative context. 
-Future work should develop sketch production models that both operate on natural visual inputs and more closely approximate the the action space inherent to the task.
+Future work should develop sketch production models that both operate on natural visual inputs and more closely approximate the action space inherent to the task.
 
 Meeting these challenges is not only important for developing more human-like artificial intelligence, but may also shed new light on the nature of human visual abstraction, and how ongoing perception and long-term conceptual knowledge guide action selection during complex, natural behaviors. 
 In the long term, investigating the computational basis of visual communication may shed light on the sources of cultural variation in pictorial style, and lead to enhanced interactive visualization tools for education and research.
@@ -556,7 +556,7 @@ To train and evaluate our sketcher model, we first filter the sketch dataset to 
 This filtered sketch dataset was then split into training, validation, and test sets in a 80\%, 10\%, and 10\% ratio, and this split was performed in a 5-fold crossvalidated manner.
 Splits were based on context, defined as the set containing a specific target object and three distractor objects, such that no context appeared both in the training and test splits of any cross-validation fold. 
 We ensured that: (1) the number of sketches from each category (i.e. car) and (2) the proportion of sketches from close and far trials were equated across splits. 
-This was done to control for biases in model peformance due to imbalances in the training or test set.
+This was done to control for biases in model performance due to imbalances in the training or test set.
 
 \subsubsection*{Deriving empirical estimates of perceptual correspondence between sketches and objects}
 
@@ -565,7 +565,7 @@ In the recognition experiment, most sketches were not matched exclusively to a s
 We treated these sketches as thus displaying some degree of correspondence to the several objects it was matched to at least once. 
 For a single sketch, we estimate the perceptual correspondence between that sketch and any object as the proportion of recognition task trials on which it was matched to that object. 
 For sketches in each of 64 object-context categories, we estimate the ``aggregated'' sketch-object correspondence to be the proportion of recognition task trials on which any sketch from this category was matched to that object. 
-Because our goal was to understand how well each model could produce produce informative sketches according to the context condition, and not necessarily to reproduce exactly the same sketch as a particular participant had on a specific trial, we use this aggregate correspondence measure in all modeling experiments.  
+Because our goal was to understand how well each model could produce informative sketches according to the context condition, and not necessarily to reproduce exactly the same sketch as a particular participant had on a specific trial, we use this aggregate correspondence measure in all modeling experiments.  
 As a result, sketch-object correspondence scores lie in the range $[0,1]$, and sum to 1 for sketches in the same object-context category. 
 Because all sketches from the same object-context category share the same correspondence to each object, there are a total of 32 sketch categories x 32 objects x 2 contexts = 2048 empirical perceptual correspondence scores.
 
@@ -585,7 +585,7 @@ The visual encoder is a function that accepts a pair of images as input (both 22
 
 The encoder consists of two components: a base visual encoder and an adaptor network. 
 We employed VGG-19 \cite{simonyan2014very} as our base visual encoder architecture.
-We augmented VGG-19 with a shallow fully-connected \textit{adaptor} network that is trained to predict the perceptual correspondence between individual sketch-objecet pairs. 
+We augmented VGG-19 with a shallow fully-connected \textit{adaptor} network that is trained to predict the perceptual correspondence between individual sketch-object pairs. 
 Only the parameters of this adaptor network are trained; the parameters of the base visual encoder remain frozen. 
 We compared three adaptor networks that intercept VGG-19 image representations at different layers: the first max pooling layer (early), the tenth convolutional layer (mid), and the first fully connected layer (high). 
 To facilitate comparison between adaptor networks, we ensured that each of the three adaptors contain a comparable number of trainable parameters (number of learnable parameters for high: $1048839$; mid: $1049115$; low: $1048833$) with identical training hyperparameters (i.e., learning rate, batch size, etc.). 
@@ -640,7 +640,7 @@ We define the loss function, $\mathcal{L}$, to be the cross entropy loss between
 
 % learn not only to predict the strength of the correspondence between a sketch and the object it was intended to depict (measured by correct matches during recognition), but also to predict its correspondence to all of the other objects (measured by the pattern of confusions during recognition).
 
-We use the Adam optimization algorithm \cite[]{kingma2014adam} (learning rate = 1e-4) over minibatches of size 10 for 100 epochs, where an epoch is a full pass through the training set.\footnote{As a property of the input domain, the gradients with respect to adaptor parameters are very small (1.51e-4 $\pm$ 2.61e-4), inevitably resulting in poor learning (we can reproduce this effect from several intializations). We find that naively increasing the learning rate led to unstable optimization, but that multiplying the loss by a large constant $C$ leads to a much smoother learning trajectories and good test generalization. Critically, increasing the learning rate and multiplying the loss by a constant are not equivalent for second moment gradient methods. In practice, $C =$ 1e4.}  
+We use the Adam optimization algorithm \cite[]{kingma2014adam} (learning rate = 1e-4) over minibatches of size 10 for 100 epochs, where an epoch is a full pass through the training set.\footnote{As a property of the input domain, the gradients with respect to adaptor parameters are very small (1.51e-4 $\pm$ 2.61e-4), inevitably resulting in poor learning (we can reproduce this effect from several initializations). We find that naively increasing the learning rate led to unstable optimization, but that multiplying the loss by a large constant $C$ leads to a much smoother learning trajectories and good test generalization. Critically, increasing the learning rate and multiplying the loss by a constant are not equivalent for second moment gradient methods. In practice, $C =$ 1e4.}  
 After training each adaptor for 100 epochs, we select the model found during training with the best performance on the validation set. 
 
 \subsubsection*{Generating encoder-based estimates of perceptual correspondence between sketches and objects}
@@ -731,7 +731,7 @@ To estimate standard errors on predictions across models, we employed the follow
 % estimation of measures on the data for a particular parameter setting and test split, variation across the parameter posterior for a test split, and variation across test splits. %% may want to include more detail about how exactly this was done. 
 Specifically, for each model variant and for each test split we bootstrap resampled trials with replacement from the test dataset 1000 times to estimate the mean and standard error on each measure of interest, marginalizing over MCMC samples from the parameter posterior. 
 We applied inverse-variance weighting to aggregate these estimates of the mean and standard error across test splits, such that test splits with lower variance contribute more than do splits with higher variance, yielding an overall estimate of the mean and standard error for each measure of interest, for each model variant. 
-We estimated the half-widths of the 95\% confidence interval for each measure of interest under the the assumption of normality for the sampling distribution of the mean.
+We estimated the half-widths of the 95\% confidence interval for each measure of interest under the assumption of normality for the sampling distribution of the mean.
 
 \subsection*{Statistics}
 
